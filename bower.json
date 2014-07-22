@@ -3,10 +3,12 @@
   "description": "E.g. Seed project to get started with Famo.us.",
   "version": "0.1.0",
   "homepage": "https://github.com//test",
-  "authors": [{
-    "name": "Vishesh Duggar",
-    "url": "http://github.com//"
-  }],
+  "authors": [
+    {
+      "name": "Vishesh Duggar",
+      "url": "http://github.com//"
+    }
+  ],
   "main": "app/index.html",
   "moduleType": [
     "amd"
@@ -27,6 +29,8 @@
     "requirejs": "~2.1.11",
     "almond": "~0.2.9",
     "famous-polyfills": "git+https://github.com/Famous/polyfills.git#0.1.1",
-    "famous": "~0.2.2"
+    "famous": "~0.2.2",
+    "angularjs": "~1.2.20",
+    "angular-resource": "~1.2.20"
   }
 }
