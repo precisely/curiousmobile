@@ -38,8 +38,9 @@ define(function(require, exports, module) {
 
     function _createHeader() {
         var backgroundSurface = new Surface({
+            size: [undefined, 44],
             properties: {
-                backgroundColor: 'red'
+                backgroundColor: 'black'
             }
         });
 
