@@ -19,58 +19,47 @@ define(function(require, exports, module) {
 
 	MenuView.DEFAULT_OPTIONS = {
 		menuData: {},
-		topOffset: 0,
-		stripOffset: 58,
-		staggerDelay: 35,
-		transition: {
-			duration: 300,
-			curve: Easing.outBack
-		}
+        angle: -0.2,
+        menuItemWidth: 320,
+        menuItemHeight: 54,
+        topOffset: 0,
+		menuItemOffset: 58,
+        staggerDelay: 35,
+        transition: {
+            duration: 700,
+            curve: 'easeOut'
+        }
 	};
 
 	MenuView.prototype = Object.create(View.prototype);
 	MenuView.prototype.constructor = MenuView;
-	MenuView.prototype.dragOpenMenuAnimation = function(currentPosition, openPosition) {
-		var transition = this.options.transition;
-		var topOffset = this.options.topOffset;
-		var stripOffset = (currentPosition > openPosition) ? this.options.stripOffset : currentPosition / openPosition * this.options.stripOffset;
-
-
-		for (var i = 0; i < this.menuItemModifiers.length; i++) {
-			var yOffset = topOffset + stripOffset * i;
-			this.menuItemModifiers[i].setTransform(Transform.translate(0, yOffset, 0));
-		}
-
-	};
 
 	MenuView.prototype.resetMenuItems = function() {
-
 		for (var i = 0; i < this.menuItemModifiers.length; i++) {
+			var initX = -this.options.menuItemWidth;
+			var initY = this.options.topOffset + this.options.menuItemOffset * i + this.options.menuItemWidth * Math.tan(-this.options.angle);
 
-			this.menuItemModifiers[i].setTransform(Transform.translate(0, 0, 0));
+			this.menuItemModifiers[i].setTransform(Transform.translate(initX, initY, 0));
 		}
 	};
 
-	MenuView.prototype.animateMenuItems = function(currentPosition, openPosition) {
+	MenuView.prototype.animateMenuItems = function() {
+		this.resetMenuItems();
 
 		var transition = this.options.transition;
 		var delay = this.options.staggerDelay;
+		var menuItemOffset = this.options.menuItemOffset;
 		var topOffset = this.options.topOffset;
-
-		var stripOffset = (currentPosition >= openPosition) ? this.options.stripOffset : currentPosition / openPosition * this.options.stripOffset;
 
 		for (var i = 0; i < this.menuItemModifiers.length; i++) {
 			Timer.setTimeout(function(i) {
-				var yOffset = topOffset + stripOffset * i;
+				var yOffset = topOffset + menuItemOffset * i;
 
 				this.menuItemModifiers[i].setTransform(
 					Transform.translate(0, yOffset, 0), transition);
 			}.bind(this, i), i * delay);
 		}
-
 	};
-
-
 
 	_createMenuItems = function() {
 		// used in _animateMenuItems()
@@ -92,7 +81,7 @@ define(function(require, exports, module) {
 			this.menuItemModifiers.push(menuItemModifier);
 			this.add(menuItemModifier).add(menuItem);
 
-			yOffset += this.options.stripOffset;
+			yOffset += this.options.menuItemOffset;
 
 		}
 

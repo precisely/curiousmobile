@@ -58,6 +58,7 @@ define(function(require, exports, module) {
 			this.slideLeft();
 		} else {
 			this.slideRight();
+			this.menuView.animateMenuItems();
 		}
 		this.menuToggle = !this.menuToggle;
 	};
