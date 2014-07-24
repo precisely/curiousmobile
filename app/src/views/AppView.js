@@ -6,12 +6,14 @@ define(function(require, exports, module) {
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var PageView = require('views/PageView');
+	var MenuView = require('views/MenuView');
+	var	MenuData = require('data/MenuData');
 
 	function AppView() {
 		View.apply(this, arguments);
 		this.menuToggle = false;
 		_createPageView.call(this);
-		_setListeners.call(this);
+		_createMenuView.call(this);
 	}
 
 	AppView.prototype = Object.create(View.prototype);
@@ -30,12 +32,25 @@ define(function(require, exports, module) {
 		this.pageModifier = new StateModifier();
 
 		this.add(this.pageModifier).add(this.pageView);
+		_setListeners.call(this);
+	}
+
+	function _createMenuView() {
+		this.menuView = new MenuView({ menuData: MenuData });
+
+		var menuModifier = new StateModifier({
+			transform: Transform.behind
+		});
+
+		this.add(menuModifier).add(this.menuView);
 	}
 
 	function _setListeners() {
-		this.pageView.on('menuToggle', function() {
+		this.pageView.on('menuToggleNested', function() {
+			console.log("Event: menuToggle Hangler - AppView");
 			this.toggleMenu();
 		}.bind(this));
+	
 	}
 
 	AppView.prototype.toggleMenu = function() {
@@ -48,11 +63,11 @@ define(function(require, exports, module) {
 	};
 
 	AppView.prototype.slideRight = function() {
-        this.pageModifier.setTransform(Transform.translate(this.options.openPosition, 0, 0), this.options.transition);
+		this.pageModifier.setTransform(Transform.translate(this.options.openPosition, 0, 0), this.options.transition);
 	};
 
 	AppView.prototype.slideLeft = function() {
-        this.pageModifier.setTransform(Transform.translate(0, 0, 0), this.options.transition);
+		this.pageModifier.setTransform(Transform.translate(0, 0, 0), this.options.transition);
 	};
 
 	module.exports = AppView;
