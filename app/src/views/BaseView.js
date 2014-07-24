@@ -13,7 +13,6 @@ define(function(require, exports, module) {
         View.apply(this, arguments);
         _createLayout.call(this);
         _createHeader.call(this);
-        _createBody.call(this);
         _setListeners.call(this);
     }
 
@@ -82,21 +81,6 @@ define(function(require, exports, module) {
         this.layout.header.add(searchModifier).add(searchSurface);
     }
 
-    function _createBody() {
-        this.bodySurface = new Surface({
-            content: '<span>Testing</span>',
-            properties: {
-                backgroundColor: 'green',
-                color: 'white'
-            }
-        });
-
-        var backgroundModifier = new StateModifier({
-            transform: Transform.translate(0,44,0),
-            //            size: [400,400]
-        });
-        this.layout.content.add(backgroundModifier).add(this.bodySurface);
-    }
 
     function _setListeners() {
         this.hamburgerSurface.on('click', function() {
