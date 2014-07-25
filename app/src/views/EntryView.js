@@ -28,19 +28,26 @@ define(function(require, exports, module) {
 	function _createReadView(argument) {
 		//TODO
 		
+		var entryBackground = new Surface({
+			properties: {
+				borderBottom: '2px solid #dde2e9'
+			}
+		});
+		this.add(entryBackground);
 		this.readView = new EntryReadView(this.entry);
 		this.readViewModifier = new StateModifier({
 		});
-		this.add(this.readViewModifier).add(this.readView);
-		this.readView.on('click', function($event){
+		this.add(this.readView.renderController);
+		this.readView.on('select-entry', function($event){
 			console.log("Click on EntryReadView");
+			this.readView.renderController.hide();
 			this.showFormView();		
 		}.bind(this));
 	}
 
-	function showFormView(argument) {
+	EntryView.prototype.showFormView = function(argument) {
 		//TODO
-		if (typeof this.createForm != 'undefined') {
+		if (typeof this.createForm == 'undefined') {
 			_createFormView.call(this);
 		}	
 	}
@@ -49,9 +56,10 @@ define(function(require, exports, module) {
 	 *
 	 */
 	function _createFormView(argument) {
+		console.log("EntryView : creating entry form view");
 		this.formView = new EntryFormView(this.entry);
 		this.formModifier = new StateModifier();
-		this.add(formModifier).add(formView);
+		this.add(this.formModifier).add(this.formView);
 	}
 	
 	/**

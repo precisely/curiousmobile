@@ -1,9 +1,11 @@
 define(function(require, exports, module) {
     var View          = require('famous/core/View');
     var Surface       = require('famous/core/Surface');
+	var ImageSurface = require('famous/surfaces/ImageSurface');
     var InputSurface       = require('famous/surfaces/InputSurface');
     var Transform     = require('famous/core/Transform');
     var StateModifier = require('famous/modifiers/StateModifier');
+    var Modifier = require('famous/core/Modifier');
 	var Entry = require('models/Entry');
 
     function EntryFormView(entry) {
@@ -22,11 +24,12 @@ define(function(require, exports, module) {
 			size: [24,24]	
 		});
 
-		this.inputModifier = new StateModifier({
+		this.inputModifier = new Modifier({
 			align: [0.5,0.5]
 		});
 
-		inputModifier.sizeFrom(function(){
+		this.inputModifier.sizeFrom(function(){
+			var mainContext = window.mainContext;
 			var size = mainContext.getSize();
 			return [0.7 * size[0], 20];
 		});
@@ -35,7 +38,7 @@ define(function(require, exports, module) {
 			properties: {
 			}
 		});
-		this.add(inputModifier).add(inputSurface);
+		this.add(this.inputModifier).add(inputSurface);
 
 		var repeatSurface = new ImageSurface({
             content: 'content/images/repeat.png',

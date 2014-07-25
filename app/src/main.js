@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 
 	var mainContext = Engine.createContext();
 	var appView = new AppView();
+	window.mainContext = mainContext;
 
 	mainContext.add(appView);
 });

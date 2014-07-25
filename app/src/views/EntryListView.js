@@ -3,8 +3,11 @@ define(function(require, exports, module) {
 		Surface = require('famous/core/Surface'),
 		Transform = require('famous/core/Transform'),
 		StateModifier = require('famous/modifiers/StateModifier'),
+		RenderController = require("famous/views/RenderController"),
 		EntryCollection = require('models/EntryCollection'),
-		EntryView = require('views/EntryView');
+		EntryView = require('views/EntryView'),
+
+		renderController = new RenderController();
 
 	function EntryListView() {
 		View.apply(this, arguments);
@@ -34,9 +37,6 @@ define(function(require, exports, module) {
 			var entryModifier = new StateModifier({
 				size: [undefined, this.options.entryHeight],
 				transform: Transform.translate(0, yOffset, 0),
-				properties: {
-
-				}
 			});
 
 			var entryView = new EntryView(entries[len]);
