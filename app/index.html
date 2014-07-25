@@ -24,15 +24,15 @@
 		<script type="text/javascript" src="lib/famous-polyfills/requestAnimationFrame.js"></script>
 		<!-- endbuild -->
 
-		<!-- process:remove:dev -->
-		<script type="text/javascript" src="src/main.js"></script>
-		<!-- /process -->
 
 		<!-- process:remove:dist -->
 		<script type="text/javascript" src="lib/requirejs/require.js" data-main="src/requireConfig"></script>
 		<!-- /process -->
 		<script src="lib/angular/angular.js"></script>
 		<script src="lib/angular-resource/angular-resource.js"></script>
+		<!-- process:remove:dev -->
+		<script type="text/javascript" src="src/main.js"></script>
+		<!-- /process -->
 		<script type="text/javascript">
 			require.config({
 				baseUrl: './src/'

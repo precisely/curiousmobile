@@ -8,7 +8,6 @@ define(function(require, exports, module) {
 	var PageView = require('views/PageView');
 	var MenuView = require('views/MenuView');
 	var	MenuData = require('data/MenuData');
-
 	function AppView() {
 		View.apply(this, arguments);
 		this.menuToggle = false;
