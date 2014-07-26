@@ -69,7 +69,7 @@ define(function(require, exports, module) {
 	EntryView.prototype.select = function() {
 		this.readView.renderController.hide();
 		this.entryBackground.setProperties({
-			backgroundColor: 'grey'
+			backgroundColor: '#dde2e9'
 		});
 		this._eventOutput.emit('select-entry', this.entry);
 		this.showFormView();

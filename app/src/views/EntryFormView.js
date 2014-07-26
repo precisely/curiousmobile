@@ -14,7 +14,7 @@ define(function(require, exports, module) {
         View.apply(this, arguments);
 		this.entry = entry;
 		this.renderController = new RenderController();
-		
+		this.iconRenderController = new RenderController();	
 		_createForm.call(this);
     }
 
@@ -35,22 +35,23 @@ define(function(require, exports, module) {
 		//this.add(this.backgroundModifier).add(this.backgroundSurface);
 		this.iconModifier = new Modifier({
 			size: [24,24],
+			transform: Transform.translate(5, 40, 0)
 		});
 
 		this.inputModifier = new Modifier({
-			align: [0,0.1]
+			align: [0,0],
+			transform: Transform.translate(5,5,0)
 		});
 
 		this.inputModifier.sizeFrom(function(){
 			var mainContext = window.mainContext;
 			var size = mainContext.getSize();
-			return [0.85 * size[0], 30];
+			return [0.97 * size[0], 30];
 		});
 
 		this.inputSurface = new InputSurface({
-			properties: {
-			}
 		});
+
 		this.add(this.inputModifier).add(this.inputSurface);
 
 		this.repeatSurface = new ImageSurface({
@@ -73,8 +74,12 @@ define(function(require, exports, module) {
 			}
 		});
 		this.add(this.iconModifier).add(this.pinSurface);
-		this.renderController.show(this._node);
+		this.show();
 	}	
+
+	EntryFormView.prototype.show = function (argument) {
+		this.renderController.show(this._node);
+	}
 	
 
     module.exports = EntryFormView;
