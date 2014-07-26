@@ -50,6 +50,8 @@ define(function(require, exports, module) {
 			this.add(entryModifier).add(entryView);
 			this.entryViews.push(entryView);
 			yOffset += this.options.entryHeight;
+			
+			//Handle entry selection handler
 			entryView.on('select-entry', function($data) {
 				console.log('entry selected with id: ' + $data.id);
 				this.selectEntryView($data);
@@ -59,6 +61,11 @@ define(function(require, exports, module) {
 	}
 
 	EntryListView.prototype.selectEntryView = function(entry) {
+		if (this.selectedEntryView != null) {
+			//TODO if the entry is dirty send update
+			this.selectedEntryView.hideFormView();
+			this.unselectAllEntries();
+		}
 		var yOffset = 0;
 		for (var i = 0, len = this.entryViews.length; i < len; i++) {
 			var entryView = this.entryViews[i];
@@ -70,11 +77,24 @@ define(function(require, exports, module) {
 			);
 			yOffset += this.options.entryHeight;
 			if (entryView.entry.id == entry.id) {
+				this.selectedEntryView = entryView;
 				console.log('Found the selected view');
 				yOffset += this.options.selectionPadding;
 			}
-			entryView.selectio
 		}
 	}
+
+	EntryListView.prototype.unselectAllEntries = function(entry) {
+		var yOffset = 0;
+		for (var i = 0, len = this.entryViews.length; i < len; i++) {
+			var entryView = this.entryViews[i];
+			entryView.modifier.setTransform(
+				Transform.translate(0, yOffset, 0), {
+				}
+			);
+			yOffset += this.options.entryHeight;
+		}
+	}
+	
 	module.exports = EntryListView;
 });

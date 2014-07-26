@@ -74,11 +74,9 @@ define(function(require, exports, module) {
 			}
 		});
 		this.add(this.iconModifier).add(this.pinSurface);
-		this.show();
 	}	
 
 	EntryFormView.prototype.show = function (argument) {
-		this.renderController.show(this._node);
 	}
 	
 

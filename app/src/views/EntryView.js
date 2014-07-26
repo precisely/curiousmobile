@@ -6,6 +6,7 @@ define(function(require, exports, module) {
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Utils = require('Utils');
+	var RenderController = require("famous/views/RenderController");
 	var EntryReadView = require('views/EntryReadView');
 	var EntryFormView = require('views/EntryFormView');
 	var Easing = require("famous/transitions/Easing");
@@ -18,6 +19,7 @@ define(function(require, exports, module) {
 	function EntryView(entry) {
 		View.apply(this, arguments);
 		this.entry = entry;
+		_createBase.call(this);
 		_createReadView.call(this);
 	}
 
@@ -26,14 +28,9 @@ define(function(require, exports, module) {
 
 	EntryView.DEFAULT_OPTIONS = {};
 
-	/**
-	 *	The default view based on the RepeatType for the entry in question.
-	 *	Binding the backbone update event to the view
-	 *
-	 */
-	function _createReadView(argument) {
-		//TODO
-
+	function _createBase(argument) {
+		this.renderController = new RenderController();
+		this.add(this.renderController);
 		var selectionTransitionable = new TransitionableTransform();
 		var selectionModifier = new Modifier({
 			transform: selectionTransitionable,
@@ -46,31 +43,47 @@ define(function(require, exports, module) {
 			}
 		});
 		this.add(selectionModifier).add(this.entryBackground);
+	}
+
+	/**
+	 *	The default view based on the RepeatType for the entry in question.
+	 *	Binding the backbone update event to the view
+	 *
+	 */
+	function _createReadView(argument) {
+		//TODO
 		this.readView = new EntryReadView(this.entry);
 		this.readViewModifier = new StateModifier({});
-		this.add(this.readView.renderController);
 		this.readView.on('select-entry', function($event) {
 			console.log("Click on EntryReadView");
 			this.select();
 		}.bind(this));
+		this.renderController.show(this.readView);
 	}
 
 	EntryView.prototype.showFormView = function(argument) {
 		//TODO
 		this.selectionTransitionable.setScale([1, 1.60, 1], {
-			duration: 1000,
-			curve: Easing.inOutQuad
 		});
-		if (typeof this.createForm == 'undefined') {
+		if (typeof this.formView == 'undefined') {
 			_createFormView.call(this);
 		}
+		this.renderController.hide(this.readView);
+		this.renderController.show(this.formView);
+	}
+
+	EntryView.prototype.hideFormView = function (argument) {
+		if (typeof this.formView == 'undefined') {
+			return;
+		}
+		this.entryBackground.setProperties({
+			backgroundColor: 'white'
+		});
+		this.renderController.hide(this.formView);
+		this.renderController.show(this.readView);
 	}
 
 	EntryView.prototype.select = function() {
-		this.readView.renderController.hide();
-		this.entryBackground.setProperties({
-			backgroundColor: '#dde2e9'
-		});
 		this._eventOutput.emit('select-entry', this.entry);
 		this.showFormView();
 	}
@@ -82,7 +95,6 @@ define(function(require, exports, module) {
 	function _createFormView(argument) {
 		console.log("EntryView : creating entry form view");
 		this.formView = new EntryFormView(this.entry);
-		this.add(this.formView.renderController);
 	}
 
 	/**
