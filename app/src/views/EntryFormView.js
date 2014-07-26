@@ -6,12 +6,16 @@ define(function(require, exports, module) {
     var Transform     = require('famous/core/Transform');
     var StateModifier = require('famous/modifiers/StateModifier');
     var Modifier = require('famous/core/Modifier');
+	var Easing           = require("famous/transitions/Easing");
+	var RenderController = require("famous/views/RenderController");
 	var Entry = require('models/Entry');
 
     function EntryFormView(entry) {
         View.apply(this, arguments);
 		this.entry = entry;
-		_createIcons.call(this);
+		this.renderController = new RenderController();
+		
+		_createForm.call(this);
     }
 
     EntryFormView.prototype = Object.create(View.prototype);
@@ -19,47 +23,57 @@ define(function(require, exports, module) {
 
     EntryFormView.DEFAULT_OPTIONS = {};
 
-	function _createIcons() {
-		this.iconModifier = new StateModifier({
-			size: [24,24]	
+	function _createForm() {
+		//this.backgroundModifier = new StateModifier({
+			//transform: this.transitionableTransform	
+		//});
+		//this.backgroundSurface = new Surface({
+			//properties: {
+				//backgroundColor: '#dde2e9'	
+			//}
+		//});
+		//this.add(this.backgroundModifier).add(this.backgroundSurface);
+		this.iconModifier = new Modifier({
+			size: [24,24],
 		});
 
 		this.inputModifier = new Modifier({
-			align: [0.5,0.5]
+			align: [0,0.1]
 		});
 
 		this.inputModifier.sizeFrom(function(){
 			var mainContext = window.mainContext;
 			var size = mainContext.getSize();
-			return [0.7 * size[0], 20];
+			return [0.85 * size[0], 30];
 		});
 
-		var inputSurface = new InputSurface({
+		this.inputSurface = new InputSurface({
 			properties: {
 			}
 		});
-		this.add(this.inputModifier).add(inputSurface);
+		this.add(this.inputModifier).add(this.inputSurface);
 
-		var repeatSurface = new ImageSurface({
+		this.repeatSurface = new ImageSurface({
             content: 'content/images/repeat.png',
 			properties: {
 			}
 		});
-		this.add(this.iconModifier).add(repeatSurface);	
+		this.add(this.iconModifier).add(this.repeatSurface);	
 
-		var remindSurface = new ImageSurface({
+		this.remindSurface = new ImageSurface({
             content: 'content/images/remind.png',
 			properties: {
 			}
 		});
-		this.add(this.iconModifier).add(remindSurface);
+		this.add(this.iconModifier).add(this.remindSurface);
 
-		var pinSurface = new ImageSurface({
+		this.pinSurface = new ImageSurface({
             content: 'content/images/pin.png',
 			properties: {
 			}
 		});
-		this.add(this.iconModifier).add(pinSurface);
+		this.add(this.iconModifier).add(this.pinSurface);
+		this.renderController.show(this._node);
 	}	
 	
 
