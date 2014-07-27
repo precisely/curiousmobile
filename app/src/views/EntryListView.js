@@ -63,8 +63,8 @@ define(function(require, exports, module) {
 	EntryListView.prototype.selectEntryView = function(entry) {
 		if (this.selectedEntryView != null) {
 			//TODO if the entry is dirty send update
-			this.selectedEntryView.hideFormView();
 			this.unselectAllEntries();
+			this.selectedEntryView.hideFormView();
 		}
 		var yOffset = 0;
 		for (var i = 0, len = this.entryViews.length; i < len; i++) {

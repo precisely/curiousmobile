@@ -63,6 +63,9 @@ define(function(require, exports, module) {
 
 	EntryView.prototype.showFormView = function(argument) {
 		//TODO
+		this.entryBackground.setProperties({
+			backgroundColor: '#dde2e9'	
+		})
 		this.selectionTransitionable.setScale([1, 1.60, 1], {
 		});
 		if (typeof this.formView == 'undefined') {
@@ -81,6 +84,7 @@ define(function(require, exports, module) {
 		});
 		this.renderController.hide(this.formView);
 		this.renderController.show(this.readView);
+		this.selectionTransitionable.setScale([1, 1, 1]);
 	}
 
 	EntryView.prototype.select = function() {
