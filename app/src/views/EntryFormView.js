@@ -1,84 +1,94 @@
 define(function(require, exports, module) {
-    var View          = require('famous/core/View');
-    var Surface       = require('famous/core/Surface');
+	var View = require('famous/core/View');
+	var Surface = require('famous/core/Surface');
 	var ImageSurface = require('famous/surfaces/ImageSurface');
-    var InputSurface       = require('famous/surfaces/InputSurface');
-    var Transform     = require('famous/core/Transform');
-    var StateModifier = require('famous/modifiers/StateModifier');
-    var Modifier = require('famous/core/Modifier');
-	var Easing           = require("famous/transitions/Easing");
+	var InputSurface = require('famous/surfaces/InputSurface');
+	var Transform = require('famous/core/Transform');
+	var StateModifier = require('famous/modifiers/StateModifier');
+	var Modifier = require('famous/core/Modifier');
+	var Easing = require("famous/transitions/Easing");
 	var RenderController = require("famous/views/RenderController");
+	var SequentialLayout = require("famous/views/SequentialLayout");
 	var Entry = require('models/Entry');
 
-    function EntryFormView(entry) {
-        View.apply(this, arguments);
+	function EntryFormView(entry) {
+		View.apply(this, arguments);
 		this.entry = entry;
 		this.renderController = new RenderController();
-		this.iconRenderController = new RenderController();	
+		this.iconRenderController = new RenderController();
 		_createForm.call(this);
-    }
+	}
 
-    EntryFormView.prototype = Object.create(View.prototype);
-    EntryFormView.prototype.constructor = EntryFormView;
+	EntryFormView.prototype = Object.create(View.prototype);
+	EntryFormView.prototype.constructor = EntryFormView;
 
-    EntryFormView.DEFAULT_OPTIONS = {};
+	EntryFormView.DEFAULT_OPTIONS = {};
 
 	function _createForm() {
 		//this.backgroundModifier = new StateModifier({
-			//transform: this.transitionableTransform	
+		//transform: this.transitionableTransform	
 		//});
 		//this.backgroundSurface = new Surface({
-			//properties: {
-				//backgroundColor: '#dde2e9'	
-			//}
+		//properties: {
+		//backgroundColor: '#dde2e9'	
+		//}
 		//});
 		//this.add(this.backgroundModifier).add(this.backgroundSurface);
+		var sequentialLayout = new SequentialLayout({
+			direction: 0,
+			itemSpacing: 20,
+			defaultItemSize: [24, 24],
+		});
+
+		sequentialLayout.setOutputFunction(function(input, offset, index) {
+			offset += 10;
+			var transform = (this.options.direction === 0) ?
+				Transform.translate(offset, 40, 0) : Transform.translate(0, offset);
+			return {
+				transform: transform,
+				target: input.render()
+			};
+		});
+
 		this.iconModifier = new Modifier({
-			size: [24,24],
-			transform: Transform.translate(5, 40, 0)
+			transform: Transform.translate(0, 5, 0)
 		});
 
 		this.inputModifier = new Modifier({
-			align: [0,0],
-			transform: Transform.translate(5,5,0)
+			align: [0, 0],
+			transform: Transform.translate(5, 5, 0)
 		});
 
-		this.inputModifier.sizeFrom(function(){
+		this.inputModifier.sizeFrom(function() {
 			var mainContext = window.mainContext;
 			var size = mainContext.getSize();
 			return [0.97 * size[0], 30];
 		});
 
-		this.inputSurface = new InputSurface({
-		});
+		this.inputSurface = new InputSurface({});
 
 		this.add(this.inputModifier).add(this.inputSurface);
 
 		this.repeatSurface = new ImageSurface({
-            content: 'content/images/repeat.png',
-			properties: {
-			}
+			content: 'content/images/repeat.png',
+			size: [24, 24],
 		});
-		this.add(this.iconModifier).add(this.repeatSurface);	
 
 		this.remindSurface = new ImageSurface({
-            content: 'content/images/remind.png',
-			properties: {
-			}
+			content: 'content/images/remind.png',
+			size: [24, 24],
 		});
-		this.add(this.iconModifier).add(this.remindSurface);
 
 		this.pinSurface = new ImageSurface({
-            content: 'content/images/pin.png',
-			properties: {
-			}
+			content: 'content/images/pin.png',
+			size: [24, 24],
 		});
-		this.add(this.iconModifier).add(this.pinSurface);
-	}	
-
-	EntryFormView.prototype.show = function (argument) {
+		sequentialLayout.sequenceFrom([this.repeatSurface, this.pinSurface, this.remindSurface]);
+		this.add(sequentialLayout);
 	}
-	
 
-    module.exports = EntryFormView;
+	EntryFormView.prototype.show = function(argument) {}
+
+
+	module.exports = EntryFormView;
 });
