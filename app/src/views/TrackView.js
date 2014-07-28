@@ -4,11 +4,13 @@ define(function(require, exports, module) {
     var Transform     = require('famous/core/Transform');
     var StateModifier = require('famous/modifiers/StateModifier');
 	var EntryListView = require('views/EntryListView');
-
+	var CalendarView = require('views/CalendarView');
 	var Entry = require('models/Entry');
+
     function TrackView() {
         BaseView.apply(this, arguments);
 		_createBody.call(this);
+		_createCalendar.call(this);
     }
 
     TrackView.prototype = Object.create(BaseView.prototype);
@@ -25,6 +27,15 @@ define(function(require, exports, module) {
         });
         this.layout.content.add(backgroundModifier).add(this.entryListView);
     }
+
+	function _createCalendar() {
+		var calendarView = new CalendarView();
+        var calendarModifier = new StateModifier({
+			transform: Transform.translate(50,0,0)
+        });
+		this.layout.header.add(calendarModifier).add(calendarView);
+		
+	}
 
 
     module.exports = TrackView;

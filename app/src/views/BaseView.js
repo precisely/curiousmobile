@@ -39,7 +39,7 @@ define(function(require, exports, module) {
         var backgroundSurface = new Surface({
             size: [undefined, 44],
             properties: {
-                backgroundColor: 'black'
+                backgroundColor: '#535353'
             }
         });
 
@@ -51,13 +51,9 @@ define(function(require, exports, module) {
 
         this.hamburgerSurface = new ImageSurface({
             size: [44, 44],
-            content: 'content/images/hamburger.png'
+            content: 'content/images/menu-icon.png'
         });
 
-        var searchSurface = new ImageSurface({
-            size: [232, 44],
-            content: 'content/images/search.png'
-        });
 
         var iconSurface = new ImageSurface({
             size: [44, 44],
@@ -68,17 +64,12 @@ define(function(require, exports, module) {
             align: [0, 0]
         });
 
-        var searchModifier = new StateModifier({
-            origin: [0.5, 0],
-            align: [0.5, 0]
-        });
 
         var iconModifier = new StateModifier({
             origin: [1, 0.5],
             align: [1, 0.5]
         });
         this.layout.header.add(hamburgerModifier).add(this.hamburgerSurface);
-        this.layout.header.add(searchModifier).add(searchSurface);
     }
 
 
