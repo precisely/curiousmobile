@@ -2,7 +2,7 @@ define(function(require, exports, module) {
 	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
 	var ImageSurface = require('famous/surfaces/ImageSurface');
-	var	Modifier = require('famous/core/Modifier');
+	var Modifier = require('famous/core/Modifier');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Utils = require('Utils');
@@ -39,7 +39,7 @@ define(function(require, exports, module) {
 		this.entryBackground = new Surface({
 			size: [undefined, 44],
 			properties: {
-				borderBottom: '2px solid #dde2e9',
+				borderBottom: '2px solid #c0c0c0',
 			}
 		});
 		this.add(selectionModifier).add(this.entryBackground);
@@ -64,10 +64,9 @@ define(function(require, exports, module) {
 	EntryView.prototype.showFormView = function(argument) {
 		//TODO
 		this.entryBackground.setProperties({
-			backgroundColor: '#dde2e9'	
+			backgroundColor: '#c0c0c0'
 		})
-		this.selectionTransitionable.setScale([1, 1.60, 1], {
-		});
+		this.selectionTransitionable.setScale([1, 1.60, 1], {});
 		if (typeof this.formView == 'undefined') {
 			_createFormView.call(this);
 		}
@@ -75,7 +74,7 @@ define(function(require, exports, module) {
 		this.renderController.show(this.formView);
 	}
 
-	EntryView.prototype.hideFormView = function (argument) {
+	EntryView.prototype.hideFormView = function(argument) {
 		if (typeof this.formView == 'undefined') {
 			return;
 		}
@@ -109,7 +108,7 @@ define(function(require, exports, module) {
 
 	}
 
-	function toggleFormView(argument) {
+	EntryView.prototype.entryString = function() {
 
 	}
 

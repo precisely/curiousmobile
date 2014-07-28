@@ -18,7 +18,8 @@ define(function(require, exports, module) {
 	function _addSurface() {
 		this.surfaceModifier = new StateModifier();
 		var entrySurface = new Surface({
-			content: this.entry.description,
+			content: this.entry.toString(),
+			classes: this.entry.repeatTypeAsClass(),
 			properties: {
 				padding: '12px'
 			}

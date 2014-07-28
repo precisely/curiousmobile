@@ -3,7 +3,7 @@ define(function(require, exports, module) {
 	var Utils = {};
 	// Base Javascript library extensions
 
-	 Utils.isOnline = function() {
+	Utils.isOnline = function() {
 		return window.navigator.onLine;
 	}
 
@@ -282,34 +282,29 @@ define(function(require, exports, module) {
 		return $.extend(CSRFPreventionObject, data);
 	}
 
-	// Singleton Class function.
-	Utils.RepeatType = new function() {
-			this.CONTINUOUS_BIT = 0x100;
-			this.GHOST_BIT = 0x200;
-			this.CONCRETEGHOST_BIT = 0x400;
-			this.TIMED_BIT = 0x1 | 0x2 | 0x4;
-			this.REPEAT_BIT = 0x1 | 0x2;
-			this.REMIND_BIT = 0x4;
+	/*
+	 * HTML escape utility methods
+	 */
+	Utils.escapeHTML = function(str) {
+		return ('' + str).replace(/&/g, '&amp;').replace(/>/g, '&gt;').replace(/</g, '&lt;').replace(/"/g, '&quot;').replace(/  /g, '&nbsp;&nbsp;');
+	}
 
-			this.isConcreteGhost = function(repeatType) {
-				return (repeatType & this.CONCRETEGHOST_BIT) != 0;
-			}
-			this.isContinuous = function(repeatType) {
-				return (repeatType & this.CONTINUOUS_BIT) != 0;
-			}
-			this.isGhost = function(repeatType) {
-				return (repeatType & this.GHOST_BIT) != 0;
-			}
-			this.isRemind = function(repeatType) {
-				return (repeatType & this.REMIND_BIT) != 0;
-			}
-			this.isRepeat = function(repeatType) {
-				return (repeatType & this.REPEAT_BIT) != 0;
-			}
-			this.isTimed = function(repeatType) {
-				return (repeatType & this.TIMED_BIT) != 0;
-			}
+	Utils.addSlashes = function(str) {
+		return str.replace(/\'/g, '\\\'').replace(/\"/g, '\\"')
+			.replace(/\\/g, '\\\\').replace(/\0/g, '\\0');
+	}
+
+
+	Utils.formatAmount = function(amount, amountPrecision) {
+		if (amount == null) return " ___";
+		if (amountPrecision < 0) return "";
+		if (amountPrecision == 0) {
+			return amount ? " yes" : " no";
 		}
+		return " " + amount;
+	}
+
+
 
 	module.exports = Utils;
 });

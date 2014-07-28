@@ -25,15 +25,6 @@ define(function(require, exports, module) {
 	EntryFormView.DEFAULT_OPTIONS = {};
 
 	function _createForm() {
-		//this.backgroundModifier = new StateModifier({
-		//transform: this.transitionableTransform	
-		//});
-		//this.backgroundSurface = new Surface({
-		//properties: {
-		//backgroundColor: '#dde2e9'	
-		//}
-		//});
-		//this.add(this.backgroundModifier).add(this.backgroundSurface);
 		var sequentialLayout = new SequentialLayout({
 			direction: 0,
 			itemSpacing: 20,
@@ -41,6 +32,7 @@ define(function(require, exports, module) {
 		});
 
 		sequentialLayout.setOutputFunction(function(input, offset, index) {
+			//Bumping the offset to add additional padding on the left
 			offset += 10;
 			var transform = (this.options.direction === 0) ?
 				Transform.translate(offset, 40, 0) : Transform.translate(0, offset);
@@ -65,7 +57,9 @@ define(function(require, exports, module) {
 			return [0.97 * size[0], 30];
 		});
 
-		this.inputSurface = new InputSurface({});
+		this.inputSurface = new InputSurface({
+			value: this.cleanSuffix(this.entry.toString())
+		});
 
 		this.add(this.inputModifier).add(this.inputSurface);
 
@@ -87,7 +81,16 @@ define(function(require, exports, module) {
 		this.add(sequentialLayout);
 	}
 
-	EntryFormView.prototype.show = function(argument) {}
+	EntryFormView.prototype.cleanSuffix = function(entryText) {
+
+		var text = entryText;
+
+		if (text.endsWith(" repeat") || text.endsWith(" remind") || text.endsWith(" pinned")) {
+			text = text.substr(0, text.length - 7);
+		}
+		return text;
+	}
+
 
 
 	module.exports = EntryFormView;

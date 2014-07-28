@@ -6,3 +6,7 @@ html {
   -webkit-backface-visibility: visible;
   backface-visibility: visible;
 }
+
+.ghost {
+	color: #c0c0c0;
+}
