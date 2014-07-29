@@ -7,6 +7,7 @@ define(function(require, exports, module) {
     function SelectDateView() {
         View.apply(this, arguments);
 		_createNavigation.call(this);
+		_setListener.call(this);
     }
 
     SelectDateView.prototype = Object.create(View.prototype);
@@ -37,6 +38,9 @@ define(function(require, exports, module) {
 			}
 		});
 
+		this.dateSurface = dateSurface;
+		dateSurface.pipe(this._eventOutput);
+
 		var dateModifier = new StateModifier({
 			transform: Transform.translate(60, 10,0)	
 		});
@@ -57,6 +61,13 @@ define(function(require, exports, module) {
 		});
 		this.add(rightModifier).add(rightSurface);
 		
+	}
+	
+	function _setListener() {
+		this.on('date-changed', function (date) {
+			this.date = date;
+			this.dateSurface.setContent(date.toDateString());
+		}.bind(this));
 	}
 
     module.exports = SelectDateView;

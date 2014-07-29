@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 	var SelectDateView = require('views/SelectDateView');
 	var DateGridView = require('views/DateGridView');
 	var RenderController = require("famous/views/RenderController");
+    var Transitionable = require("famous/transitions/Transitionable");
 
 	function CalendarView(currentDate) {
 		View.apply(this, arguments);
@@ -14,8 +15,11 @@ define(function(require, exports, module) {
 			currentDate = new Date();
 		}
 		this.currentDate = currentDate;
+		this.renderController = new RenderController();
+		this.add(this.renderController);
 		_createHeader.call(this);
 		_createDateGrid.call(this);
+		_renderTransitions.call(this);
 	}
 
 	CalendarView.prototype = Object.create(View.prototype);
@@ -26,6 +30,10 @@ define(function(require, exports, module) {
 	function _createHeader(argument) {
 		var selectDateView = new SelectDateView(this.currentDate);
 		this.add(selectDateView);
+		selectDateView.on('click', function() {
+			console.log("CalendarView: toggle date grid event");
+			this.toggleDateGrid();
+		}.bind(this));
 	}
 
 	function _createDateGrid(argument) {
@@ -33,7 +41,23 @@ define(function(require, exports, module) {
 		var gridModifier = new StateModifier({
 			transform: Transform.translate(-20, 44, 0)
 		});
-		this.add(gridModifier).add(dateGridView);
+		this.dateGrid = dateGridView;
+	}
+
+	function _renderTransitions() {
+		var transition = new Transitionable(Transform.translate(-20, 44, 0));
+		this.renderController.inTransformFrom(transition);
+		this.renderController.outTransformFrom(transition);
+	}
+
+	CalendarView.prototype.toggleDateGrid = function () {
+		if (typeof this.showingDateGrid == 'undefined' || !this.showingDateGrid) {
+			this.renderController.show(this.dateGrid);	
+			this.showingDateGrid = true;
+		} else {
+			this.renderController.hide();	
+			this.showingDateGrid = false;
+		}
 	}
 
 	module.exports = CalendarView;
