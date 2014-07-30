@@ -4,9 +4,9 @@ define(function(require, exports, module) {
     var Transform     = require('famous/core/Transform');
     var StateModifier = require('famous/modifiers/StateModifier');
 
-    function SelectDateView() {
+    function SelectDateView(date) {
         View.apply(this, arguments);
-		_createNavigation.call(this);
+		_createNavigation.call(this, date);
 		_setListener.call(this);
     }
 
@@ -15,7 +15,7 @@ define(function(require, exports, module) {
 
     SelectDateView.DEFAULT_OPTIONS = {};
 
-	function _createNavigation() {
+	function _createNavigation(date) {
 		var leftSurface = new Surface({
 			content: '&#9664;',
 			size: [24,44],
@@ -26,9 +26,13 @@ define(function(require, exports, module) {
 		});
 
 		var leftModifier = new StateModifier({
-			transform: Transform.translate(0, 0, 0),
+			transform: Transform.translate(0, 0, 1),
 		});
 		this.add(leftModifier).add(leftSurface);	
+
+		leftSurface.on('click', function() {
+			this._eventOutput.emit('date-minus');	
+		}.bind(this));
 
 		var dateSurface = new Surface({
 			content: new Date().toDateString(),
@@ -39,16 +43,20 @@ define(function(require, exports, module) {
 		});
 
 		this.dateSurface = dateSurface;
-		dateSurface.pipe(this._eventOutput);
+
+		this.dateSurface.on('click', function() {
+			console.log("dateSurface event");
+			this._eventOutput.emit('toggle-date-grid');
+		}.bind(this));
 
 		var dateModifier = new StateModifier({
-			transform: Transform.translate(60, 10,0)	
+			transform: Transform.translate(60, 10,1)	
 		});
 
 		this.add(dateModifier).add(dateSurface);
 
 		var rightModifier = new StateModifier({
-			transform: Transform.translate(240, 5, 0),
+			transform: Transform.translate(240, 5, 1),
 		});
 
 		var rightSurface = new Surface({
@@ -60,14 +68,21 @@ define(function(require, exports, module) {
 			}
 		});
 		this.add(rightModifier).add(rightSurface);
-		
+		rightSurface.on('click', function() {
+			this._eventOutput.emit('date-add');	
+		}.bind(this));
+				
 	}
 	
 	function _setListener() {
 		this.on('date-changed', function (date) {
-			this.date = date;
-			this.dateSurface.setContent(date.toDateString());
+			this.changeDate(date);
 		}.bind(this));
+	}
+	
+	SelectDateView.prototype.changeDate = function (date) {
+		this.date = date;
+		this.dateSurface.setContent(date.toDateString());
 	}
 
     module.exports = SelectDateView;

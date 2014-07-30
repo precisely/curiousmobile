@@ -11,7 +11,9 @@ define(function(require, exports, module) {
 	function DateGridView(date) {
 		View.apply(this, arguments);
 		this.weekRows = [];
-		_createMonthHeader.call(this, date);
+		this.selectedDate = date;
+		this.currentMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+		_createMonthHeader.call(this, this.currentMonth);
 		_createMonthGrid.call(this);
 	}
 
@@ -50,18 +52,24 @@ define(function(require, exports, module) {
 		});
 		this.add(leftModifier).add(leftSurface);
 
-		var dateSurface = new Surface({
+		leftSurface.on('click', function() {
+			console.log("leftSurface event");
+			this.changeMonth(-1);
+		}.bind(this));
+
+		var monthSurface = new Surface({
 			content: DateUtil.getMonth(date) + ' ' + date.getFullYear(),
 			properties: {
 				fontSize: '20px',
 			}
 		});
 
-		var dateModifier = new StateModifier({
+		var monthModifier = new StateModifier({
 			transform: Transform.translate(100, 10, 1)
 		});
 
-		this.add(dateModifier).add(dateSurface);
+		this.add(monthModifier).add(monthSurface);
+		this.monthSurface = monthSurface;
 
 		var rightModifier = new StateModifier({
 			transform: Transform.translate(245, 5, 1),
@@ -75,6 +83,10 @@ define(function(require, exports, module) {
 			}
 		});
 		this.add(rightModifier).add(rightSurface);
+		rightSurface.on('click', function() {
+			console.log("rightSurface event");
+			this.changeMonth(1);
+		}.bind(this));
 	}
 
 	function _createMonthGrid(month) {
@@ -120,7 +132,7 @@ define(function(require, exports, module) {
 					padding: '5px',
 				}
 			});
-			daySurface.date = new Date();
+			daySurface.date = this.selectedDate;
 			daySurface.parent = this;
 
 			daySurface.on('click', function($event) {
@@ -156,11 +168,20 @@ define(function(require, exports, module) {
 	DateGridView.prototype.renderDates = function(date) {
 		var leadDays = this.getLeadDays(date);
 		var rowsToShow = this.numberOfRowsToShow(date);
-		var printDate = DateUtil.daylightSavingAdjust(new Date(date.getYear(), date.getMonth(), 1 - leadDays));
+		var printDate = DateUtil.daylightSavingAdjust(new Date(date.getFullYear(), date.getMonth(), 1 - leadDays));
 		var numOfDays = leadDays + DateUtil.daysInMonth(date);
 
+		console.log('Date Grid: Num of rows to print ' + rowsToShow);
 		for (var i = 0, len = this.daySurfaces.length; i < len; i++) {
-			this.daySurfaces[i].setContent(printDate.getDate());
+			var daySurface = this.daySurfaces[i];
+			daySurface.setContent(printDate.getDate());
+
+			if (DateUtil.areEqual(printDate, this.selectedDate)) {
+				daySurface.addClass('selected');
+				console.log('Date Grid: Found selected date');
+			} else {
+				daySurface.removeClass('selected');
+			}
 			printDate = new Date(printDate.getFullYear(), printDate.getMonth(), printDate.getDate() + 1);
 		}
 
@@ -171,7 +192,7 @@ define(function(require, exports, module) {
 			}
 		}
 
-		this.backgroundSurface.setSize([285, 55 * rowsToShow]);
+		this.backgroundSurface.setSize([285, 58 * rowsToShow]);
 		var weekRowLayout = new SequentialLayout({
 			direction: 1,
 			itemSpacing: 12,
@@ -192,7 +213,7 @@ define(function(require, exports, module) {
 		this.add(weekRowLayout);
 		this.datesRendered = weekRowLayout;
 	}
-	
+
 	DateGridView.prototype.numberOfRowsToShow = function(date) {
 		var leadDays = this.getLeadDays(date);
 		var curRows = Math.ceil((leadDays + DateUtil.daysInMonth(date)) / 7); // calculate the number of rows to generate		
@@ -202,6 +223,17 @@ define(function(require, exports, module) {
 	DateGridView.prototype.getLeadDays = function(date) {
 		var firstDate = DateUtil.getFirstDayOfMonth(date);
 		return 6 - firstDate.getDay();
+	}
+
+	DateGridView.prototype.changeMonth = function(num) {
+		var currentMonth = this.currentMonth;
+		if (num instanceof Date) {
+			currentMonth = num;
+		} else {
+			this.currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + num, currentMonth.getDate());
+		}
+		this.monthSurface.setContent(DateUtil.getMonth(currentMonth) + ' ' + currentMonth.getFullYear());
+		this.renderDates(currentMonth);
 	}
 
 	module.exports = DateGridView;

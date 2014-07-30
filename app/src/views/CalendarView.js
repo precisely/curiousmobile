@@ -8,13 +8,15 @@ define(function(require, exports, module) {
 	var DateGridView = require('views/DateGridView');
 	var RenderController = require("famous/views/RenderController");
     var Transitionable = require("famous/transitions/Transitionable");
+	var DateUtil = require('DateUtil');
 
-	function CalendarView(currentDate) {
+	function CalendarView(selectedDate) {
 		View.apply(this, arguments);
-		if (typeof currentDate == 'undefined' || !(currentDate instanceof Date)) {
-			currentDate = new Date();
+		if (typeof selectedDate == 'undefined' || !(selectedDate instanceof Date)) {
+			var today = new Date();
+			selectedDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 		}
-		this.currentDate = currentDate;
+		this.selectedDate = selectedDate;
 		this.renderController = new RenderController();
 		this.add(this.renderController);
 		_createHeader.call(this);
@@ -28,19 +30,29 @@ define(function(require, exports, module) {
 	CalendarView.DEFAULT_OPTIONS = {};
 
 	function _createHeader(argument) {
-		var selectDateView = new SelectDateView(this.currentDate);
+		var selectDateView = new SelectDateView(this.selectedDate);
 		this.add(selectDateView);
-		selectDateView.on('click', function() {
+		selectDateView.on('toggle-date-grid', function() {
 			console.log("CalendarView: toggle date grid event");
 			this.toggleDateGrid();
 		}.bind(this));
+		this.selectDateView = selectDateView;
+		selectDateView.on('date-add', function() {
+			console.log("CalendarView: adding a day");
+			this.selectedDate = DateUtil.addDays(this.selectedDate, 1);
+			this.selectDateView.changeDate(this.selectedDate);	
+		}.bind(this));
+
+		selectDateView.on('date-minus', function() {
+			console.log("CalendarView: subtracting a day");
+			this.selectedDate = DateUtil.minusDays(this.selectedDate, 1);
+			this.selectDateView.changeDate(this.selectedDate);	
+		}.bind(this));
+		
 	}
 
 	function _createDateGrid(argument) {
-		var dateGridView = new DateGridView();
-		var gridModifier = new StateModifier({
-			transform: Transform.translate(-20, 44, 0)
-		});
+		var dateGridView = new DateGridView(this.selectedDate);
 		this.dateGrid = dateGridView;
 	}
 
@@ -48,6 +60,10 @@ define(function(require, exports, module) {
 		var transition = new Transitionable(Transform.translate(-20, 44, 0));
 		this.renderController.inTransformFrom(transition);
 		this.renderController.outTransformFrom(transition);
+	}
+	
+	function _setListeners(argument) {
+		
 	}
 
 	CalendarView.prototype.toggleDateGrid = function () {

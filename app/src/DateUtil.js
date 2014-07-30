@@ -30,5 +30,21 @@ define(function(require, exports, module) {
 		var d = new Date(date.getFullYear(), date.getMonth()+1, 0);
 		return d.getDate();
 	}
+
+	DateUtil.addDays = function(date, numOfDays) {
+		var d = new Date(date.getFullYear(), date.getMonth(), date.getDate() + numOfDays);
+		return d;
+	}
+	
+	DateUtil.minusDays = function(date, numOfDays) {
+		var d = new Date(date.getFullYear(), date.getMonth(), date.getDate() - numOfDays);
+		return d;
+	}
+
+	DateUtil.areEqual = function (a, b) {
+		return a.getDate() == b.getDate() && a.getMonth() == b.getMonth() 
+			&& a.getFullYear() == b.getFullYear();
+	}
+
 	module.exports = DateUtil;
 });

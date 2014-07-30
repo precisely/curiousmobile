@@ -10,3 +10,7 @@ html {
 .ghost {
 	color: #c0c0c0;
 }
+
+.selected {
+	background-color: #FFFFFF !important;
+}
