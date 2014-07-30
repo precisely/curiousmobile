@@ -238,14 +238,14 @@ define(function(require, exports, module) {
 	}
 
 	DateGridView.prototype.changeMonth = function(num) {
-		var currentMonth = this.currentMonth;
+		var monthDate = this.currentMonth;
 		if (num instanceof Date) {
-			currentMonth = num;
+			this.currentMonth = num;
 		} else {
-			this.currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + num, currentMonth.getDate());
+			this.currentMonth = new Date(monthDate.getFullYear(), monthDate.getMonth() + num, monthDate.getDate());
 		}
-		this.monthSurface.setContent(DateUtil.getMonth(currentMonth) + ' ' + currentMonth.getFullYear());
-		this.renderDates(currentMonth);
+		this.monthSurface.setContent(DateUtil.getMonth(this.currentMonth) + ' ' + this.currentMonth.getFullYear());
+		this.renderDates(this.currentMonth);
 	}
 
 	DateGridView.prototype.changeSelectedDate = function (date) {
