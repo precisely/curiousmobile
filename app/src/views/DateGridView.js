@@ -22,6 +22,10 @@ define(function(require, exports, module) {
 
 	DateGridView.DEFAULT_OPTIONS = {};
 
+	/**
+	 * Creates the header to change month
+	 */
+
 	function _createMonthHeader(date) {
 		if (typeof date == 'undefined') {
 			date = new Date();
@@ -89,6 +93,11 @@ define(function(require, exports, module) {
 		}.bind(this));
 	}
 
+	/**
+	 * Internal method to layout a 7 week grid which would be re-used to render each
+	 * month view
+	 */
+
 	function _createMonthGrid(month) {
 		var rowItemHeight = 35;
 		var rowItemWidth = 35;
@@ -117,9 +126,9 @@ define(function(require, exports, module) {
 		dayLabelLayout.sequenceFrom(dayLabelSurfaces);
 
 		this.add(dayLabelModifier).add(dayLabelLayout);
-		this.daySurfaces = [];
-		var daysInAWeek = [];
-		var tempWeekRows = [];
+		this.weekRenderControllers = [];
+		this.daySurfaces = []; // Flattened bucket to maniputlate all surfaces. See renderDates
+		var daysInAWeek = []; // temporary bucket to render each row in the month grid
 		for (var i = 1, len = 43; i < len; i++) {
 			var daySurface = new Surface({
 				size: [rowItemWidth - 5, rowItemHeight - 5],
@@ -137,7 +146,7 @@ define(function(require, exports, module) {
 
 			daySurface.on('click', function($event) {
 				console.log("daySurface event");
-				this.parent._eventOutput.emit('select-date', this.date);
+				this.parent._eventOutput.emit('select-date', this.boundDate);
 			});
 
 			this.daySurfaces.push(daySurface);
@@ -158,10 +167,31 @@ define(function(require, exports, module) {
 				});
 
 				weekColumnLayout.sequenceFrom(daysInAWeek);
+				this.weekRenderControllers.push(new RenderController());
 				this.weekRows.push(weekColumnLayout);
 				daysInAWeek = [];
 			}
 		}
+
+		var weekRowLayout = new SequentialLayout({
+			direction: 1,
+			itemSpacing: 0,
+		});
+
+		weekRowLayout.setOutputFunction(function(input, offset, index) {
+			//Bumping the offset to add additional padding on the left
+			offset += 70;
+			var transform = Transform.translate(0, offset, 1);
+			return {
+				transform: transform,
+				target: input.render()
+			};
+		});
+
+		weekRowLayout.sequenceFrom(this.weekRenderControllers);
+
+		this.add(weekRowLayout);
+		
 		this.renderDates(new Date());
 	}
 
@@ -175,6 +205,7 @@ define(function(require, exports, module) {
 		for (var i = 0, len = this.daySurfaces.length; i < len; i++) {
 			var daySurface = this.daySurfaces[i];
 			daySurface.setContent(printDate.getDate());
+			daySurface.boundDate = printDate;
 
 			if (DateUtil.areEqual(printDate, this.selectedDate)) {
 				daySurface.addClass('selected');
@@ -185,33 +216,14 @@ define(function(require, exports, module) {
 			printDate = new Date(printDate.getFullYear(), printDate.getMonth(), printDate.getDate() + 1);
 		}
 
-		var tempWeekRows = [];
+		this.backgroundSurface.setSize([285, 62 * rowsToShow]);
 		for (var i = 0, len = this.weekRows.length; i < len; i++) {
 			if (i < rowsToShow) {
-				tempWeekRows.push(this.weekRows[i]);
+				this.weekRenderControllers[i].show(this.weekRows[i]);
+			} else {
+				this.weekRenderControllers[i].hide();	
 			}
 		}
-
-		this.backgroundSurface.setSize([285, 58 * rowsToShow]);
-		var weekRowLayout = new SequentialLayout({
-			direction: 1,
-			itemSpacing: 12,
-		});
-
-		weekRowLayout.setOutputFunction(function(input, offset, index) {
-			//Bumping the offset to add additional padding on the left
-			offset += 70;
-			var transform = Transform.translate(0, offset, 1);
-			return {
-				transform: transform,
-				target: input.render()
-			};
-		});
-
-		weekRowLayout.sequenceFrom(tempWeekRows);
-
-		this.add(weekRowLayout);
-		this.datesRendered = weekRowLayout;
 	}
 
 	DateGridView.prototype.numberOfRowsToShow = function(date) {
@@ -234,6 +246,11 @@ define(function(require, exports, module) {
 		}
 		this.monthSurface.setContent(DateUtil.getMonth(currentMonth) + ' ' + currentMonth.getFullYear());
 		this.renderDates(currentMonth);
+	}
+
+	DateGridView.prototype.changeSelectedDate = function (date) {
+		this.selectedDate = date;
+		this.renderDates(date);
 	}
 
 	module.exports = DateGridView;

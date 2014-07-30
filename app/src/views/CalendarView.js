@@ -40,13 +40,13 @@ define(function(require, exports, module) {
 		selectDateView.on('date-add', function() {
 			console.log("CalendarView: adding a day");
 			this.selectedDate = DateUtil.addDays(this.selectedDate, 1);
-			this.selectDateView.changeDate(this.selectedDate);	
+			this.changeToDate();
 		}.bind(this));
 
 		selectDateView.on('date-minus', function() {
 			console.log("CalendarView: subtracting a day");
 			this.selectedDate = DateUtil.minusDays(this.selectedDate, 1);
-			this.selectDateView.changeDate(this.selectedDate);	
+			this.changeToDate();
 		}.bind(this));
 		
 	}
@@ -54,6 +54,11 @@ define(function(require, exports, module) {
 	function _createDateGrid(argument) {
 		var dateGridView = new DateGridView(this.selectedDate);
 		this.dateGrid = dateGridView;
+		this.dateGrid.on('select-date', function(date) {
+			console.log('CalenderView: Date selected');
+			this.changeToDate(date);
+			this.toggleDateGrid();
+		}.bind(this));
 	}
 
 	function _renderTransitions() {
@@ -74,6 +79,16 @@ define(function(require, exports, module) {
 			this.renderController.hide();	
 			this.showingDateGrid = false;
 		}
+	}
+	
+	CalendarView.prototype.changeToDate = function (date) {
+		if (typeof date == 'undefined') {
+			date = this.selectedDate;	
+		} else {
+			this.selectedDate = date;	
+		}
+		this.selectDateView.changeDate(this.selectedDate);	
+		this.dateGrid.changeSelectedDate(this.selectedDate);
 	}
 
 	module.exports = CalendarView;
