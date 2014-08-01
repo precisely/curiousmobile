@@ -1,8 +1,5 @@
-#test
-> E.g. Seed project to get started with Famo.us.
 
-[![Build Status](https://travis-ci.org//test.svg?branch=master)](https://travis-ci.org//test) [![Dependency Status](https://david-dm.org//test.svg)](https://david-dm.org//test) [![devDependency Status](https://david-dm.org//test/dev-status.svg)](https://david-dm.org//test#info=devDependencies)
-
+#Mobile Framework version of Curious Mobile App
 ##Dependencies
 It is actually quite simple really
 
