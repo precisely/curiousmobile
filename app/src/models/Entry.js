@@ -1,6 +1,6 @@
 define(['require', 'exports', 'module', 'exoskeleton'], function(require, exports, module, exoskeleton) {
 	'use strict';
-	var Utils = require('Utils');
+	var Utils = require('util/Utils');
 	// Singleton Class function.
 	var RepeatType = {
 		CONTINUOUS_BIT: 0x100,

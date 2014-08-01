@@ -5,10 +5,10 @@ define(function(require, exports, module) {
 	var Modifier = require('famous/core/Modifier');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
-	var Utils = require('Utils');
+	var Utils = require('util/Utils');
 	var RenderController = require("famous/views/RenderController");
-	var EntryReadView = require('views/EntryReadView');
-	var EntryFormView = require('views/EntryFormView');
+	var EntryReadView = require('views/entry/EntryReadView');
+	var EntryFormView = require('views/entry/EntryFormView');
 	var Easing = require("famous/transitions/Easing");
 	var TransitionableTransform = require("famous/transitions/TransitionableTransform");
 	var TweenTransition = require('famous/transitions/TweenTransition');

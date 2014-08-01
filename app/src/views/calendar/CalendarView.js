@@ -4,11 +4,11 @@ define(function(require, exports, module) {
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
-	var SelectDateView = require('views/SelectDateView');
-	var DateGridView = require('views/DateGridView');
+	var SelectDateView = require('views/calendar/SelectDateView');
+	var DateGridView = require('views/calendar/DateGridView');
 	var RenderController = require("famous/views/RenderController");
     var Transitionable = require("famous/transitions/Transitionable");
-	var DateUtil = require('DateUtil');
+	var DateUtil = require('util/DateUtil');
 
 	function CalendarView(selectedDate) {
 		View.apply(this, arguments);

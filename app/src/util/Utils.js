@@ -304,5 +304,14 @@ define(function(require, exports, module) {
 		return " " + amount;
 	}
 
+	Utils.getWindowSize = function() {
+		var mainContext = window.mainContext;
+		return mainContext.getSize();
+	}
+
+
+
+
+
 	module.exports = Utils;
 });

@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 		StateModifier = require('famous/modifiers/StateModifier'),
 		RenderController = require("famous/views/RenderController"),
 		EntryCollection = require('models/EntryCollection'),
-		EntryView = require('views/EntryView'),
+		EntryView = require('views/entry/EntryView'),
 
 		renderController = new RenderController();
 	var TransitionableTransform = require("famous/transitions/TransitionableTransform");

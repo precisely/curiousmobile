@@ -5,8 +5,8 @@ define(function(require, exports, module) {
     var StateModifier = require('famous/modifiers/StateModifier');
 	var Utility = require("famous/utilities/Utility");
     var Scrollview = require("famous/views/Scrollview");
-	var EntryListView = require('views/EntryListView');
-	var CalendarView = require('views/CalendarView');
+	var EntryListView = require('views/entry/EntryListView');
+	var CalendarView = require('views/calendar/CalendarView');
 	var Entry = require('models/Entry');
 
     function TrackView() {

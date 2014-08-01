@@ -6,7 +6,7 @@ define(function(require, exports, module) {
 	var Modifier = require('famous/core/Modifier');
 	var RenderController = require("famous/views/RenderController");
 	var SequentialLayout = require("famous/views/SequentialLayout");
-	var DateUtil = require('DateUtil');
+	var DateUtil = require('util/DateUtil');
 
 	function DateGridView(date) {
 		View.apply(this, arguments);
