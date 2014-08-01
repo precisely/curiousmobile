@@ -13,7 +13,8 @@ require.config({
         underscore: '../lib/underscore/underscore',
         exoskeleton: '../lib/exoskeleton/exoskeleton',
         jquery: '../lib/jquery/dist/jquery',
-        fontawesome: '../lib/fontawesome/fonts/*'
+        fontawesome: '../lib/fontawesome/fonts/*',
+        store: '../lib/store.js/store'
     },
     packages: [
 

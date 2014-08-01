@@ -30,6 +30,7 @@ define(function(require, exports, module) {
 	};
 
 	function _createList(argument) {
+		
 		var backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
@@ -37,13 +38,13 @@ define(function(require, exports, module) {
 			}
 		});
 		this.add(backgroundSurface);
-
+		backgroundSurface.pipe(this._eventOutput);
 		var yOffset = 0;
 		for (var len = 0; len < this.entries.length; len++) {
 
 			var entryModifier = new StateModifier({
 				size: [undefined, this.options.entryHeight],
-				transform: Transform.translate(0,yOffset,0)
+				transform: Transform.translate(0,yOffset,2)
 			});
 			var entryView = new EntryView(this.entries[len]);
 			entryView.modifier = entryModifier;
