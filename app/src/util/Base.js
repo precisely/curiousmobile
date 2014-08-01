@@ -34,36 +34,40 @@ function callLogoutCallbacks() {
 /*
  * Add universal startsWith method to all String classes
  */
-String.prototype.startsWith = function(str) { return this.substring(0, str.length) === str; }
-String.prototype.endsWith = function (str) { return this.length >= str.length && this.substr(this.length - str.length) == str; }
+String.prototype.startsWith = function(str) {
+	return this.substring(0, str.length) === str;
+}
+String.prototype.endsWith = function(str) {
+	return this.length >= str.length && this.substr(this.length - str.length) == str;
+}
 
 /*
  * Simple, clean Javascript inheritance scheme
- * 
+ *
  * Based on: http://kevinoncode.blogspot.com/2011/04/understanding-javascript-inheritance.html
- * 
+ *
  * Usage:
- * 
+ *
  * function Person(age) {
  * 	this.age = age;
  * }
- * 
+ *
  * function Fireman(age, station) {
  * 	Person.call(this, age);
  * 	this.station = station;
  * }
  * inherit(Fireman, Person);
- * 
+ *
  * var fireman = new Fireman(35, 1001);
  * assert(fireman.age == 35);
- * 
- * 
+ *
+ *
  */
 function inherit(subclass, superclass) {
 	function TempClass() {}
 	TempClass.prototype = superclass.prototype;
 	var newSubPrototype = new TempClass();
-	newSubPrototype.constructor = subclass; 
+	newSubPrototype.constructor = subclass;
 	subclass.prototype = newSubPrototype;
 }
 
@@ -74,7 +78,7 @@ function arrayEmpty(arr) {
 	for (var i in arr) {
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -114,18 +118,18 @@ function dateToTimeStr(d, shortForm) {
 		hour = 12;
 	if (hour > 12)
 		hour = hour - 12;
-	
+
 	var min = d.getMinutes();
-	
+
 	if (shortForm && min == 0) {
 		return hour + ap;
 	}
-	
+
 	min = min + "";
-	
+
 	if (min.length == 1)
 		min = "0" + min;
-	
+
 	return hour + ":" + min + ap;
 }
 
@@ -157,7 +161,9 @@ function queueJSON(description, url, args, successCallback, failCallback, delay,
 		args = undefined;
 	}
 	if (args == undefined || args == null) {
-		args = {dateToken:new Date().getTime()};
+		args = {
+			dateToken: new Date().getTime()
+		};
 	} else if (!args['dateToken']) {
 		args['dateToken'] = new Date().getTime();
 	}
@@ -218,14 +224,14 @@ function queueJSON(description, url, args, successCallback, failCallback, delay,
 				data: args,
 				timeout: 20000 + (delay > 0 ? delay : 0)
 			})
-			.done(wrapSuccessCallback)
-			.fail(wrapFailCallback);
+				.done(wrapSuccessCallback)
+				.fail(wrapFailCallback);
 		};
 		++numJSONCalls;
 		pendingJSONCalls.push(jsonCall);
 	} else { // first call
 		if (!background)
-			++numJSONCalls;
+		++numJSONCalls;
 		$.ajax({
 			type: (post ? "post" : "get"),
 			dataType: "json",
@@ -233,8 +239,8 @@ function queueJSON(description, url, args, successCallback, failCallback, delay,
 			data: args,
 			timeout: 20000 + (delay > 0 ? delay : 0)
 		})
-		.done(wrapSuccessCallback)
-		.fail(wrapFailCallback);
+			.done(wrapSuccessCallback)
+			.fail(wrapFailCallback);
 	}
 }
 
@@ -262,7 +268,7 @@ App.CSRF.SyncTokenUriName = "SYNCHRONIZER_URI"; // From org.codehaus.groovy.grai
  */
 function getCSRFPreventionURI(key) {
 	var preventionURI = App.CSRF.SyncTokenKeyName + "=" + App.CSRF[key] + "&" + App.CSRF.SyncTokenUriName + "=" + key;
-	if(App.CSRF[key] == undefined) {
+	if (App.CSRF[key] == undefined) {
 		console.error("Missing csrf prevention token for key", key);
 	}
 	return preventionURI;
@@ -278,7 +284,7 @@ function getCSRFPreventionURI(key) {
  */
 function getCSRFPreventionObject(key, data) {
 	var CSRFPreventionObject = new Object();
-	if(App.CSRF[key]) {
+	if (App.CSRF[key]) {
 		CSRFPreventionObject[App.CSRF.SyncTokenKeyName] = App.CSRF[key];
 	} else {
 		console.error("Missing csrf prevention token for key", key);
@@ -288,3 +294,39 @@ function getCSRFPreventionObject(key, data) {
 	return $.extend(CSRFPreventionObject, data);
 }
 
+/*
+ * Curious data json return value check
+ */
+function checkData(data, status, errorMessage, successMessage) {
+	if (data == 'error') {
+		if (errorMessage && status != 'cached')
+			showAlert(errorMessage);
+		return false;
+	}
+	if (data == 'login') {
+		if (status != 'cached') {
+			showAlert("Session timed out.");
+			doLogout();
+			location.reload(true);
+		}
+		return false;
+	}
+	if (data == 'success') {
+		if (successMessage && status != 'cached')
+			showAlert(successMessage);
+		return true;
+	}
+	if (data == 'refresh') {
+		showAlert("Server timeout, refreshing page.")
+		refreshPage();
+		return false;
+	}
+	if (typeof(data) == 'string') {
+		if (status != 'cached' && data != "") {
+			showAlert(data);
+			location.reload(true);
+		}
+		return false;
+	}
+	return true;
+}

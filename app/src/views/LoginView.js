@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 	var ImageSurface = require("famous/surfaces/ImageSurface");
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var FormContainerSurface = require("famous/surfaces/FormContainerSurface");
+	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var InputSurface = require("famous/surfaces/InputSurface");
 	var ImageSurface = require("famous/surfaces/ImageSurface");
 	var SubmitInputSurface = require("famous/surfaces/SubmitInputSurface");
@@ -24,30 +25,31 @@ define(function(require, exports, module) {
 	LoginView.DEFAULT_OPTIONS = {};
 
 	function _createForm() {
-
-		var backgroundSurface = new Surface({
-			size: [undefined, undefined],
+		var containerSurface = new ContainerSurface({
+			size: [window.innerWidth, window.innerHeight],
 			properties: {
 				backgroundColor: 'white'
 			}
 		});
+		this.add(containerSurface);
+
 		var logoSurface = new ImageSurface({
 			size: [205, 230],
 			content: 'content/images/logo.gif'
 		});
 
 		var logoModifier = new Modifier({
-			transform: Transform.translate(window.innerWidth * 0.20, window.innerHeight * 0.02, 1)
+			origin: [0.5,0.1],
 		});
 
+		var formModifier = new Modifier({
+			origin: [0.5,0.8],
+		});
 
 		var formSurface = new FormContainerSurface({
 			size: [200, 200],
 		});
 
-		this.formModifier = new Modifier({
-			transform: Transform.translate(window.innerWidth * 0.20, window.innerHeight * 0.50, 1)
-		});
 
 		var usernameSurface = new InputSurface({
 			placeholder: 'username',
@@ -86,9 +88,8 @@ define(function(require, exports, module) {
 		formLayout.sequenceFrom([usernameSurface, passwordSurface, submitSurface]);
 		formSurface.add(formLayout);
 
-		this.add(backgroundSurface);
+		this.add(formModifier).add(formSurface);
 		this.add(logoModifier).add(logoSurface);
-		this.add(this.formModifier).add(formSurface);
 	}
 
 	module.exports = LoginView;
