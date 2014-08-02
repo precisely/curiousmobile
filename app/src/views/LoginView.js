@@ -64,10 +64,8 @@ define(function(require, exports, module) {
 		var submitSurface = new InputSurface({
 			value: 'Login',
 			type: 'button',
-			size: [80, 20],
-			properties: {
-				padding: '10px'
-			}
+			classes: ['btn'],
+			size: [80, 40],
 		});
 
 		this.usernameSurface = usernameSurface;

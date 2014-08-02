@@ -1,12 +1,16 @@
 define(function(require, exports, module) {
 	'use strict';
 	var Utils = {};
+	var u = Utils;
 	var AlertView = require('views/AlertView');
 	var RenderController = require("famous/views/RenderController");
 	// Base Javascript library extensions
 	//
 	
 	Utils.showAlert = function (options) {
+		if (_.isString(options)) {
+			options = {message: options};
+		}
 		var alert = new AlertView(options);
 		var alertController = new RenderController();
 		window.mainContext.add(alertController);
@@ -150,7 +154,7 @@ define(function(require, exports, module) {
 		window.setTimeout(function() {
 			if (stillRunning) {
 				alertShown = true;
-				showAlert(description + ": in progress");
+				u.showAlert(description + ": in progress");
 			}
 		}, 4000);
 		if (typeof args == "function") {
@@ -203,11 +207,11 @@ define(function(require, exports, module) {
 			}
 			if (msg == "timeout") {
 				if (delay * 2 > 1000000) { // stop retrying after delay too large
-					showAlert("Server down... giving up");
+					u.showAlert("Server down... giving up");
 					return;
 				}
 				if (!(delay > 0))
-					showAlert("Server not responding... retrying " + description);
+					u.showAlert("Server not responding... retrying " + description);
 				delay = (delay > 0 ? delay * 2 : 5000);
 				window.setTimeout(function() {
 					queueJSON(description, url, args, successCallback, failCallback, delay, background);
@@ -299,12 +303,12 @@ define(function(require, exports, module) {
 	Utils.checkData = function(data, status, errorMessage, successMessage) {
 		if (data == 'error') {
 			if (errorMessage && status != 'cached')
-				showAlert(errorMessage);
+				u.showAlert(errorMessage);
 			return false;
 		}
 		if (data == 'login') {
 			if (status != 'cached') {
-				showAlert("Session timed out.");
+				u.showAlert("Session timed out.");
 				doLogout();
 				location.reload(true);
 			}
@@ -312,17 +316,17 @@ define(function(require, exports, module) {
 		}
 		if (data == 'success') {
 			if (successMessage && status != 'cached')
-				showAlert(successMessage);
+				u.showAlert(successMessage);
 			return true;
 		}
 		if (data == 'refresh') {
-			showAlert("Server timeout, refreshing page.")
+			u.showAlert("Server timeout, refreshing page.")
 			refreshPage();
 			return false;
 		}
 		if (typeof(data) == 'string') {
 			if (status != 'cached' && data != "") {
-				showAlert(data);
+				u.showAlert(data);
 				location.reload(true);
 			}
 			return false;
