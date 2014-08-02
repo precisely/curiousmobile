@@ -1,8 +1,19 @@
 define(function(require, exports, module) {
 	'use strict';
 	var Utils = {};
+	var AlertView = require('views/AlertView');
+	var RenderController = require("famous/views/RenderController");
 	// Base Javascript library extensions
-
+	//
+	
+	Utils.showAlert = function (options) {
+		var alert = new AlertView(options);
+		var alertController = new RenderController();
+		window.mainContext.add(alertController);
+		alertController.show(alert);
+		alert.controller = alertController;
+		return alert;
+	}
 	Utils.isOnline = function() {
 		return window.navigator.onLine;
 	}
@@ -280,6 +291,73 @@ define(function(require, exports, module) {
 		CSRFPreventionObject[App.CSRF.SyncTokenUriName] = key;
 
 		return $.extend(CSRFPreventionObject, data);
+	}
+
+	/*
+	 * Curious data json return value check
+	 */
+	Utils.checkData = function(data, status, errorMessage, successMessage) {
+		if (data == 'error') {
+			if (errorMessage && status != 'cached')
+				showAlert(errorMessage);
+			return false;
+		}
+		if (data == 'login') {
+			if (status != 'cached') {
+				showAlert("Session timed out.");
+				doLogout();
+				location.reload(true);
+			}
+			return false;
+		}
+		if (data == 'success') {
+			if (successMessage && status != 'cached')
+				showAlert(successMessage);
+			return true;
+		}
+		if (data == 'refresh') {
+			showAlert("Server timeout, refreshing page.")
+			refreshPage();
+			return false;
+		}
+		if (typeof(data) == 'string') {
+			if (status != 'cached' && data != "") {
+				showAlert(data);
+				location.reload(true);
+			}
+			return false;
+		}
+		return true;
+	}
+
+	Utils.isLoggedIn = function() {
+		return localStorage['mobileSessionId'] != null;
+	}
+
+	Utils.makeGetUrl = function(url) {
+		return "/mobiledata/" + url + '?callback=?';
+	}
+
+	Utils.makeGetArgs = function(args) {
+		args['mobileSessionId'] = localStorage['mobileSessionId'];
+
+		return args;
+	}
+
+	Utils.makePostUrl = function(url) {
+		return "/mobiledata/" + url;
+	}
+
+	Utils.makePostArgs = function(args) {
+		args['mobileSessionId'] = localStorage['mobileSessionId'];
+
+		return args;
+	}
+
+	Utils.makePlainUrl = function(url) {
+		var url = "/mobile/" + url;
+		url = url;
+		return url;
 	}
 
 	/*

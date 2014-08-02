@@ -12,6 +12,7 @@ define(function(require, exports, module) {
 	var ImageSurface = require("famous/surfaces/ImageSurface");
 	var SubmitInputSurface = require("famous/surfaces/SubmitInputSurface");
 	var User = require('models/User');
+	var u = require('util/Utils');
 
 
 	function LoginView() {
@@ -45,7 +46,6 @@ define(function(require, exports, module) {
 		var formModifier = new Modifier({
 			origin: [0.5,0.8],
 		});
-
 		var formSurface = new FormContainerSurface({
 			size: [200, 200],
 		});
