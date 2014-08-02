@@ -54,5 +54,5 @@
        <param name="ios-package" value="CDVStatusBar" onload="true" />
     </feature>
     <access origin="*" />
-    <content src="mobile/main.html" />
+	<content src="app/index.html" />
 </widget>
