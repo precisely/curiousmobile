@@ -3,13 +3,24 @@ define(function(require, exports, module) {
 	var Utils = {};
 	var u = Utils;
 	var AlertView = require('views/AlertView');
-	var RenderController = require("famous/views/RenderController");
-	// Base Javascript library extensions
-	//
+	var store = require('store');
+	var User = require('models/User');
 	
-	Utils.showAlert = function (options) {
+	u.numJSONCalls = 0;
+	u.pendingJSONCalls = [];
+
+
+	// Base Javascript library extensions
+
+	Utils.getServerUrl = function() {
+		return window.App.serverUrl;
+	}
+	Utils.showAlert = function(options) {
+		var RenderController = require("famous/views/RenderController");
 		if (_.isString(options)) {
-			options = {message: options};
+			options = {
+				message: options
+			};
 		}
 		var alert = new AlertView(options);
 		var alertController = new RenderController();
@@ -30,23 +41,48 @@ define(function(require, exports, module) {
 		}
 	}
 
+	// flag to determine whether the system is ready to submit data
+	u.dataReady = false;
+
+	u.dataReadyCallbacks = [];
+
+	Utils.addDataReadyCallback = function(closure) {
+		console.log("Adding dataReady callback");
+		u.dataReadyCallbacks.push(closure);
+	}
+
+	Utils.callDataReadyCallbacks = function() {
+		console.log("Calling dataReadyCallbacks");
+		for (var i in u.dataReadyCallbacks) {
+			console.log("Calling dataReadyCallback " + i);
+			u.dataReadyCallbacks[i]();
+		}
+
+		u.dataReadyCallbacks = [];
+	}
+
+	Utils.clearDataReadyCallbacks = function() {
+		u.dataReadyCallbacks = [];
+	}
+
+
 	/*
 	 * Logout callbacks; register callbacks to be called when user logs out
 	 */
-	var _logoutCallbacks = [];
+	u._logoutCallbacks = [];
 
-	var _loginSessionNumber = 0;
+	u._loginSessionNumber = 0;
 
 	Utils.registerLogoutCallback = function(closure) {
-		_logoutCallbacks.push(closure);
+		u._logoutCallbacks.push(closure);
 	}
 
 	Utils.callLogoutCallbacks = function() {
-		for (var i in _logoutCallbacks) {
-			_logoutCallbacks[i]();
+		for (var i in u._logoutCallbacks) {
+			u._logoutCallbacks[i]();
 		}
 		clearJSONQueue();
-		++_loginSessionNumber;
+		++u._loginSessionNumber;
 	}
 
 	/*
@@ -136,9 +172,6 @@ define(function(require, exports, module) {
 		}
 	}
 
-	var numJSONCalls = 0;
-	var pendingJSONCalls = [];
-
 	Utils.backgroundPostJSON = function(description, url, args, successCallback, failCallback, delay) {
 		queueJSON(description, url, args, successCallback, failCallback, delay, true, true);
 	}
@@ -148,7 +181,7 @@ define(function(require, exports, module) {
 	}
 
 	Utils.queueJSON = function(description, url, args, successCallback, failCallback, delay, post, background) {
-		var currentLoginSession = _loginSessionNumber; // cache current login session
+		var currentLoginSession = u._loginSessionNumber; // cache current login session
 		var stillRunning = true;
 		var alertShown = false;
 		window.setTimeout(function() {
@@ -174,16 +207,16 @@ define(function(require, exports, module) {
 			stillRunning = false;
 			if (alertShown)
 				closeAlert();
-			if (currentLoginSession != _loginSessionNumber)
+			if (currentLoginSession != u._loginSessionNumber)
 				return; // if current login session is over, cancel callbacks
 			if (successCallback)
 				successCallback(data);
 			if (!background) {
-				--numJSONCalls;
-				if (numJSONCalls < 0)
-					numJSONCalls = 0;
-				if (pendingJSONCalls.length > 0) {
-					var nextCall = pendingJSONCalls.shift();
+				--u.numJSONCalls;
+				if (u.numJSONCalls < 0)
+					u.numJSONCalls = 0;
+				if (u.pendingJSONCalls.length > 0) {
+					var nextCall = u.pendingJSONCalls.shift();
 					nextCall();
 				}
 			}
@@ -192,16 +225,16 @@ define(function(require, exports, module) {
 			stillRunning = false;
 			if (alertShown)
 				closeAlert();
-			if (currentLoginSession != _loginSessionNumber)
+			if (currentLoginSession != u._loginSessionNumber)
 				return; // if current login session is over, cancel callbacks
 			if (failCallback)
 				failCallback(data);
 			if (!background) {
-				--numJSONCalls;
-				if (numJSONCalls < 0)
-					numJSONCalls = 0;
-				if (pendingJSONCalls.length > 0) {
-					var nextCall = pendingJSONCalls.shift();
+				--u.numJSONCalls;
+				if (u.numJSONCalls < 0)
+					u.numJSONCalls = 0;
+				if (u.pendingJSONCalls.length > 0) {
+					var nextCall = u.pendingJSONCalls.shift();
 					nextCall();
 				}
 			}
@@ -218,7 +251,7 @@ define(function(require, exports, module) {
 				}, delay);
 			}
 		};
-		if ((!background) && (numJSONCalls > 0)) { // json call in progress
+		if ((!background) && (u.numJSONCalls > 0)) { // json call in progress
 			var jsonCall = function() {
 				$.ajax({
 					type: (post ? "post" : "get"),
@@ -230,11 +263,11 @@ define(function(require, exports, module) {
 					.done(wrapSuccessCallback)
 					.fail(wrapFailCallback);
 			};
-			++numJSONCalls;
-			pendingJSONCalls.push(jsonCall);
+			++u.numJSONCalls;
+			u.pendingJSONCalls.push(jsonCall);
 		} else { // first call
 			if (!background)
-			++numJSONCalls;
+			++u.numJSONCalls;
 			$.ajax({
 				type: (post ? "post" : "get"),
 				dataType: "json",
@@ -248,19 +281,14 @@ define(function(require, exports, module) {
 	}
 
 	Utils.backgroundJSON = function(description, url, args, successCallback, failCallback, delay, post) {
-		queueJSON(description, url, args, successCallback, failCallback, delay, post, true);
+		u.queueJSON(description, url, args, successCallback, failCallback, delay, post, true);
 	}
 
 	Utils.clearJSONQueue = function() {
-		numJSONCalls = 0;
-		pendingJSONCalls = [];
+		u.numJSONCalls = 0;
+		u.pendingJSONCalls = [];
 	}
 
-	var App = {};
-	App.CSRF = {};
-	App.CSRF.SyncTokenKeyName = "SYNCHRONIZER_TOKEN"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_KEY
-	App.CSRF.SyncTokenUriName = "SYNCHRONIZER_URI"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_URI
-	window.App = App;
 
 	/**
 	 * A method which returns an string representation of an url containing parameters
@@ -270,6 +298,7 @@ define(function(require, exports, module) {
 	 * @returns string representation of CSRF parameters.
 	 */
 	Utils.getCSRFPreventionURI = function(key) {
+		var App = window.App;
 		var preventionURI = App.CSRF.SyncTokenKeyName + "=" + App.CSRF[key] + "&" + App.CSRF.SyncTokenUriName + "=" + key;
 		if (App.CSRF[key] == undefined) {
 			console.error("Missing csrf prevention token for key", key);
@@ -286,6 +315,7 @@ define(function(require, exports, module) {
 	 * @returns the object containing parameters for CSRF prevention.
 	 */
 	Utils.getCSRFPreventionObject = function(key, data) {
+		var App = window.App;
 		var CSRFPreventionObject = new Object();
 		if (App.CSRF[key]) {
 			CSRFPreventionObject[App.CSRF.SyncTokenKeyName] = App.CSRF[key];
@@ -309,8 +339,7 @@ define(function(require, exports, module) {
 		if (data == 'login') {
 			if (status != 'cached') {
 				u.showAlert("Session timed out.");
-				doLogout();
-				location.reload(true);
+				User.logout();
 			}
 			return false;
 		}
@@ -335,31 +364,31 @@ define(function(require, exports, module) {
 	}
 
 	Utils.isLoggedIn = function() {
-		return localStorage['mobileSessionId'] != null;
+		return store.get('mobileSessionId') != null;
 	}
 
 	Utils.makeGetUrl = function(url) {
-		return "/mobiledata/" + url + '?callback=?';
+		return u.getServerUrl() + "/mobiledata/" + url + '?callback=?';
 	}
 
 	Utils.makeGetArgs = function(args) {
-		args['mobileSessionId'] = localStorage['mobileSessionId'];
+		args['mobileSessionId'] = store.get('mobileSessionId');
 
 		return args;
 	}
 
 	Utils.makePostUrl = function(url) {
-		return "/mobiledata/" + url;
+		return u.getServerUrl() + "/mobiledata/" + url;
 	}
 
 	Utils.makePostArgs = function(args) {
-		args['mobileSessionId'] = localStorage['mobileSessionId'];
+		args['mobileSessionId'] = store.get('mobileSessionId');
 
 		return args;
 	}
 
 	Utils.makePlainUrl = function(url) {
-		var url = "/mobile/" + url;
+		var url = u.getServerUrl() + "/mobile/" + url;
 		url = url;
 		return url;
 	}

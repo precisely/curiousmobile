@@ -1,22 +1,20 @@
 /*globals require*/
 require.config({
 	shim: {
-		'exoskeleton': {
-            //These script dependencies should be loaded before loading
-            //backbone.js
-            deps: ['underscore'],
-            //Once loaded, use the global 'Backbone' as the
-            //module value.
-            exports: 'Backbone'
-        },
+		exoskeleton: {
+			deps: [
+				'underscore'
+			],
+			exports: 'Backbone'
+		},
 		underscore: {
 			exports: '_',
-			init: function() {
-				this._.extend(this._.templateSettings, {
-					interpolate: /\{\{(.+?)\}\}/g
-				});
-				return this._;
-			}
+			init: function () {
+			this._.extend(this._.templateSettings, {
+				interpolate: /\{\{(.+?)\}\}/g
+			});
+			return this._;
+		}
 		}
 	},
 	paths: {
@@ -31,7 +29,8 @@ require.config({
 		jquery: '../lib/jquery/dist/jquery',
 		fontawesome: '../lib/fontawesome/fonts/*',
 		store: '../lib/store.js/store',
-		text: '../lib/text'
+		text: '../lib/text',
+		jstzdetect: '../lib/jstzdetect/jstz.min'
 	},
 	packages: [
 

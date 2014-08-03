@@ -17,7 +17,7 @@ define(function(require, exports, module) {
 
 	function LoginView() {
 		View.apply(this, arguments);
-		_createForm.call(this);
+		_createView.call(this);
 	}
 
 	LoginView.prototype = Object.create(View.prototype);
@@ -25,7 +25,7 @@ define(function(require, exports, module) {
 
 	LoginView.DEFAULT_OPTIONS = {};
 
-	function _createForm() {
+	function _createView() {
 		var containerSurface = new ContainerSurface({
 			size: [window.innerWidth, window.innerHeight],
 			properties: {
@@ -72,9 +72,11 @@ define(function(require, exports, module) {
 		this.passwordSurface = passwordSurface;
 		submitSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				User.login(this.usernameSurface.getValue(), this.passwordSurface.getValue(), function(data) {
-					console.log('login attempted');
-				});
+				var currentUser = new User();
+				currentUser.login(this.usernameSurface.getValue(), this.passwordSurface.getValue(), function(user) {
+					window.App.currentUser = user;
+					this._eventOutput.emit('login-success');	
+				}.bind(this));
 			}
 		}.bind(this));
 

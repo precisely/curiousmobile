@@ -1,45 +1,91 @@
 /*** PageView.js ***/
 
 define(function(require, exports, module) {
-    var View = require('famous/core/View');
-    var Surface = require('famous/core/Surface');
-    var Transform = require('famous/core/Transform');
-    var StateModifier = require('famous/modifiers/StateModifier');
+	var View = require('famous/core/View');
+	var Surface = require('famous/core/Surface');
+	var Transform = require('famous/core/Transform');
+	var StateModifier = require('famous/modifiers/StateModifier');
 	var RenderController = require("famous/views/RenderController");
 	var TrackView = require('views/TrackView');
 	var LoginView = require('views/LoginView');
 	var Utils = require('util/Utils');
+	var store = require('store');
+	var User = require('models/User');
 
-    function PageView() {
-        View.apply(this, arguments);
+	function PageView() {
+		View.apply(this, arguments);
 		this.renderController = new RenderController();
 		this.add(this.renderController);
+		this.pageMap = {};
 		_addPages.call(this);
-    }
+	}
 
-    PageView.prototype = Object.create(View.prototype);
-    PageView.prototype.constructor = PageView;
+	PageView.prototype = Object.create(View.prototype);
+	PageView.prototype.constructor = PageView;
 
-    PageView.DEFAULT_OPTIONS = {
-    };
+	PageView.DEFAULT_OPTIONS = {};
 
 	function _addPages() {
 		var windowSize = Utils.getWindowSize();
 		this.loginView = new LoginView();
 		this.trackView = new TrackView();
+		this.pageMap['track'] = this.trackView;
+		this.pageMap['login'] = this.loginView;
 		this.hiddenModifier = new StateModifier({
-			align: [1,1]
+			align: [1, 1]
 		});
-		this.trackView.on('menuToggle', function(){
-            this._eventOutput.emit('menuToggleNested');
-        }.bind(this));
-
-		this.loginView.on('login-success', function (data) {
-			this.renderController.hide(this.loginView);
-			this.renderController.show(this.trackView);
+		this.trackView.on('menuToggle', function() {
+			this._eventOutput.emit('menuToggleNested');
 		}.bind(this));
-		this.renderController.show(this.loginView, {duration:0});
+
+		this.loginView.on('login-success', function(data) {
+			this.changePage('track');
+		}.bind(this));
+		if (!User.isLoggedIn()) {
+			this.changePage('login');
+		} else {
+			this.changePage('track');
+		}
 	}
 
-    module.exports = PageView;
+	/**
+	 * Track the last page visited by the user
+	 * @param {string} page - name of the page
+	 */
+	PageView.prototype.setLastPage = function(page) {
+		store.set('lastPage', page)
+	}
+
+
+	/**
+	 * Get the last page visited by the user
+	 * @param {string} page - name of the page
+	 */
+	PageView.prototype.getLastPage = function(page) {
+		var view = this.pageMap[store.get('lastPage')];
+		return view;
+	}
+
+	/**
+	 * Changing the page
+	 * @params {string} pageName - name of the page to go to
+	 *
+	 */
+	PageView.prototype.changePage = function(pageName) {
+		var lastPageName = store.get('lastPage');
+		this.renderController.hide(); //hides the last page
+		this.renderController.show(this.getPage(pageName), {duration:0});
+	}
+
+	/**
+	 * Getting the view instance from the page map
+	 * @params {string} pageName - key for the page in the pageMap
+	 *
+	 */
+	PageView.prototype.getPage = function(pageName) {
+		var view = this.pageMap[pageName];
+		return view;
+	}
+
+	module.exports = PageView;
 });

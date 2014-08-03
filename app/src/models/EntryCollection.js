@@ -1,14 +1,49 @@
-define(['require', 'exports', 'module','exoskeleton'],function(require, exports, module, exoskeleton) {
+define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton'], function(require, exports, module, jstz, exoskeleton) {
 	var Entry = require('models/Entry');
+	var u = require('util/Utils');
+	var User = require('models/User');
+	var jstz = require('jstzdetect');
+	var store = require('store');
 	var EntryCollection = Backbone.Collection.extend({
-		fetchEntries: function() {
-			var	entries = [{"id":176477,"userId":54,"date":"2014-07-22T18:30:00.000Z","datePrecisionSecs":86400,"timeZoneName":"Asia/Kolkata","description":"dinner","amount":1,"amountPrecision":-1,"units":"","comment":"pinned","repeatType":768},{"id":176474,"userId":54,"date":"2014-07-22T18:30:00.000Z","datePrecisionSecs":86400,"timeZoneName":"Asia/Kolkata","description":"shower","amount":1,"amountPrecision":-1,"units":"","comment":"pinned","repeatType":768},{"id":224880,"userId":54,"date":"2014-07-23T03:30:00.000Z","datePrecisionSecs":180,"timeZoneName":"Asia/Kolkata","description":"cough medicine","amount":1,"amountPrecision":-1,"units":"","comment":"remind","repeatType":517,"setName":null}];
-			var models = [];
-			for (var i = 0, len = entries.length; i < len; i++) {
-				models.push(new Entry(entries[i]));	
-			}
-			return models;
-		}
+		model: Entry
 	});
-    module.exports = EntryCollection;
+
+	EntryCollection.fetchEntries = function(dates, callback) {
+		var argDates = [];
+
+		if (typeof dates == 'undefined') {
+			console.log('fetchEntries: Missing dates');
+		}
+
+		for (var i = 0, len = dates.length; i < len; i++) {
+			argDates.push(dates[i].toUTCString());
+		}
+		if (typeof callback == 'undefined') {
+			console.log('fetchEntries: Missing a callback');
+		}
+
+		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
+			date: argDates,
+			userId: User.getCurrentUserId(),
+			timeZoneName: window.jstz.determine().name()
+		});
+		console.log('Fetching entries from the server for dates: ' + dates);
+		u.backgroundJSON("loading entry list", u.makeGetUrl("getListData"), u.makeGetArgs(argsToSend),
+			function(entries) {
+				if (u.checkData(entries)) {
+					console.log('entries from the server: ' + entries);
+					var collections = [];
+					for (var prop in entries) {
+						var entryCollection = new EntryCollection(entries[prop]);
+						collections.push(entryCollection);
+						store.set('entry-cache ' + prop, entryCollection);
+					}
+					callback(collections);
+				}
+			});
+	}
+
+
+
+	module.exports = EntryCollection;
 });

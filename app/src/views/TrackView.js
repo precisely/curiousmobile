@@ -1,57 +1,64 @@
 define(function(require, exports, module) {
 	var BaseView = require('views/BaseView');
-    var Surface       = require('famous/core/Surface');
-    var Transform     = require('famous/core/Transform');
-    var StateModifier = require('famous/modifiers/StateModifier');
+	var Surface = require('famous/core/Surface');
+	var Transform = require('famous/core/Transform');
+	var StateModifier = require('famous/modifiers/StateModifier');
 	var Utility = require("famous/utilities/Utility");
-    var Scrollview = require("famous/views/Scrollview");
+	var Scrollview = require("famous/views/Scrollview");
 	var EntryListView = require('views/entry/EntryListView');
 	var CalendarView = require('views/calendar/CalendarView');
 	var Entry = require('models/Entry');
+	var EntryCollection = require('models/EntryCollection');
+	var User = require('models/User');
 
-    function TrackView() {
-        BaseView.apply(this, arguments);
+
+	function TrackView() {
+		BaseView.apply(this, arguments);
 		_createBody.call(this);
 		_createCalendar.call(this);
-    }
+	}
 
-    TrackView.prototype = Object.create(BaseView.prototype);
-    TrackView.prototype.constructor = TrackView;
+	TrackView.prototype = Object.create(BaseView.prototype);
+	TrackView.prototype.constructor = TrackView;
 
-    TrackView.DEFAULT_OPTIONS = {};
+	TrackView.DEFAULT_OPTIONS = {};
 
-    function _createBody() {
+	function _createBody() {
 		this.entryListViewCache = [];
-		this.scrollView  = new Scrollview({
+		this.scrollView = new Scrollview({
 			direction: Utility.Direction.X,
 			pagination: true,
 			edgeGrip: 0.2,
 		});
+		if (User.isLoggedIn()) {
+			EntryCollection.fetchEntries([new Date()], function(collections) {
+				for (var i = 0, l = collections.length; i < l; i++) {
+					var entryListView = new EntryListView(collections[i]);
+					this.entryListViewCache.push(entryListView);
+					entryListView.pipe(this.scrollView);
+				}
+				this.scrollView.sequenceFrom(this.entryListViewCache);
 
-		for (var i = 0, l = 5; i < l; i++) {
-			var entryListView = new EntryListView();
-			this.entryListViewCache.push(entryListView);
-			entryListView.pipe(this.scrollView);
+				var backgroundModifier = new StateModifier({
+					transform: Transform.translate(0, 44, 0),
+					//            size: [400,400]
+				});
+				this.layout.content.add(backgroundModifier).add(this.scrollView);
+			}.bind(this));
+
 		}
 
-		this.scrollView.sequenceFrom(this.entryListViewCache);
-
-        var backgroundModifier = new StateModifier({
-            transform: Transform.translate(0,44,0),
-            //            size: [400,400]
-        });
-        this.layout.content.add(backgroundModifier).add(this.scrollView);
-    }
+	}
 
 	function _createCalendar() {
 		var calendarView = new CalendarView();
-        var calendarModifier = new StateModifier({
-			transform: Transform.translate(50,0,0)
-        });
+		var calendarModifier = new StateModifier({
+			transform: Transform.translate(50, 0, 0)
+		});
 		this.layout.header.add(calendarModifier).add(calendarView);
-		
+
 	}
 
 
-    module.exports = TrackView;
+	module.exports = TrackView;
 });

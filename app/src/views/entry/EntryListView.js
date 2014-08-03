@@ -14,10 +14,10 @@ define(function(require, exports, module) {
 	var TweenTransition = require('famous/transitions/TweenTransition');
 	TweenTransition.registerCurve('inSine', Easing.inSine);
 
-	function EntryListView(date) {
+	function EntryListView(collection) {
 		View.apply(this, arguments);
 		this.entryViews = [];
-		this.entries = new EntryCollection().fetchEntries();
+		this.entries = collection;
 		_createList.call(this);
 	}
 
@@ -30,7 +30,7 @@ define(function(require, exports, module) {
 	};
 
 	function _createList(argument) {
-		
+
 		var backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
@@ -40,24 +40,24 @@ define(function(require, exports, module) {
 		this.add(backgroundSurface);
 		backgroundSurface.pipe(this._eventOutput);
 		var yOffset = 0;
-		for (var len = 0; len < this.entries.length; len++) {
+		this.entries.forEach(function(entry) {
 
 			var entryModifier = new StateModifier({
 				size: [undefined, this.options.entryHeight],
-				transform: Transform.translate(0,yOffset,2)
+				transform: Transform.translate(0, yOffset, 2)
 			});
-			var entryView = new EntryView(this.entries[len]);
+			var entryView = new EntryView(entry);
 			entryView.modifier = entryModifier;
 			this.add(entryModifier).add(entryView);
 			this.entryViews.push(entryView);
 			yOffset += this.options.entryHeight;
-			
+
 			//Handle entry selection handler
 			entryView.on('select-entry', function($data) {
 				console.log('entry selected with id: ' + $data.id);
 				this.selectEntryView($data);
 			}.bind(this));
-		}
+		}.bind(this));
 
 	}
 
@@ -90,12 +90,11 @@ define(function(require, exports, module) {
 		for (var i = 0, len = this.entryViews.length; i < len; i++) {
 			var entryView = this.entryViews[i];
 			entryView.modifier.setTransform(
-				Transform.translate(0, yOffset, 0), {
-				}
+				Transform.translate(0, yOffset, 0), {}
 			);
 			yOffset += this.options.entryHeight;
 		}
 	}
-	
+
 	module.exports = EntryListView;
 });

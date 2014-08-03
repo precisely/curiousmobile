@@ -7,7 +7,14 @@ define(function(require, exports, module) {
 	var AppView = require('views/AppView');
 	//var AppView = require('views/AppView');
 
+	var App = {};
+	App.CSRF = {};
+	App.CSRF.SyncTokenKeyName = "SYNCHRONIZER_TOKEN"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_KEY
+	App.CSRF.SyncTokenUriName = "SYNCHRONIZER_URI"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_URI
+	window.App = App;
 
+	App.serverUrl = "http://192.168.0.31:8080";
+	//App.serverUrl = "https://dev.wearecurio.us";
 	var mainContext = Engine.createContext();
 	window.mainContext = mainContext;
 	var appView = new AppView();
@@ -18,7 +25,5 @@ define(function(require, exports, module) {
 //TODO A cleaner approach to setting template format
 //
 window.templateSettings = {
-  interpolate: /\{\{(.+?)\}\}/g
+	interpolate: /\{\{(.+?)\}\}/g
 };
-
-
