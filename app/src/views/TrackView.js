@@ -6,6 +6,7 @@ define(function(require, exports, module) {
 	var Utility = require("famous/utilities/Utility");
 	var Scrollview = require("famous/views/Scrollview");
 	var EntryListView = require('views/entry/EntryListView');
+	var EntryView = require('views/entry/EntryView');
 	var CalendarView = require('views/calendar/CalendarView');
 	var Entry = require('models/Entry');
 	var EntryCollection = require('models/EntryCollection');
@@ -25,12 +26,21 @@ define(function(require, exports, module) {
 
 	function _createBody() {
 		this.entryListViewCache = [];
-		this.scrollView = new Scrollview({
-			direction: Utility.Direction.X,
-			pagination: true,
-			edgeGrip: 0.2,
+		this.createView = new EntryView('', true);
+		var backgroundModifier = new StateModifier({
+			transform: Transform.translate(0, 44, 0),
+			//            size: [400,400]
 		});
+		this.layout.content.add(backgroundModifier).add(this.createView);
 		if (User.isLoggedIn()) {
+			this.scrollView = new Scrollview({
+				direction: Utility.Direction.X,
+				pagination: true,
+				edgeGrip: 0.2,
+			});
+			var scrollModifier = new StateModifier({
+				transform: Transform.translate(0,110, 0)	
+			});	
 			EntryCollection.fetchEntries([new Date()], function(collections) {
 				for (var i = 0, l = collections.length; i < l; i++) {
 					var entryListView = new EntryListView(collections[i]);
@@ -38,12 +48,7 @@ define(function(require, exports, module) {
 					entryListView.pipe(this.scrollView);
 				}
 				this.scrollView.sequenceFrom(this.entryListViewCache);
-
-				var backgroundModifier = new StateModifier({
-					transform: Transform.translate(0, 44, 0),
-					//            size: [400,400]
-				});
-				this.layout.content.add(backgroundModifier).add(this.scrollView);
+				this.layout.content.add(scrollModifier).add(this.scrollView);
 			}.bind(this));
 
 		}

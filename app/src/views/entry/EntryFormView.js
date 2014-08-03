@@ -35,7 +35,7 @@ define(function(require, exports, module) {
 			//Bumping the offset to add additional padding on the left
 			offset += 10;
 			var transform = (this.options.direction === 0) ?
-				Transform.translate(offset, 40, 0) : Transform.translate(0, offset);
+				Transform.translate(offset, 40, 1) : Transform.translate(0, offset);
 			return {
 				transform: transform,
 				target: input.render()
@@ -43,12 +43,12 @@ define(function(require, exports, module) {
 		});
 
 		this.iconModifier = new Modifier({
-			transform: Transform.translate(0, 5, 0)
+			transform: Transform.translate(0, 5, 1)
 		});
 
 		this.inputModifier = new Modifier({
 			align: [0, 0],
-			transform: Transform.translate(5, 5, 0)
+			transform: Transform.translate(5, 5, 1)
 		});
 
 		this.inputModifier.sizeFrom(function() {
@@ -56,10 +56,26 @@ define(function(require, exports, module) {
 			var size = mainContext.getSize();
 			return [0.97 * size[0], 30];
 		});
-
+		
+		var text = '';
+		if (this.entry) {
+			text = this.cleanSuffix(this.entry.toString())
+		}
 		this.inputSurface = new InputSurface({
-			value: this.cleanSuffix(this.entry.toString())
+			value: text 
 		});
+
+
+		this.inputSurface.on('onfocus', function(e) {
+			console.log('onfocus on entry');
+		});
+
+		this.inputSurface.on('click', function(e) {
+			if (e instanceof CustomEvent && this.entry) {
+				var selectionRange = this.entry.getSelectionRange();
+				e.srcElement.setSelectionRange(selectionRange);
+			}
+		}.bind(this));
 
 		this.add(this.inputModifier).add(this.inputSurface);
 
@@ -91,7 +107,9 @@ define(function(require, exports, module) {
 		return text;
 	}
 
-
+	EntryFormView.prototype.focus = function(arguments) {
+		this.inputSurface.focus();
+	}
 
 	module.exports = EntryFormView;
 });

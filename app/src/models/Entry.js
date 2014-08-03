@@ -57,10 +57,14 @@ define(['require', 'exports', 'module', 'exoskeleton'], function(require, export
 			}
 			return classes;
 		},
-		selectionRange: function(argument) {
-			var selectStart = entry.description.length + 1 + (this.formattedAmount().length == 0 ? 1 : 0);
+		getSelectionRange: function(argument) {
+			var formattedAmount = this.formattedAmount();
+			var selectStart = this.get('description').length + 1 + (formattedAmount.length == 0 ? 1 : 0);
 			var selectEnd = selectStart + formattedAmount.length - 1;
-			return [selectStart, selectEnd, amountPrecision < 0]; // if third item is true, insert extra space at cursor
+			return [selectStart, selectEnd]; // if third item is true, insert extra space at cursor
+		},
+		needExtraSpace: function () {
+			return this.get('amountPrecision') < 0;
 		},
 		toString: function(argument) {
 			var entry = this.attributes;

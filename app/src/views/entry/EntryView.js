@@ -16,11 +16,15 @@ define(function(require, exports, module) {
 
 	var Entry = require('models/Entry');
 
-	function EntryView(entry) {
+	function EntryView(entry, formView) {
 		View.apply(this, arguments);
 		this.entry = entry;
 		_createBase.call(this);
-		_createReadView.call(this);
+		if (formView) {
+			this.showFormView();
+		} else {
+			_createReadView.call(this);
+		}
 	}
 
 	EntryView.prototype = Object.create(View.prototype);
@@ -71,7 +75,11 @@ define(function(require, exports, module) {
 			_createFormView.call(this);
 		}
 		this.renderController.hide(this.readView);
-		this.renderController.show(this.formView);
+		this.renderController.show(this.formView, {
+			duration: 0
+		}, function() {
+			this.formView.focus();
+		}.bind(this));
 	}
 
 	EntryView.prototype.hideFormView = function(argument) {
