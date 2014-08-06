@@ -76,11 +76,11 @@ define(function(require, exports, module) {
 	
 	function _setListener() {
 		this.on('date-changed', function (date) {
-			this.changeDate(date);
+			this.setDate(date);
 		}.bind(this));
 	}
 	
-	SelectDateView.prototype.changeDate = function (date) {
+	SelectDateView.prototype.setDate = function (date) {
 		this.date = date;
 		this.dateSurface.setContent(date.toDateString());
 	}

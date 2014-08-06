@@ -11,6 +11,7 @@ define(function(require, exports, module) {
 	var Entry = require('models/Entry');
 	var EntryCollection = require('models/EntryCollection');
 	var User = require('models/User');
+	var u = require('util/Utils');
 
 
 	function TrackView() {
@@ -26,7 +27,13 @@ define(function(require, exports, module) {
 
 	function _createBody() {
 		this.entryListViewCache = [];
-		this.createView = new EntryView('', true);
+		this.createView = new EntryView(new Entry(), true);
+
+		this.createView.on('new-entry', function(data) {
+			console.log("New Entry - TrackView event");
+			this.currentListView.refreshEntries(data.entries, data.glowEntry);
+		}.bind(this));
+
 		var backgroundModifier = new StateModifier({
 			transform: Transform.translate(0, 44, 0),
 			//            size: [400,400]
@@ -41,9 +48,11 @@ define(function(require, exports, module) {
 			var scrollModifier = new StateModifier({
 				transform: Transform.translate(0,110, 0)	
 			});	
-			EntryCollection.fetchEntries([new Date()], function(collections) {
+			EntryCollection.fetchEntries([u.getMidnightDate(new Date())], function(collections) {
 				for (var i = 0, l = collections.length; i < l; i++) {
 					var entryListView = new EntryListView(collections[i]);
+					// TODO make it work with scroll
+					this.currentListView = entryListView;
 					this.entryListViewCache.push(entryListView);
 					entryListView.pipe(this.scrollView);
 				}
@@ -56,12 +65,16 @@ define(function(require, exports, module) {
 	}
 
 	function _createCalendar() {
-		var calendarView = new CalendarView();
+		this.calendarView = new CalendarView();
 		var calendarModifier = new StateModifier({
 			transform: Transform.translate(50, 0, 0)
 		});
-		this.layout.header.add(calendarModifier).add(calendarView);
+		this.layout.header.add(calendarModifier).add(this.calendarView);
 
+	}
+
+	TrackView.prototype.getSelectedDate = function(){
+		return this.calendarView.getCurrentDate();	
 	}
 
 

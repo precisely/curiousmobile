@@ -15,7 +15,6 @@ define(function(require, exports, module) {
 	function PageView() {
 		View.apply(this, arguments);
 		this.renderController = new RenderController();
-		this.add(this.renderController);
 		this.pageMap = {};
 		_addPages.call(this);
 	}
@@ -27,6 +26,14 @@ define(function(require, exports, module) {
 
 	function _addPages() {
 		var windowSize = Utils.getWindowSize();
+		var backgroundSurface = new Surface({
+			size: [undefined,undefined],
+			properties: {
+				backgroundColor: 'white'	
+			}	
+		});
+		this.add(backgroundSurface);
+		this.add(this.renderController);
 		this.loginView = new LoginView();
 		this.trackView = new TrackView();
 		this.pageMap['track'] = this.trackView;
@@ -85,6 +92,10 @@ define(function(require, exports, module) {
 	PageView.prototype.getPage = function(pageName) {
 		var view = this.pageMap[pageName];
 		return view;
+	}
+
+	PageView.prototype.getSelectedDate = function(){
+		return this.trackView.getSelectedDate();	
 	}
 
 	module.exports = PageView;

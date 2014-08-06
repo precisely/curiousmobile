@@ -248,7 +248,7 @@ define(function(require, exports, module) {
 		this.renderDates(this.currentMonth);
 	}
 
-	DateGridView.prototype.changeSelectedDate = function (date) {
+	DateGridView.prototype.setSelectedDate = function (date) {
 		this.selectedDate = date;
 		this.renderDates(date);
 	}

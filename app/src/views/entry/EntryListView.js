@@ -42,31 +42,38 @@ define(function(require, exports, module) {
 		var yOffset = 0;
 		this.entries.forEach(function(entry) {
 
-			var entryModifier = new StateModifier({
-				size: [undefined, this.options.entryHeight],
-				transform: Transform.translate(0, yOffset, 2)
-			});
-			var entryView = new EntryView(entry);
-			entryView.modifier = entryModifier;
-			this.add(entryModifier).add(entryView);
-			this.entryViews.push(entryView);
 			yOffset += this.options.entryHeight;
-
-			//Handle entry selection handler
-			entryView.on('select-entry', function($data) {
-				console.log('entry selected with id: ' + $data.id);
-				this.selectEntryView($data);
-			}.bind(this));
+			this.addEntry(entry, yOffset);
 		}.bind(this));
 
+	}
+
+	EntryListView.prototype.addEntry = function(entry, offset) {
+		var entryModifier = new StateModifier({
+			size: [undefined, this.options.entryHeight],
+			transform: Transform.translate(0, offset, 2)
+		});
+		var entryView = new EntryView(entry);
+		entryView.modifier = entryModifier;
+		this.add(entryModifier).add(entryView);
+		this.entryViews.push(entryView);
+
+		//Handle entry selection handler
+		entryView.on('select-entry', function($data) {
+			console.log('entry selected with id: ' + $data.id);
+			this.selectEntryView($data);
+		}.bind(this));
+		return entryView;
 	}
 
 	EntryListView.prototype.selectEntryView = function(entry) {
 		if (this.selectedEntryView != null) {
 			//TODO if the entry is dirty send update
 			this.selectedEntryView.hideFormView();
+			this.selectedEntryView.formView.blur();
 			this.unselectAllEntries();
 		}
+
 		var yOffset = 0;
 		for (var i = 0, len = this.entryViews.length; i < len; i++) {
 			var entryView = this.entryViews[i];
@@ -93,6 +100,29 @@ define(function(require, exports, module) {
 				Transform.translate(0, yOffset, 0), {}
 			);
 			yOffset += this.options.entryHeight;
+		}
+	}
+
+	EntryListView.prototype.refreshEntries = function(entries, glowEntry) {
+		this.entries.set(entries);
+		var yOffset = 0;
+		var glowView = undefined;
+		this.entries.each(function(entry, index) {
+			var view = this.entryViews[index];
+			if (view) {
+				view.setEntry(entry);
+			} else {
+				view = this.addEntry(entry, yOffset);
+			}
+
+			if ((glowEntry && entry.id == glowEntry.id) || entry.glow) {
+				glowView = view;	
+			}
+			yOffset += this.options.entryHeight;
+		}.bind(this));
+
+		if (glowView) {
+			glowView.glow();
 		}
 	}
 

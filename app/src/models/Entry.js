@@ -1,6 +1,8 @@
-define(['require', 'exports', 'module', 'exoskeleton'], function(require, exports, module, exoskeleton) {
+define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils'], function(require, exports, module, exoskeleton, u) {
 	'use strict';
-	var Utils = require('util/Utils');
+
+	var User = require('models/User');
+
 	// Singleton Class function.
 	var RepeatType = {
 		CONTINUOUS_BIT: 0x100,
@@ -13,6 +15,14 @@ define(['require', 'exports', 'module', 'exoskeleton'], function(require, export
 	};
 
 	var Entry = Backbone.Model.extend({
+		'userId': -1,
+		'date': '2014-08-03T11:58:28.000Z',
+		'datePrecisionSecs': 86400,
+		'description': '',
+		'amount': null,
+		'amountPrecision': 3,
+		'units': '',
+		'comment': '',
 
 		isConcreteGhost: function() {
 			return (this.get('repeatType') & RepeatType.CONCRETEGHOST_BIT) != 0;
@@ -59,26 +69,28 @@ define(['require', 'exports', 'module', 'exoskeleton'], function(require, export
 		},
 		getSelectionRange: function(argument) {
 			var formattedAmount = this.formattedAmount();
+			if (!this.get('description')) {
+				return [0, 0];
+			}
 			var selectStart = this.get('description').length + 1 + (formattedAmount.length == 0 ? 1 : 0);
 			var selectEnd = selectStart + formattedAmount.length - 1;
 			return [selectStart, selectEnd]; // if third item is true, insert extra space at cursor
 		},
-		needExtraSpace: function () {
+		needExtraSpace: function() {
 			return this.get('amountPrecision') < 0;
 		},
 		toString: function(argument) {
 			var entry = this.attributes;
-			var escapeHTML = Utils.escapeHTML;
+			var escapeHTML = u.escapeHTML;
 			var dateStr = '';
+			if (!this.get('id')) {
+				return '';
+			}
 			if (this.get('datePrecisionSecs') < 43200) {
-				dateStr = Utils.dateToTimeStr(new Date(entry.date), false);
+				dateStr = u.dateToTimeStr(new Date(entry.date), false);
 				dateStr = ' ' + dateStr;
 			}
-			var entryStr = escapeHTML(entry.description)
-				+ escapeHTML(this.formattedAmount())
-				+ escapeHTML(this.formatUnits())
-				+ escapeHTML(dateStr)
-				+ (entry.comment != '' ? ' ' + escapeHTML(entry.comment) : '')
+			var entryStr = escapeHTML(entry.description) + escapeHTML(this.formattedAmount()) + escapeHTML(this.formatUnits()) + escapeHTML(dateStr) + (entry.comment != '' ? ' ' + escapeHTML(entry.comment) : '')
 			return entryStr;
 		},
 		formattedAmount: function(argument) {
@@ -92,10 +104,83 @@ define(['require', 'exports', 'module', 'exoskeleton'], function(require, export
 		},
 		formatUnits: function() {
 			var units = this.get('units');
-			if (units.length > 0)
+			if (units && units.length > 0)
 				return " " + units;
 
 			return "";
+		},
+		create: function(callback) {
+			var baseDate = window.App.selectedDate;
+			var argsToSend = u.getCSRFPreventionObject("addEntryCSRF", {
+				currentTime: new Date().toUTCString(),
+				userId: User.getCurrentUserId(),
+				text: this.text,
+				baseDate: baseDate.toUTCString(),
+				timeZoneName: u.getTimezone(),
+				defaultToNow: '1'
+			})
+
+			u.queueJSON("adding new entry", u.makeGetUrl("addEntrySData"), u.makeGetArgs(argsToSend), function(
+				entries) {
+				if (u.checkData(entries)) {
+					if (entries[1] != null) {
+						u.showAlert(entries[1]);
+					}
+					callback({entries:entries[0],glowEntry: entries[3]});
+					//if (entries[2] != null)
+					//updateAutocomplete(entries[2][0], entries[2][1], entries[2][2],
+					//entries[2][3]);
+				} else {
+					u.showAlert("Error adding entry");
+				}
+			});
+
+		},
+		save: function(allFuture, callback) {
+			var baseDate = this.get('date');
+			var argsToSend = u.getCSRFPreventionObject("updateEntrySDataCSRF", {
+				entryId: this.get('id'),
+				currentTime: new Date().toUTCString(),
+				text: this.text,
+				baseDate: baseDate.toUTCString(),
+				timeZoneName: u.getTimezone(),
+				defaultToNow: defaultToNow ? '1' : '0',
+				allFuture: allFuture ? '1' : '0'
+			});
+
+			u.queueJSON("saving entry", u.makeGetUrl("updateEntrySData"), u.makeGetArgs(argsToSend),
+				function(entries) {
+					if (entries == "") {
+						return;
+					}
+					// Temporary fix since checkData fails
+					if (typeof entries[0] != 'undefined' && entries[0].length > 0) {
+						_.each(entries[0], function(entry) {
+							// Finding entry which is recently updated.
+							if (entry.id == entryId) {
+								this.set(entry);
+							}
+						}.bind(this));
+						
+						//if (entries[1] != null)
+							//updateAutocomplete(entries[1][0], entries[1][1],
+								//entries[1][2], entries[1][3]);
+						//if (entries[2] != null)
+							//updateAutocomplete(entries[2][0], entries[2][1],
+								//entries[2][2], entries[2][3]);
+					} else {
+						u.showAlert("Error updating entry");
+					}
+				});
+
+		},
+		setText: function(text) {
+			this.oldText = this.text;
+			this.text = text;
+		},
+		isTodayOrLater: function() {
+			return new Date() - (24 * 60 * 60000) < window.App.selectedDate.getTime();
+
 		}
 
 	});

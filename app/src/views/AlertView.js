@@ -8,10 +8,15 @@ define(function(require, exports, module) {
 	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var InputSurface = require("famous/surfaces/InputSurface");
 	var AlertTemplate = require('text!templates/alert.html');
+	var AlertABTemplate = require('text!templates/alert-ab.html');
+	var RenderController = require("famous/views/RenderController");
 
 	function AlertView() {
 		View.apply(this, arguments);
 		_createAlert.call(this);
+		this.controller = new RenderController();
+		window.mainContext.add(this.controller);
+
 	}
 
 	AlertView.prototype = Object.create(View.prototype);
@@ -20,7 +25,11 @@ define(function(require, exports, module) {
 	AlertView.DEFAULT_OPTIONS = {
 		type: 'info',
 		message: 'Enter message',
-		verify: false
+		verify: false,
+		a: 'OK',
+		b: 'Cancel',
+		onA: undefined,
+		onB: undefined,
 	};
 
 	function _createAlert() {
@@ -33,19 +42,30 @@ define(function(require, exports, module) {
 			origin: [0.5, 0.5],
 		});
 
+		var template = AlertTemplate;
+		if (this.options.onA && this.options.onB) {
+			template = AlertABTemplate;
+		}
+
 		var messageSurface = new Surface({
 			size: [300, 40],
-			content: _.template(AlertTemplate, this.options, templateSettings)
+			content: _.template(template, this.options, templateSettings)
 		});
 
 
 		messageSurface.on('click', function(e) {
 			this._eventOutput.emit('alert-ok');
-			if (_.contains(e.srcElement.parentElement.classList, 'close')) {
+			var classList = e.srcElement.parentElement.classList;
+			if (_.contains(classList, 'close')) {
 				this.controller.hide();
+			} else if (_.contains(classList, 'a') && this.options.onA) {
+				console.log('Event A');
+				this.options.onA.call();	
+			} else if (_.contains(classList, 'b') && this.options.onB) {
+				console.log('Event B');
+				this.options.onB.call();	
 			}
 		}.bind(this));
-		if (this.verify) {}
 
 		containerSurface.add(messageModifier).add(messageSurface);
 

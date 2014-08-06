@@ -106,18 +106,27 @@ define(function(require, exports, module) {
 	function _createFormView(argument) {
 		console.log("EntryView : creating entry form view");
 		this.formView = new EntryFormView(this.entry);
+		this.formView.on('entry-updated', function() {
+			console.log("formView event");
+		}.bind(this));
+
+		this.formView.pipe(this._eventOutput);
 	}
 
 	/**
 	 * Updateing read and form(if exists) views with the updated value
 	 * @param entry
 	 */
-	function updateEntryViews(entry) {
-
+	EntryView.prototype.setEntry = function(entry) {
+		this.entry = entry;
+		this.readView.setEntry(entry);
+		if (this.formView) {
+			this.formView.setEntry(entry);
+		}
 	}
 
-	EntryView.prototype.entryString = function() {
-
+	EntryView.prototype.glow = function() {
+		this.readView.glow();
 	}
 
 

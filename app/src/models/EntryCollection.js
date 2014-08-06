@@ -4,6 +4,7 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton'], function(r
 	var User = require('models/User');
 	var jstz = require('jstzdetect');
 	var store = require('store');
+	var u = require('util/Utils');
 	var EntryCollection = Backbone.Collection.extend({
 		model: Entry
 	});
