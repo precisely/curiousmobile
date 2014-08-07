@@ -126,7 +126,10 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils'], function(r
 					if (entries[1] != null) {
 						u.showAlert(entries[1]);
 					}
-					callback({entries:entries[0],glowEntry: entries[3]});
+					callback({
+						entries: entries[0],
+						glowEntry: entries[3]
+					});
 					//if (entries[2] != null)
 					//updateAutocomplete(entries[2][0], entries[2][1], entries[2][2],
 					//entries[2][3]);
@@ -161,17 +164,86 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils'], function(r
 								this.set(entry);
 							}
 						}.bind(this));
-						
+
 						//if (entries[1] != null)
-							//updateAutocomplete(entries[1][0], entries[1][1],
-								//entries[1][2], entries[1][3]);
+						//updateAutocomplete(entries[1][0], entries[1][1],
+						//entries[1][2], entries[1][3]);
 						//if (entries[2] != null)
-							//updateAutocomplete(entries[2][0], entries[2][1],
-								//entries[2][2], entries[2][3]);
+						//updateAutocomplete(entries[2][0], entries[2][1],
+						//entries[2][2], entries[2][3]);
 					} else {
 						u.showAlert("Error updating entry");
 					}
 				});
+
+		},
+		delete: function(callback) {
+			if (this.isTimed() || this.isGhost()) {
+				if (this.isContinuous() || this.isTodayOrLater()) {
+					this.deleteGhost(true, callback);
+				} else {
+					u.showAlert({
+						message: 'Delete just this one event or also future events?',
+						verify: false,
+						a: 'One',
+						b: 'Future',
+						onA: function() {
+							this.deleteGhost(false, callback);
+						}.bind(this),
+						onB: function() {
+							this.deleteGhost(true, callback);
+						}.bind(this),
+
+					});
+				}
+			} else {
+				var baseDate = window.App.selectedDate.toUTCString();
+				var argsToSend = u.getCSRFPreventionObject(
+					"deleteEntryDataCSRF", {
+						entryId: this.id,
+						currentTime: new Date().toUTCString(),
+						baseDate: baseDate,
+						timeZoneName: u.getTimezone(),
+						displayDate: baseDate 
+					});
+
+				u.queueJSON("deleting entry", u.makeGetUrl("deleteEntrySData"), u.makeGetArgs(argsToSend),
+					function(entries) {
+						if (u.checkData(entries)) {
+							callback(entries[0]);							
+							//if (entries[1] != null)
+								//updateAutocomplete(entries[1][0], entries[1][1],
+									//entries[1][2], entries[1][3]);
+							//if (entries[2] != null)
+								//updateAutocomplete(entries[2][0],
+									//entries[2][1], entries[2][2],
+									//entries[2][3]);
+						} else {
+							u.showAlert("Error deleting entry");
+						}
+					});
+
+			}
+
+		},
+		deleteGhost: function(allFuture, callback) {
+			var selectedDate = window.App.selectedDate;
+			u.queueJSON("deleting entry", u.makeGetUrl("deleteGhostEntryData"),
+				u.makeGetArgs(u.getCSRFPreventionObject(
+					"deleteGhostEntryDataCSRF", {
+						entryId: this.id,
+						all: allFuture,
+						date: selectedDate.toUTCString()
+					})),
+				function(ret) {
+					console.log('deleteGhost: Response received' + u.checkData(ret, 'success', "Error deleting entry"));
+					if (u.checkData(ret, 'success', "Error deleting entry")) {
+						console.log('deleteGhost: Removing entry from cache as well');
+						callback();
+						return;
+					}
+
+				}.bind(this));
 
 		},
 		setText: function(text) {

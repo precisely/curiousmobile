@@ -129,6 +129,14 @@ define(function(require, exports, module) {
 		this.readView.glow();
 	}
 
+	EntryView.prototype.hide = function(arguments){
+		this.renderController.hide();
+	}
+
+	EntryView.prototype.show = function(arguments){
+		this.renderController.show(this.readView);
+	}
+
 
 	module.exports = EntryView;
 });

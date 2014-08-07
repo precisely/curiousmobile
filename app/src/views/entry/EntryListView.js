@@ -18,6 +18,7 @@ define(function(require, exports, module) {
 		View.apply(this, arguments);
 		this.entryViews = [];
 		this.entries = collection;
+		this.renderController = new RenderController();
 		_createList.call(this);
 	}
 
@@ -39,9 +40,9 @@ define(function(require, exports, module) {
 		});
 		this.add(backgroundSurface);
 		backgroundSurface.pipe(this._eventOutput);
+		this.add(this.renderController);
 		var yOffset = 0;
 		this.entries.forEach(function(entry) {
-
 			yOffset += this.options.entryHeight;
 			this.addEntry(entry, yOffset);
 		}.bind(this));
@@ -83,6 +84,12 @@ define(function(require, exports, module) {
 					duration: 1000
 				}
 			);
+
+			entryView.on('delete-entry', function(entry) {
+				console.log('EntryListView: Deleting an entry');
+				this.entries.remove(entry);
+				this.refreshEntries(this.entries);
+			}.bind(this));
 			yOffset += this.options.entryHeight;
 			if (entryView.entry.id == entry.id) {
 				this.selectedEntryView = entryView;
@@ -107,23 +114,36 @@ define(function(require, exports, module) {
 		this.entries.set(entries);
 		var yOffset = 0;
 		var glowView = undefined;
+		var lastIndex = 0;
 		this.entries.each(function(entry, index) {
+			lastIndex = index;
 			var view = this.entryViews[index];
 			if (view) {
 				view.setEntry(entry);
 			} else {
+				//Add additional views if needed
 				view = this.addEntry(entry, yOffset);
 			}
 
 			if ((glowEntry && entry.id == glowEntry.id) || entry.glow) {
-				glowView = view;	
+				glowView = view;
 			}
+
 			yOffset += this.options.entryHeight;
 		}.bind(this));
+
+		//Hide additional views if all entries have been displayed
+		for (var i = lastIndex + 1, len = this.entryViews.length; i < len; i++) {
+			this.entryViews[i].hide();
+		}
 
 		if (glowView) {
 			glowView.glow();
 		}
+	}
+
+	EntryListView.prototype.deleteEntry = function() {
+
 	}
 
 	module.exports = EntryListView;

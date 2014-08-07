@@ -123,13 +123,35 @@ define(function(require, exports, module) {
 		}.bind(this));
 		sequentialLayout.sequenceFrom([this.repeatSurface, this.pinSurface, this.remindSurface]);
 		this.add(sequentialLayout);
+
+		if (!this.newEntryForm) {
+			var deleteSurface = new Surface({
+				content: 'x',
+				size: [24, 24],
+				properties: {
+					color: 'black',
+				}
+			});
+
+			var deleteModifier = new Modifier({
+				transform: Transform.translate(window.innerWidth * 0.95, 44, 1)
+			});
+
+			this.add(deleteModifier).add(deleteSurface);
+			deleteSurface.on('click', function() {
+				this.entry.delete(function(){
+					this._eventOutput.emit('delete-entry',this.entry);
+				}.bind(this))
+			}.bind(this));
+		}
+
 	}
 
 	EntryFormView.prototype.toggleSuffix = function(suffix) {
 
 		var text = this.inputSurface.getValue();
 
-		if (text.endsWith(" repeat") || text.endsWith(" remind") || text.endsWith(" pinned")) {
+		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned')) {
 			text = text.substr(0, text.length - 7);
 		} else if (typeof suffix != 'undefined') {
 			text += ' ' + suffix;
@@ -155,8 +177,8 @@ define(function(require, exports, module) {
 			return;
 		}
 		if (!entry.get('id') || entry.isContinuous()) {
-			entry.create(function(resp){
-				this._eventOutput.emit('new-entry', resp);	
+			entry.create(function(resp) {
+				this._eventOutput.emit('new-entry', resp);
 			}.bind(this));
 			var newEntry = new Entry();
 			newEntry.set('date', window.App.selectedDate);
@@ -185,7 +207,10 @@ define(function(require, exports, module) {
 		var entry = this.entry;
 		entry.update(allFuture, function(entry) {
 			this.entry = new Entry(entry);
-			this._eventOutput.emit('entry-updated', {entries: entries, glowEntry: this.entry});
+			this._eventOutput.emit('entry-updated', {
+				entries: entries,
+				glowEntry: this.entry
+			});
 		}.bind(this));
 
 	}

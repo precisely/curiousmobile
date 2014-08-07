@@ -13,7 +13,7 @@ define(function(require, exports, module) {
 	App.CSRF.SyncTokenUriName = "SYNCHRONIZER_URI"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_URI
 	window.App = App;
 
-	App.serverUrl = "http://192.168.0.108:8080";
+	App.serverUrl = "http://192.168.0.31:8080";
 	//App.serverUrl = "https://dev.wearecurio.us";
 	var mainContext = Engine.createContext();
 	window.mainContext = mainContext;

@@ -16,7 +16,7 @@ define(function(require, exports, module) {
 		_createAlert.call(this);
 		this.controller = new RenderController();
 		window.mainContext.add(this.controller);
-
+		this.controller.show(this);
 	}
 
 	AlertView.prototype = Object.create(View.prototype);
@@ -55,7 +55,12 @@ define(function(require, exports, module) {
 
 		messageSurface.on('click', function(e) {
 			this._eventOutput.emit('alert-ok');
-			var classList = e.srcElement.parentElement.classList;
+			var classList;
+			if (e.srcElement.localName == 'button') {
+				classList = e.srcElement.classList;
+			} else {
+				classList = e.srcElement.parentElement.classList;
+			}	
 			if (_.contains(classList, 'close')) {
 				this.controller.hide();
 			} else if (_.contains(classList, 'a') && this.options.onA) {
