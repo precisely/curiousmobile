@@ -167,26 +167,38 @@ define(function(require, exports, module) {
 
 	EntryFormView.prototype.setEntry = function(entry) {
 		this.entry = entry;
+		this.setEntryText(entry.toString());
+	}
+
+	EntryFormView.prototype.setEntryText = function(text){
+		this.inputSurface.setValue(text);
 	}
 
 	EntryFormView.prototype.blur = function(e) {
 		var entry = this.entry;
-		entry.setText(e.srcElement.value);
+		var newText = this.inputSurface.getValue();
 		if (!u.isOnline()) {
 			u.showAlert("Please wait until online to add an entry");
 			return;
 		}
-		if (!entry.get('id') || entry.isContinuous()) {
-			entry.create(function(resp) {
-				this._eventOutput.emit('new-entry', resp);
-			}.bind(this));
+		if (!entry || !entry.get('id') || entry.isContinuous()) {
 			var newEntry = new Entry();
 			newEntry.set('date', window.App.selectedDate);
 			this.entry = newEntry;
+			this.entry.setText(newText);
+			this.entry.create(function(resp) {
+				this._eventOutput.emit('new-entry', resp);
+				this.inputSurface.setValue('');
+				this.entry = null;
+			}.bind(this));
 			return;
-		} else if (!entry.isRemind() && entry.oldText == entry.text) {
+		} else if (!entry.isRemind() && entry.toString() == entry.text) {
 			return;
-		} else if (this.hasFuture()) {
+		} else {
+			entry.setText(newText);
+		}
+		
+		if (this.hasFuture()) {
 			u.showAlert({
 				message: 'Update just this one event or also future events?',
 				a: 'One',
@@ -205,19 +217,23 @@ define(function(require, exports, module) {
 
 	EntryFormView.prototype.saveEntry = function(allFuture) {
 		var entry = this.entry;
-		entry.update(allFuture, function(entry) {
-			this.entry = new Entry(entry);
-			this._eventOutput.emit('entry-updated', {
-				entries: entries,
-				glowEntry: this.entry
-			});
+		entry.save(allFuture, function(resp) {
+			this._eventOutput.emit('update-entry', resp);
 		}.bind(this));
 
 	}
 
+	EntryFormView.prototype.createEntry = function(){
+		var entry = this.entry;
+		entry.save(function(resp) {
+			this.entry = new Entry(entry);
+			this._eventOutput.emit('new-entry', resp);
+		}.bind(this));
+	}
+
 	EntryFormView.prototype.hasFuture = function(options) {
 		var entry = this.entry;
-		retur((entry.isRepeat() && !entry.isRemind()) || entry.isGhost()) && entry.isTodayOrLater()
+		return((entry.isRepeat() && !entry.isRemind()) || entry.isGhost()) && entry.isTodayOrLater()
 	}
 
 	module.exports = EntryFormView;

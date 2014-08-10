@@ -106,8 +106,8 @@ define(function(require, exports, module) {
 	function _createFormView(argument) {
 		console.log("EntryView : creating entry form view");
 		this.formView = new EntryFormView(this.entry);
-		this.formView.on('entry-updated', function() {
-			console.log("formView event");
+		this.formView.on('update-entry', function() {
+			
 		}.bind(this));
 
 		this.formView.pipe(this._eventOutput);
@@ -130,7 +130,8 @@ define(function(require, exports, module) {
 	}
 
 	EntryView.prototype.hide = function(arguments){
-		this.renderController.hide();
+		this.renderController.hide(this.readView);
+		this.renderController.hide(this.formView);
 	}
 
 	EntryView.prototype.show = function(arguments){

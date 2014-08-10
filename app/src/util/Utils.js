@@ -3,7 +3,6 @@ define(['require', 'exports', 'module', 'store','jstzdetect', 'exoskeleton', 'vi
 		'use strict';
 		var Utils = {};
 		var u = Utils;
-		var User = require('models/User');
 		var jstz = require('jstzdetect');
 		
 		u.numJSONCalls = 0;
@@ -344,6 +343,7 @@ define(['require', 'exports', 'module', 'store','jstzdetect', 'exoskeleton', 'vi
 		* Curious data json return value check
 		*/
 		Utils.checkData = function(data, status, errorMessage, successMessage) {
+			var User = require('models/User');
 			if (data == 'error') {
 				if (errorMessage && status != 'cached')
 					u.showAlert(errorMessage);

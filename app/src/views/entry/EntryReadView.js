@@ -45,6 +45,7 @@ define(function(require, exports, module) {
 
 	EntryReadView.prototype.setEntry = function(entry){
 		this.entry = entry;
+		this.entrySurface.setContent(this.entry.toString());
 	}
 	 
 	EntryReadView.prototype.glow = function(){

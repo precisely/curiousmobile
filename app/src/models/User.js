@@ -1,6 +1,7 @@
 define(['require', 'exports', 'module', 'exoskeleton'], function(require, exports, module, exoskeleton) {
 	var EventHandler = require("famous/core/EventHandler");
 	var store = require('store');
+	var u = require('util/Utils');
 	var User = Backbone.Model.extend({
 		constructor: function(argument) {
 			this.eventInput = new EventHandler();
@@ -46,7 +47,7 @@ define(['require', 'exports', 'module', 'exoskeleton'], function(require, export
 			return false;
 		}
 		return true;
-	},
+	}
 
 	User.getCurrentUserId = function() {
 		var user = store.get('user');
@@ -54,6 +55,20 @@ define(['require', 'exports', 'module', 'exoskeleton'], function(require, export
 			return false;
 		}
 		return user.id;
+	}
+
+	User.getCurrentUser = function() {
+		var user = store.get('user');
+		if (typeof user == 'undefined') {
+			return false;
+		}
+		return new User(user);
+	}
+
+	User.logout = function() {
+		store.set('mobileSessionId', undefined);
+		store.set('user', undefined);
+		u.callLogoutCallbacks();
 	}
 
 	module.exports = User;

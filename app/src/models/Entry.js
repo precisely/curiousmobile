@@ -140,14 +140,14 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils'], function(r
 
 		},
 		save: function(allFuture, callback) {
-			var baseDate = this.get('date');
+			var baseDate = window.App.selectedDate;
 			var argsToSend = u.getCSRFPreventionObject("updateEntrySDataCSRF", {
 				entryId: this.get('id'),
 				currentTime: new Date().toUTCString(),
 				text: this.text,
 				baseDate: baseDate.toUTCString(),
 				timeZoneName: u.getTimezone(),
-				defaultToNow: defaultToNow ? '1' : '0',
+				defaultToNow: 1, //TODO Is this going to be configurable
 				allFuture: allFuture ? '1' : '0'
 			});
 
@@ -160,11 +160,14 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils'], function(r
 					if (typeof entries[0] != 'undefined' && entries[0].length > 0) {
 						_.each(entries[0], function(entry) {
 							// Finding entry which is recently updated.
-							if (entry.id == entryId) {
+							if (entry.id == this.id) {
 								this.set(entry);
 							}
 						}.bind(this));
-
+						callback({
+							entries: entries[0],
+							glowEntry: this
+						});
 						//if (entries[1] != null)
 						//updateAutocomplete(entries[1][0], entries[1][1],
 						//entries[1][2], entries[1][3]);
@@ -174,7 +177,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils'], function(r
 					} else {
 						u.showAlert("Error updating entry");
 					}
-				});
+				}.bind(this));
 
 		},
 		delete: function(callback) {
@@ -193,7 +196,6 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils'], function(r
 						onB: function() {
 							this.deleteGhost(true, callback);
 						}.bind(this),
-
 					});
 				}
 			} else {
@@ -204,20 +206,20 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils'], function(r
 						currentTime: new Date().toUTCString(),
 						baseDate: baseDate,
 						timeZoneName: u.getTimezone(),
-						displayDate: baseDate 
+						displayDate: baseDate
 					});
 
 				u.queueJSON("deleting entry", u.makeGetUrl("deleteEntrySData"), u.makeGetArgs(argsToSend),
 					function(entries) {
 						if (u.checkData(entries)) {
-							callback(entries[0]);							
+							callback(entries[0]);
 							//if (entries[1] != null)
-								//updateAutocomplete(entries[1][0], entries[1][1],
-									//entries[1][2], entries[1][3]);
+							//updateAutocomplete(entries[1][0], entries[1][1],
+							//entries[1][2], entries[1][3]);
 							//if (entries[2] != null)
-								//updateAutocomplete(entries[2][0],
-									//entries[2][1], entries[2][2],
-									//entries[2][3]);
+							//updateAutocomplete(entries[2][0],
+							//entries[2][1], entries[2][2],
+							//entries[2][3]);
 						} else {
 							u.showAlert("Error deleting entry");
 						}
