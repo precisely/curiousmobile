@@ -2,6 +2,7 @@ define(function(require, exports, module) {
 	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
 	var ImageSurface = require('famous/surfaces/ImageSurface');
+	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var InputSurface = require('famous/surfaces/InputSurface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
@@ -29,6 +30,12 @@ define(function(require, exports, module) {
 	EntryFormView.DEFAULT_OPTIONS = {};
 
 	function _createForm() {
+		var formContainerSurface = new ContainerSurface({
+			size: [undefined,70],
+			properties: {
+				backgroundColor: '#c0c0c0'	
+			}
+		});
 		var sequentialLayout = new SequentialLayout({
 			direction: 0,
 			itemSpacing: 20,
@@ -86,7 +93,7 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.add(this.inputModifier).add(this.inputSurface);
+		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
 
 		this.repeatSurface = new ImageSurface({
 			content: 'content/images/repeat.png',
@@ -122,7 +129,7 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 		sequentialLayout.sequenceFrom([this.repeatSurface, this.pinSurface, this.remindSurface]);
-		this.add(sequentialLayout);
+		formContainerSurface.add(sequentialLayout);
 
 		if (!this.newEntryForm) {
 			var deleteSurface = new Surface({
@@ -137,13 +144,14 @@ define(function(require, exports, module) {
 				transform: Transform.translate(window.innerWidth * 0.95, 44, 1)
 			});
 
-			this.add(deleteModifier).add(deleteSurface);
+			formContainerSurface.add(deleteModifier).add(deleteSurface);
 			deleteSurface.on('click', function() {
 				this.entry.delete(function(){
 					this._eventOutput.emit('delete-entry',this.entry);
 				}.bind(this))
 			}.bind(this));
 		}
+		this.add(formContainerSurface);
 
 	}
 

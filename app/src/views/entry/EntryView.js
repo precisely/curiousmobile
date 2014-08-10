@@ -21,7 +21,8 @@ define(function(require, exports, module) {
 		this.entry = entry;
 		_createBase.call(this);
 		if (formView) {
-			this.showFormView();
+			console.log('Creating a form view for Entry: ' + entry.id);
+			_createFormView.call(this);
 		} else {
 			_createReadView.call(this);
 		}
@@ -35,18 +36,6 @@ define(function(require, exports, module) {
 	function _createBase(argument) {
 		this.renderController = new RenderController();
 		this.add(this.renderController);
-		var selectionTransitionable = new TransitionableTransform();
-		var selectionModifier = new Modifier({
-			transform: selectionTransitionable,
-		});
-		this.selectionTransitionable = selectionTransitionable;
-		this.entryBackground = new Surface({
-			size: [undefined, 44],
-			properties: {
-				borderBottom: '2px solid #c0c0c0',
-			}
-		});
-		this.add(selectionModifier).add(this.entryBackground);
 	}
 
 	/**
@@ -60,21 +49,15 @@ define(function(require, exports, module) {
 		this.readViewModifier = new StateModifier({});
 		this.readView.on('select-entry', function($event) {
 			console.log("Click on EntryReadView");
-			this.select();
+			this._eventOutput.emit('select-entry', this.entry);
 		}.bind(this));
 		this.renderController.show(this.readView);
 	}
 
-	EntryView.prototype.showFormView = function(argument) {
+	function _createFormView(argument) {
 		//TODO
-		this.entryBackground.setProperties({
-			backgroundColor: '#c0c0c0'
-		})
-		this.selectionTransitionable.setScale([1, 1.60, 1], {});
-		if (typeof this.formView == 'undefined') {
-			_createFormView.call(this);
-		}
-		this.renderController.hide(this.readView);
+		this.formView = new EntryFormView(this.entry);
+		this.formView.pipe(this._eventOutput);
 		this.renderController.show(this.formView, {
 			duration: 0
 		}, function() {
@@ -82,62 +65,9 @@ define(function(require, exports, module) {
 		}.bind(this));
 	}
 
-	EntryView.prototype.hideFormView = function(argument) {
-		if (typeof this.formView == 'undefined') {
-			return;
-		}
-		this.entryBackground.setProperties({
-			backgroundColor: 'white'
-		});
-		this.renderController.hide(this.formView);
-		this.renderController.show(this.readView);
-		this.selectionTransitionable.setScale([1, 1, 1]);
-	}
-
-	EntryView.prototype.select = function() {
-		this._eventOutput.emit('select-entry', this.entry);
-		this.showFormView();
-	}
-
-	/**
-	 *	Form view for a given entry
-	 *
-	 */
-	function _createFormView(argument) {
-		console.log("EntryView : creating entry form view");
-		this.formView = new EntryFormView(this.entry);
-		this.formView.on('update-entry', function() {
-			
-		}.bind(this));
-
-		this.formView.pipe(this._eventOutput);
-	}
-
-	/**
-	 * Updateing read and form(if exists) views with the updated value
-	 * @param entry
-	 */
-	EntryView.prototype.setEntry = function(entry) {
-		this.entry = entry;
-		this.readView.setEntry(entry);
-		if (this.formView) {
-			this.formView.setEntry(entry);
-		}
-	}
-
 	EntryView.prototype.glow = function() {
 		this.readView.glow();
 	}
-
-	EntryView.prototype.hide = function(arguments){
-		this.renderController.hide(this.readView);
-		this.renderController.hide(this.formView);
-	}
-
-	EntryView.prototype.show = function(arguments){
-		this.renderController.show(this.readView);
-	}
-
 
 	module.exports = EntryView;
 });
