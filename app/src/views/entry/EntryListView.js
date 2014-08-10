@@ -67,6 +67,7 @@ define(function(require, exports, module) {
 
 		entryView.on('update-entry', function(resp) {
 			console.log('EntryListView: Updating an entry');
+			this.selectedEntry = undefined;
 			this.refreshEntries(resp.entries, resp.glowEntry);
 		}.bind(this));
 		return entryView;
