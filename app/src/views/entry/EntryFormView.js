@@ -207,7 +207,7 @@ define(function(require, exports, module) {
 		}
 		
 		if (this.hasFuture()) {
-			u.showAlert({
+			this.alert = u.showAlert({
 				message: 'Update just this one event or also future events?',
 				a: 'One',
 				b: 'All Future',
@@ -226,6 +226,9 @@ define(function(require, exports, module) {
 	EntryFormView.prototype.saveEntry = function(allFuture) {
 		var entry = this.entry;
 		entry.save(allFuture, function(resp) {
+			if (this.alert) {
+				this.alert.controller.hide();
+			}
 			this._eventOutput.emit('update-entry', resp);
 		}.bind(this));
 

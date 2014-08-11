@@ -54,21 +54,22 @@ define(function(require, exports, module) {
 
 
 		messageSurface.on('click', function(e) {
-			this._eventOutput.emit('alert-ok');
 			var classList;
-			if (e.srcElement.localName == 'button') {
-				classList = e.srcElement.classList;
-			} else {
-				classList = e.srcElement.parentElement.classList;
-			}	
-			if (_.contains(classList, 'close')) {
-				this.controller.hide();
-			} else if (_.contains(classList, 'a') && this.options.onA) {
-				console.log('Event A');
-				this.options.onA.call();	
-			} else if (_.contains(classList, 'b') && this.options.onB) {
-				console.log('Event B');
-				this.options.onB.call();	
+			if (e instanceof CustomEvent) {
+				if (e.srcElement.localName == 'button') {
+					classList = e.srcElement.classList;
+				} else {
+					classList = e.srcElement.parentElement.classList;
+				}
+				if (_.contains(classList, 'close')) {
+					this.controller.hide();
+				} else if (_.contains(classList, 'a') && this.options.onA) {
+					console.log('Event A');
+					this.options.onA.call();
+				} else if (_.contains(classList, 'b') && this.options.onB) {
+					console.log('Event B');
+					this.options.onB.call();
+				}
 			}
 		}.bind(this));
 
