@@ -57,6 +57,7 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 						for (var i = 0, len = dates.length; i < len; i++) {
 							var entries = collectionCache.getItem(_getCacheKey(dates[i]));
 							var entryCollection = new EntryCollection(entries);
+							entryCollection.date = dates[i];
 							collections.push(entryCollection);
 						}
 						callback(collections);

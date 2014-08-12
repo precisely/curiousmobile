@@ -3,25 +3,25 @@ define(function(require, exports, module) {
 		title: 'Track',
 		iconFont: '<i class="fa fa-coffee"></i>'
 	}, {
-		title: 'Cloud',
+		title: 'Logout',
 		iconFont: '<i class="fa fa-cloud"></i>'
 	}, {
-		title: 'Fork',
+		title: '             ',
 		iconFont: '<i class="fa fa-code-fork"></i>'
 	}, {
-		title: 'Camera',
+		title: '             ',
 		iconFont: '<i class="fa fa-camera-retro"></i>'
 	}, {
-		title: 'Database',
+		title: '             ',
 		iconFont: '<i class="fa fa-database"></i>'
 	}, {
-		title: 'Cube',
+		title: '             ',
 		iconFont: '<i class="fa fa-cube"></i>'
 	}, {
-		title: 'Envelope',
+		title: '             ',
 		iconFont: '<i class="fa fa-envelope-o"></i>'
 	}, {
-		title: 'Keyboard',
+		title: '             ',
 		iconFont: '<i class="fa fa-keyboard-o"></i>'
 	}];
 });

@@ -59,8 +59,8 @@ define(function(require, exports, module) {
 		//TODO
 		this.formView = new EntryFormView(this.entry);
 		this.formView.pipe(this._eventOutput);
-		this.renderController.show(this.formView, {
-			duration: 0
+		this.renderController.show(this.formView, function (argument) {
+			return Transform.translate(0, 0, window.App.zIndex.readView)
 		}, function() {
 			this.formView.focus();
 		}.bind(this));

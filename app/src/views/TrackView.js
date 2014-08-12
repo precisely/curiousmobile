@@ -3,6 +3,7 @@ define(function(require, exports, module) {
 	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var RenderController = require("famous/views/RenderController");
 	var Utility = require("famous/utilities/Utility");
 	var Scrollview = require("famous/views/Scrollview");
 	var EntryListView = require('views/entry/EntryListView');
@@ -35,8 +36,8 @@ define(function(require, exports, module) {
 		}
 		return dates;
 	}
+
 	function _createBody() {
-		this.entryListViewCache = [];
 		this.createView = new EntryView(new Entry(), true);
 
 		this.createView.on('new-entry', function(data) {
@@ -49,39 +50,13 @@ define(function(require, exports, module) {
 			//            size: [400,400]
 		});
 		this.layout.content.add(backgroundModifier).add(this.createView);
+		var scrollModifier = new StateModifier({
+			transform: Transform.translate(0, 110, 1)
+		});
+		this.renderController = new RenderController();
+		this.layout.content.add(scrollModifier).add(this.renderController);
 		if (User.isLoggedIn()) {
-			this.scrollView = new Scrollview({
-				direction: Utility.Direction.X,
-				paginated: true,
-			});
-			var scrollModifier = new StateModifier({
-				transform: Transform.translate(0,110, 0)	
-			});	
-			//creating 11 cached list views by default
-			//5 days before and 5 days after today
-			EntryCollection.fetchEntries(_getDefaultDates(new Date()), function(collections) {
-				for (var i = 0, l = collections.length; i < l; i++) {
-					var entryListView = new EntryListView(collections[i]);
-					// TODO make it work with scroll
-					this.currentListView = entryListView;
-					this.entryListViewCache.push(entryListView);
-					entryListView.pipe(this.scrollView);
-				}
-				this.scrollView.sequenceFrom(this.entryListViewCache);
-				//setting the scroll position to today
-				this.scrollView.setPosition(window.innerWidth * 5);
-				this.lastScrollPosition = this.scrollView.getPosition();
-				this.scrollView.on('pageChange', function (e) {
-					var position = this.scrollView.getPosition();
-					if (this.lastScrollPosition == position) {
-						return;	
-					}
-					this.calendarView.changeDate(e.direction);	
-					this.lastScrollPosition = position;
-				}.bind(this));
-				this.layout.content.add(scrollModifier).add(this.scrollView);
-			}.bind(this));
-
+			this.addEntryListViews(new Date());
 		}
 
 	}
@@ -91,12 +66,58 @@ define(function(require, exports, module) {
 		var calendarModifier = new StateModifier({
 			transform: Transform.translate(50, 0, 0)
 		});
+
+		this.calendarView.on('manual-date-change', function(e) {
+			this.addEntryListViews(e.date);
+		}.bind(this));
 		this.layout.header.add(calendarModifier).add(this.calendarView);
 
 	}
 
-	TrackView.prototype.getSelectedDate = function(){
-		return this.calendarView.getCurrentDate();	
+	TrackView.prototype.addEntryListViews = function(date) {
+		this.entryListViewCache = [];
+		if (this.scrollView) {
+			this.renderController.hide(this.scrollView);
+		}
+		this.scrollView = new Scrollview({
+			direction: Utility.Direction.X,
+			paginated: true,
+		});
+		//creating 11 cached list views by default
+		//5 days before and 5 days after today
+
+		EntryCollection.fetchEntries(_getDefaultDates(date), function(collections) {
+			for (var i = 0, l = collections.length; i < l; i++) {
+				var entryListView = new EntryListView(collections[i]);
+				// TODO make it work with scroll
+				this.currentListView = entryListView;
+				this.entryListViewCache.push(entryListView);
+				entryListView.pipe(this.scrollView);
+			}
+			this.scrollView.sequenceFrom(this.entryListViewCache);
+			//setting the scroll position to today
+			this.scrollView.setPosition(window.innerWidth * 5);
+			this.lastScrollPosition = this.scrollView.getPosition();
+			this.scrollView.on('pageChange', function(e) {
+				var listView = this.entryListViewCache[e.index];
+				if (listView) {
+					if (e.index < 2 || e.index > this.entryListViewCache.length - 2) {
+						var selectedDate = listView.entries.date;
+						this.calendarView.setSelectedDate(selectedDate);
+						this.addEntryListViews(selectedDate);
+					} else {
+						this.calendarView.changeDate(e.direction);
+						listView.refreshEntries();
+						console.log('No list view found');
+					}
+				}
+			}.bind(this));
+			this.renderController.show(this.scrollView);
+		}.bind(this));
+	}
+
+	TrackView.prototype.getSelectedDate = function() {
+		return this.calendarView.getCurrentDate();
 	}
 
 

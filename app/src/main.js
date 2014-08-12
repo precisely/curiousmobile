@@ -13,7 +13,7 @@ define(function(require, exports, module) {
 	App.CSRF.SyncTokenUriName = "SYNCHRONIZER_URI"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_URI
 	App.zIndex = {
 		menu: 11,
-		readView: 10,
+		readView: 9,
 		formView: 11, 
 		baseHeader: 12,
 		datePicker: 13,

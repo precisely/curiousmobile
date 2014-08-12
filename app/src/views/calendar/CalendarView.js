@@ -43,12 +43,16 @@ define(function(require, exports, module) {
 		this.selectDateView = selectDateView;
 		selectDateView.on('date-add', function() {
 			console.log("CalendarView: adding a day");
-			this.setSelectedDate(DateUtil.addDays(this.selectedDate, 1));
+			var date = DateUtil.addDays(this.selectedDate, 1);
+			this.setSelectedDate(date);
+			_manualDateChangeHandler.call(this, date);
 		}.bind(this));
 
 		selectDateView.on('date-minus', function() {
 			console.log("CalendarView: subtracting a day");
-			this.setSelectedDate(DateUtil.addDays(this.selectedDate, -1));
+			var date = DateUtil.addDays(this.selectedDate, -1);
+			this.setSelectedDate(date);
+			_manualDateChangeHandler.call(this, date);
 		}.bind(this));
 
 	}
@@ -59,8 +63,13 @@ define(function(require, exports, module) {
 		this.dateGrid.on('select-date', function(date) {
 			console.log('CalenderView: Date selected');
 			this.setSelectedDate(date);
+			_manualDateChangeHandler.call(this, date);
 			this.toggleDateGrid();
 		}.bind(this));
+	}
+
+	function _manualDateChangeHandler(date) {
+		this._eventOutput.emit('manual-date-change', {date: date});
 	}
 
 	function _renderTransitions() {
