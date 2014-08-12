@@ -12,7 +12,6 @@ define(function(require, exports, module) {
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var u = require('util/Utils');
 	var Entry = require('models/Entry');
-
 	function EntryFormView(entry) {
 		View.apply(this, arguments);
 		this.entry = entry;
@@ -28,6 +27,10 @@ define(function(require, exports, module) {
 	EntryFormView.prototype.constructor = EntryFormView;
 
 	EntryFormView.DEFAULT_OPTIONS = {};
+
+	function _zIndex(argument) {
+		return window.App.zIndex.formView;
+	}
 
 	function _createForm() {
 		var formContainerSurface = new ContainerSurface({
@@ -54,12 +57,12 @@ define(function(require, exports, module) {
 		});
 
 		this.iconModifier = new Modifier({
-			transform: Transform.translate(0, 5, 1)
+			transform: Transform.translate(0, 5, _zIndex())
 		});
 
 		this.inputModifier = new Modifier({
 			align: [0, 0],
-			transform: Transform.translate(5, 5, 1)
+			transform: Transform.translate(5, 5, _zIndex())
 		});
 
 		this.inputModifier.sizeFrom(function() {
@@ -141,7 +144,7 @@ define(function(require, exports, module) {
 			});
 
 			var deleteModifier = new Modifier({
-				transform: Transform.translate(window.innerWidth * 0.95, 44, 1)
+				transform: Transform.translate(window.innerWidth * 0.95, 44, _zIndex())
 			});
 
 			formContainerSurface.add(deleteModifier).add(deleteSurface);

@@ -27,32 +27,37 @@ define(function(require, exports, module) {
 	function _addPages() {
 		var windowSize = Utils.getWindowSize();
 		var backgroundSurface = new Surface({
-			size: [undefined,undefined],
+			size: [undefined, undefined],
 			properties: {
-				backgroundColor: 'white'	
-			}	
+				backgroundColor: 'white'
+			}
 		});
 		this.add(backgroundSurface);
 		this.add(this.renderController);
 		this.loginView = new LoginView();
-		this.trackView = new TrackView();
-		this.pageMap['track'] = this.trackView;
 		this.pageMap['login'] = this.loginView;
 		this.hiddenModifier = new StateModifier({
 			align: [1, 1]
 		});
-		this.trackView.on('menuToggle', function() {
-			this._eventOutput.emit('menuToggleNested');
-		}.bind(this));
 
 		this.loginView.on('login-success', function(data) {
+			_createTrackPage.call(this);
 			this.changePage('track');
 		}.bind(this));
 		if (!User.isLoggedIn()) {
 			this.changePage('login');
 		} else {
+			_createTrackPage.call(this);
 			this.changePage('track');
 		}
+	}
+
+	function _createTrackPage() {
+		this.trackView = new TrackView();
+		this.pageMap['track'] = this.trackView;
+		this.trackView.on('menuToggle', function() {
+			this._eventOutput.emit('menuToggleNested');
+		}.bind(this));
 	}
 
 	/**
@@ -81,7 +86,9 @@ define(function(require, exports, module) {
 	PageView.prototype.changePage = function(pageName) {
 		var lastPageName = store.get('lastPage');
 		this.renderController.hide(); //hides the last page
-		this.renderController.show(this.getPage(pageName), {duration:0});
+		this.renderController.show(this.getPage(pageName), {
+			duration: 0
+		});
 	}
 
 	/**
@@ -94,8 +101,8 @@ define(function(require, exports, module) {
 		return view;
 	}
 
-	PageView.prototype.getSelectedDate = function(){
-		return this.trackView.getSelectedDate();	
+	PageView.prototype.getSelectedDate = function() {
+		return this.trackView.getSelectedDate();
 	}
 
 	module.exports = PageView;

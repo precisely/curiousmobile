@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 	var SelectDateView = require('views/calendar/SelectDateView');
 	var DateGridView = require('views/calendar/DateGridView');
 	var RenderController = require("famous/views/RenderController");
-    var Transitionable = require("famous/transitions/Transitionable");
+	var Transitionable = require("famous/transitions/Transitionable");
 	var DateUtil = require('util/DateUtil');
 
 	function CalendarView(selectedDate) {
@@ -29,6 +29,10 @@ define(function(require, exports, module) {
 
 	CalendarView.DEFAULT_OPTIONS = {};
 
+	function _zIndex(argument) {
+		return window.App.zIndex.datePicker;
+	}
+
 	function _createHeader(date) {
 		var selectDateView = new SelectDateView(date);
 		this.add(selectDateView);
@@ -46,7 +50,7 @@ define(function(require, exports, module) {
 			console.log("CalendarView: subtracting a day");
 			this.setSelectedDate(DateUtil.addDays(this.selectedDate, -1));
 		}.bind(this));
-		
+
 	}
 
 	function _createDateGrid(date) {
@@ -60,35 +64,40 @@ define(function(require, exports, module) {
 	}
 
 	function _renderTransitions() {
-		var transition = new Transitionable(Transform.translate(-20, 44, 0));
+		var transition = new Transitionable(Transform.translate(-20, 44, _zIndex()));
 		this.renderController.inTransformFrom(transition);
 		this.renderController.outTransformFrom(transition);
 	}
-	
+
 	function _setListeners(argument) {
-		
+
 	}
 
-	CalendarView.prototype.toggleDateGrid = function () {
+	CalendarView.prototype.toggleDateGrid = function() {
 		if (typeof this.showingDateGrid == 'undefined' || !this.showingDateGrid) {
-			this.renderController.show(this.dateGrid);	
+			this.renderController.show(this.dateGrid);
 			this.showingDateGrid = true;
 		} else {
-			this.renderController.hide();	
+			this.renderController.hide();
 			this.showingDateGrid = false;
 		}
 	}
-	
-	CalendarView.prototype.getSelectedDate = function(){
+
+	CalendarView.prototype.getSelectedDate = function() {
 		return this.selectedDate;
 	}
 
-	CalendarView.prototype.setSelectedDate = function(date){
+	CalendarView.prototype.setSelectedDate = function(date) {
 		var App = window.App;
 		App.selectedDate = DateUtil.getMidnightDate(date);
 		this.selectedDate = date;
-		this.selectDateView.setDate(this.selectedDate);	
+		this.selectDateView.setDate(this.selectedDate);
 		this.dateGrid.setSelectedDate(this.selectedDate);
+	}
+
+	CalendarView.prototype.changeDate = function(direction) {
+		var date = this.selectedDate;
+		this.setSelectedDate(new Date(date.getFullYear(), date.getMonth(), date.getDate() + direction));
 	}
 
 	module.exports = CalendarView;

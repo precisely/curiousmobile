@@ -16,12 +16,16 @@ define(function(require, exports, module) {
 	MenuItemView.prototype.constructor = MenuItemView;
 
 	MenuItemView.DEFAULT_OPTIONS = {
-		width: undefined,
+		width: 276, // open position from AppView
 		height: 55,
 		iconSize: 32,
 		iconFont: '<i class="fa fa-rebel"></i>',
 		title: 'Rebel Alliance'
 	};
+
+	function _zIndex(argument) {
+		return window.App.zIndex.menuItem;
+	}
 
 	_createBackground = function() {
 		var backgroundSurface = new Surface({

@@ -39,6 +39,7 @@
     "fontawesome": "~4.1.0",
     "store.js": "~1.3.16",
     "jstzdetect": "~1.0.6",
-    "jscache": "*"
+    "jscache": "*",
+    "exoskeleton.localStorage": "~1.0.0"
   }
 }

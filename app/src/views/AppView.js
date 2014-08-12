@@ -57,6 +57,7 @@ define(function(require, exports, module) {
 	AppView.prototype.toggleMenu = function() {
 		if (this.menuToggle) {
 			this.slideLeft();
+			this.menuView.resetMenuItems();
 		} else {
 			this.slideRight();
 			this.menuView.animateMenuItems();

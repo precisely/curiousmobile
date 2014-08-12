@@ -21,7 +21,8 @@ require.config({
 		fontawesome: '../lib/fontawesome/fonts/*',
 		store: '../lib/store.js/store',
 		text: '../lib/text',
-		jstzdetect: '../lib/jstzdetect/jstz.min'
+		jstzdetect: '../lib/jstzdetect/jstz.min',
+		jscache: '../lib/jscache/cache'
 	},
 	packages: [
 

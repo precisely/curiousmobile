@@ -52,6 +52,7 @@ define(function(require, exports, module) {
 			this._eventOutput.emit('select-entry', this.entry);
 		}.bind(this));
 		this.renderController.show(this.readView);
+		this.readView.pipe(this._eventOutput);
 	}
 
 	function _createFormView(argument) {

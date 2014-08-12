@@ -34,7 +34,8 @@ define(function(require, exports, module) {
 		var backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
-				backgroundColor: 'white'
+				backgroundColor: 'white',
+				border: '2px solid #c0c0c0'
 			}
 		});
 		this.add(backgroundSurface);
@@ -50,6 +51,7 @@ define(function(require, exports, module) {
 			formView = true;	
 		}
 		var entryView = new EntryView(entry, formView);
+		entryView.pipe(this._eventOutput);
 		this.entryViews.push(entryView);
 
 		//Handle entry selection handler

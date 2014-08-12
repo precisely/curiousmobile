@@ -56,7 +56,7 @@ define(function(require, exports, module) {
 				var yOffset = topOffset + menuItemOffset * i;
 
 				this.menuItemModifiers[i].setTransform(
-					Transform.translate(0, yOffset, 0), transition);
+					Transform.translate(0, yOffset, window.App.zIndex.menu), transition);
 			}.bind(this, i), i * delay);
 		}
 	};

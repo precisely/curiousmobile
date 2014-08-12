@@ -25,6 +25,16 @@ define(function(require, exports, module) {
 
 	TrackView.DEFAULT_OPTIONS = {};
 
+	function _getDefaultDates(date) {
+		var dates = [];
+		var date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 5);
+		date = u.getMidnightDate(date);
+
+		for (var i = 0, len = 11; i < len; i++) {
+			dates.push(new Date(date.getFullYear(), date.getMonth(), date.getDate() + i));
+		}
+		return dates;
+	}
 	function _createBody() {
 		this.entryListViewCache = [];
 		this.createView = new EntryView(new Entry(), true);
@@ -42,13 +52,14 @@ define(function(require, exports, module) {
 		if (User.isLoggedIn()) {
 			this.scrollView = new Scrollview({
 				direction: Utility.Direction.X,
-				pagination: true,
-				edgeGrip: 0.2,
+				paginated: true,
 			});
 			var scrollModifier = new StateModifier({
 				transform: Transform.translate(0,110, 0)	
 			});	
-			EntryCollection.fetchEntries([u.getMidnightDate(new Date())], function(collections) {
+			//creating 11 cached list views by default
+			//5 days before and 5 days after today
+			EntryCollection.fetchEntries(_getDefaultDates(new Date()), function(collections) {
 				for (var i = 0, l = collections.length; i < l; i++) {
 					var entryListView = new EntryListView(collections[i]);
 					// TODO make it work with scroll
@@ -57,6 +68,17 @@ define(function(require, exports, module) {
 					entryListView.pipe(this.scrollView);
 				}
 				this.scrollView.sequenceFrom(this.entryListViewCache);
+				//setting the scroll position to today
+				this.scrollView.setPosition(window.innerWidth * 5);
+				this.lastScrollPosition = this.scrollView.getPosition();
+				this.scrollView.on('pageChange', function (e) {
+					var position = this.scrollView.getPosition();
+					if (this.lastScrollPosition == position) {
+						return;	
+					}
+					this.calendarView.changeDate(e.direction);	
+					this.lastScrollPosition = position;
+				}.bind(this));
 				this.layout.content.add(scrollModifier).add(this.scrollView);
 			}.bind(this));
 

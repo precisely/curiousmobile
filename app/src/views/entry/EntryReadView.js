@@ -18,6 +18,9 @@ define(function(require, exports, module) {
 
 	function _addSurface() {
 		this.renderController = new RenderController();
+		this.renderController.inTransformFrom(function(progress){
+			return Transform.translate(0, 0, window.App.zIndex.readView);	
+		});
 		this.add(this.renderController);
 		this.entrySurface = new Surface({
 			size: [undefined, 44],
@@ -28,6 +31,7 @@ define(function(require, exports, module) {
 				borderBottom: '2px solid #c0c0c0',
 			}
 		});
+		this.entrySurface.pipe(this._eventOutput);
 		this.glowSurface = new Surface({
 			size: [undefined, 44],
 			content: this.entry.toString(),
@@ -40,7 +44,7 @@ define(function(require, exports, module) {
 		});
 		this.entrySurface.on('click', function(e) {
 			console.log("entrySurface event");
-			if (e instanceof CustomEvent) {
+			if (e instanceof MouseEvent) {
 				this._eventOutput.emit('select-entry', this.entry);
 			}
 		}.bind(this));

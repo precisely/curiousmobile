@@ -7,7 +7,6 @@ define(function(require, exports, module) {
 	var RenderController = require("famous/views/RenderController");
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var DateUtil = require('util/DateUtil');
-
 	function DateGridView(date) {
 		View.apply(this, arguments);
 		this.weekRows = [];
@@ -21,6 +20,10 @@ define(function(require, exports, module) {
 	DateGridView.prototype.constructor = DateGridView;
 
 	DateGridView.DEFAULT_OPTIONS = {};
+
+	function _zIndex(argument) {
+		return window.App.zIndex.datePicker;	
+	}
 
 	/**
 	 * Creates the header to change month
@@ -40,7 +43,7 @@ define(function(require, exports, module) {
 		});
 		this.backgroundSurface = backgroundSurface;
 		this.backgroudModifier = new Modifier({
-			transform: Transform.identity
+			transform: Transform.translate(0, 0, _zIndex())
 		});
 		this.add(backgroundSurface);
 		var leftSurface = new Surface({
@@ -52,7 +55,7 @@ define(function(require, exports, module) {
 		});
 
 		var leftModifier = new StateModifier({
-			transform: Transform.translate(10, 0, 1),
+			transform: Transform.translate(10, 0, _zIndex() + 1),
 		});
 		this.add(leftModifier).add(leftSurface);
 
@@ -69,14 +72,14 @@ define(function(require, exports, module) {
 		});
 
 		var monthModifier = new StateModifier({
-			transform: Transform.translate(100, 10, 1)
+			transform: Transform.translate(100, 10, _zIndex() + 1)
 		});
 
 		this.add(monthModifier).add(monthSurface);
 		this.monthSurface = monthSurface;
 
 		var rightModifier = new StateModifier({
-			transform: Transform.translate(245, 5, 1),
+			transform: Transform.translate(245, 5, _zIndex() + 1),
 		});
 
 		var rightSurface = new Surface({
@@ -121,7 +124,7 @@ define(function(require, exports, module) {
 		});
 
 		var dayLabelModifier = new Modifier({
-			transform: Transform.translate(0, 40, 1)
+			transform: Transform.translate(0, 40, _zIndex() + 1)
 		});
 		dayLabelLayout.sequenceFrom(dayLabelSurfaces);
 
@@ -159,7 +162,7 @@ define(function(require, exports, module) {
 				weekColumnLayout.setOutputFunction(function(input, offset, index) {
 					//Bumping the offset to add additional padding on the left
 					offset += 10;
-					var transform = Transform.translate(offset, 0, 1);
+					var transform = Transform.translate(offset, 0, _zIndex() + 1);
 					return {
 						transform: transform,
 						target: input.render()
@@ -181,7 +184,7 @@ define(function(require, exports, module) {
 		weekRowLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
 			offset += 70;
-			var transform = Transform.translate(0, offset, 1);
+			var transform = Transform.translate(0, offset, _zIndex() + 1);
 			return {
 				transform: transform,
 				target: input.render()
