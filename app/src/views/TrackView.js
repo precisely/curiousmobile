@@ -17,6 +17,7 @@ define(function(require, exports, module) {
 
 	function TrackView() {
 		BaseView.apply(this, arguments);
+		this.pageChange = false; //making sure the pageChange even is disregarded on page reload
 		_createBody.call(this);
 		_createCalendar.call(this);
 	}
@@ -75,6 +76,7 @@ define(function(require, exports, module) {
 	}
 
 	TrackView.prototype.addEntryListViews = function(date) {
+		date = u.getMidnightDate(date);
 		this.entryListViewCache = [];
 		if (this.scrollView) {
 			this.renderController.hide(this.scrollView);
@@ -89,30 +91,36 @@ define(function(require, exports, module) {
 		EntryCollection.fetchEntries(_getDefaultDates(date), function(collections) {
 			for (var i = 0, l = collections.length; i < l; i++) {
 				var entryListView = new EntryListView(collections[i]);
-				// TODO make it work with scroll
-				this.currentListView = entryListView;
 				this.entryListViewCache.push(entryListView);
 				entryListView.pipe(this.scrollView);
 			}
 			this.scrollView.sequenceFrom(this.entryListViewCache);
+			// TODO make it work with scroll
+			this.currentListView = this.entryListViewCache[5];
 			//setting the scroll position to today
 			this.scrollView.setPosition(window.innerWidth * 5);
 			this.lastScrollPosition = this.scrollView.getPosition();
 			this.scrollView.on('pageChange', function(e) {
+				if (!this.pageChange) {
+					this.pageChange = true;
+					return;
+				}
 				var listView = this.entryListViewCache[e.index];
+				this.currentListView = listView;
 				if (listView) {
+					var selectedDate = this.calendarView.changeDate(e.direction);
 					if (e.index < 2 || e.index > this.entryListViewCache.length - 2) {
 						var selectedDate = listView.entries.date;
-						this.calendarView.setSelectedDate(selectedDate);
 						this.addEntryListViews(selectedDate);
 					} else {
-						this.calendarView.changeDate(e.direction);
 						listView.refreshEntries();
 						console.log('No list view found');
 					}
 				}
 			}.bind(this));
-			this.renderController.show(this.scrollView);
+			this.renderController.show(this.scrollView, {
+				duration: 0
+			});
 		}.bind(this));
 	}
 

@@ -4,8 +4,11 @@
 
 define(function(require, exports, module) {
 	var Engine = require('famous/core/Engine');
+	var Cache = require('jscache');
 	var AppView = require('views/AppView');
 	//var AppView = require('views/AppView');
+
+	var collectionCache = new Cache(1000, true, new Cache.LocalStorageCacheStorage('ec'));
 
 	var App = {};
 	App.CSRF = {};
@@ -19,7 +22,9 @@ define(function(require, exports, module) {
 		datePicker: 13,
 	};
 
-	//App.serverUrl = "http://192.168.0.109:8080";
+	App.collectionCache = collectionCache;
+
+	//App.serverUrl = "http://192.168.0.106:8080";
 	App.serverUrl = "http://127.0.0.1:8080";
 	//App.serverUrl = "https://dev.wearecurio.us";
 	var mainContext = Engine.createContext();

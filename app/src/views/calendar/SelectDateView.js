@@ -35,7 +35,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		var dateSurface = new Surface({
-			content: new Date().toDateString(),
+			content: date.toDateString(),
 			properties: {
 				fontSize: '20px',
 				color: 'white'

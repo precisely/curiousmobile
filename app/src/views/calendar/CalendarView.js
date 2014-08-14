@@ -106,7 +106,9 @@ define(function(require, exports, module) {
 
 	CalendarView.prototype.changeDate = function(direction) {
 		var date = this.selectedDate;
-		this.setSelectedDate(new Date(date.getFullYear(), date.getMonth(), date.getDate() + direction));
+		var newDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() + direction);
+		this.setSelectedDate(newDate);
+		return newDate;
 	}
 
 	module.exports = CalendarView;

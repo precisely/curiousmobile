@@ -5,24 +5,14 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 		var jstz = require('jstzdetect');
 		var store = require('store');
 		var u = require('util/Utils');
-		var collectionCache = new Cache(1000, true, new Cache.LocalStorageCacheStorage('ec'));
+
 		var EntryCollection = Backbone.Collection.extend({
 			model: Entry
 		});
 
-		function _getCacheKey(date) {
-			var dateStr;
-			if (typeof date == 'object') {
-				var month = ("0" + (date.getMonth() + 1)).slice(-2);
-				var day = ("0" + date.getDate()).slice(-2);
-				dateStr = month + '/' + day + '/' + (date.getYear() + 1900);
-			} else {
-				dateStr = date;
-			}
-			return dateStr;
-		}
 
 		EntryCollection.fetchEntries = function(dates, callback) {
+			var collectionCache = window.App.collectionCache;
 			var argDates = [];
 
 			if (typeof dates == 'undefined') {
@@ -30,7 +20,7 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 			}
 
 			for (var i = 0, len = dates.length; i < len; i++) {
-				var key = _getCacheKey(dates[i]);
+				var key = Entry.getCacheKey(dates[i]);
 				var cachedCollection = collectionCache.getItem(key);
 				if (!cachedCollection) {
 					argDates.push(dates[i].toUTCString());
@@ -51,11 +41,11 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 					if (u.checkData(entries)) {
 						console.log('entries from the server: ' + entries);
 						for (var prop in entries) {
-							collectionCache.setItem(prop, entries[prop]);
+							Entry.cacheEntries(prop, entries[prop]);
 						}
 						var collections = [];
 						for (var i = 0, len = dates.length; i < len; i++) {
-							var entries = collectionCache.getItem(_getCacheKey(dates[i]));
+							var entries = collectionCache.getItem(Entry.getCacheKey(dates[i]));
 							var entryCollection = new EntryCollection(entries);
 							entryCollection.date = dates[i];
 							collections.push(entryCollection);
@@ -64,7 +54,6 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 					}
 				});
 		}
-
 
 
 		module.exports = EntryCollection;

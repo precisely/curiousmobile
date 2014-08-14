@@ -40,11 +40,11 @@ define(function(require, exports, module) {
 		});
 
 		var logoModifier = new Modifier({
-			origin: [0.5,0.1],
+			origin: [0.5, 0.1],
 		});
 
 		var formModifier = new Modifier({
-			origin: [0.5,0.8],
+			origin: [0.5, 0.8],
 		});
 		var formSurface = new FormContainerSurface({
 			size: [200, 200],
@@ -61,6 +61,13 @@ define(function(require, exports, module) {
 			type: 'password'
 		});
 
+		passwordSurface.on('keydown', function (e) {
+			//on enter
+			if (e.keyCode == 13) {
+				this.submit();
+			}
+		}.bind(this));
+
 		var submitSurface = new InputSurface({
 			value: 'Login',
 			type: 'button',
@@ -72,11 +79,7 @@ define(function(require, exports, module) {
 		this.passwordSurface = passwordSurface;
 		submitSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				var currentUser = new User();
-				currentUser.login(this.usernameSurface.getValue(), this.passwordSurface.getValue(), function(user) {
-					window.App.currentUser = user;
-					this._eventOutput.emit('login-success');	
-				}.bind(this));
+				this.submit();	
 			}
 		}.bind(this));
 
@@ -90,6 +93,14 @@ define(function(require, exports, module) {
 
 		this.add(formModifier).add(formSurface);
 		this.add(logoModifier).add(logoSurface);
+	}
+
+	LoginView.prototype.submit = function(arguments) {
+		var currentUser = new User();
+		currentUser.login(this.usernameSurface.getValue(), this.passwordSurface.getValue(), function(user) {
+			window.App.currentUser = user;
+			this._eventOutput.emit('login-success');
+		}.bind(this));
 	}
 
 	module.exports = LoginView;
