@@ -69,14 +69,13 @@ define(function(require, exports, module) {
 
 		for (var i = 0; i < this.options.menuData.length; i++) {
 
-			var menuItem = new MenuItem({
-				iconFont: this.options.menuData[i].iconFont,
-				title: this.options.menuData[i].title
-			});
+			var menuItem = new MenuItem(this.options.menuData[i]);
 
 			var menuItemModifier = new StateModifier({
 				transform: Transform.translate(0, yOffset, 0)
 			});
+
+			menuItem.pipe(this._eventOutput);
 
 			this.menuItemModifiers.push(menuItemModifier);
 			this.add(menuItemModifier).add(menuItem);

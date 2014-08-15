@@ -20,7 +20,8 @@ define(function(require, exports, module) {
 		height: 55,
 		iconSize: 32,
 		iconFont: '<i class="fa fa-rebel"></i>',
-		title: 'Rebel Alliance'
+		title: 'Rebel Alliance',
+		trigger: 'noevent'
 	};
 
 	function _zIndex(argument) {
@@ -35,6 +36,13 @@ define(function(require, exports, module) {
 				boxShadow: '0 0 1px black'
 			}
 		});
+
+		backgroundSurface.on('click', function(e) {
+			console.log('backgroundSurface event');
+			if (e instanceof CustomEvent) {
+				this._eventOutput.emit(this.options.trigger, e);				
+			}
+		}.bind(this));
 
 		this.add(backgroundSurface);
 

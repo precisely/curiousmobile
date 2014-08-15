@@ -83,7 +83,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			for (var i in u._logoutCallbacks) {
 				u._logoutCallbacks[i]();
 			}
-			clearJSONQueue();
+			u.clearJSONQueue();
 			++u._loginSessionNumber;
 		};
 

@@ -76,7 +76,7 @@ define(function(require, exports, module) {
     function _setListeners() {
         this.hamburgerSurface.on('click', function() {
 			console.log("Clicked on menu icon image");
-            this._eventOutput.emit('menuToggle');
+            this._eventOutput.emit('show-menu');
         }.bind(this));
     }
     module.exports = BaseView;

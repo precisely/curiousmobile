@@ -17,6 +17,7 @@ define(function(require, exports, module) {
 		this.renderController = new RenderController();
 		this.pageMap = {};
 		_addPages.call(this);
+		_menuHandlers.call(this);
 	}
 
 	PageView.prototype = Object.create(View.prototype);
@@ -59,10 +60,21 @@ define(function(require, exports, module) {
 	function _createTrackPage() {
 		this.trackView = new TrackView();
 		this.pageMap['track'] = this.trackView;
-		this.trackView.on('menuToggle', function() {
-			this._eventOutput.emit('menuToggleNested');
-		}.bind(this));
+		this.trackView.pipe(this._eventOutput);
 		this.changePage('track');
+	}
+
+	function _menuHandlers() {
+		this.on('noevent', function(e) {
+			console.log('PageView: noevent');
+		}.bind(this));
+
+		this.on('logout', function(e) {
+			User.logout(function(){
+				this.changePage('launch');	
+			}.bind(this));
+			console.log('PageView: logout');
+		}.bind(this));
 	}
 
 	/**
@@ -94,6 +106,7 @@ define(function(require, exports, module) {
 		this.renderController.show(this.getPage(pageName), {
 			duration: 0
 		});
+		this._eventOutput.emit('change-page');
 	}
 
 	/**

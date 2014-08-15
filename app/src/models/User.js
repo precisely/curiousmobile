@@ -1,4 +1,5 @@
-define(['require', 'exports', 'module', 'exoskeleton'], function(require, exports, module, exoskeleton) {
+define(function(require, exports, module) {
+	var exoskeleton = require('exoskeleton');
 	var EventHandler = require("famous/core/EventHandler");
 	var store = require('store');
 	var u = require('util/Utils');
@@ -105,10 +106,13 @@ define(['require', 'exports', 'module', 'exoskeleton'], function(require, export
 		return new User(user);
 	}
 
-	User.logout = function() {
+	User.logout = function(callback) {
 		store.set('mobileSessionId', undefined);
 		store.set('user', undefined);
 		u.callLogoutCallbacks();
+		if (typeof callback != 'undefined') {
+			callback();	
+		}
 	}
 
 	module.exports = User;

@@ -38,6 +38,10 @@ define(function(require, exports, module) {
 
 	function _createMenuView() {
 		this.menuView = new MenuView({ menuData: MenuData });
+		this.menuView.on('logout', function(e) {
+			console.log('AppView logout event');
+		}.bind(this));
+		this.menuView.pipe(this.pageView._eventOutput);
 
 		var menuModifier = new StateModifier({
 			transform: Transform.behind
@@ -51,16 +55,26 @@ define(function(require, exports, module) {
 			console.log("Event: menuToggle Hangler - AppView");
 			this.toggleMenu();
 		}.bind(this));
-	
+		this.pageView.on('change-page', function() {
+			if (this.showingMenu) {
+				this.toggleMenu();
+			}
+		}.bind(this));
+		this.pageView.on('show-menu', function(e) {
+			console.log('pageView event');
+			this.toggleMenu();
+		}.bind(this));
 	}
 
 	AppView.prototype.toggleMenu = function() {
 		if (this.menuToggle) {
 			this.slideLeft();
 			this.menuView.resetMenuItems();
+			this.showingMenu = false;
 		} else {
 			this.slideRight();
 			this.menuView.animateMenuItems();
+			this.showingMenu = true;
 		}
 		this.menuToggle = !this.menuToggle;
 	};
