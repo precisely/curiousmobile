@@ -1,19 +1,18 @@
-define(['require', 'exports', 'module', 'store','jstzdetect', 'exoskeleton', 'views/AlertView'],
+define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'views/AlertView'],
 	function(require, exports, module, store, jstz, exoskeleton, AlertView) {
 		'use strict';
 		var Utils = {};
 		var u = Utils;
-		var jstz = require('jstzdetect');
-		
+
 		u.numJSONCalls = 0;
 		u.pendingJSONCalls = [];
-		u.alertViewsOpen = []; 
+		u.alertViewsOpen = [];
 
 
 		// Base Javascript library extensions
 		Utils.getServerUrl = function() {
 			return window.App.serverUrl;
-		}
+		};
 
 		Utils.showAlert = function(options) {
 			if (_.isString(options)) {
@@ -24,25 +23,25 @@ define(['require', 'exports', 'module', 'store','jstzdetect', 'exoskeleton', 'vi
 			var alert = new AlertView(options);
 			u.alertViewsOpen.push(alert);
 			return alert;
-		}
+		};
 
-		Utils.closeAlerts = function () {
-			_.each(u.alertViews, function (view) {
+		Utils.closeAlerts = function() {
+			_.each(u.alertViews, function(view) {
 				view.controller.hide();
 			});
-		}
+		};
 
 		Utils.isOnline = function() {
 			return window.navigator.onLine;
-		}
+		};
 
 		Utils.supportsLocalStorage = function() {
 			try {
-				return 'localStorage' in window && window['localStorage'] !== null;
+				return 'localStorage' in window && window.localStorage !== null;
 			} catch (e) {
 				return false;
 			}
-		}
+		};
 
 		// flag to determine whether the system is ready to submit data
 		u.dataReady = false;
@@ -50,35 +49,35 @@ define(['require', 'exports', 'module', 'store','jstzdetect', 'exoskeleton', 'vi
 		u.dataReadyCallbacks = [];
 
 		Utils.addDataReadyCallback = function(closure) {
-			console.log("Adding dataReady callback");
+			console.log('Adding dataReady callback');
 			u.dataReadyCallbacks.push(closure);
-		}
+		};
 
 		Utils.callDataReadyCallbacks = function() {
-			console.log("Calling dataReadyCallbacks");
+			console.log('Calling dataReadyCallbacks');
 			for (var i in u.dataReadyCallbacks) {
-				console.log("Calling dataReadyCallback " + i);
+				console.log('Calling dataReadyCallback ' + i);
 				u.dataReadyCallbacks[i]();
 			}
 
 			u.dataReadyCallbacks = [];
-		}
+		};
 
 		Utils.clearDataReadyCallbacks = function() {
 			u.dataReadyCallbacks = [];
-		}
+		};
 
 
 		/*
-		* Logout callbacks; register callbacks to be called when user logs out
-		*/
+		 * Logout callbacks; register callbacks to be called when user logs out
+		 */
 		u._logoutCallbacks = [];
 
 		u._loginSessionNumber = 0;
 
 		Utils.registerLogoutCallback = function(closure) {
 			u._logoutCallbacks.push(closure);
-		}
+		};
 
 		Utils.callLogoutCallbacks = function() {
 			for (var i in u._logoutCallbacks) {
@@ -86,46 +85,48 @@ define(['require', 'exports', 'module', 'store','jstzdetect', 'exoskeleton', 'vi
 			}
 			clearJSONQueue();
 			++u._loginSessionNumber;
-		}
+		};
 
 		/*
-		* Add universal startsWith method to all String classes
-		*/
+		 * Add universal startsWith method to all String classes
+		 */
 		String.prototype.startsWith = function(str) {
 			return this.substring(0, str.length) === str;
-		}
+		};
+
 		String.prototype.endsWith = function(str) {
-			return this.length >= str.length && this.substr(this.length - str.length) == str;
-		}
+			return this.length >= str.length && this.substr(this.length - str.length) === str;
+		};
 
 		/*
-		* Low-level utility methods
-		*/
+		 * Low-level utility methods
+		 */
 		Utils.arrayEmpty = function(arr) {
 			for (var i in arr) {
 				return false;
 			}
 
 			return true;
-		}
+		};
 
 		Utils.removeElem = function(arr, elem) {
 			return jQuery.grep(arr, function(v) {
-				return v != elem;
+				return v !== elem;
 			});
-		}
+		};
 
 		/*
-		* Number/date formatting
-		*/
+		 * Number/date formatting
+		 */
 		Utils.isNumeric = function(str) {
-			var chars = "0123456789.+-";
+			var chars = '0123456789.+-';
 
-			for (i = 0; i < str.length; i++)
+			for (i = 0; i < str.length; i++) {
 				if (chars.indexOf(str.charAt(i)) == -1)
 					return false;
+			}
 			return true;
-		}
+		};
 
 		Utils.dateToTime = function(date) {
 			if (typeof(date) == 'string') {
@@ -141,29 +142,31 @@ define(['require', 'exports', 'module', 'store','jstzdetect', 'exoskeleton', 'vi
 				ap = "am";
 			else
 				ap = "pm";
-			if (hour == 0)
+			if (hour === 0) {
 				hour = 12;
-			if (hour > 12)
+			}
+			if (hour > 12) {
 				hour = hour - 12;
+			}
 
 			var min = d.getMinutes();
 
-			if (shortForm && min == 0) {
+			if (shortForm && min === 0) {
 				return hour + ap;
 			}
 
-			min = min + "";
+			min = min + '';
 
 			if (min.length == 1)
-				min = "0" + min;
+				min = '0' + min;
 
-			return hour + ":" + min + ap;
-		}
+			return hour + ':' + min + ap;
+		};
 
 		//var DateUtil = new function() {
 		Utils.DateUtil = function() {
 			this.now = new Date();
-		}
+		};
 
 		Utils.DateUtil.prototype.getDateRangeForToday = function() {
 			var now = this.now;
@@ -173,23 +176,23 @@ define(['require', 'exports', 'module', 'store','jstzdetect', 'exoskeleton', 'vi
 				start: start,
 				end: end
 			}
-		}
+		};
 
 		Utils.getMidnightDate = function(date) {
 			var start = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
-			return start;	
-		}
+			return start;
+		};
 
-		Utils.getTimezone = function () {
+		Utils.getTimezone = function() {
 			return window.jstz.determine().name();
 		}
 
 		Utils.backgroundPostJSON = function(description, url, args, successCallback, failCallback, delay) {
-			queueJSON(description, url, args, successCallback, failCallback, delay, true, true);
+			u.queueJSON(description, url, args, successCallback, failCallback, delay, true, true);
 		}
 
 		Utils.queuePostJSON = function(description, url, args, successCallback, failCallback, delay) {
-			queueJSON(description, url, args, successCallback, failCallback, delay, true, false);
+			u.queueJSON(description, url, args, successCallback, failCallback, delay, true, false);
 		}
 
 		Utils.queueJSON = function(description, url, args, successCallback, failCallback, delay, post, background) {
@@ -259,7 +262,7 @@ define(['require', 'exports', 'module', 'store','jstzdetect', 'exoskeleton', 'vi
 						u.showAlert("Server not responding... retrying " + description);
 					delay = (delay > 0 ? delay * 2 : 5000);
 					window.setTimeout(function() {
-						queueJSON(description, url, args, successCallback, failCallback, delay, background);
+						u.queueJSON(description, url, args, successCallback, failCallback, delay, background);
 					}, delay);
 				}
 			};
@@ -303,12 +306,12 @@ define(['require', 'exports', 'module', 'store','jstzdetect', 'exoskeleton', 'vi
 
 
 		/**
-		* A method which returns an string representation of an url containing parameters
-		* related to CSRF prevention. This is useful to concate url in any url string of ajax call,
-		* @param key unique string which is passed in jqCSRFToken tag to create token.
-		* @param prefix any string to append before generated url like: <b>&</b>.
-		* @returns string representation of CSRF parameters.
-		*/
+		 * A method which returns an string representation of an url containing parameters
+		 * related to CSRF prevention. This is useful to concate url in any url string of ajax call,
+		 * @param key unique string which is passed in jqCSRFToken tag to create token.
+		 * @param prefix any string to append before generated url like: <b>&</b>.
+		 * @returns string representation of CSRF parameters.
+		 */
 		Utils.getCSRFPreventionURI = function(key) {
 			var App = window.App;
 			var preventionURI = App.CSRF.SyncTokenKeyName + "=" + App.CSRF[key] + "&" + App.CSRF.SyncTokenUriName + "=" + key;
@@ -319,13 +322,13 @@ define(['require', 'exports', 'module', 'store','jstzdetect', 'exoskeleton', 'vi
 		}
 
 		/**
-		* A method which returns an object containing key & its token based on given key.
-		* This is useful to be easily passed in some jQuery methods like <b>getJSON</b>,
-		* which accepts parameters to be passed as Object.
-		* @param key unique string which is passed in jqCSRFToken tag to create token.
-		* @param data optional object to attach to new object using jQuery's extend method.
-		* @returns the object containing parameters for CSRF prevention.
-		*/
+		 * A method which returns an object containing key & its token based on given key.
+		 * This is useful to be easily passed in some jQuery methods like <b>getJSON</b>,
+		 * which accepts parameters to be passed as Object.
+		 * @param key unique string which is passed in jqCSRFToken tag to create token.
+		 * @param data optional object to attach to new object using jQuery's extend method.
+		 * @returns the object containing parameters for CSRF prevention.
+		 */
 		Utils.getCSRFPreventionObject = function(key, data) {
 			var App = window.App;
 			var CSRFPreventionObject = new Object();
@@ -340,8 +343,8 @@ define(['require', 'exports', 'module', 'store','jstzdetect', 'exoskeleton', 'vi
 		}
 
 		/*
-		* Curious data json return value check
-		*/
+		 * Curious data json return value check
+		 */
 		Utils.checkData = function(data, status, errorMessage, successMessage) {
 			var User = require('models/User');
 			if (data == 'error') {
@@ -407,8 +410,8 @@ define(['require', 'exports', 'module', 'store','jstzdetect', 'exoskeleton', 'vi
 		}
 
 		/*
-		* HTML escape utility methods
-		*/
+		 * HTML escape utility methods
+		 */
 		Utils.escapeHTML = function(str) {
 			return ('' + str).replace(/&/g, '&amp;').replace(/>/g, '&gt;').replace(/</g, '&lt;').replace(/"/g, '&quot;').replace(/  /g, '&nbsp;&nbsp;');
 		}
@@ -438,4 +441,4 @@ define(['require', 'exports', 'module', 'store','jstzdetect', 'exoskeleton', 'vi
 
 
 		module.exports = Utils;
-});
+	});

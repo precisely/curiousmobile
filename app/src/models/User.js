@@ -24,11 +24,7 @@ define(['require', 'exports', 'module', 'exoskeleton'], function(require, export
 				}),
 				function(data) {
 					if (data['success']) {
-						store.set('mobileSessionId', data['mobileSessionId']);
-						var currentUser = new User(data['user']);
-						store.set('user', currentUser);
-						console.log(data);
-						callback(currentUser);
+						callback(this.getUserData(data));
 					} else {
 						this.u.showAlert('Username or password not correct, please try again');
 					}
@@ -38,6 +34,50 @@ define(['require', 'exports', 'module', 'exoskeleton'], function(require, export
 		isLoggedIn: function() {
 			User.isLoggedIn();
 		},
+		register: function(email, username, password, callback) {
+			this.u.queuePostJSON("creating account",
+				this.u.makePostUrl('doregisterData'),
+				this.u.makePostArgs({
+					email: email,
+					username: username,
+					password: password,
+					groups: "['announce','curious','curious announce']"
+				}),
+				function(data) {
+					if (data['success']) {
+						this.getUserData(data);
+						callback(data);
+					} else {
+						this.u.showAlert(data.message + ' Please try again or hit Cancel to return to the login screen.');
+					}
+				}
+			);
+
+		},
+		getUserData: function(data) {
+			store.set('mobileSessionId', data['mobileSessionId']);
+			if (data.user) {
+				return this.cache(data.user);
+			} else {
+				this.u.queueJSON("loading login data",
+					this.u.makeGetUrl("getPeopleData"),
+					this.u.makeGetArgs(this.u.getCSRFPreventionObject("getPeopleDataCSRF")),
+					function(data) {
+						if (!u.checkData(data))
+							return;
+						this.cache(data);
+					}
+				);
+
+			}
+		},
+		cache: function(user) {
+			var currentUser = new User(user);
+			store.set('user', currentUser);
+			dataReady = true;
+			this.u.callDataReadyCallbacks();
+			return currentUser;
+		}
 
 	});
 

@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var RenderController = require("famous/views/RenderController");
 	var TrackView = require('views/TrackView');
-	var LoginView = require('views/LoginView');
+	var LaunchView = require('views/LaunchView');
 	var Utils = require('util/Utils');
 	var store = require('store');
 	var User = require('models/User');
@@ -34,21 +34,25 @@ define(function(require, exports, module) {
 		});
 		this.add(backgroundSurface);
 		this.add(this.renderController);
-		this.loginView = new LoginView();
-		this.pageMap['login'] = this.loginView;
+		this.launchView = new LaunchView();
+		this.pageMap['launch'] = this.launchView;
 		this.hiddenModifier = new StateModifier({
 			align: [1, 1]
 		});
 
-		this.loginView.on('login-success', function(data) {
+		this.launchView.on('login-success', function(data) {
 			_createTrackPage.call(this);
-			this.changePage('track');
+			console.log('PageView: login-success');
 		}.bind(this));
+
+		this.launchView.on('registered', function(e) {
+			_createTrackPage.call(this);
+		}.bind(this));
+
 		if (!User.isLoggedIn()) {
-			this.changePage('login');
+			this.changePage('launch');
 		} else {
 			_createTrackPage.call(this);
-			this.changePage('track');
 		}
 	}
 
@@ -58,6 +62,7 @@ define(function(require, exports, module) {
 		this.trackView.on('menuToggle', function() {
 			this._eventOutput.emit('menuToggleNested');
 		}.bind(this));
+		this.changePage('track');
 	}
 
 	/**

@@ -1,51 +1,25 @@
 define(function(require, exports, module) {
-	var View = require('famous/core/View');
-	var Surface = require('famous/core/Surface');
-	var Transform = require('famous/core/Transform');
-	var StateModifier = require('famous/modifiers/StateModifier');
-	var Modifier = require("famous/core/Modifier");
-	var ImageSurface = require("famous/surfaces/ImageSurface");
-	var SequentialLayout = require("famous/views/SequentialLayout");
+	'use strict';
+    var View          = require('famous/core/View');
+    var Surface       = require('famous/core/Surface');
+    var Transform     = require('famous/core/Transform');
+    var StateModifier = require('famous/modifiers/StateModifier');
 	var FormContainerSurface = require("famous/surfaces/FormContainerSurface");
-	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var InputSurface = require("famous/surfaces/InputSurface");
-	var ImageSurface = require("famous/surfaces/ImageSurface");
-	var SubmitInputSurface = require("famous/surfaces/SubmitInputSurface");
+	var SequentialLayout = require("famous/views/SequentialLayout");
 	var User = require('models/User');
-	var u = require('util/Utils');
 
-
-	function LoginView() {
-		View.apply(this, arguments);
+    function LoginView() {
+        View.apply(this, arguments);
 		_createView.call(this);
-	}
+    }
 
-	LoginView.prototype = Object.create(View.prototype);
-	LoginView.prototype.constructor = LoginView;
+    LoginView.prototype = Object.create(View.prototype);
+    LoginView.prototype.constructor = LoginView;
 
-	LoginView.DEFAULT_OPTIONS = {};
+    LoginView.DEFAULT_OPTIONS = {};
 
-	function _createView() {
-		var containerSurface = new ContainerSurface({
-			size: [window.innerWidth, window.innerHeight],
-			properties: {
-				backgroundColor: 'white'
-			}
-		});
-		this.add(containerSurface);
-
-		var logoSurface = new ImageSurface({
-			size: [205, 230],
-			content: 'content/images/logo.gif'
-		});
-
-		var logoModifier = new Modifier({
-			origin: [0.5, 0.1],
-		});
-
-		var formModifier = new Modifier({
-			origin: [0.5, 0.8],
-		});
+	function _createView(argument) {
 		var formSurface = new FormContainerSurface({
 			size: [200, 200],
 		});
@@ -68,11 +42,9 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		var submitSurface = new InputSurface({
-			value: 'Login',
-			type: 'button',
-			classes: ['btn'],
-			size: [80, 40],
+		var submitSurface = new Surface({
+			size: [52, 25],
+			content: '<input type="button" value="Login" />'
 		});
 
 		this.usernameSurface = usernameSurface;
@@ -88,20 +60,43 @@ define(function(require, exports, module) {
 			itemSpacing: 7,
 		});
 
-		formLayout.sequenceFrom([usernameSurface, passwordSurface, submitSurface]);
+		var otherLinksSurface = new Surface({
+			size: [200,20],
+			content: '<a href="#" class="create-account">Create an account</a> | ' +
+				'<a href="#" class="forgot-password">Forgot Password?</a>',
+			properties: {
+				color: 'black',
+				fontSize: '11px'
+			}
+				
+		});
+
+		otherLinksSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				if (_.contains(e.srcElement.classList, 'create-account')) {
+					console.log("Show create-account form");
+					this._eventOutput.emit('create-account');
+				} else if (_.contains(e.srcElement.classList, 'forgot-password')) {
+					console.log("otherLinksSurface forgot password");
+					this._eventOutput.emit('forgot-password');
+				}
+			}
+		}.bind(this));
+
+		formLayout.sequenceFrom([usernameSurface, passwordSurface, submitSurface, otherLinksSurface]);
 		formSurface.add(formLayout);
 
-		this.add(formModifier).add(formSurface);
-		this.add(logoModifier).add(logoSurface);
+		this.add(formSurface);
 	}
 
-	LoginView.prototype.submit = function(arguments) {
+	LoginView.prototype.submit = function() {
 		var currentUser = new User();
 		currentUser.login(this.usernameSurface.getValue(), this.passwordSurface.getValue(), function(user) {
 			window.App.currentUser = user;
+			console.log('LoginView: login success');
 			this._eventOutput.emit('login-success');
 		}.bind(this));
 	}
 
-	module.exports = LoginView;
+    module.exports = LoginView;
 });

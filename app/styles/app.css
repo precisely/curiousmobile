@@ -2,6 +2,10 @@ html {
   background: #fff;
 }
 
+a {
+	color: blue;
+}
+
 .backfaceVisibility {
   -webkit-backface-visibility: visible;
   backface-visibility: visible;
