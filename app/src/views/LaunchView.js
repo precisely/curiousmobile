@@ -50,12 +50,11 @@ define(function(require, exports, module) {
 		this.forgotPasswordView = new ForgotPasswordView();
 
 		this.loginView.on('forgot-password', function() {
-			this.renderController.show(this.forgotPasswordView);
+			this.showView(this.forgotPasswordView);
 		}.bind(this));
 
 		this.loginView.on('create-account', function() {
-			this.renderController.hide();
-			this.renderController.show(this.registerView);
+			this.showView(this.registerView);
 		}.bind(this));
 
 		this.loginView.on('login-success', function() {
@@ -64,15 +63,15 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.forgotPasswordView.on('cancel-forgot-password', function(e) {
-			this.renderController.show(this.loginView);
+			this.showView(this.loginView);
 		}.bind(this));
 
 		this.forgotPasswordView.on('password-reset', function(e) {
-			this.renderController.show(this.loginView);
+			this.showView(this.loginView);
 		}.bind(this));
 		
 		this.registerView.on('cancel-registration', function(e) {
-			this.renderController.show(this.loginView);
+			this.showView(this.loginView);
 		}.bind(this));
 
 		this.registerView.on('registration-success', function(e) {
@@ -81,6 +80,11 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 
+	}
+
+	LaunchView.prototype.showView = function(view){
+		view.reset();
+		this.renderController.show(view);
 	}
 
 	module.exports = LaunchView;

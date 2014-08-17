@@ -98,5 +98,10 @@ define(function(require, exports, module) {
 		}.bind(this));
 	}
 
+	LoginView.prototype.reset = function(){
+		this.usernameSurface.setValue('');
+		this.passwordSurface.setValue('');
+	}
+
     module.exports = LoginView;
 });

@@ -87,5 +87,9 @@ define(function(require, exports, module) {
 				}
 			}.bind(this));
 	};
+
+	ForgotPasswordView.prototype.reset = function(){
+		this.usernameSurface.setValue('');
+	};
 	module.exports = ForgotPasswordView;
 });

@@ -203,7 +203,7 @@ define(function(require, exports, module) {
 				this.entry = null;
 			}.bind(this));
 			return;
-		} else if (!entry.isRemind() && entry.toString() == entry.text) {
+		} else if (!entry.isRemind() && entry.toString() == newText) {
 			return;
 		} else {
 			entry.setText(newText);

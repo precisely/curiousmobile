@@ -77,10 +77,11 @@ define(function(require, exports, module) {
 
 	EntryListView.prototype.refreshEntries = function(entries, glowEntry) {
 		this.entryViews = [];
-		if (entries) {
-			this.entries.set(entries);
+		if (!entries && this.entries) {
+			entries = EntryCollection.getFromCache(this.entries.key);
 		}
 
+		this.entries.set(entries);
 		if (this.sequentialLayout) {
 			this.renderController.hide(this.sequentialLayout);
 		}

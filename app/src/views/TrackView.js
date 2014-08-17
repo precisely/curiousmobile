@@ -43,7 +43,9 @@ define(function(require, exports, module) {
 
 		this.createView.on('new-entry', function(data) {
 			console.log("New Entry - TrackView event");
-			this.currentListView.refreshEntries(data.entries, data.glowEntry);
+			if (this.listViewKeyMap[data.key]) {
+				this.listViewKeyMap[data.key].refreshEntries(data.entries);
+			}
 		}.bind(this));
 
 		var backgroundModifier = new StateModifier({
@@ -76,14 +78,16 @@ define(function(require, exports, module) {
 	}
 
 	TrackView.prototype.addEntryListViews = function(date) {
+		this.listViewKeyMap = {};
 		date = u.getMidnightDate(date);
 		this.entryListViewCache = [];
 		if (this.scrollView) {
-			this.renderController.hide(this.scrollView);
+			this.renderController.hide({duration: 0});
 		}
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.X,
 			paginated: true,
+			rails: false
 		});
 		//creating 11 cached list views by default
 		//5 days before and 5 days after today
@@ -92,6 +96,7 @@ define(function(require, exports, module) {
 			for (var i = 0, l = collections.length; i < l; i++) {
 				var entryListView = new EntryListView(collections[i]);
 				this.entryListViewCache.push(entryListView);
+				this.listViewKeyMap[collections[i].key] = entryListView;
 				entryListView.pipe(this.scrollView);
 			}
 			this.scrollView.sequenceFrom(this.entryListViewCache);
@@ -101,14 +106,15 @@ define(function(require, exports, module) {
 			this.scrollView.setPosition(window.innerWidth * 5);
 			this.lastScrollPosition = this.scrollView.getPosition();
 			this.scrollView.on('pageChange', function(e) {
-				if (!this.pageChange) {
-					this.pageChange = true;
-					return;
-				}
 				var listView = this.entryListViewCache[e.index];
 				this.currentListView = listView;
+				console.log('changing to page index: ' + (e.index + e.direction));
+				console.log('changing page to: ' + listView.entries.key);
+				console.log(listView);
+
 				if (listView) {
-					var selectedDate = this.calendarView.changeDate(e.direction);
+					var selectedDate = listView.entries.date; 
+					this.calendarView.setSelectedDate(selectedDate);
 					if (e.index < 2 || e.index > this.entryListViewCache.length - 2) {
 						var selectedDate = listView.entries.date;
 						this.addEntryListViews(selectedDate);

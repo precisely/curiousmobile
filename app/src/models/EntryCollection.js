@@ -45,14 +45,21 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 						}
 						var collections = [];
 						for (var i = 0, len = dates.length; i < len; i++) {
-							var entries = collectionCache.getItem(Entry.getCacheKey(dates[i]));
+							var key = Entry.getCacheKey(dates[i]);
+							var entries = collectionCache.getItem(key);
 							var entryCollection = new EntryCollection(entries);
 							entryCollection.date = dates[i];
+							entryCollection.key = key;
 							collections.push(entryCollection);
 						}
 						callback(collections);
 					}
 				});
+		};
+
+		EntryCollection.getFromCache = function(key){
+			var collectionCache = window.App.collectionCache;
+			return collectionCache.getItem(key);
 		}
 
 

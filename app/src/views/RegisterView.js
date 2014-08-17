@@ -97,7 +97,13 @@ define(function(require, exports, module) {
 				this._eventOutput.emit('registration-success');
 			}.bind(this)
 		)
-	}
+	};
+
+	RegisterView.prototype.reset = function(){
+		this.emailSurface.setValue('');
+		this.usernameSurface.setValue('');
+		this.passwordSurface.setValue('');
+	};
 
 	module.exports = RegisterView;
 });

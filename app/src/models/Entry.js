@@ -131,6 +131,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						callback({
 							entries: entries[0],
 							glowEntry: entries[3],
+							key: Entry.getCacheKey(baseDate)
 						});
 						//if (entries[2] != null)
 						//updateAutocomplete(entries[2][0], entries[2][1], entries[2][2],
