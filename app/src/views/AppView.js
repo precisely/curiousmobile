@@ -1,6 +1,7 @@
 /*** AppView.js ***/
 
 define(function(require, exports, module) {
+	'use strict';
 	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
@@ -51,19 +52,18 @@ define(function(require, exports, module) {
 	}
 
 	function _setListeners() {
-		this.pageView.on('menuToggleNested', function() {
-			console.log("Event: menuToggle Hangler - AppView");
-			this.toggleMenu();
-		}.bind(this));
-		this.pageView.on('change-page', function() {
+
+		this.pageView.on('page-change-complete', function() {
 			if (this.showingMenu) {
 				this.toggleMenu();
 			}
 		}.bind(this));
+
 		this.pageView.on('show-menu', function(e) {
 			console.log('pageView event');
 			this.toggleMenu();
 		}.bind(this));
+
 	}
 
 	AppView.prototype.toggleMenu = function() {

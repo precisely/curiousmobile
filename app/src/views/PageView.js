@@ -75,6 +75,10 @@ define(function(require, exports, module) {
 			}.bind(this));
 			console.log('PageView: logout');
 		}.bind(this));
+
+		this.on('change-page', function(e) {
+			this.changePage(e.data);	
+		}.bind(this));
 	}
 
 	/**
@@ -106,7 +110,7 @@ define(function(require, exports, module) {
 		this.renderController.show(this.getPage(pageName), {
 			duration: 0
 		});
-		this._eventOutput.emit('change-page');
+		this._eventOutput.emit('page-change-complete');
 	}
 
 	/**

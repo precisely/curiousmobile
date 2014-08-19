@@ -6,6 +6,12 @@ a {
 	color: blue;
 }
 
+.footer a {
+	font-weight: bold;
+	color: rgb(83, 83, 83);
+	font-size: 12px;
+}
+
 .backfaceVisibility {
   -webkit-backface-visibility: visible;
   backface-visibility: visible;

@@ -3,11 +3,11 @@ define(function(require, exports, module) {
 	module.exports = [{
 		title: 'Track',
 		iconFont: '<i class="fa fa-coffee"></i>',
-		trigger: 'track'
+		trigger: {name:'change-page', data: 'track'}
 	}, {
 		title: 'Logout',
 		iconFont: '<i class="fa fa-cloud"></i>',
-		trigger: 'logout'
+		trigger: {name:'logout', data: 'track'}
 	}, {
 		title: '             ',
 		iconFont: '<i class="fa fa-code-fork"></i>'
