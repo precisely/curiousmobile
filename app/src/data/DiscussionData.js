@@ -1,0 +1,161 @@
+define(function(require, exports, module) {
+	'use strict';
+	module.exports = [{
+		'id': 173,
+		'name': 'acupuncture+sleep quality:2014-6-11 (snapshot)',
+		'userId': 4,
+		'isPublic': false,
+		'created': '2014-08-11T23:34:44.000Z',
+		'updated': '2014-08-11T23:34:44.000Z',
+		'isAdmin': false,
+		'groupId': 2,
+		'groupName': 'Curious Discussions',
+		'userName': 'heatheranne',
+		'isPlot': true
+	}, {
+		'id': 172,
+		'name': 'New question or discussion topic?',
+		'userId': 54,
+		'isPublic': false,
+		'created': '2014-05-19T11:35:55.000Z',
+		'updated': '2014-05-19T11:35:55.000Z',
+		'isAdmin': true,
+		'groupId': 2,
+		'groupName': 'Curious Discussions',
+		'userName': 'visheshd',
+		'isPlot': false
+	}, {
+		'id': 171,
+		'name': 'New question or discussion topic?',
+		'userId': 54,
+		'isPublic': false,
+		'created': '2014-05-13T10:23:13.000Z',
+		'updated': '2014-05-13T10:23:13.000Z',
+		'isAdmin': true,
+		'groupId': 2,
+		'groupName': 'Curious Discussions',
+		'userName': 'visheshd',
+		'isPlot': false
+	}, {
+		'id': 170,
+		'name': 'actinobacteria+bacteroidetes+cyanobacteria+firmicutes+fusobacteria+proteobacteria:2014-5-6',
+		'userId': 75,
+		'isPublic': false,
+		'created': '2014-05-06T11:25:02.000Z',
+		'updated': '2014-05-06T12:21:47.000Z',
+		'isAdmin': false,
+		'groupId': 2,
+		'groupName': 'Curious Discussions',
+		'userName': 'lgmd',
+		'isPlot': true
+	}, {
+		'id': 169,
+		'name': 'steps+max temp+max co2+dizzy:2014-5-5 (snapshot)',
+		'userId': 75,
+		'isPublic': true,
+		'created': '2014-05-05T16:35:22.000Z',
+		'updated': '2014-05-05T16:35:22.000Z',
+		'isAdmin': false,
+		'groupId': 2,
+		'groupName': 'Curious Discussions',
+		'userName': 'lgmd',
+		'isPlot': true
+	}, {
+		'id': 168,
+		'name': 'coffee:2014-4-2 (snapshot)',
+		'userId': 54,
+		'isPublic': false,
+		'created': '2014-04-28T14:18:36.000Z',
+		'updated': '2014-04-28T14:18:36.000Z',
+		'isAdmin': true,
+		'groupId': 2,
+		'groupName': 'Curious Discussions',
+		'userName': 'visheshd',
+		'isPlot': true
+	}, {
+		'id': 167,
+		'name': 'New question or discussion topic?',
+		'userId': 54,
+		'isPublic': false,
+		'created': '2014-04-28T13:21:19.000Z',
+		'updated': '2014-04-28T13:21:19.000Z',
+		'isAdmin': true,
+		'groupId': 2,
+		'groupName': 'Curious Discussions',
+		'userName': 'visheshd',
+		'isPlot': false
+	}, {
+		'id': 165,
+		'name': 'Is low blood oxygen saturation why I detest flying?',
+		'userId': 4,
+		'isPublic': false,
+		'created': '2014-04-14T10:04:21.000Z',
+		'updated': '2014-04-14T12:17:27.000Z',
+		'isAdmin': false,
+		'groupId': 2,
+		'groupName': 'Curious Discussions',
+		'userName': 'heatheranne',
+		'isPlot': true
+	}, {
+		'id': 164,
+		'name': 'Is this why I hate air travel?',
+		'userId': 4,
+		'isPublic': false,
+		'created': '2014-04-14T10:01:48.000Z',
+		'updated': '2014-04-14T10:02:06.000Z',
+		'isAdmin': false,
+		'groupId': 2,
+		'groupName': 'Curious Discussions',
+		'userName': 'heatheranne',
+		'isPlot': true
+	}, {
+		'id': 162,
+		'name': 'banana+sedentary activity distance group:2014-3-25 (snapshot)',
+		'userId': 54,
+		'isPublic': false,
+		'created': '2014-03-31T07:17:03.000Z',
+		'updated': '2014-03-31T07:17:03.000Z',
+		'isAdmin': true,
+		'groupId': 2,
+		'groupName': 'Curious Discussions',
+		'userName': 'visheshd',
+		'isPlot': true
+	}, {
+		'id': 159,
+		'name': 'anxiety+magnesium malate:2014-3-3',
+		'userId': 4,
+		'isPublic': false,
+		'created': '2014-03-03T15:21:22.000Z',
+		'updated': '2014-03-03T15:21:31.000Z',
+		'isAdmin': false,
+		'groupId': 2,
+		'groupName': 'Curious Discussions',
+		'userName': 'heatheranne',
+		'isPlot': true
+	}, {
+		'id': 157,
+		'name': 'headache severity+sugar:2014-2-7 (snapshot)',
+		'userId': 14,
+		'isPublic': true,
+		'created': '2014-02-06T23:21:12.000Z',
+		'updated': '2014-02-06T23:21:18.000Z',
+		'isAdmin': false,
+		'groupId': 2,
+		'groupName': 'Curious Discussions',
+		'userName': 'demo',
+		'isPlot': true
+	}, {
+		'id': 155,
+		'name': 'LGMD2I demo 1',
+		'userId': 75,
+		'isPublic': false,
+		'created': '2013-10-21T19:15:31.000Z',
+		'updated': '2013-10-21T19:16:08.000Z',
+		'isAdmin': false,
+		'groupId': 2,
+		'groupName': 'Curious Discussions',
+		'userName': 'lgmd',
+		'isPlot': true
+	}];
+
+});

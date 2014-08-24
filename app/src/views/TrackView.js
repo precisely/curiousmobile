@@ -100,7 +100,6 @@ define(function(require, exports, module) {
 				entryListView.pipe(this.scrollView);
 			}
 			this.scrollView.sequenceFrom(this.entryListViewCache);
-			// TODO make it work with scroll
 			this.currentListView = this.entryListViewCache[5];
 			//setting the scroll position to today
 			this.scrollView.setPosition(window.innerWidth * 5);

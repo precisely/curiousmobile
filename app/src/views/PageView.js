@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 	var RenderController = require("famous/views/RenderController");
 	var TrackView = require('views/TrackView');
 	var LaunchView = require('views/LaunchView');
+	var CommunityView = require('views/community/CommunityView');
 	var Utils = require('util/Utils');
 	var store = require('store');
 	var User = require('models/User');
@@ -50,6 +51,8 @@ define(function(require, exports, module) {
 			_createTrackPage.call(this);
 		}.bind(this));
 
+		this.communityView = new CommunityView('');
+		this.pageMap['community'] = this.communityView;
 		if (!User.isLoggedIn()) {
 			this.changePage('launch');
 		} else {
@@ -77,6 +80,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.on('change-page', function(e) {
+			console.log('Changing page to ' + e.data);
 			this.changePage(e.data);	
 		}.bind(this));
 	}
@@ -107,9 +111,12 @@ define(function(require, exports, module) {
 	PageView.prototype.changePage = function(pageName) {
 		var lastPageName = store.get('lastPage');
 		this.renderController.hide(); //hides the last page
-		this.renderController.show(this.getPage(pageName), {
+		var view = this.getPage(pageName);
+		this.renderController.show(view, {
 			duration: 0
 		});
+
+		view._eventInput.trigger('on-show');
 		this._eventOutput.emit('page-change-complete');
 	}
 
