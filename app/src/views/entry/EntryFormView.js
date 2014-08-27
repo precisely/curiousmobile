@@ -10,7 +10,7 @@ define(function(require, exports, module) {
 	var Easing = require("famous/transitions/Easing");
 	var RenderController = require("famous/views/RenderController");
 	var SequentialLayout = require("famous/views/SequentialLayout");
-	var AutoCompleteView = require("views/AutoCompleteView");
+	var AutocompleteView = require("views/AutocompleteView");
 	var u = require('util/Utils');
 	var Entry = require('models/Entry');
 
@@ -42,7 +42,8 @@ define(function(require, exports, module) {
 			}
 		});
 
-		var autoCompleteSurface = new AutoCompleteView();
+		var autoCompleteSurface = new AutocompleteView();
+		autoCompleteSurface.getAutoComplete();
 		
 		var sequentialLayout = new SequentialLayout({
 			direction: 0,

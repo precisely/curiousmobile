@@ -384,7 +384,8 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		}
 
 		Utils.makeGetUrl = function(url) {
-			return u.getServerUrl() + "/mobiledata/" + url + '?callback=?';
+			return "http://127.0.0.1:8080" + "/mobiledata/" + url + '?callback=?';
+//          return u.getServerUrl() + "/mobiledata/" + url + '?callback=?';
 		}
 
 		Utils.makeGetArgs = function(args) {
