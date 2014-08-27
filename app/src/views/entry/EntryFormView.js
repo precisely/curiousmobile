@@ -10,8 +10,10 @@ define(function(require, exports, module) {
 	var Easing = require("famous/transitions/Easing");
 	var RenderController = require("famous/views/RenderController");
 	var SequentialLayout = require("famous/views/SequentialLayout");
+	var AutoCompleteView = require("views/AutoCompleteView");
 	var u = require('util/Utils');
 	var Entry = require('models/Entry');
+
 	function EntryFormView(entry) {
 		View.apply(this, arguments);
 		this.entry = entry;
@@ -36,9 +38,12 @@ define(function(require, exports, module) {
 		var formContainerSurface = new ContainerSurface({
 			size: [undefined,70],
 			properties: {
-				backgroundColor: '#c0c0c0'	
+				backgroundColor: '#c0c0c0'
 			}
 		});
+
+		var autoCompleteSurface = new AutoCompleteView();
+		
 		var sequentialLayout = new SequentialLayout({
 			direction: 0,
 			itemSpacing: 20,
@@ -86,6 +91,8 @@ define(function(require, exports, module) {
 			//on enter
 			if (e.keyCode == 13) {
 				this.blur(e);
+			} else if (e.keyCode != 13) {
+			    formContainerSurface.add(autoCompleteSurface);
 			}
 		}.bind(this));
 
