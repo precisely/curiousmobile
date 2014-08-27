@@ -43,7 +43,6 @@ define(function(require, exports, module) {
 		});
 
 		var autoCompleteSurface = new AutocompleteView();
-		autoCompleteSurface.getAutoComplete();
 		
 		var sequentialLayout = new SequentialLayout({
 			direction: 0,
