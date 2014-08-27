@@ -42,7 +42,7 @@ define(function(require, exports, module) {
 			}
 		});
 
-		var autoCompleteSurface = new AutocompleteView();
+//		var autoCompleteSurface = new AutocompleteView();
 		
 		var sequentialLayout = new SequentialLayout({
 			direction: 0,
@@ -87,12 +87,20 @@ define(function(require, exports, module) {
 		this.toggleSuffix();
 
 		this.inputSurface.on('keydown', function(e) {
-			console.log('keydown on formview');
+//			console.log('keydown on formview');
 			//on enter
 			if (e.keyCode == 13) {
 				this.blur(e);
 			} else if (e.keyCode != 13) {
-			    formContainerSurface.add(autoCompleteSurface);
+			    if (e.keyCode != 229){
+			        var enteredKey = String.fromCharCode(e.keyCode)
+    			    console.log(enteredKey); 
+    //			    autoCompleteSurface(e.keyCode);
+    //			    this._eventOutput.emit('forgot-password');
+			        var autoCompleteSurface = new AutocompleteView(enteredKey);
+//    			    autoCompleteSurface.enteredKey = e.keyCode;
+                    formContainerSurface.add(autoCompleteSurface);
+			    }
 			}
 		}.bind(this));
 
