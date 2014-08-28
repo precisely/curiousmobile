@@ -24,6 +24,12 @@ define(function(require, exports, module) {
 
 	App.collectionCache = collectionCache;
 
+	var app = (document.URL.indexOf( 'http://' ) === -1 && document.URL.indexOf( 'https://' ) === -1);
+	if (app){
+	    App.serverUrl = "http://192.168.0.109:8080";
+	} else {
+        App.serverUrl = "http://127.0.0.1:8080";
+	}
 	//App.serverUrl = "http://192.168.0.31:8080";
 //	App.serverUrl = "http://127.0.0.1:8080";
     App.serverUrl = "http://192.168.0.109:8080";
