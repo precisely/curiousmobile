@@ -46,7 +46,7 @@ define(function(require, exports, module) {
 			}
 		});
 
-		var autoCompleteSurface;
+		var autoCompleteSurface = new AutocompleteView();
 		
 		var sequentialLayout = new SequentialLayout({
 			direction: 0,
@@ -89,8 +89,6 @@ define(function(require, exports, module) {
 		});
 
 		this.toggleSuffix();
-
-		autoCompleteSurface = new AutocompleteView();
 
 		this.inputSurface.on('keydown', function(e) {
 			console.log('keydown on formview');
@@ -172,7 +170,7 @@ define(function(require, exports, module) {
 			}.bind(this));
 		}
 		this.add(formContainerSurface);
-
+	    
 	}
 
 	EntryFormView.prototype.toggleSuffix = function(suffix) {

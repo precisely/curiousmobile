@@ -62,16 +62,23 @@ define(function(require, exports, module) {
             var scrollView = new Scrollview({
                 direction: Utility.Direction.Y,
             });
-
             autocompletes.forEach(function(autocomplete) {
                 var autoCompleteView = new View();
                 autoCompleteView.autoCompleteSurface = new Surface({
                     size: [1270, 20],
                     content: autocomplete.label
                 });
+
                 autoCompleteView.autoCompleteModifier = new StateModifier({
                     transform:Transform.translate(6,35,99)
                 });
+
+                //Todo: listener that would set the data clicked into input field
+                autoCompleteView.autoCompleteSurface.on('click', function(e) {
+                    console.log("Clicked on autocomplete data");
+                    this._eventOutput.emit('autoCompleteEvent');
+                }.bind(this));
+
                 autoCompleteView.add(autoCompleteView.autoCompleteModifier).add(autoCompleteView.autoCompleteSurface);
                 surfaceList.push(autoCompleteView);
                 autoCompleteView.pipe(scrollView);
@@ -80,7 +87,6 @@ define(function(require, exports, module) {
             scrollView.sequenceFrom(surfaceList);
             this.renderController.show(scrollView);
         }.bind(this));
-
     }
 
     module.exports = AutocompleteView;
