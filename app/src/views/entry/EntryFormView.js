@@ -13,6 +13,7 @@ define(function(require, exports, module) {
 	var AutocompleteView = require("views/AutocompleteView");
 	var u = require('util/Utils');
 	var Entry = require('models/Entry');
+	var EventHandler = require('famous/core/EventHandler');
 
 	function EntryFormView(entry) {
 		View.apply(this, arguments);
@@ -29,7 +30,10 @@ define(function(require, exports, module) {
 	EntryFormView.prototype.constructor = EntryFormView;
 
 	EntryFormView.DEFAULT_OPTIONS = {};
-
+	EntryFormView.prototype.eventHandler = new EventHandler();
+	
+	var enteredKey = []
+	
 	function _zIndex(argument) {
 		return window.App.zIndex.formView;
 	}
@@ -42,7 +46,7 @@ define(function(require, exports, module) {
 			}
 		});
 
-//		var autoCompleteSurface = new AutocompleteView();
+		var autoCompleteSurface;
 		
 		var sequentialLayout = new SequentialLayout({
 			direction: 0,
@@ -86,19 +90,17 @@ define(function(require, exports, module) {
 
 		this.toggleSuffix();
 
+		autoCompleteSurface = new AutocompleteView();
+
 		this.inputSurface.on('keydown', function(e) {
-//			console.log('keydown on formview');
+			console.log('keydown on formview');
 			//on enter
 			if (e.keyCode == 13) {
 				this.blur(e);
 			} else if (e.keyCode != 13) {
 			    if (e.keyCode != 229){
-			        var enteredKey = String.fromCharCode(e.keyCode)
-    			    console.log(enteredKey); 
-    //			    autoCompleteSurface(e.keyCode);
-    //			    this._eventOutput.emit('forgot-password');
-			        var autoCompleteSurface = new AutocompleteView(enteredKey);
-//    			    autoCompleteSurface.enteredKey = e.keyCode;
+			        enteredKey = this.inputSurface.getValue() + String.fromCharCode(e.keyCode);
+			        autoCompleteSurface.getAutoCompletes(enteredKey);
                     formContainerSurface.add(autoCompleteSurface);
 			    }
 			}

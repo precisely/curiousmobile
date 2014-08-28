@@ -10,10 +10,13 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
             model: Autocomplete
         });
 
+        var tagStatsMap = new TagStatsMap();
+        var algTagList = [];
+        var freqTagList = [];
+        var dataFetched = false;
+        
         AutocompleteCollection.fetch = function(enteredKey, callback) {
-
             var collectionCache = window.App.collectionCache;
-
             if (typeof callback == 'undefined') {
                 console.log('fetchEntries: Missing a callback');
             }
@@ -22,78 +25,54 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
                 all: 'info'
             });
 
-            u.backgroundJSON("getting autocomplete info", u.makeGetUrl("autocompleteData"), u.makeGetArgs(argsToSend),
+            if (dataFetched) {
+//              var term = enteredKey[0].toLowerCase();
+                var term = enteredKey[enteredKey.length - 1].toLowerCase();
+                processInitData(term);
+            } else {
+                u.backgroundJSON("getting autocomplete info", u.makeGetUrl("autocompleteData"), u.makeGetArgs(argsToSend),
                 function(data) {
                     if (u.checkData(data)) {
-                        console.log('autocomplete entries from the server: ', data);
                         tagStatsMap.import(data['all']);
                         algTagList = data['alg'];
                         freqTagList = data['freq'];
-                        
-//                            var inputField = $("#input0");
-                        
-//                            var term = request.term.toLowerCase();
-                        var term = enteredKey.toLowerCase();
-                        
-                        var skipSet = {};
-                        var result = [];
-                        
-                        var matches = findAutoMatches(tagStatsMap, algTagList, term, 3, skipSet, 1);
-                        
-                        addStatsTermToSet(matches, skipSet);
-                        appendStatsTextToList(result, matches);
-                        
-                        var remaining = 6 - matches.length;
-                        
-                        if (term.length == 1) {
-                            var nextRemaining = remaining > 3 ? 3 : remaining;
-                            matches = findAutoMatches(tagStatsMap, algTagList, term, nextRemaining, skipSet, 0);
-                            addStatsTermToSet(matches, skipSet);
-                            appendStatsTextToList(result, matches);
-                            remaining -= nextRemaining;
-                        }
-                        
-                        if (remaining > 0) {
-                            matches = findAutoMatches(tagStatsMap, freqTagList, term, remaining, skipSet, 0);
-                            appendStatsTextToList(result, matches);
-                        }
-                        
-                        var obj = new Object();
-                        obj.data = result;
-                        console.log("result", result);
-                        console.log("result length", result.length);
-
-//                        result.forEach(function(entry) {
-////                                console.log(entry);
-//                            resultOut = entry.label;
-//                          alert(resultOut);
-//                        });
-                        callback(result);
-//                        response(result);
-//                    
-//                    
-//                    
-//                        inputField.autocomplete({
-//                            minLength: 1,
-//                            attachTo: "#autocomplete",
-//                            source: function(request, response) {
-//                            },
-//                            selectcomplete: function(event, ui) {
-//                                var tagStats = tagStatsMap.getFromText(ui.item.value);
-//                                if (tagStats) {
-//                                    var range = tagStats.getAmountSelectionRange();
-//                                    inputField.selectRange(range[0], range[1]);
-//                                    inputField.focus();
-//                                }
-//                            }
-//                            });
-//                            // open autocomplete on focus
-//                            inputField.focus(function(){
-//                                inputField.autocomplete("search",$("#input0").val());
-//                            });
-                        }
+                        dataFetched = true;
+//                        var inputField = $("#input0");
+//                        var term = enteredKey[0].toLowerCase();
+                        var term = enteredKey[enteredKey.length - 1].toLowerCase();
+                        processInitData(term);
+                    }
                 });
+            }
             
+            function processInitData(term) {
+                var skipSet = {};
+                var result = [];
+                var matches = findAutoMatches(tagStatsMap, algTagList, term, 3, skipSet, 1);
+                addStatsTermToSet(matches, skipSet);
+                appendStatsTextToList(result, matches);
+                var remaining = 6 - matches.length;
+
+                if (term.length == 1) {
+                    var nextRemaining = remaining > 3 ? 3 : remaining;
+                    matches = findAutoMatches(tagStatsMap, algTagList, term, nextRemaining, skipSet, 0);
+                    addStatsTermToSet(matches, skipSet);
+                    appendStatsTextToList(result, matches);
+                    remaining -= nextRemaining;
+                }
+
+                if (remaining > 0) {
+                    matches = findAutoMatches(tagStatsMap, freqTagList, term, remaining, skipSet, 0);
+                    appendStatsTextToList(result, matches);
+                }
+
+                var obj = new Object();
+                obj.data = result;
+                console.log("result", result);
+                console.log("result length", result.length);
+                callback(result);
+            }
+
             function addStatsTermToSet(list, set) {
                 for (var i in list) {
                     set[list[i].term] = 1;
@@ -250,10 +229,6 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
                     return this.textMap[textValue];
                 }
             }
-
-            var tagStatsMap = new TagStatsMap();
-            var algTagList = [];
-            var freqTagList = [];
 
             // refresh autocomplete data if new tag added
             function updateAutocomplete(term, amount, amountPrecision, units) {
