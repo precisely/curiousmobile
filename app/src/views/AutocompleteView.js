@@ -18,43 +18,23 @@ define(function(require, exports, module) {
 
     function AutocompleteView() {
         View.apply(this, arguments);
-        _createView.call(this);
-//        _addEventHandlers.call(this);
-//        AutocompleteView.enteredKey = key;
         this.init();
     }
 
     AutocompleteView.prototype = Object.create(View.prototype);
     AutocompleteView.prototype.constructor = AutocompleteView;
-
     AutocompleteView.DEFAULT_OPTIONS = {};
-//    AutocompleteView.enteredKey = 'm';
-//    alert(enteredKey);
-
+    
+    var onSelectCallback;
+    
     AutocompleteView.prototype.init = function() {
         this.renderController = new RenderController();
         this.add(this.renderController);
-//        this.getAutoCompletes(enteredKey);
     };
 
-    function _createView(argument) {
-        var formSurface = new FormContainerSurface({
-            size: [1280, 120],
-        });
-        var formLayout = new SequentialLayout({
-            direction: 1,
-            itemSpacing: 7,
-        });
-        var usernameSurface = new InputSurface({
-            size: [1280, 120]
-        });
-        formLayout.sequenceFrom([usernameSurface]);
-        formSurface.add(formLayout);
-        var autoCompleteModifier = new StateModifier({
-            transform:Transform.translate(6,35,11)
-        });
-        this.add(autoCompleteModifier).add(formSurface);
-    }
+    AutocompleteView.prototype.onSelect = function(callback) {
+        onSelectCallback = callback;
+    };
 
     AutocompleteView.prototype.getAutoCompletes = function(enteredKey) {
         AutocompleteCollection.fetch(enteredKey, function(autocompletes) {
@@ -62,26 +42,28 @@ define(function(require, exports, module) {
             var scrollView = new Scrollview({
                 direction: Utility.Direction.Y,
             });
+
             autocompletes.forEach(function(autocomplete) {
-                var autoCompleteView = new View();
-                autoCompleteView.autoCompleteSurface = new Surface({
+                var myView = new View();
+                myView.autoCompleteSurface = new Surface({
                     size: [1270, 20],
-                    content: autocomplete.label
+                    content: autocomplete.label,
+                    properties: {
+                        backgroundColor: 'white'
+                    }
                 });
 
-                autoCompleteView.autoCompleteModifier = new StateModifier({
+                myView.autoCompleteModifier = new StateModifier({
                     transform:Transform.translate(6,35,99)
                 });
 
-                //Todo: listener that would set the data clicked into input field
-                autoCompleteView.autoCompleteSurface.on('click', function(e) {
-                    console.log("Clicked on autocomplete data");
-                    this._eventOutput.emit('autoCompleteEvent');
-                }.bind(this));
+                myView.autoCompleteSurface.on('click', function() {
+                    onSelectCallback(autocomplete.label);
+                });
 
-                autoCompleteView.add(autoCompleteView.autoCompleteModifier).add(autoCompleteView.autoCompleteSurface);
-                surfaceList.push(autoCompleteView);
-                autoCompleteView.pipe(scrollView);
+                myView.add(myView.autoCompleteModifier).add(myView.autoCompleteSurface);
+                surfaceList.push(myView);
+                myView.pipe(scrollView);
             });
 
             scrollView.sequenceFrom(surfaceList);

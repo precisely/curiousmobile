@@ -24,6 +24,7 @@ define(function(require, exports, module) {
 		this.renderController = new RenderController();
 		this.iconRenderController = new RenderController();
 		_createForm.call(this);
+//        _setListeners.call(this);
 	}
 
 	EntryFormView.prototype = Object.create(View.prototype);
@@ -31,12 +32,18 @@ define(function(require, exports, module) {
 
 	EntryFormView.DEFAULT_OPTIONS = {};
 	EntryFormView.prototype.eventHandler = new EventHandler();
-	
-	var enteredKey = []
-	
-	function _zIndex(argument) {
+	var autoCompleteSurface = new AutocompleteView();
+	var enteredKey;
+
+    function _zIndex(argument) {
 		return window.App.zIndex.formView;
 	}
+
+    function _setListeners() {
+        this.autoCompleteSurface.on('updateInputSurface', function(){
+            console.log('update the Input Surface');
+        }.bind(this));
+    }
 
 	function _createForm() {
 		var formContainerSurface = new ContainerSurface({
@@ -46,8 +53,6 @@ define(function(require, exports, module) {
 			}
 		});
 
-		var autoCompleteSurface = new AutocompleteView();
-		
 		var sequentialLayout = new SequentialLayout({
 			direction: 0,
 			itemSpacing: 20,
@@ -64,7 +69,7 @@ define(function(require, exports, module) {
 				target: input.render()
 			};
 		});
-
+        
 		this.iconModifier = new Modifier({
 			transform: Transform.translate(0, 5, _zIndex())
 		});
@@ -110,8 +115,15 @@ define(function(require, exports, module) {
 				e.srcElement.setSelectionRange(selectionRange);
 			}
 		}.bind(this));
+		
+		//update input field
+        autoCompleteSurface.onSelect(function(inputLabel) {
+            console.log(inputLabel);
+            this.inputSurface.setValue(inputLabel);
+        }.bind(this));
 
-		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
+//        this.inputSurface.setValue('test');
+        formContainerSurface.add(this.inputModifier).add(this.inputSurface);
 
 		this.repeatSurface = new ImageSurface({
 			content: 'content/images/repeat.png',
@@ -170,9 +182,8 @@ define(function(require, exports, module) {
 			}.bind(this));
 		}
 		this.add(formContainerSurface);
-	    
 	}
-
+    
 	EntryFormView.prototype.toggleSuffix = function(suffix) {
 
 		var text = this.inputSurface.getValue();
