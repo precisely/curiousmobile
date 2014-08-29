@@ -34,19 +34,32 @@ define(function(require, exports, module) {
     };
     AutoCompleteView.prototype.getAutoCompletes = function(enteredKey) {
         AutoCompleteObj.fetch(enteredKey, function(autocompletes) {
+            var $this = this;
             var surfaceList = [];
             var scrollView = new Scrollview({
                 direction: Utility.Direction.Y,
             });
-            var $this = this;
+            var i = 0;
+            var borderProperty = '0px solid #aaaaaa';
+            
             autocompletes.forEach(function(autocomplete) {
                 var myView = new View();
+
+                if (i == autocompletes.length-1){
+                    borderProperty = '1px solid #aaaaaa';
+                } 
+                else{
+                    i = i + 1;
+                }
                 myView.autoCompleteSurface = new Surface({
                     content: autocomplete.label,
                     properties: {
                         backgroundColor: 'white',
-                        padding: '10px',
-                        paddingTop: '5px'
+                        padding: '15px',
+                        paddingTop: '5px',
+                        borderBottom: borderProperty,
+                        borderLeft: '1px solid #aaaaaa',
+                        borderRight: '1px solid #aaaaaa'
                     }
                 });
 
@@ -64,7 +77,6 @@ define(function(require, exports, module) {
                 surfaceList.push(myView);
                 myView.pipe(scrollView);
             });
-
             scrollView.sequenceFrom(surfaceList);
             this.renderController.show(scrollView);
         }.bind(this));

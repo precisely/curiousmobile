@@ -55,8 +55,6 @@ define( function(require, exports, module) {
 
             var obj = new Object();
             obj.data = result;
-            console.log("result", result);
-            console.log("result length", result.length);
             callback(result);
         }
     };
