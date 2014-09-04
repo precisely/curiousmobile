@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 	var InputSurface = require("famous/surfaces/InputSurface");
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var User = require('models/User');
+    var u = require('util/Utils');
 
     function LoginView() {
         View.apply(this, arguments);
@@ -50,9 +51,9 @@ define(function(require, exports, module) {
 		this.usernameSurface = usernameSurface;
 		this.passwordSurface = passwordSurface;
 		submitSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
+//			if (e instanceof CustomEvent) {
 				this.submit();	
-			}
+//			}
 		}.bind(this));
 
 		var formLayout = new SequentialLayout({
@@ -72,15 +73,18 @@ define(function(require, exports, module) {
 		});
 
 		otherLinksSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
+//			if (e instanceof CustomEvent) {
+//	            u.showAlert('2nd ');
 				if (_.contains(e.srcElement.classList, 'create-account')) {
+//		            u.showAlert('3rd ');
 					console.log("Show create-account form");
 					this._eventOutput.emit('create-account');
 				} else if (_.contains(e.srcElement.classList, 'forgot-password')) {
+//                    u.showAlert('4th ');
 					console.log("otherLinksSurface forgot password");
 					this._eventOutput.emit('forgot-password');
 				}
-			}
+//			}
 		}.bind(this));
 
 		formLayout.sequenceFrom([usernameSurface, passwordSurface, submitSurface, otherLinksSurface]);

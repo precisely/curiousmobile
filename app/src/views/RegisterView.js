@@ -63,7 +63,7 @@ define(function(require, exports, module) {
 		this.usernameSurface = usernameSurface;
 		this.passwordSurface = passwordSurface;
 		submitSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
+//			if (e instanceof CustomEvent) {
 				var classList = e.srcElement.classList;
 				if (_.contains(classList, 'cancel')) {
 					console.log('registration canclled');
@@ -72,7 +72,7 @@ define(function(require, exports, module) {
 					console.log('RegisterView: submit form');
 					this.submit();
 				}
-			}
+//			}
 		}.bind(this));
 
 		var formLayout = new SequentialLayout({
