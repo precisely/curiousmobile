@@ -41,7 +41,7 @@ define(function(require, exports, module) {
 		var formModifier = new Modifier({
 			origin: [0.5, 0.8],
 		});
-		this.add(logoModifier).add(logoSurface);
+//		this.add(logoModifier).add(logoSurface);
 		this.renderController = new RenderController();
 		this.add(formModifier).add(this.renderController);
 		this.loginView = new LoginView();
@@ -50,11 +50,11 @@ define(function(require, exports, module) {
 		this.forgotPasswordView = new ForgotPasswordView();
 
 		this.loginView.on('forgot-password', function() {
-			this.showView(this.forgotPasswordView);
+//			this.showView(this.forgotPasswordView);
 		}.bind(this));
 
 		this.loginView.on('create-account', function() {
-			this.showView(this.registerView);
+//			this.showView(this.registerView);
 		}.bind(this));
 
 		this.loginView.on('login-success', function() {
@@ -63,15 +63,15 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.forgotPasswordView.on('cancel-forgot-password', function(e) {
-			this.showView(this.loginView);
+//			this.showView(this.loginView);
 		}.bind(this));
 
 		this.forgotPasswordView.on('password-reset', function(e) {
-			this.showView(this.loginView);
+//			this.showView(this.loginView);
 		}.bind(this));
 		
 		this.registerView.on('cancel-registration', function(e) {
-			this.showView(this.loginView);
+//			this.showView(this.loginView);
 		}.bind(this));
 
 		this.registerView.on('registration-success', function(e) {
