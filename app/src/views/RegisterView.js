@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 	var InputSurface = require('famous/surfaces/InputSurface');
 	var SequentialLayout = require('famous/views/SequentialLayout');
 	var User = require('models/User');
+    var RegisterTemplate = require('text!templates/registration.html');
 	var u = require('util/Utils');
 
 	function RegisterView() {
@@ -21,89 +22,41 @@ define(function(require, exports, module) {
 	RegisterView.DEFAULT_OPTIONS = {};
 
 	RegisterView.prototype.createView = function() {
-		var formSurface = new FormContainerSurface({
-			size: [200, 200],
-			properties: {
-				backgroundColor: 'white'
-			}
-		});
+	    var template = RegisterTemplate;
+	    var registerSurface = new Surface({
+	        content: _.template(template, this.options, templateSettings)
+	    });
 
-		this.elementModifier = new StateModifier({
-			transform: Transform.translate(0, 0, 2)
-		});
-
-		var emailSurface = new InputSurface({
-			placeholder: 'email',
-			size: [200, 25]
-		});
-
-		var usernameSurface = new InputSurface({
-			placeholder: 'username',
-			size: [200, 25]
-		});
-		var passwordSurface = new InputSurface({
-			placeholder: 'password',
-			size: [200, 25],
-			type: 'password'
-		});
-
-		passwordSurface.on('keydown', function(e) {
-			//on enter
-			if (e.keyCode == 13) {
-				this.submit();
-			}
-		}.bind(this));
-
-		var submitSurface = new Surface({
-			content: '<input type="button" value="Cancel" class="cancel" />' +
-				' <input type="button" value="Submit" class="submit" />',
-		});
-
-		this.emailSurface = emailSurface;
-		this.usernameSurface = usernameSurface;
-		this.passwordSurface = passwordSurface;
-		submitSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
-				var classList = e.srcElement.classList;
-				if (_.contains(classList, 'cancel')) {
-					console.log('registration canclled');
-					this._eventOutput.emit('cancel-registration');
-				} else if (_.contains(classList, 'submit')) {
-					console.log('RegisterView: submit form');
-					this.submit();
-				}
-			}
-		}.bind(this));
-
-		var formLayout = new SequentialLayout({
-			direction: 1,
-			itemSpacing: 7,
-		});
-
-
-		formLayout.sequenceFrom([emailSurface, usernameSurface, passwordSurface, submitSurface]);
-		formSurface.add(this.elementModifier).add(formLayout);
-
-		this.add(formSurface);
+	    registerSurface.on('click', function(e) {
+            var classList;
+//            if (e instanceof CustomEvent) {
+                if (e.srcElement.localName == 'button') {
+                    classList = e.srcElement.classList;
+                } else {
+                    classList = e.srcElement.parentElement.classList;
+                }
+                if (_.contains(classList, 'submit')) {
+                    console.log('RegisterView: submit form');
+                    this.submit();
+                }
+        }.bind(this));
+	    this.add(registerSurface);
 	};
 
-	RegisterView.prototype.submit = function() {
-		var user = new User();
-		user.register(
-			this.emailSurface.getValue(),
-			this.usernameSurface.getValue(),
-			this.passwordSurface.getValue(),
-			function (user) {
-				this._eventOutput.emit('registration-success');
-			}.bind(this)
-		)
-	};
-
-	RegisterView.prototype.reset = function(){
-		this.emailSurface.setValue('');
-		this.usernameSurface.setValue('');
-		this.passwordSurface.setValue('');
-	};
+    RegisterView.prototype.submit = function() {
+        var user = new User();
+        var email = document.forms["registerForm"]["email"].value;
+        var username = document.forms["registerForm"]["username"].value;
+        var password = document.forms["registerForm"]["password"].value;
+        user.register(
+            email,
+            username,
+            password,
+            function (user) {
+                this._eventOutput.emit('registration-success');
+            }.bind(this)
+        )
+    };
 
 	module.exports = RegisterView;
 });
