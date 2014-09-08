@@ -26,5 +26,9 @@ define(function(require, exports, module) {
 	}, {
 		title: '             ',
 		iconFont: '<i class="fa fa-keyboard-o"></i>'
-	}];
+	}, {
+        title: 'Quick Help',
+        iconFont: '<i class="fa fa-question-circle"></i>',
+        trigger: {name:'change-page', data: 'help'}
+    }];
 });
