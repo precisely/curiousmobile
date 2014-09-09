@@ -18,7 +18,7 @@ define(function(require, exports, module) {
 	QuickHelpView.prototype.constructor = QuickHelpView;
 	QuickHelpView.DEFAULT_OPTIONS = {};
 
-    var surfaceList = [];
+	var surfaceList = [];
 
 	var scrollView = new Scrollview({
 		direction: Utility.Direction.X,
@@ -40,7 +40,7 @@ define(function(require, exports, module) {
 	surfaceList.push(secondSurface);
 
 	scrollView.sequenceFrom(surfaceList);
-	
+
 	QuickHelpView.prototype.init = function() {
 		this.renderController = new RenderController();
 		this.add(this.renderController);

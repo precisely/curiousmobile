@@ -66,6 +66,7 @@ define(function(require, exports, module) {
 				discussionSurface.pipe(scrollView);
 			});
 
+
 			scrollView.sequenceFrom(surfaceList);
 			this.renderController.show(scrollView);
 		}.bind(this));

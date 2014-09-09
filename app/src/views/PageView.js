@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var RenderController = require("famous/views/RenderController");
 	var TrackView = require('views/TrackView');
-    var QuickHelpView = require('views/QuickHelpView');
+	var QuickHelpView = require('views/QuickHelpView');
 	var LaunchView = require('views/LaunchView');
 	var CommunityView = require('views/community/CommunityView');
 	var Utils = require('util/Utils');
@@ -54,8 +54,8 @@ define(function(require, exports, module) {
 
 		this.communityView = new CommunityView('');
 		this.pageMap['community'] = this.communityView;
-        this.quickHelpView = new QuickHelpView();
-        this.pageMap['help'] = this.quickHelpView;
+		this.quickHelpView = new QuickHelpView();
+		this.pageMap['help'] = this.quickHelpView;
 		if (!User.isLoggedIn()) {
 			this.changePage('launch');
 		} else {
@@ -115,7 +115,6 @@ define(function(require, exports, module) {
 		var lastPageName = store.get('lastPage');
 		this.renderController.hide(); //hides the last page
 		var view = this.getPage(pageName);
-//		console.log(pageName);
 		this.renderController.show(view, {
 			duration: 0
 		});
