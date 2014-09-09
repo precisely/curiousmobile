@@ -1,48 +1,37 @@
-<head>
-<style type="text/css">
-
-.form-footer{
-    margin-left:38%;
-}
-.bottom-position-> .footer-wrapper-> .btn-success { background-color: red; } //button
-
-.btn-success:hover { background-color: red; } //hover
-</style>
-</head>
-
 <br>
 <img src="content/images/logo.gif" style="display: block; margin-left: auto;margin-right: auto; width:150px"/>
 <br>
 
 <div class="bottom-position">
-    <div class="footer-wrapper">
-        <form role="form" class="form-footer" name="registerForm" method="post" onSubmit="return false;">
-            <h3>Create a new account</h3>
-            <div class="form-group">
-                <input type="email" class="form-control" name="email" placeholder="EMAIL" style="width: 330px;">
-            </div>
-            <div class="form-group">
-                <input type="text" class="form-control" name="username" placeholder="USER NAME" style="width: 330px;">
-            </div>
-            <div class="form-group">
-        		<p>alphanumberic, plus at least one symbol (e.g. &,#,%)</p>
-            </div>
-            <div class="form-group">
-                <input type="password" class="form-control" name="password" placeholder="PASSWORD" style="width: 330px;">
-            </div>
-            <div class="form-group">
-                <input type="password" class="form-control" placeholder="VERIFY PASSWORD" style="width: 330px; float: left;">
-            </div><br><br>
-            <div class="row"> 
-            	<div class="col-sm-2"> too weak </div>
-            	<div class="col-sm-2"> kind of OK </div>
-            	<div class="col-sm-2"> good job </div>  
-            </div>
-            <div class="form-group">
-                <progress value="33" max="100" style="width:330px"></progress>
-            </div>
-            <button type="submit" class="btn btn-success submit " style="width:130px">SUBMIT</button>
-        </form>
-        <br><br>
-    </div>
+	<div class="footer-wrapper">
+		<form role="form" class="form-footer-registration" name="registerForm" method="post" onSubmit="return false;">
+			<h3>Create a new account</h3>
+			<div class="form-group">
+				<input type="email" class="form-control" name="email" placeholder="EMAIL" style="width: 330px;">
+			</div>
+			<div class="form-group">
+				<input type="text" class="form-control" name="username" placeholder="USER NAME" style="width: 330px;">
+			</div>
+			<div class="form-group">
+				<p>alphanumberic, plus at least one symbol (e.g. &,#,%)</p>
+			</div>
+			<div class="form-group">
+				<input type="password" class="form-control" name="password" placeholder="PASSWORD" style="width: 330px;"
+				 onkeydown="checkProgress();">
+			</div>
+			<div class="form-group">
+				<input type="password" class="form-control" placeholder="VERIFY PASSWORD" style="width: 330px; float: left;">
+			</div><br><br>
+			<div class="row"> 
+				<div class="col-sm-2"> too weak </div>
+				<div class="col-sm-2"> kind of OK </div>
+				<div class="col-sm-2"> good job </div>  
+			</div>
+			<div class="form-group">
+				<progress value="0" max="100" id="progressBar" style="width:330px"></progress>
+			</div>
+			<button type="submit" class="btn btn-success submit " style="width:130px">SUBMIT</button>
+		</form>
+		<br><br>
+	</div>
 </div>
