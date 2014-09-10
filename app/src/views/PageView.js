@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var RenderController = require("famous/views/RenderController");
 	var TrackView = require('views/TrackView');
+	var QuickHelpView = require('views/QuickHelpView');
 	var LaunchView = require('views/LaunchView');
 	var CommunityView = require('views/community/CommunityView');
 	var Utils = require('util/Utils');
@@ -53,6 +54,8 @@ define(function(require, exports, module) {
 
 		this.communityView = new CommunityView('');
 		this.pageMap['community'] = this.communityView;
+		this.quickHelpView = new QuickHelpView();
+		this.pageMap['help'] = this.quickHelpView;
 		if (!User.isLoggedIn()) {
 			this.changePage('launch');
 		} else {

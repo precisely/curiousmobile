@@ -32,3 +32,50 @@ a {
 .discussion .footer {
 	background-color: #c0c0c0;
 }
+
+.form-footer-registration{
+	margin-left:38%;
+}
+
+.header-login{ 
+	position: absolute;
+	height: 100%;
+	//right: 500px;
+	left: 0px;
+	border-top: 121px solid #cccccc;
+	border-left: 1297px solid transparent;
+	z-index: -1;
+}
+.footer-wrapper-login{
+	position:relative;
+	width:100%;
+	overflow:hidden;
+}
+
+.footer-login{ 
+	position: absolute;
+	height: 100%;
+	border-top: 100px solid transparent;
+	border-left: 2000px solid #cccccc;
+	border-right: 0px solid transparent;
+	z-index: -1;
+}
+
+.bottom-position-login{
+	position: absolute;
+	bottom:0px;
+	width:100%;
+}
+.form-footer-login{
+	margin-left:42%;
+}
+
+.other-links {
+	color: inherit;
+	text-decoration: none;
+}
+
+.form-footer-forgot{
+	margin-left:39%;
+	width: 300px;
+}

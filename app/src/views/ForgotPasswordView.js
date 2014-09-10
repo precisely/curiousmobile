@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var ForgotPasswordTemplate = require('text!templates/forgot-password.html');
 	var u = require('util/Utils');
 
 	function ForgotPasswordView() {
@@ -20,72 +21,45 @@ define(function(require, exports, module) {
 	ForgotPasswordView.DEFAULT_OPTIONS = {};
 
 	function _createView() {
-		var formSurface = new FormContainerSurface({
-			size: [200, 200],
-			properties: {
-				backgroundColor: 'white'
+		var template = ForgotPasswordTemplate;
+		var forgotSurface = new Surface({
+			content: _.template(template, this.options, templateSettings)
+		});
+
+		forgotSurface.on('click', function(e) {
+			var classList;
+//			if (e instanceof CustomEvent) {
+			if (e.srcElement.localName == 'button') {
+				classList = e.srcElement.classList;
+			} else {
+				classList = e.srcElement.parentElement.classList;
 			}
-		});
-
-		this.elementModifier = new StateModifier({
-			transform: Transform.translate(0, 0, 2)
-		});
-
-		this.usernameSurface = new InputSurface({
-			placeholder: 'username',
-			size: [200, 25]
-		});
-
-		this.usernameSurface.on('keydown', function(e) {
-			//on enter
-			if (e.keyCode == 13) {
+			if (_.contains(classList, 'cancel')) {
+				console.log('password reset cancelled');
+				this._eventOutput.emit('cancel-forgot-password');;
+			} else if (_.contains(classList, 'submit')) {
 				this.submit();
 			}
 		}.bind(this));
-
-		var submitSurface = new Surface({
-			content: '<input type="button" value="Cancel" class="cancel" /> <input type="button" value="Submit" class="submit" />'
-		});
-
-		submitSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
-				var classList = e.srcElement.classList;
-				if (_.contains(classList, 'cancel')) {
-					console.log('password reset canclled');
-					this._eventOutput.emit('cancel-forgot-password');
-				} else if (_.contains(classList, 'submit')) {
-					this.submit();
-				}
-			}
-		}.bind(this));
-
-		var formLayout = new SequentialLayout({
-			direction: 1,
-			itemSpacing: 7,
-		});
-
-
-		formLayout.sequenceFrom([this.usernameSurface, submitSurface]);
-		formSurface.add(this.elementModifier).add(formLayout);
-
-		this.add(formSurface);
+		this.add(forgotSurface);
 
 	}
 
 	ForgotPasswordView.prototype.submit = function() {
+		var name = document.forms["forgotPasswordForm"]["username"].value;
 		u.queueJSON('password recovery',
-			u.makeGetUrl('doforgotData'),
-			u.makeGetArgs({
-				username: this.usernameSurface.getValue()
-			}),
-			function(data) {
-				if (data.success) {
-					u.showAlert('Look for instructions on recovering your account information in your email.');
-					this._eventOutput.emit('password-reset');
-				} else {
-					u.showAlert(data.message + ' Please try again or hit Cancel to return to the login screen.');
-				}
-			}.bind(this));
+				u.makeGetUrl('doforgotData'),
+				u.makeGetArgs({
+					username: name
+				}),
+				function(data) {
+			if (data.success) {
+				u.showAlert('Look for instructions on recovering your account information in your email.');
+				this._eventOutput.emit('password-reset');
+			} else {
+				u.showAlert(data.message + ' Please try again or hit Cancel to return to the login screen.');
+			}
+		}.bind(this));
 	};
 
 	ForgotPasswordView.prototype.reset = function(){
