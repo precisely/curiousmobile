@@ -60,8 +60,6 @@ define(function(require, exports, module) {
 			u.showAlert("Password is a required field!");
 		} else if (password !== rePassword){
 			u.showAlert("Passwords don't match!");
-		} else if (!(email && username && password)){
-			u.showAlert("Form not filled!");
 		} else {
 			user.register(
 					email,
