@@ -2,7 +2,6 @@ define(function(require, exports, module) {
 	'use strict';
 	var Utility = require('famous/utilities/Utility');
 	var BaseView = require('views/BaseView');
-	var RenderController = require('famous/views/RenderController');
 	var Surface = require('famous/core/Surface');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var ImageSurface = require("famous/surfaces/ImageSurface");
@@ -25,13 +24,11 @@ define(function(require, exports, module) {
 	});
 
 	var firstSurface = new ImageSurface({
-		size: [window.innerWidth/1, undefined],
-		content: 'content/images/help-image-one.png'
+		content: 'content/images/help-track.png'
 	});
 
 	var secondSurface = new ImageSurface({
-		size: [window.innerWidth/1, undefined],
-		content: 'content/images/help-image-two.png'
+		content: 'content/images/help-community.png'
 	});
 
 	firstSurface.pipe(scrollView);  
@@ -42,11 +39,8 @@ define(function(require, exports, module) {
 	scrollView.sequenceFrom(surfaceList);
 
 	QuickHelpView.prototype.init = function() {
-		this.renderController = new RenderController();
-		this.add(this.renderController);
-
 		this._eventInput.on('on-show', function() {
-			this.renderController.show(scrollView);
+			this.add(scrollView);
 		}.bind(this));
 	}
 
