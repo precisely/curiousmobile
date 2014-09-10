@@ -23,18 +23,18 @@ define(function(require, exports, module) {
 		direction: Utility.Direction.X,
 	});
 
-	var firstSurface = new ImageSurface({
+	var trackSurface = new ImageSurface({
 		content: 'content/images/help-track.png'
 	});
 
-	var secondSurface = new ImageSurface({
+	var commmunitySurface = new ImageSurface({
 		content: 'content/images/help-community.png'
 	});
 
-	firstSurface.pipe(scrollView);  
-	secondSurface.pipe(scrollView);
-	surfaceList.push(firstSurface);
-	surfaceList.push(secondSurface);
+	trackSurface.pipe(scrollView);  
+	commmunitySurface.pipe(scrollView);
+	surfaceList.push(trackSurface);
+	surfaceList.push(commmunitySurface);
 
 	scrollView.sequenceFrom(surfaceList);
 
