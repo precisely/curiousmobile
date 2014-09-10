@@ -45,17 +45,33 @@ define(function(require, exports, module) {
 
 	RegisterView.prototype.submit = function() {
 		var user = new User();
+		var emailRegEx = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 		var email = document.forms["registerForm"]["email"].value;
 		var username = document.forms["registerForm"]["username"].value;
 		var password = document.forms["registerForm"]["password"].value;
-		user.register(
-				email,
-				username,
-				password,
-				function (user) {
-					this._eventOutput.emit('registration-success');
-				}.bind(this)
-		)
+		var rePassword = document.forms["registerForm"]["re-password"].value;
+		if (!email){
+			u.showAlert("Email is a required field!");
+		} else if (email.search(emailRegEx) == -1){
+			u.showAlert("Please enter a valid email address!");
+		} else if (!username){
+			u.showAlert("Username is a required field!");
+		} else if (!password){
+			u.showAlert("Password is a required field!");
+		} else if (password !== rePassword){
+			u.showAlert("Passwords don't match!");
+		} else if (!(email && username && password)){
+			u.showAlert("Form not filled!");
+		} else {
+			user.register(
+					email,
+					username,
+					password,
+					function (user) {
+						this._eventOutput.emit('registration-success');
+					}.bind(this)
+			)
+		}
 	};
 
 	module.exports = RegisterView;

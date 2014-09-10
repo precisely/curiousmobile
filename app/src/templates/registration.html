@@ -17,10 +17,11 @@
 			</div>
 			<div class="form-group">
 				<input type="password" class="form-control" name="password" placeholder="PASSWORD" style="width: 330px;"
-				 onkeydown="checkProgress();">
+				 onKeyPress="checkProgress()" onKeyUp="checkProgress()">
 			</div>
 			<div class="form-group">
-				<input type="password" class="form-control" placeholder="VERIFY PASSWORD" style="width: 330px; float: left;">
+				<input type="password" class="form-control" placeholder="VERIFY PASSWORD" name="re-password" 
+					style="width: 330px; float: left;">
 			</div><br><br>
 			<div class="row"> 
 				<div class="col-sm-2"> too weak </div>
@@ -28,7 +29,7 @@
 				<div class="col-sm-2"> good job </div>  
 			</div>
 			<div class="form-group">
-				<progress value="0" max="100" id="progressBar" style="width:330px"></progress>
+				<progress value="0" max="10" id="progressBar" style="width:330px"></progress>
 			</div>
 			<button type="submit" class="btn btn-success submit " style="width:130px">SUBMIT</button>
 		</form>

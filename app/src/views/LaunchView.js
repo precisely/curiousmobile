@@ -41,7 +41,6 @@ define(function(require, exports, module) {
 		var formModifier = new Modifier({
 			origin: [0.5, 0.8],
 		});
-//		this.add(logoModifier).add(logoSurface);
 		this.renderController = new RenderController();
 		this.add(formModifier).add(this.renderController);
 		this.loginView = new LoginView();
@@ -83,7 +82,6 @@ define(function(require, exports, module) {
 	}
 
 	LaunchView.prototype.showView = function(view){
-//		view.reset();
 		this.renderController.show(view);
 	}
 

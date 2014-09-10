@@ -9,6 +9,7 @@ define(function(require, exports, module) {
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var LoginTemplate = require('text!templates/login.html');
 	var User = require('models/User');
+	var u = require('util/Utils');
 
 	function LoginView() {
 		View.apply(this, arguments);
@@ -57,15 +58,21 @@ define(function(require, exports, module) {
 		var currentUser = new User();
 		var username = document.forms["loginForm"]["username"].value;
 		var password = document.forms["loginForm"]["password"].value;
-		currentUser.login(
-				username,
-				password,
-				function(user) {
-					window.App.currentUser = user;
-					console.log('LoginView: login success');
-					this._eventOutput.emit('login-success');
-				}.bind(this)
-		)
+		if (!username){
+			u.showAlert("Username is a required field!");
+		} else if (!password){
+			u.showAlert("Password is a required field!");
+		} else {
+			currentUser.login(
+					username,
+					password,
+					function(user) {
+						window.App.currentUser = user;
+						console.log('LoginView: login success');
+						this._eventOutput.emit('login-success');
+					}.bind(this)
+			)
+		}
 	};
 
 	module.exports = LoginView;

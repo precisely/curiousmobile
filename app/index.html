@@ -46,7 +46,26 @@
 		<script type="text/javascript">
 		function checkProgress() {
 			var bar = document.getElementById("progressBar");
-			bar.value += 10;
+			var password = document.forms["registerForm"]["password"].value;
+			var specialChar = ['a','c'];
+			bar.value = 0;
+			if(password){
+				if(password.length > 4){
+					bar.value += 2.5;
+				}
+				if(/\d/.test(password)){
+					//digits
+					bar.value += 2.5;
+				}
+				if (password.match(/[!@#\$%\^\&*\(\)+=_-]/)) {
+					//special character
+					bar.value += 2.5;
+				}
+				if(password.indexOf('.') > 0){
+					//period
+					bar.value += 2.5;
+				}
+			}
 		};
 		</script>
 
