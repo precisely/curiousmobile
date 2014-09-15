@@ -29,20 +29,22 @@ define(function(require, exports, module) {
 
 		loginSurface.on('click', function(e) {
 			var classList;
-			if (e.srcElement.localName == 'a' || e.srcElement.localName == 'button') {
-				classList = e.srcElement.classList;
-			} else {
-				classList = e.srcElement.parentElement.classList;
-			}
-			if (_.contains(classList, 'submit')) {
-				console.log("Submit login");
-				this.submit();
-			} else if (_.contains(classList, 'create-account')) {
-				console.log("Show create-account form");
-				this._eventOutput.emit('create-account');
-			} else if (_.contains(classList, 'forgot-password')) {
-				console.log("otherLinksSurface forgot password");
-				this._eventOutput.emit('forgot-password');
+			if (e instanceof CustomEvent) {
+				if (e.srcElement.localName == 'a' || e.srcElement.localName == 'button') {
+					classList = e.srcElement.classList;
+				} else {
+					classList = e.srcElement.parentElement.classList;
+				}
+				if (_.contains(classList, 'submit')) {
+					console.log("Submit login");
+					this.submit();
+				} else if (_.contains(classList, 'create-account')) {
+					console.log("Show create-account form");
+					this._eventOutput.emit('create-account');
+				} else if (_.contains(classList, 'forgot-password')) {
+					console.log("otherLinksSurface forgot password");
+					this._eventOutput.emit('forgot-password');
+				}
 			}
 		}.bind(this));
 
@@ -64,13 +66,13 @@ define(function(require, exports, module) {
 			u.showAlert("Password is a required field!");
 		} else {
 			currentUser.login(
-					username,
-					password,
-					function(user) {
-						window.App.currentUser = user;
-						console.log('LoginView: login success');
-						this._eventOutput.emit('login-success');
-					}.bind(this)
+				username,
+				password,
+				function(user) {
+					window.App.currentUser = user;
+					console.log('LoginView: login success');
+					this._eventOutput.emit('login-success');
+				}.bind(this)
 			)
 		}
 	};

@@ -34,29 +34,29 @@ a {
 }
 
 .form-footer-registration{
-	margin-left:38%;
+	padding: 15px;
 }
 
 .header-login{ 
 	position: absolute;
 	height: 100%;
-	//right: 500px;
 	left: 0px;
 	border-top: 121px solid #cccccc;
 	border-left: 1297px solid transparent;
 	z-index: -1;
 }
+
 .footer-wrapper-login{
-	position:relative;
-	width:100%;
-	overflow:hidden;
+	position: relative;
+	width: 100%;
+	overflow: hidden;
 }
 
-.footer-login{ 
+.footer-login { 
 	position: absolute;
 	height: 100%;
 	border-top: 100px solid transparent;
-	border-left: 2000px solid #cccccc;
+	border-left: 1500px solid #cccccc;
 	border-right: 0px solid transparent;
 	z-index: -1;
 }
@@ -67,7 +67,7 @@ a {
 	width:100%;
 }
 .form-footer-login{
-	margin-left:42%;
+	padding: 15px;
 }
 
 .other-links {
@@ -75,7 +75,65 @@ a {
 	text-decoration: none;
 }
 
-.form-footer-forgot{
-	margin-left:39%;
-	width: 300px;
+.form-footer-forgot {
+	padding: 15px;
 }
+
+.logo-img {
+	display: block; 
+	margin-left: auto;
+	margin-right: auto; 
+	width:200px;
+}
+
+.logo-img-registration {
+	display: block; 
+	margin-left: auto;
+	margin-right: auto; 
+	width:100px;
+}
+
+ .progress-first{
+	float: left;
+	margin-right: 10px;
+	margin-left: 15px;
+ }
+ 
+ .progress-second{
+	float: left;
+	margin-left: 15%;
+ }
+  
+ .progress-third{
+	float: left;
+	margin-right: 15px;
+ }
+
+#progressBar {
+	width:100%;
+}
+
+.float-left {
+	float: left;
+}
+
+@media screen and (max-width: 768px) {
+	.header-login{ 
+		border-left: 600px solid transparent;
+	}
+} 
+
+@media screen and (max-width: 768px) {
+	.logo-img {
+		display: block; 
+		margin-left: auto;
+		margin-right: auto; 
+		width:120px;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.footer-login { 
+		border-left: 800px solid #cccccc;
+	}
+} 

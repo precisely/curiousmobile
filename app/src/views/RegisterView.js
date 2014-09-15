@@ -29,15 +29,16 @@ define(function(require, exports, module) {
 
 		registerSurface.on('click', function(e) {
 			var classList;
-//			if (e instanceof CustomEvent) {
-			if (e.srcElement.localName == 'button') {
-				classList = e.srcElement.classList;
-			} else {
-				classList = e.srcElement.parentElement.classList;
-			}
-			if (_.contains(classList, 'submit')) {
-				console.log('RegisterView: submit form');
-				this.submit();
+			if (e instanceof CustomEvent) {
+				if (e.srcElement.localName == 'button') {
+					classList = e.srcElement.classList;
+				} else {
+					classList = e.srcElement.parentElement.classList;
+				}
+				if (_.contains(classList, 'submit')) {
+					console.log('RegisterView: submit form');
+					this.submit();
+				}
 			}
 		}.bind(this));
 		this.add(registerSurface);

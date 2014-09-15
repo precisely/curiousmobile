@@ -28,17 +28,18 @@ define(function(require, exports, module) {
 
 		forgotSurface.on('click', function(e) {
 			var classList;
-//			if (e instanceof CustomEvent) {
-			if (e.srcElement.localName == 'button') {
-				classList = e.srcElement.classList;
-			} else {
-				classList = e.srcElement.parentElement.classList;
-			}
-			if (_.contains(classList, 'cancel')) {
-				console.log('password reset cancelled');
-				this._eventOutput.emit('cancel-forgot-password');;
-			} else if (_.contains(classList, 'submit')) {
-				this.submit();
+			if (e instanceof CustomEvent) {
+				if (e.srcElement.localName == 'button') {
+					classList = e.srcElement.classList;
+				} else {
+					classList = e.srcElement.parentElement.classList;
+				}
+				if (_.contains(classList, 'cancel')) {
+					console.log('password reset cancelled');
+					this._eventOutput.emit('cancel-forgot-password');;
+				} else if (_.contains(classList, 'submit')) {
+					this.submit();
+				}
 			}
 		}.bind(this));
 		this.add(forgotSurface);
