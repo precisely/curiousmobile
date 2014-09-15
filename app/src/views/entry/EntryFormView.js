@@ -10,8 +10,11 @@ define(function(require, exports, module) {
 	var Easing = require("famous/transitions/Easing");
 	var RenderController = require("famous/views/RenderController");
 	var SequentialLayout = require("famous/views/SequentialLayout");
+	var AutoCompleteView = require("views/AutoCompleteView");
 	var u = require('util/Utils');
 	var Entry = require('models/Entry');
+	var EventHandler = require('famous/core/EventHandler');
+
 	function EntryFormView(entry) {
 		View.apply(this, arguments);
 		this.entry = entry;
@@ -27,18 +30,28 @@ define(function(require, exports, module) {
 	EntryFormView.prototype.constructor = EntryFormView;
 
 	EntryFormView.DEFAULT_OPTIONS = {};
+	EntryFormView.prototype.eventHandler = new EventHandler();
+	var autoCompleteSurface = new AutoCompleteView();
+	var enteredKey;
 
 	function _zIndex(argument) {
 		return window.App.zIndex.formView;
+	}
+
+	function _setListeners() {
+		this.autoCompleteSurface.on('updateInputSurface', function(){
+			console.log('update the Input Surface');
+		}.bind(this));
 	}
 
 	function _createForm() {
 		var formContainerSurface = new ContainerSurface({
 			size: [undefined,70],
 			properties: {
-				backgroundColor: '#c0c0c0'	
+				backgroundColor: '#c0c0c0'
 			}
 		});
+
 		var sequentialLayout = new SequentialLayout({
 			direction: 0,
 			itemSpacing: 20,
@@ -49,11 +62,11 @@ define(function(require, exports, module) {
 			//Bumping the offset to add additional padding on the left
 			offset += 10;
 			var transform = (this.options.direction === 0) ?
-				Transform.translate(offset, 40, 1) : Transform.translate(0, offset);
-			return {
-				transform: transform,
-				target: input.render()
-			};
+					Transform.translate(offset, 40, 1) : Transform.translate(0, offset);
+					return {
+						transform: transform,
+						target: input.render()
+					};
 		});
 
 		this.iconModifier = new Modifier({
@@ -81,11 +94,18 @@ define(function(require, exports, module) {
 
 		this.toggleSuffix();
 
-		this.inputSurface.on('keydown', function(e) {
-			console.log('keydown on formview');
+		this.inputSurface.on('keyup', function(e) {
+			console.log('keyup on formview');
 			//on enter
 			if (e.keyCode == 13) {
 				this.blur(e);
+			} else {
+				enteredKey = this.inputSurface.getValue();
+				if (!enteredKey) {
+					enteredKey = "/";
+				}
+				autoCompleteSurface.getAutoCompletes(enteredKey);
+				formContainerSurface.add(autoCompleteSurface);
 			}
 		}.bind(this));
 
@@ -96,6 +116,13 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
+		//update input field
+		autoCompleteSurface.onSelect(function(inputLabel) {
+			console.log(inputLabel);
+			this.inputSurface.setValue(inputLabel);
+		}.bind(this));
+
+//		this.inputSurface.setValue('test');
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
 
 		this.repeatSurface = new ImageSurface({
@@ -155,7 +182,6 @@ define(function(require, exports, module) {
 			}.bind(this));
 		}
 		this.add(formContainerSurface);
-
 	}
 
 	EntryFormView.prototype.toggleSuffix = function(suffix) {
@@ -208,7 +234,7 @@ define(function(require, exports, module) {
 		} else {
 			entry.setText(newText);
 		}
-		
+
 		if (this.hasFuture()) {
 			this.alert = u.showAlert({
 				message: 'Update just this one event or also future events?',
