@@ -10,8 +10,11 @@ define(function(require, exports, module) {
 	var Easing = require("famous/transitions/Easing");
 	var RenderController = require("famous/views/RenderController");
 	var SequentialLayout = require("famous/views/SequentialLayout");
+	var AutoCompleteView = require("views/AutoCompleteView");
 	var u = require('util/Utils');
 	var Entry = require('models/Entry');
+	var EventHandler = require('famous/core/EventHandler');
+
 	function EntryFormView(entry) {
 		View.apply(this, arguments);
 		this.entry = entry;
@@ -27,18 +30,28 @@ define(function(require, exports, module) {
 	EntryFormView.prototype.constructor = EntryFormView;
 
 	EntryFormView.DEFAULT_OPTIONS = {};
+	EntryFormView.prototype.eventHandler = new EventHandler();
+	var autoCompleteSurface = new AutoCompleteView();
+	var enteredKey;
 
-	function _zIndex(argument) {
+    function _zIndex(argument) {
 		return window.App.zIndex.formView;
 	}
+
+    function _setListeners() {
+        this.autoCompleteSurface.on('updateInputSurface', function(){
+            console.log('update the Input Surface');
+        }.bind(this));
+    }
 
 	function _createForm() {
 		var formContainerSurface = new ContainerSurface({
 			size: [undefined,70],
 			properties: {
-				backgroundColor: '#c0c0c0'	
+				backgroundColor: '#c0c0c0'
 			}
 		});
+
 		var sequentialLayout = new SequentialLayout({
 			direction: 0,
 			itemSpacing: 20,
@@ -55,7 +68,7 @@ define(function(require, exports, module) {
 				target: input.render()
 			};
 		});
-
+        
 		this.iconModifier = new Modifier({
 			transform: Transform.translate(0, 5, _zIndex())
 		});
@@ -82,12 +95,26 @@ define(function(require, exports, module) {
 		this.toggleSuffix();
 
 		this.inputSurface.on('keydown', function(e) {
-			console.log('keydown on formview');
-			//on enter
-			if (e.keyCode == 13) {
-				this.blur(e);
-			}
-		}.bind(this));
+            console.log('keydown on formview');
+            //on enter
+            if (e.keyCode == 13) {
+                this.blur(e);
+            } else {
+                if (e.keyCode != 229 && e.keyCode != 8 ){
+                    enteredKey = this.inputSurface.getValue() + String.fromCharCode(e.keyCode);
+                } else if (e.keyCode == 8){
+                      enteredKey = this.inputSurface.getValue();
+                      if(enteredKey.length != 1){
+                          enteredKey = enteredKey.substring(0, enteredKey.length - 1);
+                      }
+                      else{
+                          enteredKey="/";
+                      }
+                }
+                autoCompleteSurface.getAutoCompletes(enteredKey);
+                formContainerSurface.add(autoCompleteSurface);
+            }
+        }.bind(this));
 
 		this.inputSurface.on('click', function(e) {
 			if (e instanceof CustomEvent && this.entry) {
@@ -95,8 +122,15 @@ define(function(require, exports, module) {
 				e.srcElement.setSelectionRange(selectionRange);
 			}
 		}.bind(this));
+		
+		//update input field
+        autoCompleteSurface.onSelect(function(inputLabel) {
+            console.log(inputLabel);
+            this.inputSurface.setValue(inputLabel);
+        }.bind(this));
 
-		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
+//        this.inputSurface.setValue('test');
+        formContainerSurface.add(this.inputModifier).add(this.inputSurface);
 
 		this.repeatSurface = new ImageSurface({
 			content: 'content/images/repeat.png',
@@ -155,9 +189,8 @@ define(function(require, exports, module) {
 			}.bind(this));
 		}
 		this.add(formContainerSurface);
-
 	}
-
+    
 	EntryFormView.prototype.toggleSuffix = function(suffix) {
 
 		var text = this.inputSurface.getValue();
