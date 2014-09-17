@@ -21,6 +21,7 @@ define(function(require, exports, module) {
 
 	var scrollView = new Scrollview({
 		direction: Utility.Direction.X,
+		paginated: true
 	});
 
 	var trackSurface = new ImageSurface({

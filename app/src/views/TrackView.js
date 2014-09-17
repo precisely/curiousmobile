@@ -86,8 +86,7 @@ define(function(require, exports, module) {
 		}
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.X,
-			paginated: true,
-			rails: false
+			paginated: true
 		});
 		//creating 11 cached list views by default
 		//5 days before and 5 days after today
@@ -102,7 +101,8 @@ define(function(require, exports, module) {
 			this.scrollView.sequenceFrom(this.entryListViewCache);
 			this.currentListView = this.entryListViewCache[5];
 			//setting the scroll position to today
-			this.scrollView.setPosition(window.innerWidth * 5);
+			//this.scrollView.setPosition(window.innerWidth * 5);
+			//this.scrollView.goToPage(5);
 			this.lastScrollPosition = this.scrollView.getPosition();
 			this.scrollView.on('pageChange', function(e) {
 				var listView = this.entryListViewCache[e.index];
