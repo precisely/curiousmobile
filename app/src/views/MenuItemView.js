@@ -19,7 +19,7 @@ define(function(require, exports, module) {
 		width: 276, // open position from AppView
 		height: 55,
 		iconSize: 32,
-		iconFont: '<i class="fa fa-rebel"></i>',
+		iconFont: ' ',
 		title: 'Rebel Alliance',
 		trigger: {name:'noevent', data: ''}
 	};
@@ -32,7 +32,7 @@ define(function(require, exports, module) {
 		var backgroundSurface = new Surface({
 			size: [this.options.width, this.options.height],
 			properties: {
-				backgroundColor: '#666',
+				backgroundColor: '#b1336a',
 				boxShadow: '0 0 1px black'
 			}
 		});
@@ -62,7 +62,7 @@ define(function(require, exports, module) {
 		});
 
 		var iconModifier = new StateModifier({
-			transform: Transform.translate(10, 10, 0)
+			transform: Transform.translate(10, 4, 0)
 		});
 
 		this.add(iconModifier).add(iconSurface);

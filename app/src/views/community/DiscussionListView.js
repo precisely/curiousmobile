@@ -5,6 +5,7 @@ define(function(require, exports, module) {
 	var Surface = require('famous/core/Surface');
 	var Timer = require('famous/utilities/Timer');
 	var Transform = require('famous/core/Transform');
+	var Transitionable = require('famous/transitions/Transitionable');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var RenderController = require('famous/views/RenderController');
 	var Scrollview = require('famous/views/Scrollview');
@@ -28,7 +29,9 @@ define(function(require, exports, module) {
 		//var postSurface = new Surface({
 		//content: postTemplate
 		//});
+		var transition = new Transitionable(Transform.translate(0, 44, 0));
 		this.renderController = new RenderController();
+		this.renderController.inTransformFrom(transition);
 		this.add(this.renderController);
 		this.changeGroup(this.group);
 	};
@@ -56,10 +59,7 @@ define(function(require, exports, module) {
 						var size = this.getSize();
 						var width = (size[0] == true) ? this._currTarget.offsetWidth : size[0];
 						var height = (size[1] == true) ? this._currTarget.offsetHeight : size[1];
-
 						this.setSize([width, height]);
-
-						console.log(this.getSize());
 					}.bind(this), 2);
 				});
 				surfaceList.push(discussionSurface);

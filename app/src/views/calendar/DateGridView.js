@@ -72,7 +72,7 @@ define(function(require, exports, module) {
 		});
 
 		var monthModifier = new StateModifier({
-			transform: Transform.translate(100, 10, _zIndex() + 1)
+			transform: Transform.translate(70, 10, _zIndex() + 1)
 		});
 
 		this.add(monthModifier).add(monthSurface);
@@ -183,6 +183,7 @@ define(function(require, exports, module) {
 
 		weekRowLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
+			offset = 30 * index;
 			offset += 70;
 			var transform = Transform.translate(0, offset, _zIndex() + 1);
 			return {

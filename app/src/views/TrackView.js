@@ -101,7 +101,7 @@ define(function(require, exports, module) {
 			this.scrollView.sequenceFrom(this.entryListViewCache);
 			this.currentListView = this.entryListViewCache[5];
 			//setting the scroll position to today
-			//this.scrollView.setPosition(window.innerWidth * 5);
+			this.scrollView.setPosition(window.innerWidth * 5);
 			//this.scrollView.goToPage(5);
 			this.lastScrollPosition = this.scrollView.getPosition();
 			this.scrollView.on('pageChange', function(e) {

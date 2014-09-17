@@ -43,7 +43,7 @@ define(function(require, exports, module) {
 		var backgroundSurface = new Surface({
 			size: [undefined, 44],
 			properties: {
-				backgroundColor: '#535353'
+				backgroundColor: '#b1336a'
 			}
 		});
 
@@ -83,7 +83,8 @@ define(function(require, exports, module) {
 			content: FooterTemplate,
 			size: [undefined, 25],
 			properties: {
-				borderTop: '1px solid #c0c0c0'	
+				borderTop: '1px solid #c0c0c0',
+				backgroundColor: 'white'
 			}
 		});
 
