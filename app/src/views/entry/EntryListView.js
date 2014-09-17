@@ -98,6 +98,7 @@ define(function(require, exports, module) {
 
 		this.sequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
+            offset = index * 44;
 			var currentView = this.entryViews[index];
 			if (!currentView) {
 				return;

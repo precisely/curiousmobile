@@ -44,7 +44,7 @@ define(function(require, exports, module) {
 		});
 		this.entrySurface.on('click', function(e) {
 			console.log("entrySurface event");
-			if (e instanceof MouseEvent) {
+			if (e instanceof CustomEvent) {
 				this._eventOutput.emit('select-entry', this.entry);
 			}
 		}.bind(this));

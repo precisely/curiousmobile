@@ -3,6 +3,8 @@ define(function(require, exports, module) {
 	var View = require('famous/core/View');
 	var Modifier = require('famous/core/Modifier');
 	var RenderController = require('famous/views/RenderController');
+	var Transitionable = require('famous/transitions/Transitionable');
+	var Transform = require('famous/core/Transform');
 	var ImageSurface = require('famous/surfaces/ImageSurface');
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var LoginView = require('views/LoginView');
@@ -38,11 +40,10 @@ define(function(require, exports, module) {
 			origin: [0.5, 0.1],
 		});
 
-		var formModifier = new Modifier({
-			origin: [0.5, 0.8],
-		});
+		var transition = new Transitionable(Transform.translate(0, 0, 2));
 		this.renderController = new RenderController();
-		this.add(formModifier).add(this.renderController);
+		this.renderController.inTransformFrom(transition);
+		this.add(this.renderController);
 		this.loginView = new LoginView();
 		this.renderController.show(this.loginView);
 		this.registerView = new RegisterView();
@@ -80,6 +81,10 @@ define(function(require, exports, module) {
 
 
 	}
+
+	LaunchView.prototype.showLogin = function() {
+		this.showView(this.loginView);	
+	};
 
 	LaunchView.prototype.showView = function(view){
 		this.renderController.show(view);

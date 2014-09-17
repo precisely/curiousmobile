@@ -4,6 +4,7 @@ define(function(require, exports, module) {
 	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var Modifier = require('famous/core/Modifier');
 	var FormContainerSurface = require("famous/surfaces/FormContainerSurface");
 	var InputSurface = require("famous/surfaces/InputSurface");
 	var SequentialLayout = require("famous/views/SequentialLayout");
@@ -23,11 +24,11 @@ define(function(require, exports, module) {
 
 	function _createView(argument) {
 		var template = LoginTemplate;
-		var loginSurface = new Surface({
+		this.loginSurface = new Surface({
 			content: _.template(template, this.options, templateSettings)
 		});
 
-		loginSurface.on('click', function(e) {
+		this.loginSurface.on('click', function(e) {
 			var classList;
 			if (e instanceof CustomEvent) {
 				if (e.srcElement.localName == 'a' || e.srcElement.localName == 'button') {
@@ -48,12 +49,13 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		loginSurface.on('keydown', function (e) {
+		this.loginSurface.on('keydown', function (e) {
 			if (e.keyCode == 13) {
 				this.submit();
 			}
 		}.bind(this));
-		this.add(loginSurface);
+
+		this.add(this.loginSurface);
 	}
 
 	LoginView.prototype.submit = function() {

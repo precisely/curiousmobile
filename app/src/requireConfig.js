@@ -22,7 +22,8 @@ require.config({
 		store: '../lib/store.js/store',
 		text: '../lib/text',
 		jstzdetect: '../lib/jstzdetect/jstz.min',
-		jscache: '../lib/jscache/cache'
+		jscache: '../lib/jscache/cache',
+		'exoskeleton.localStorage': '../lib/exoskeleton.localStorage/backbone.localStorage'
 	},
 	packages: [
 

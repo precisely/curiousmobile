@@ -61,12 +61,11 @@ define(function(require, exports, module) {
 		sequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
 			offset += 10;
-			var transform = (this.options.direction === 0) ?
-					Transform.translate(offset, 40, 1) : Transform.translate(0, offset);
-					return {
-						transform: transform,
-						target: input.render()
-					};
+			var transform = Transform.translate(offset, 40, 2);
+			return {
+				transform: transform,
+				target: input.render()
+			};
 		});
 
 		this.iconModifier = new Modifier({

@@ -78,6 +78,7 @@ define(function(require, exports, module) {
 		this.on('logout', function(e) {
 			User.logout(function(){
 				this.changePage('launch');	
+				this.launchView.showLogin();
 			}.bind(this));
 			console.log('PageView: logout');
 		}.bind(this));
