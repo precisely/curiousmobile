@@ -44,8 +44,10 @@ define(function(require, exports, module) {
 		});
 
 		this.launchView.on('login-success', function(data) {
-			_createTrackPage.call(this);
-			console.log('PageView: login-success');
+			setTimeout(function(){
+				_createTrackPage.call(this);
+				console.log('PageView: login-success');
+			}.bind(this), 1000);
 		}.bind(this));
 
 		this.launchView.on('registered', function(e) {
@@ -92,45 +94,47 @@ define(function(require, exports, module) {
 	}
 
 	/**
-	 * Track the last page visited by the user
-	 * @param {string} page - name of the page
-	 */
+	* Track the last page visited by the user
+	* @param {string} page - name of the page
+	*/
 	PageView.prototype.setLastPage = function(page) {
 		store.set('lastPage', page)
 	}
 
 
 	/**
-	 * Get the last page visited by the user
-	 * @param {string} page - name of the page
-	 */
+	* Get the last page visited by the user
+	* @param {string} page - name of the page
+	*/
 	PageView.prototype.getLastPage = function(page) {
 		var view = this.pageMap[store.get('lastPage')];
 		return view;
 	}
 
 	/**
-	 * Changing the page
-	 * @params {string} pageName - name of the page to go to
-	 *
-	 */
+	* Changing the page
+	* @params {string} pageName - name of the page to go to
+	*
+	*/
 	PageView.prototype.changePage = function(pageName) {
 		var lastPageName = store.get('lastPage');
-		this.renderController.hide(); //hides the last page
+		//		this.renderController.hide(); //hides the last page
 		var view = this.getPage(pageName);
 		this.renderController.show(view, {
 			duration: 0
 		});
-
+		if (pageName === 'launch') {
+			view.showLogin();	
+		}
 		view._eventInput.trigger('on-show');
 		this._eventOutput.emit('page-change-complete');
 	}
 
 	/**
-	 * Getting the view instance from the page map
-	 * @params {string} pageName - key for the page in the pageMap
-	 *
-	 */
+	* Getting the view instance from the page map
+	* @params {string} pageName - key for the page in the pageMap
+	*
+	*/
 	PageView.prototype.getPage = function(pageName) {
 		var view = this.pageMap[pageName];
 		return view;

@@ -99,7 +99,7 @@ define(function(require, exports, module) {
 			if (e.keyCode == 13) {
 				this.blur(e);
 			} else {
-				enteredKey = this.inputSurface.getValue();
+				enteredKey = e.srcElement.value;
 				if (!enteredKey) {
 					enteredKey = "/";
 				}
@@ -121,7 +121,7 @@ define(function(require, exports, module) {
 			this.inputSurface.setValue(inputLabel);
 		}.bind(this));
 
-//		this.inputSurface.setValue('test');
+		//		this.inputSurface.setValue('test');
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
 
 		this.repeatSurface = new ImageSurface({
@@ -174,10 +174,12 @@ define(function(require, exports, module) {
 			});
 
 			formContainerSurface.add(deleteModifier).add(deleteSurface);
-			deleteSurface.on('click', function() {
-				this.entry.delete(function(){
-					this._eventOutput.emit('delete-entry',this.entry);
-				}.bind(this))
+			deleteSurface.on('click', function(e) {
+				if (e instanceof CustomEvent) {
+					this.entry.delete(function(){
+						this._eventOutput.emit('delete-entry',this.entry);
+					}.bind(this))
+				}
 			}.bind(this));
 		}
 		this.add(formContainerSurface);
@@ -212,7 +214,7 @@ define(function(require, exports, module) {
 
 	EntryFormView.prototype.blur = function(e) {
 		var entry = this.entry;
-		var newText = this.inputSurface.getValue();
+		var newText = e.srcElement.value;
 		if (!u.isOnline()) {
 			u.showAlert("Please wait until online to add an entry");
 			return;

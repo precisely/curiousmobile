@@ -59,7 +59,7 @@ define(function(require, exports, module) {
 		this.renderController = new RenderController();
 		this.layout.content.add(scrollModifier).add(this.renderController);
 		if (User.isLoggedIn()) {
-			this.addEntryListViews(new Date());
+			this.changeDate(new Date());
 		}
 
 	}
@@ -71,23 +71,16 @@ define(function(require, exports, module) {
 		});
 
 		this.calendarView.on('manual-date-change', function(e) {
-			this.addEntryListViews(e.date);
+			this.changeDate(e.date);
 		}.bind(this));
 		this.layout.header.add(calendarModifier).add(this.calendarView);
 
 	}
 
-	TrackView.prototype.addEntryListViews = function(date) {
+	TrackView.prototype.changeDate = function(date) {
 		this.listViewKeyMap = {};
 		date = u.getMidnightDate(date);
 		this.entryListViewCache = [];
-		if (this.scrollView) {
-			this.renderController.hide({duration: 0});
-		}
-		this.scrollView = new Scrollview({
-			direction: Utility.Direction.X,
-			paginated: true
-		});
 		//creating 11 cached list views by default
 		//5 days before and 5 days after today
 
@@ -96,34 +89,11 @@ define(function(require, exports, module) {
 				var entryListView = new EntryListView(collections[i]);
 				this.entryListViewCache.push(entryListView);
 				this.listViewKeyMap[collections[i].key] = entryListView;
-				entryListView.pipe(this.scrollView);
 			}
-			this.scrollView.sequenceFrom(this.entryListViewCache);
 			this.currentListView = this.entryListViewCache[5];
 			//setting the scroll position to today
-			this.scrollView.setPosition(window.innerWidth * 5);
 			//this.scrollView.goToPage(5);
-			this.lastScrollPosition = this.scrollView.getPosition();
-			this.scrollView.on('pageChange', function(e) {
-				var listView = this.entryListViewCache[e.index];
-				this.currentListView = listView;
-				console.log('changing to page index: ' + (e.index + e.direction));
-				console.log('changing page to: ' + listView.entries.key);
-				console.log(listView);
-
-				if (listView) {
-					var selectedDate = listView.entries.date; 
-					this.calendarView.setSelectedDate(selectedDate);
-					if (e.index < 2 || e.index > this.entryListViewCache.length - 2) {
-						var selectedDate = listView.entries.date;
-						this.addEntryListViews(selectedDate);
-					} else {
-						listView.refreshEntries();
-						console.log('No list view found');
-					}
-				}
-			}.bind(this));
-			this.renderController.show(this.scrollView, {
+			this.renderController.show(this.currentListView, {
 				duration: 0
 			});
 		}.bind(this));

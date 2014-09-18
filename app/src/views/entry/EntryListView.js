@@ -64,7 +64,7 @@ define(function(require, exports, module) {
 		entryView.on('delete-entry', function(entry) {
 			console.log('EntryListView: Deleting an entry');
 			this.entries.remove(entry);
-			this.refreshEntries();
+			this.refreshEntries(this.entries);
 		}.bind(this));
 
 		entryView.on('update-entry', function(resp) {

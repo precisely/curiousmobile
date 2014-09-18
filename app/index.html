@@ -3,8 +3,7 @@
 
 	<head>
 		<title>Test</title>
-		<meta name="viewport" content="initial-scale=1, minimum-scale=1, 
-		maximum-scale=1, user-scalable=0, height=device-height"/>
+		<meta name='viewport' content='width=device-width, initial-scale=1, user-scalable=no' />
 		<meta name="mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
@@ -55,6 +54,7 @@
 			function onDeviceReady() {
 				// Now safe to use the Cordova API
 				StatusBar.hide();
+				Keyboard.shrinkView(true);
 			}
 
 			function checkProgress() {
