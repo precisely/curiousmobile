@@ -30,7 +30,6 @@ define(function(require, exports, module) {
 	window.mainContext = mainContext;
 	window.App = App;
 	var appView = new AppView();
-
 	mainContext.add(appView);
 });
 
