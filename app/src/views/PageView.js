@@ -54,8 +54,10 @@ define(function(require, exports, module) {
 
 		this.communityView = new CommunityView('');
 		this.pageMap['community'] = this.communityView;
+		this.communityView.pipe(this._eventOutput);
 		this.quickHelpView = new QuickHelpView();
 		this.pageMap['help'] = this.quickHelpView;
+		this.quickHelpView.pipe(this._eventOutput);
 		if (!User.isLoggedIn()) {
 			this.changePage('launch');
 		} else {

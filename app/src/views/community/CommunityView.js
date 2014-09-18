@@ -3,6 +3,8 @@ define(function(require, exports, module) {
 	var BaseView = require('views/BaseView');
 	var RenderController = require('famous/views/RenderController');
 	var DiscussionListView = require('views/community/DiscussionListView');
+	var Modifier = require('famous/core/Modifier');
+	var Transform = require('famous/core/Transform');
 	var Surface = require('famous/core/Surface');
 	//var DiscussionView = require('views/community/DiscussionView');
 
@@ -19,6 +21,7 @@ define(function(require, exports, module) {
 	CommunityView.prototype.init = function() {
 		this.renderController = new RenderController();
 		this.add(this.renderController);
+		this.setHeaderLabel('Community Feed');
 		this._eventInput.on('on-show', function() {
 			if (!this.discussionListView) {
 				console.log('Creating Discussion List View');

@@ -5,6 +5,7 @@ define(function(require, exports, module) {
 	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
+	var Modifier = require('famous/core/Modifier');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var HeaderFooter = require('famous/views/HeaderFooterLayout');
 	var ImageSurface = require('famous/surfaces/ImageSurface');
@@ -89,8 +90,8 @@ define(function(require, exports, module) {
 		});
 
 		footerSurface.on('click', function(e) {
-			console.log('footerSurface event');
 			if (e instanceof CustomEvent) {
+				console.log('footerSurface event');
 				var classList = e.srcElement.classList;				
 				e.data = classList[0];
 				this._eventOutput.emit('change-page', e);
@@ -106,6 +107,21 @@ define(function(require, exports, module) {
 			console.log("Clicked on menu icon image");
 			this._eventOutput.emit('show-menu');
 		}.bind(this));
+	}
+
+	BaseView.prototype.setHeaderLabel = function(title) {
+		var labelModifier = new Modifier({
+			transform: Transform.translate(window.innerWidth * 0.25, 5, 0)
+		});
+		var labelSurface = new Surface({
+			content: title,
+			properties: {
+				fontSize: '20px',
+				color: 'white'
+			}
+		});
+
+		this.layout.header.add(labelModifier).add(labelSurface);
 	}
 	module.exports = BaseView;
 });

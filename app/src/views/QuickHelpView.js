@@ -43,6 +43,7 @@ define(function(require, exports, module) {
 		this._eventInput.on('on-show', function() {
 			this.add(scrollView);
 		}.bind(this));
+		this.setHeaderLabel('Quick Help');
 	}
 
 	module.exports = QuickHelpView;

@@ -69,8 +69,8 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 
 
 		/*
-		 * Logout callbacks; register callbacks to be called when user logs out
-		 */
+		* Logout callbacks; register callbacks to be called when user logs out
+		*/
 		u._logoutCallbacks = [];
 
 		u._loginSessionNumber = 0;
@@ -88,8 +88,8 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		};
 
 		/*
-		 * Add universal startsWith method to all String classes
-		 */
+		* Add universal startsWith method to all String classes
+		*/
 		String.prototype.startsWith = function(str) {
 			return this.substring(0, str.length) === str;
 		};
@@ -99,8 +99,8 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		};
 
 		/*
-		 * Low-level utility methods
-		 */
+		* Low-level utility methods
+		*/
 		Utils.arrayEmpty = function(arr) {
 			for (var i in arr) {
 				return false;
@@ -116,8 +116,8 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		};
 
 		/*
-		 * Number/date formatting
-		 */
+		* Number/date formatting
+		*/
 		Utils.isNumeric = function(str) {
 			var chars = '0123456789.+-';
 
@@ -164,110 +164,125 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		};
 
 		//var DateUtil = new function() {
-		Utils.DateUtil = function() {
-			this.now = new Date();
-		};
+			Utils.DateUtil = function() {
+				this.now = new Date();
+			};
 
-		Utils.DateUtil.prototype.getDateRangeForToday = function() {
-			var now = this.now;
-			var start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
-			var end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
-			return {
-				start: start,
-				end: end
-			}
-		};
-
-		Utils.getMidnightDate = function(date) {
-			var start = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
-			return start;
-		};
-
-		Utils.getTimezone = function() {
-			return window.jstz.determine().name();
-		}
-
-		Utils.backgroundPostJSON = function(description, url, args, successCallback, failCallback, delay) {
-			u.queueJSON(description, url, args, successCallback, failCallback, delay, true, true);
-		}
-
-		Utils.queuePostJSON = function(description, url, args, successCallback, failCallback, delay) {
-			u.queueJSON(description, url, args, successCallback, failCallback, delay, true, false);
-		}
-
-		Utils.queueJSON = function(description, url, args, successCallback, failCallback, delay, post, background) {
-			var currentLoginSession = u._loginSessionNumber; // cache current login session
-			var stillRunning = true;
-			var alertShown = false;
-			window.setTimeout(function() {
-				if (stillRunning) {
-					alertShown = true;
-					u.showAlert(description + ": in progress");
+			Utils.DateUtil.prototype.getDateRangeForToday = function() {
+				var now = this.now;
+				var start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+				var end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+				return {
+					start: start,
+					end: end
 				}
-			}, 4000);
-			if (typeof args == "function") {
-				delay = failCallback;
-				failCallback = successCallback
-				successCallback = args;
-				args = undefined;
+			};
+
+			Utils.getMidnightDate = function(date) {
+				var start = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0);
+				return start;
+			};
+
+			Utils.getTimezone = function() {
+				return window.jstz.determine().name();
 			}
-			if (args == undefined || args == null) {
-				args = {
-					dateToken: new Date().getTime()
+
+			Utils.backgroundPostJSON = function(description, url, args, successCallback, failCallback, delay) {
+				u.queueJSON(description, url, args, successCallback, failCallback, delay, true, true);
+			}
+
+			Utils.queuePostJSON = function(description, url, args, successCallback, failCallback, delay) {
+				u.queueJSON(description, url, args, successCallback, failCallback, delay, true, false);
+			}
+
+			Utils.queueJSON = function(description, url, args, successCallback, failCallback, delay, post, background) {
+				var currentLoginSession = u._loginSessionNumber; // cache current login session
+				var stillRunning = true;
+				var alertShown = false;
+				window.setTimeout(function() {
+					if (stillRunning) {
+						alertShown = true;
+						u.showAlert(description + ": in progress");
+					}
+				}, 4000);
+				if (typeof args == "function") {
+					delay = failCallback;
+					failCallback = successCallback
+					successCallback = args;
+					args = undefined;
+				}
+				if (args == undefined || args == null) {
+					args = {
+						dateToken: new Date().getTime()
+					};
+				} else if (!args['dateToken']) {
+					args['dateToken'] = new Date().getTime();
+				}
+				var wrapSuccessCallback = function(data, msg) {
+					stillRunning = false;
+					if (alertShown)
+						u.closeAlerts();
+					if (currentLoginSession != u._loginSessionNumber)
+						return; // if current login session is over, cancel callbacks
+					if (successCallback)
+						successCallback(data);
+					if (!background) {
+						--u.numJSONCalls;
+						if (u.numJSONCalls < 0)
+							u.numJSONCalls = 0;
+						if (u.pendingJSONCalls.length > 0) {
+							var nextCall = u.pendingJSONCalls.shift();
+							nextCall();
+						}
+					}
 				};
-			} else if (!args['dateToken']) {
-				args['dateToken'] = new Date().getTime();
-			}
-			var wrapSuccessCallback = function(data, msg) {
-				stillRunning = false;
-				if (alertShown)
-					u.closeAlerts();
-				if (currentLoginSession != u._loginSessionNumber)
-					return; // if current login session is over, cancel callbacks
-				if (successCallback)
-					successCallback(data);
-				if (!background) {
-					--u.numJSONCalls;
-					if (u.numJSONCalls < 0)
-						u.numJSONCalls = 0;
-					if (u.pendingJSONCalls.length > 0) {
-						var nextCall = u.pendingJSONCalls.shift();
-						nextCall();
+				var wrapFailCallback = function(data, msg) {
+					stillRunning = false;
+					if (alertShown)
+						u.closeAlerts();
+					if (currentLoginSession != u._loginSessionNumber)
+						return; // if current login session is over, cancel callbacks
+					if (failCallback)
+						failCallback(data);
+					if (!background) {
+						--u.numJSONCalls;
+						if (u.numJSONCalls < 0)
+							u.numJSONCalls = 0;
+						if (u.pendingJSONCalls.length > 0) {
+							var nextCall = u.pendingJSONCalls.shift();
+							nextCall();
+						}
 					}
-				}
-			};
-			var wrapFailCallback = function(data, msg) {
-				stillRunning = false;
-				if (alertShown)
-					u.closeAlerts();
-				if (currentLoginSession != u._loginSessionNumber)
-					return; // if current login session is over, cancel callbacks
-				if (failCallback)
-					failCallback(data);
-				if (!background) {
-					--u.numJSONCalls;
-					if (u.numJSONCalls < 0)
-						u.numJSONCalls = 0;
-					if (u.pendingJSONCalls.length > 0) {
-						var nextCall = u.pendingJSONCalls.shift();
-						nextCall();
+					if (msg == "timeout") {
+						if (delay * 2 > 1000000) { // stop retrying after delay too large
+							u.showAlert("Server down... giving up");
+							return;
+						}
+						if (!(delay > 0))
+							u.showAlert("Server not responding... retrying " + description);
+						delay = (delay > 0 ? delay * 2 : 5000);
+						window.setTimeout(function() {
+							u.queueJSON(description, url, args, successCallback, failCallback, delay, background);
+						}, delay);
 					}
-				}
-				if (msg == "timeout") {
-					if (delay * 2 > 1000000) { // stop retrying after delay too large
-						u.showAlert("Server down... giving up");
-						return;
-					}
-					if (!(delay > 0))
-						u.showAlert("Server not responding... retrying " + description);
-					delay = (delay > 0 ? delay * 2 : 5000);
-					window.setTimeout(function() {
-						u.queueJSON(description, url, args, successCallback, failCallback, delay, background);
-					}, delay);
-				}
-			};
-			if ((!background) && (u.numJSONCalls > 0)) { // json call in progress
-				var jsonCall = function() {
+				};
+				if ((!background) && (u.numJSONCalls > 0)) { // json call in progress
+					var jsonCall = function() {
+						$.ajax({
+							type: (post ? "post" : "get"),
+							dataType: "json",
+							url: url,
+							data: args,
+							timeout: 20000 + (delay > 0 ? delay : 0)
+						})
+						.done(wrapSuccessCallback)
+						.fail(wrapFailCallback);
+					};
+					++u.numJSONCalls;
+					u.pendingJSONCalls.push(jsonCall);
+				} else { // first call
+					if (!background)
+						++u.numJSONCalls;
 					$.ajax({
 						type: (post ? "post" : "get"),
 						dataType: "json",
@@ -275,191 +290,174 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 						data: args,
 						timeout: 20000 + (delay > 0 ? delay : 0)
 					})
-						.done(wrapSuccessCallback)
-						.fail(wrapFailCallback);
-				};
-				++u.numJSONCalls;
-				u.pendingJSONCalls.push(jsonCall);
-			} else { // first call
-				if (!background)
-				++u.numJSONCalls;
-				$.ajax({
-					type: (post ? "post" : "get"),
-					dataType: "json",
-					url: url,
-					data: args,
-					timeout: 20000 + (delay > 0 ? delay : 0)
-				})
 					.done(wrapSuccessCallback)
 					.fail(wrapFailCallback);
-			}
-		}
-
-		Utils.backgroundJSON = function(description, url, args, successCallback, failCallback, delay, post) {
-			u.queueJSON(description, url, args, successCallback, failCallback, delay, post, true);
-		}
-
-		Utils.clearJSONQueue = function() {
-			u.numJSONCalls = 0;
-			u.pendingJSONCalls = [];
-		}
-
-
-		/**
-		 * A method which returns an string representation of an url containing parameters
-		 * related to CSRF prevention. This is useful to concate url in any url string of ajax call,
-		 * @param key unique string which is passed in jqCSRFToken tag to create token.
-		 * @param prefix any string to append before generated url like: <b>&</b>.
-		 * @returns string representation of CSRF parameters.
-		 */
-		Utils.getCSRFPreventionURI = function(key) {
-			var App = window.App;
-			var preventionURI = App.CSRF.SyncTokenKeyName + "=" + App.CSRF[key] + "&" + App.CSRF.SyncTokenUriName + "=" + key;
-			if (App.CSRF[key] == undefined) {
-				console.error("Missing csrf prevention token for key", key);
-			}
-			return preventionURI;
-		}
-
-		/**
-		 * A method which returns an object containing key & its token based on given key.
-		 * This is useful to be easily passed in some jQuery methods like <b>getJSON</b>,
-		 * which accepts parameters to be passed as Object.
-		 * @param key unique string which is passed in jqCSRFToken tag to create token.
-		 * @param data optional object to attach to new object using jQuery's extend method.
-		 * @returns the object containing parameters for CSRF prevention.
-		 */
-		Utils.getCSRFPreventionObject = function(key, data) {
-			var App = window.App;
-			var CSRFPreventionObject = new Object();
-			if (App.CSRF[key]) {
-				CSRFPreventionObject[App.CSRF.SyncTokenKeyName] = App.CSRF[key];
-			} else {
-				console.error("Missing csrf prevention token for key", key);
-			}
-			CSRFPreventionObject[App.CSRF.SyncTokenUriName] = key;
-
-			return $.extend(CSRFPreventionObject, data);
-		}
-
-		/*
-		 * Curious data json return value check
-		 */
-		Utils.checkData = function(data, status, errorMessage, successMessage) {
-			var User = require('models/User');
-			if (data == 'error') {
-				if (errorMessage && status != 'cached')
-					u.showAlert(errorMessage);
-				return false;
-			}
-			if (data == 'login') {
-				if (status != 'cached') {
-					u.showAlert("Session timed out.");
-					User.logout();
 				}
-				return false;
 			}
-			if (data == 'success') {
-				if (successMessage && status != 'cached')
-					u.showAlert(successMessage);
+
+			Utils.backgroundJSON = function(description, url, args, successCallback, failCallback, delay, post) {
+				u.queueJSON(description, url, args, successCallback, failCallback, delay, post, true);
+			}
+
+			Utils.clearJSONQueue = function() {
+				u.numJSONCalls = 0;
+				u.pendingJSONCalls = [];
+			}
+
+
+			/**
+			* A method which returns an string representation of an url containing parameters
+			* related to CSRF prevention. This is useful to concate url in any url string of ajax call,
+			* @param key unique string which is passed in jqCSRFToken tag to create token.
+			* @param prefix any string to append before generated url like: <b>&</b>.
+			* @returns string representation of CSRF parameters.
+			*/
+			Utils.getCSRFPreventionURI = function(key) {
+				var App = window.App;
+				var preventionURI = App.CSRF.SyncTokenKeyName + "=" + App.CSRF[key] + "&" + App.CSRF.SyncTokenUriName + "=" + key;
+				if (App.CSRF[key] == undefined) {
+					console.error("Missing csrf prevention token for key", key);
+				}
+				return preventionURI;
+			}
+
+			/**
+			* A method which returns an object containing key & its token based on given key.
+			* This is useful to be easily passed in some jQuery methods like <b>getJSON</b>,
+			* which accepts parameters to be passed as Object.
+			* @param key unique string which is passed in jqCSRFToken tag to create token.
+			* @param data optional object to attach to new object using jQuery's extend method.
+			* @returns the object containing parameters for CSRF prevention.
+			*/
+			Utils.getCSRFPreventionObject = function(key, data) {
+				var CSRFPreventionObject = new Object();
+				if (localStorage['mobileSessionId']) {
+					CSRFPreventionObject['mobileSessionId'] = localStorage['mobileSessionId'];
+				} else {
+					console.error("Missing mobileSessionId for CSRF protection");
+				}
+
+				return $.extend(CSRFPreventionObject, data);
+			}
+
+			/*
+			* Curious data json return value check
+			*/
+			Utils.checkData = function(data, status, errorMessage, successMessage) {
+				var User = require('models/User');
+				if (data == 'error') {
+					if (errorMessage && status != 'cached')
+						u.showAlert(errorMessage);
+					return false;
+				}
+				if (data == 'login') {
+					if (status != 'cached') {
+						u.showAlert("Session timed out.");
+						User.logout();
+					}
+					return false;
+				}
+				if (data == 'success') {
+					if (successMessage && status != 'cached')
+						u.showAlert(successMessage);
+					return true;
+				}
+				if (data == 'refresh') {
+					u.showAlert("Server timeout, refreshing page.")
+					refreshPage();
+					return false;
+				}
+				if (typeof(data) == 'string') {
+					if (status != 'cached' && data != "") {
+						u.showAlert(data);
+						location.reload(true);
+					}
+					return false;
+				}
 				return true;
 			}
-			if (data == 'refresh') {
-				u.showAlert("Server timeout, refreshing page.")
-				refreshPage();
-				return false;
+
+			Utils.isLoggedIn = function() {
+				return store.get('mobileSessionId') != null;
 			}
-			if (typeof(data) == 'string') {
-				if (status != 'cached' && data != "") {
-					u.showAlert(data);
-					location.reload(true);
-				}
-				return false;
+
+			Utils.makeGetUrl = function(url) {
+				return u.getServerUrl() + "/mobiledata/" + url + '?callback=?';
 			}
-			return true;
-		}
 
-		Utils.isLoggedIn = function() {
-			return store.get('mobileSessionId') != null;
-		}
+			Utils.makeGetArgs = function(args) {
+				args['mobileSessionId'] = store.get('mobileSessionId');
 
-		Utils.makeGetUrl = function(url) {
-			return u.getServerUrl() + "/mobiledata/" + url + '?callback=?';
-		}
+				return args;
+			}
 
-		Utils.makeGetArgs = function(args) {
-			args['mobileSessionId'] = store.get('mobileSessionId');
+			Utils.makePostUrl = function(url) {
+				return u.getServerUrl() + "/mobiledata/" + url;
+			}
 
-			return args;
-		}
+			Utils.makePostArgs = function(args) {
+				args['mobileSessionId'] = store.get('mobileSessionId');
 
-		Utils.makePostUrl = function(url) {
-			return u.getServerUrl() + "/mobiledata/" + url;
-		}
+				return args;
+			}
 
-		Utils.makePostArgs = function(args) {
-			args['mobileSessionId'] = store.get('mobileSessionId');
+			Utils.makePlainUrl = function(url) {
+				var url = u.getServerUrl() + "/mobile/" + url;
+				url = url;
+				return url;
+			}
 
-			return args;
-		}
+			/*
+			* HTML escape utility methods
+			*/
+			Utils.escapeHTML = function(str) {
+				return ('' + str).replace(/&/g, '&amp;').replace(/>/g, '&gt;').replace(/</g, '&lt;').replace(/"/g, '&quot;').replace(/  /g, '&nbsp;&nbsp;');
+			}
 
-		Utils.makePlainUrl = function(url) {
-			var url = u.getServerUrl() + "/mobile/" + url;
-			url = url;
-			return url;
-		}
-
-		/*
-		 * HTML escape utility methods
-		 */
-		Utils.escapeHTML = function(str) {
-			return ('' + str).replace(/&/g, '&amp;').replace(/>/g, '&gt;').replace(/</g, '&lt;').replace(/"/g, '&quot;').replace(/  /g, '&nbsp;&nbsp;');
-		}
-
-		Utils.addSlashes = function(str) {
-			return str.replace(/\'/g, '\\\'').replace(/\"/g, '\\"')
+			Utils.addSlashes = function(str) {
+				return str.replace(/\'/g, '\\\'').replace(/\"/g, '\\"')
 				.replace(/\\/g, '\\\\').replace(/\0/g, '\\0');
-		}
-
-
-		Utils.formatAmount = function(amount, amountPrecision) {
-			if (amount == null) return " ___";
-			if (amountPrecision < 0) return "";
-			if (amountPrecision == 0) {
-				return amount ? " yes" : " no";
 			}
-			return " " + amount;
-		}
 
-		Utils.getWindowSize = function() {
-			var mainContext = window.mainContext;
-			return mainContext.getSize();
-		}
 
-		Utils.prettyDate = function prettyDate(time) {
-			var date = time,
+			Utils.formatAmount = function(amount, amountPrecision) {
+				if (amount == null) return " ___";
+				if (amountPrecision < 0) return "";
+				if (amountPrecision == 0) {
+					return amount ? " yes" : " no";
+				}
+				return " " + amount;
+			}
+
+			Utils.getWindowSize = function() {
+				var mainContext = window.mainContext;
+				return mainContext.getSize();
+			}
+
+			Utils.prettyDate = function prettyDate(time) {
+				var date = time,
 				diff = (((new Date()).getTime() - date.getTime()) / 1000),
 				day_diff = Math.floor(diff / 86400);
 
-			if (isNaN(day_diff) || day_diff < 0)
-				return;
+				if (isNaN(day_diff) || day_diff < 0)
+					return;
 
-			if (day_diff >= 31) {
-				return date.getMonth() + '/' + date.getDate() + '/' + date.getFullYear();	
+				if (day_diff >= 31) {
+					return date.getMonth() + '/' + date.getDate() + '/' + date.getFullYear();	
+				}
+
+				return day_diff == 0 && (
+					diff < 60 && "just now" ||
+					diff < 120 && "1 minute ago" ||
+					diff < 3600 && Math.floor(diff / 60) + " minutes ago" ||
+					diff < 7200 && "1 hour ago" ||
+					diff < 86400 && Math.floor(diff / 3600) + " hours ago") ||
+					day_diff == 1 && "Yesterday" ||
+					day_diff < 7 && day_diff + " days ago" ||
+					day_diff < 31 && Math.ceil(day_diff / 7) + " weeks ago";
 			}
 
-			return day_diff == 0 && (
-				diff < 60 && "just now" ||
-				diff < 120 && "1 minute ago" ||
-				diff < 3600 && Math.floor(diff / 60) + " minutes ago" ||
-				diff < 7200 && "1 hour ago" ||
-				diff < 86400 && Math.floor(diff / 3600) + " hours ago") ||
-				day_diff == 1 && "Yesterday" ||
-				day_diff < 7 && day_diff + " days ago" ||
-				day_diff < 31 && Math.ceil(day_diff / 7) + " weeks ago";
-		}
 
 
-
-		module.exports = Utils;
+			module.exports = Utils;
 	});
