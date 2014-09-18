@@ -6,6 +6,15 @@ require.config({
 				'underscore'
 			],
 			exports: 'Backbone'
+		},
+		underscore: {
+			exports: '_',
+			init: function () {
+		this._.extend(this._.templateSettings, {
+			interpolate: /\{\{(.+?)\}\}/g
+		});
+		return this._;
+	}
 		}
 	},
 	paths: {
@@ -20,10 +29,11 @@ require.config({
 		jquery: '../lib/jquery/dist/jquery',
 		fontawesome: '../lib/fontawesome/fonts/*',
 		store: '../lib/store.js/store',
-		text: '../lib/text',
+		text: '../lib/text/text',
 		jstzdetect: '../lib/jstzdetect/jstz.min',
 		jscache: '../lib/jscache/cache',
-		'exoskeleton.localStorage': '../lib/exoskeleton.localStorage/backbone.localStorage'
+		'exoskeleton.localStorage': '../lib/exoskeleton.localStorage/backbone.localStorage',
+		bootstrap: '../lib/bootstrap/dist/js/bootstrap'
 	},
 	packages: [
 

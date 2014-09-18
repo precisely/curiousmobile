@@ -4,10 +4,10 @@ module.exports = {
     files: [{
       expand: true,
       dot: true,
-      cwd: '.',
-      dest: '<%= config.dist %>',
+      cwd: '<%= config.app %>',
+      dest: '../<%= config.dist %>',
       src: [
-        'app/*',
+        '**/**.*',
         '.htaccess',
         'images/{,*/}*.webp',
         // '{,*/}*.html',
