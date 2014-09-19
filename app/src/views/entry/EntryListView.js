@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 		StateModifier = require('famous/modifiers/StateModifier'),
 		RenderController = require("famous/views/RenderController"),
 		EntryCollection = require('models/EntryCollection'),
+		Entry = require('models/Entry'),
 		EntryView = require('views/entry/EntryView');
 	var TransitionableTransform = require("famous/transitions/TransitionableTransform");
 	var SequentialLayout = require("famous/views/SequentialLayout");
@@ -64,7 +65,8 @@ define(function(require, exports, module) {
 		entryView.on('delete-entry', function(entry) {
 			console.log('EntryListView: Deleting an entry');
 			this.entries.remove(entry);
-			this.refreshEntries(this.entries);
+			Entry.cacheEntries(this.entries.key, this.entries);
+			this.refreshEntries();
 		}.bind(this));
 
 		entryView.on('update-entry', function(resp) {
