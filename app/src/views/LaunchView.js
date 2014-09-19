@@ -23,14 +23,6 @@ define(function(require, exports, module) {
 	LaunchView.DEFAULT_OPTIONS = {};
 
 	function _createView() {
-		var containerSurface = new ContainerSurface({
-			size: [window.innerWidth, window.innerHeight],
-			properties: {
-				backgroundColor: 'white'
-			}
-		});
-		this.add(containerSurface);
-
 		var logoSurface = new ImageSurface({
 			size: [205, 230],
 			content: 'content/images/logo.gif'

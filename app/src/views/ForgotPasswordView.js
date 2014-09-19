@@ -23,7 +23,10 @@ define(function(require, exports, module) {
 	function _createView() {
 		var template = ForgotPasswordTemplate;
 		var forgotSurface = new Surface({
-			content: _.template(template, this.options, templateSettings)
+			content: _.template(template, this.options, templateSettings),
+			properties: {
+				backgroundColor: 'white'
+			}
 		});
 
 		forgotSurface.on('click', function(e) {

@@ -24,7 +24,10 @@ define(function(require, exports, module) {
 	RegisterView.prototype.createView = function() {
 		var template = RegisterTemplate;
 		var registerSurface = new Surface({
-			content: _.template(template, this.options, templateSettings)
+			content: _.template(template, this.options, templateSettings),
+			properties: {
+				backgroundColor: 'white'
+			}
 		});
 
 		registerSurface.on('click', function(e) {

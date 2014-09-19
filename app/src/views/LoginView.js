@@ -25,7 +25,10 @@ define(function(require, exports, module) {
 	function _createView(argument) {
 		var template = LoginTemplate;
 		this.loginSurface = new Surface({
-			content: _.template(template, this.options, templateSettings)
+			content: _.template(template, this.options, templateSettings),
+			properties: {
+				backgroundColor: 'white'
+			}
 		});
 
 		this.loginSurface.on('click', function(e) {

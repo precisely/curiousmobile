@@ -47,7 +47,7 @@ define(function(require, exports, module) {
 			setTimeout(function(){
 				_createTrackPage.call(this);
 				console.log('PageView: login-success');
-			}.bind(this), 1000);
+			}.bind(this), 2000);
 		}.bind(this));
 
 		this.launchView.on('registered', function(e) {

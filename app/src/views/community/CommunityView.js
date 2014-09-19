@@ -28,12 +28,7 @@ define(function(require, exports, module) {
 				this.discussionListView = new DiscussionListView('');
 			}
 			console.log('CommunityView: on show');
-			var testSurface = new Surface({
-				size: [undefined,undefined],
-				content: 'Testing CommunityView'
-			});
 			this.renderController.show(this.discussionListView);
-			//this.renderController.show(testSurface);
 		}.bind(this));
 	}
 

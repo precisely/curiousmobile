@@ -215,6 +215,7 @@ define(function(require, exports, module) {
 	EntryFormView.prototype.blur = function(e) {
 		var entry = this.entry;
 		var newText = e.srcElement.value;
+		$(e.srcElement).blur();
 		if (!u.isOnline()) {
 			u.showAlert("Please wait until online to add an entry");
 			return;
