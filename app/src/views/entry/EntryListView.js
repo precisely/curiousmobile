@@ -74,6 +74,12 @@ define(function(require, exports, module) {
 			this.selectedEntry = undefined;
 			this.refreshEntries(resp.entries, resp.glowEntry);
 		}.bind(this));
+
+		entryView.on('new-entry', function(resp) {
+			console.log('EntryListView: New entry');
+			this.selectedEntry = undefined;
+			this.refreshEntries(resp.entries, resp.glowEntry);
+		}.bind(this));
 		return entryView;
 	}
 
