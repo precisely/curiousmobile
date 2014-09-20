@@ -103,8 +103,8 @@ define(function(require, exports, module) {
 				if (!enteredKey) {
 					enteredKey = "/";
 				}
-				//autoCompleteSurface.getAutoCompletes(enteredKey);
-				//formContainerSurface.add(autoCompleteSurface);
+				autoCompleteSurface.getAutoCompletes(enteredKey);
+				formContainerSurface.add(autoCompleteSurface);
 			}
 		}.bind(this));
 
