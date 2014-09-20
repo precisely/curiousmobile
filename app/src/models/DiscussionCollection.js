@@ -13,21 +13,20 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Dis
 
 		DiscussionCollection.fetch = function(args, callback) {
 			//TODO fetch discussion from server
-			//var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
-				//date: argDates,
-				//userId: User.getCurrentUserId(),
-				//timeZoneName: window.jstz.determine().name()
-			//});
-			//console.log('Fetching discussions from the server: ');
-			//u.backgroundJSON("loading entry list", u.makeGetUrl("getListData"), u.makeGetArgs(argsToSend),
-				//function(discussions) {
-					//if (u.checkData(discussions)) {
-						//console.log('discussions from the server: ' + discussions);
-						//callback(collections);
-					//}
-				//});
-				
-			callback(new DiscussionCollection(discussions));	
+			var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
+//				date: argDates,
+				userId: User.getCurrentUserId(),
+				timeZoneName: window.jstz.determine().name()
+			});
+			console.log('Fetching discussions from the server: ');
+			u.backgroundJSON("loading discussion list", u.makeGetUrl("listDiscussionData"), u.makeGetArgs(argsToSend),
+				function(discussions) {
+					if (u.checkData(discussions)) {
+					    console.log('discussions from the server: ', discussions);
+						callback(discussions);
+					}
+				});
+//            callback(new DiscussionCollection(discussions));
 		};
 
 		DiscussionCollection.getFromCache = function(key){

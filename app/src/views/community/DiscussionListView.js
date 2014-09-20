@@ -44,14 +44,17 @@ define(function(require, exports, module) {
 				direction: Utility.Direction.Y,
 			});
 
-			discussions.each(function(discussion) {
-				var prettyDate = u.prettyDate(new Date(discussion.get('updated')));
+            console.log('discussions from the server: ', discussions);
+			discussions.forEach(function(discussion) {
+                var prettyDate = new Date();
+//				var prettyDate = u.prettyDate(new Date(discussion.get('updated')));
 				console.log('Pretty date ' + prettyDate);
-				discussion.set('prettyDate', prettyDate);
+                console.log('discussion ', discussion);
+                discussion.prettyDate =  prettyDate;
 				var discussionSurface = new Surface({
 					size: [undefined, true],
 					//content: 'testing'
-					content: _.template(DiscussionTemplate, discussion.attributes, templateSettings),
+					content: _.template(DiscussionTemplate, discussion, templateSettings),
 				});
 
 				discussionSurface.on('deploy', function() {
