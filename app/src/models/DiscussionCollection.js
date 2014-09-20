@@ -15,6 +15,7 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Dis
 			//TODO fetch discussion from server
 			var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 //				date: argDates,
+//			    q : "curoau",
 				userId: User.getCurrentUserId(),
 				timeZoneName: window.jstz.determine().name()
 			});
