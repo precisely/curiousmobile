@@ -2,7 +2,8 @@ define(function(require, exports, module) {
 	'use strict';
 	var BaseView = require('views/BaseView');
 	var RenderController = require('famous/views/RenderController');
-	var DiscussionListView = require('views/community/DiscussionListView');
+    var DiscussionListView = require('views/community/DiscussionListView');
+//	var DiscussionListView = require('views/community/DiscussionSummaryView');
 	var Modifier = require('famous/core/Modifier');
 	var Transform = require('famous/core/Transform');
 	var Surface = require('famous/core/Surface');

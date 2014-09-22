@@ -11,12 +11,13 @@ define(function(require, exports, module) {
 	var Scrollview = require('famous/views/Scrollview');
 	var DiscussionCollection = require('models/DiscussionCollection');
 	var DiscussionTemplate = require('text!templates/discussion.html');
-    var SearchTemplate = require('text!templates/search-field.html');
+    var SearchTemplate = require('text!templates/create-post-search-discussion.html');
 	var TrueSurface = require('surfaces/TrueSurface');
 	var u = require('util/Utils');
     var FormContainerSurface = require("famous/surfaces/FormContainerSurface");
     var InputSurface = require("famous/surfaces/InputSurface");
     var SequentialLayout = require("famous/views/SequentialLayout");
+    var CreatePostView = require("views/CreatePostView");
 
 	function DiscussionListView(group) {
 		View.apply(this, arguments);
@@ -30,10 +31,7 @@ define(function(require, exports, module) {
 	DiscussionListView.DEFAULT_OPTIONS = {};
 
 	DiscussionListView.prototype.init = function() {
-		//var postSurface = new Surface({
-		//content: postTemplate
-		//});
-		var transition = new Transitionable(Transform.translate(0, 140, 0));
+		var transition = new Transitionable(Transform.translate(0, 100, 0));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
 		this.add(this.renderController);
@@ -43,69 +41,7 @@ define(function(require, exports, module) {
 
 
     function _createView(argument) {
-/*        var formSurface = new FormContainerSurface({
-            size: [200, 200],
-        });
-
-        var searchSurface = new InputSurface({
-            placeholder: 'discussion title',
-            size: [window.innerWidth * 0.972, 25]
-        });
-
-        searchSurface.on('keydown', function (e) {
-            //on enter
-            if (e.keyCode == 13) {
-                this.submit();
-            }
-        }.bind(this));
-
-        var submitSurface = new Surface({
-            size: [52, 25],
-            content: '<input type="button" value="search" />'
-        });
-
-        this.searchSurface = searchSurface;
-        submitSurface.on('click', function(e) {
-          if (e instanceof CustomEvent) {
-                this.submit();  
-          }
-        }.bind(this));
-
-        var formLayout = new SequentialLayout({
-            direction: 1,
-            itemSpacing: 7,
-        });
-
-        var otherLinksSurface = new Surface({
-            size: [200,20],
-            content: '<a href="#" class="post-discussion">Post</a>',
-            properties: {
-                color: 'black',
-                fontSize: '11px'
-            }
-        });
-
-        otherLinksSurface.on('click', function(e) {
-            if (e instanceof CustomEvent && _.contains(e.srcElement.classList, 'post-discussion')) {
-                    this._eventOutput.emit('create-account');
-            }
-        }.bind(this));
-
-        var modifier = new StateModifier({
-          align: [0.05, 0.2],
-          origin: [0.05, 0.2]
-        });
-
-//        var modifier  = new StateModifier({
-//            transform:Transform.translate(4,60,0)
-//        });
-        
-        formLayout.sequenceFrom([searchSurface, submitSurface, otherLinksSurface]);
-        formSurface.add(formLayout);
-
-        this.add(modifier).add(formSurface);*/
-
-        var searchAndPostSurface = new Surface({
+        this.searchAndPostSurface = new Surface({
             size: [undefined, true],
             content: _.template(SearchTemplate, templateSettings),
         });
@@ -113,10 +49,44 @@ define(function(require, exports, module) {
             align: [0.05, 0.1],
             origin: [0.05, 0.1]
           });
-        this.add(modifier).add(searchAndPostSurface);
+        this.add(modifier).add(this.searchAndPostSurface);
+//        this.renderController.show(this.searchAndPostSurface);
 
+        this.searchAndPostSurface.on('click', function(e) {
+            var classList;
+            if (e instanceof CustomEvent) {
+                classList = e.srcElement.parentElement.classList;
+                if (_.contains(classList, 'submit')) {
+                    console.log("Submit for search");
+                    this.submit();
+                } else if (_.contains(classList, 'create-post')) {
+                    console.log("Show create-post page");
+                    this._eventOutput.emit('create-post');
+                    var createPostSurface = new CreatePostView();
+//                    createPostSurface.getAutoCompletes(enteredKey);
+                    this.renderController.show(createPostSurface);
+//                    formContainerSurface.add(autoCompleteSurface);
+                }
+            }
+        }.bind(this));
+
+        this.searchAndPostSurface.on('keydown', function (e) {
+            if (e.keyCode == 13) {
+                this.submit();
+            }
+        }.bind(this));
     }
 	
+
+    DiscussionListView.prototype.submit = function() {
+        var searchDiscussion = document.forms["searchForm"]["searchDiscussion"].value;
+        if (!searchDiscussion){
+            u.showAlert("No search data!");
+        } else {
+            console.log('Fetch result from server');
+        }
+    };
+    
 	DiscussionListView.prototype.changeGroup = function(group) {
 		DiscussionCollection.fetch(group, function(discussions) {
 			var surfaceList = [];
@@ -129,6 +99,15 @@ define(function(require, exports, module) {
 			discussions.forEach(function(discussion) {
 				var prettyDate = u.prettyDate(new Date(discussion.updated));
                 discussion.prettyDate =  prettyDate;
+
+                var iconImage='<i class="fa fa-comment close pull-right"></i>';
+
+                if (discussion.isPlot) {
+                    iconImage= '<i class="fa fa-area-chart close pull-right"></i>';
+                }
+
+                discussion.iconImage =  iconImage;
+                
 				var discussionSurface = new Surface({
 					size: [undefined, true],
 					content: _.template(DiscussionTemplate, discussion, templateSettings),
@@ -144,31 +123,34 @@ define(function(require, exports, module) {
 				});
 				
 				discussionSurface.on('click', function(e) {
+				    var classList;
 //				    if (e instanceof CustomEvent) {
-                        console.log(discussion.name);
-                        var detailedDiscussionSurface = new Surface({
-                            size: [undefined, true],
-                            content: _.template(DiscussionTemplate, discussion, templateSettings),
-                        });
+		                classList = e.srcElement.parentElement.classList;
+		                if (_.contains(classList, 'close-discussion')) {
+                            console.log("close ");
+		                } else {
+                            console.log(discussion.name);
+                            var detailedDiscussionSurface = new Surface({
+                                size: [undefined, true],
+                                content: _.template(DiscussionTemplate, discussion, templateSettings),
+                            });
+    
+                            var detailedModifier = new StateModifier({
+                              align: [0.5, 0.5],
+                              origin: [0.5, 0.5]
+                            });
 
-                        var detailedModifier = new StateModifier({
-                          align: [0.5, 0.5],
-                          origin: [0.5, 0.5]
-                        });
-
-//                        var detailedModifier  = new StateModifier({
-//                            transform:Transform.translate(4,260,0)
-//                        });
-                        $this.add(detailedModifier).add(detailedDiscussionSurface);
-                        $this.renderController.hide(scrollView);
+    //                        var detailedModifier  = new StateModifier({
+    //                            transform:Transform.translate(4,260,0)
+    //                        });
+                            $this.add(detailedModifier).add(detailedDiscussionSurface);
+                            $this.renderController.hide(scrollView);
+		                }
 //				    }
                 }.bind(this));
-//                $this.renderController.show(scrollView);
-
 				surfaceList.push(discussionSurface);
 				discussionSurface.pipe(scrollView);
 			});
-
 
 			scrollView.sequenceFrom(surfaceList);
 			this.renderController.show(scrollView);

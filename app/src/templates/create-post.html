@@ -1,0 +1,40 @@
+
+
+<div align="center" style="border:1px solid gray">
+    <strong class="">CREATE A NEW POST </strong>
+</div>
+<div style="border:1px solid gray">
+    <span class="post" style="float:left">POST IT</span>
+     &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;
+     &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;
+     &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;  &nbsp; &nbsp;
+    <span>CANCEL</span>
+</div>
+   
+<!-- 	<span class="pull-right">CANCEL</span> -->
+<!-- 	<span class="pull-left">POST IT</span> -->
+    <form role="form" class="form-footer-login" name="postForm" method="post" onSubmit="return false;">
+    <div class="form-group">
+        <label>Topic</label> 
+        <input class="form-control"  placeholder="New question or discussion topic?"
+          type="text" id="topic" name="name" value="" style="width: 80%"/>
+        <textarea class="form-control" class="full-width" name="discussionPost" 
+          style="height: 160px"></textarea> <br>
+          <span class="input-group-btn">
+              <button type="submit" class="input-group btn submit">
+                  <i class="fa fa-arrow-circle-right fa-1x"></i>
+              </button>
+          </span>
+    </div>
+    </form>
+</form>
+
+<!-- 
+<form action="/discussion/create" method="post">
+        <input class="full-width" type="text" placeholder="New question or discussion topic?" name="name">
+        <textarea class="full-width" name="discussionPost"></textarea>
+        <input type="hidden" name="group" value="">
+        <input type="submit" name="POST" value="POST">
+    </form>
+</div>
+ -->
