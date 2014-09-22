@@ -11,7 +11,7 @@ define(function(require, exports, module) {
 		},
 		post: function(name, discussionPost, callback) {
 			this.u.queueJSON("posting in",
-                this.u.makeGetUrl('createData'),
+                this.u.makeGetUrl('createDiscussion'),
                 this.u.makeGetArgs({
                     name: name,
                     discussionPost: discussionPost,
