@@ -31,7 +31,6 @@ define(function(require, exports, module) {
 		var logoModifier = new Modifier({
 			origin: [0.5, 0.1],
 		});
-
 		var transition = new Transitionable(Transform.translate(0, 0, 2));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
@@ -61,7 +60,7 @@ define(function(require, exports, module) {
 		this.forgotPasswordView.on('password-reset', function(e) {
 			this.showView(this.loginView);
 		}.bind(this));
-		
+
 		this.registerView.on('cancel-registration', function(e) {
 			this.showView(this.loginView);
 		}.bind(this));

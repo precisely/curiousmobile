@@ -6,6 +6,7 @@ define(function(require, exports, module) {
 	var Engine = require('famous/core/Engine');
 	var Cache = require('jscache');
 	var AppView = require('views/AppView');
+	var StateModifier = require('famous/modifiers/StateModifier');
 	//var AppView = require('views/AppView');
 
 	var collectionCache = new Cache(1000, true, new Cache.LocalStorageCacheStorage('ec'));
@@ -23,15 +24,19 @@ define(function(require, exports, module) {
 	};
 
 	App.collectionCache = collectionCache;
-	//App.serverUrl = "http://192.168.0.31:8080";
-	App.serverUrl = "http://dev.wearecurio.us";
+	App.serverUrl = "http://192.168.0.31:8080";
+	//App.serverUrl = "http://dev.wearecurio.us";
 	//App.serverUrl = "http://127.0.0.1:8080";
 
 	var mainContext = Engine.createContext();
 	window.mainContext = mainContext;
 	window.App = App;
 	var appView = new AppView();
-	mainContext.add(appView);
+	var mod = new StateModifier({
+		origin: [0, 0],
+		align: [0, 0]
+	});
+	mainContext.add(mod).add(appView);
 });
 
 //TODO A cleaner approach to setting template format

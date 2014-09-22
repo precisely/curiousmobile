@@ -54,6 +54,7 @@ define(function(require, exports, module) {
 
 		this.loginSurface.on('keydown', function (e) {
 			if (e.keyCode == 13) {
+				$(e.srcElement).blur();
 				this.submit();
 			}
 		}.bind(this));

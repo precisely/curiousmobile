@@ -31,6 +31,7 @@ define(function(require, exports, module) {
 		this.pageView = new PageView();
 		this.pageModifier = new StateModifier({
 			size: [window.innerWidth, window.innerHeight]
+
 		});
 
 		this.add(this.pageModifier).add(this.pageView);

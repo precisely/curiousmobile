@@ -98,14 +98,8 @@ define(function(require, exports, module) {
 			//on enter
 			if (e.keyCode == 13) {
 				this.blur(e);
-			} else {
-				enteredKey = e.srcElement.value;
-				if (!enteredKey) {
-					enteredKey = "/";
-				}
-				//autoCompleteSurface.getAutoCompletes(enteredKey);
-				//formContainerSurface.add(autoCompleteSurface);
-			}
+				this._eventOutput.emit('refresh-list-view');
+			} 		
 		}.bind(this));
 
 		this.inputSurface.on('click', function(e) {

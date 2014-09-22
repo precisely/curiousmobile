@@ -49,11 +49,13 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		var backgroundModifier = new StateModifier({
+			origin: [0,0],
 			transform: Transform.translate(0, 44, 0),
 			//            size: [400,400]
 		});
 		this.layout.content.add(backgroundModifier).add(this.createView);
 		var scrollModifier = new StateModifier({
+			origin: [0,0],
 			transform: Transform.translate(0, 110, 1)
 		});
 		this.renderController = new RenderController();

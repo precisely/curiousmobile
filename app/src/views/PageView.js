@@ -32,22 +32,30 @@ define(function(require, exports, module) {
 		var backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
-				backgroundColor: 'white'
+				backgroundColor: 'red'
 			}
 		});
 		this.add(backgroundSurface);
-		this.add(this.renderController);
+		this.hiddenModifier = new StateModifier({
+			align: [0, 0]
+		});
+		this.add(this.hiddenModifier).add(this.renderController);
 		this.launchView = new LaunchView();
 		this.pageMap['launch'] = this.launchView;
-		this.hiddenModifier = new StateModifier({
-			align: [1, 1]
-		});
 
 		this.launchView.on('login-success', function(data) {
-			setTimeout(function(){
-				_createTrackPage.call(this);
-				console.log('PageView: login-success');
-			}.bind(this), 2000);
+			_createTrackPage.call(this);
+			var view = new View();
+			var backgroundSurface = new Surface({
+				size: [undefined, undefined],
+				properties: {
+					backgroundColor: 'white'
+				}
+			});
+			view.add(backgroundSurface);
+			this.renderController.show(view);
+			this.changePage('track');
+			console.log('PageView: login-success');
 		}.bind(this));
 
 		this.launchView.on('registered', function(e) {
@@ -118,7 +126,7 @@ define(function(require, exports, module) {
 	*/
 	PageView.prototype.changePage = function(pageName) {
 		var lastPageName = store.get('lastPage');
-		//		this.renderController.hide(); //hides the last page
+		this.renderController.hide(); //hides the last page
 		var view = this.getPage(pageName);
 		this.renderController.show(view, {
 			duration: 0

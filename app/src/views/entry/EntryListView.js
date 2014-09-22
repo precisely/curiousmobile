@@ -33,7 +33,7 @@ define(function(require, exports, module) {
 	function _createList(argument) {
 
 		var backgroundSurface = new Surface({
-			size: [undefined, undefined],
+			size: [320, 543],
 			properties: {
 				backgroundColor: 'white',
 				border: '2px solid #c0c0c0'
@@ -107,6 +107,7 @@ define(function(require, exports, module) {
 		this.sequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
             offset = index * 44;
+			//console.log("["+ offset + ", " + index + "]");
 			var currentView = this.entryViews[index];
 			if (!currentView) {
 				return;
