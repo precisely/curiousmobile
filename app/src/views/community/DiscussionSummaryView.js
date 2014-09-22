@@ -3,14 +3,22 @@ define(function(require, exports, module) {
     var View = require('famous/core/View');
     var Surface = require('famous/surfaces/ContainerSurface');
     var Transform = require('famous/core/Transform');
+    var Transitionable = require('famous/transitions/Transitionable');
     var StateModifier = require('famous/modifiers/StateModifier');
     var u = require('util/Utils');
+    var Utility = require('famous/utilities/Utility');
+    var Scrollview = require('famous/views/Scrollview');
+    var RenderController = require('famous/views/RenderController');
     var DetailedDiscussion = require('models/DetailedDiscussion');
-    var DiscussionTemplate = require('text!templates/detailedDiscussion.html');
+    var commentTemplate = require('text!templates/comment.html');
 
-    function DiscussionSummaryView(discussion) {
+    function DiscussionSummaryView(discussionId) {
         View.apply(this, arguments);
-        this.init(discussion)
+        var transition = new Transitionable(Transform.translate(0, 400, 0));
+        this.renderController = new RenderController();
+        this.renderController.inTransformFrom(transition);
+        this.add(this.renderController);
+        this.init(discussionId)
     }
 
     DiscussionSummaryView.prototype = Object.create(View.prototype);
@@ -18,25 +26,27 @@ define(function(require, exports, module) {
 
     DiscussionSummaryView.DEFAULT_OPTIONS = {};
 
-    DiscussionSummaryView.prototype.init = function(discussion) {
-
-//        DetailedDiscussion.fetch(group, function(deatiledDiscussion) {
-        DetailedDiscussion.fetch(function(deatiledDiscussion) {
-            var surfaceList = [];
-            var $this = this;
-
+    DiscussionSummaryView.prototype.init = function(discussionId) {
+        var $this = this;
+        var surfaceList = [];
+        DetailedDiscussion.fetch(discussionId, function(detailedDiscussion) {
             var scrollView = new Scrollview({
                 direction: Utility.Direction.Y,
             });
-
-                var prettyDate = u.prettyDate(new Date(deatiledDiscussion.updated));
-                deatiledDiscussion.prettyDate =  prettyDate;
-                var discussionSurface = new Surface({
+            var prettyDate = u.prettyDate(new Date(detailedDiscussion.updated));
+            detailedDiscussion.prettyDate =  prettyDate;
+            
+            detailedDiscussion.posts.forEach(function(post) {
+                var commentSurface = new Surface({
                     size: [undefined, true],
-                    content: _.template(DiscussionTemplate, deatiledDiscussion, templateSettings),
+                    content: _.template(commentTemplate, post, templateSettings),
                 });
-                this.add(discussionSurface);
-        });
+                surfaceList.push(commentSurface);
+                commentSurface.pipe(scrollView);
+            });
+            scrollView.sequenceFrom(surfaceList);
+            this.renderController.show(scrollView);
+        }.bind(this));
     }
 
     module.exports = DiscussionSummaryView;

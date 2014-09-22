@@ -5,25 +5,31 @@ define(function(require, exports, module) {
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
+    var RenderController = require('famous/views/RenderController');
 	var FormContainerSurface = require("famous/surfaces/FormContainerSurface");
 	var InputSurface = require("famous/surfaces/InputSurface");
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var PostTemplate = require('text!templates/create-post.html');
+    var DiscussionListView = require('views/community/DiscussionListView');
 	var Post = require('models/Post');
 	var u = require('util/Utils');
 
 	function CreatePostView() {
 		View.apply(this, arguments);
 		_createView.call(this);
+		$this = this;
 	}
 
 	CreatePostView.prototype = Object.create(View.prototype);
 	CreatePostView.prototype.constructor = CreatePostView;
 
 	CreatePostView.DEFAULT_OPTIONS = {};
-
+	var $this;
+	
 	function _createView(argument) {
 		var template = PostTemplate;
+        this.renderController = new RenderController();
+        this.add(this.renderController);
 		this.postSurface = new Surface({
 			content: _.template(template, this.options, templateSettings),
 			properties: {
@@ -34,10 +40,8 @@ define(function(require, exports, module) {
 		this.postSurface.on('click', function(e) {
 			var classList;
 			if (e instanceof CustomEvent) {
-				if (e.srcElement.localName == 'button') {
-					classList = e.srcElement.classList;
-				}
-				if (_.contains(classList, 'submit')) {
+				classList = e.srcElement.classList;
+				if (_.contains(classList, 'submit-post')) {
 					console.log("Submit post");
 					this.submit();
 				}
@@ -50,7 +54,7 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.add(this.postSurface);
+		this.renderController.show(this.postSurface);
 	}
 
 
