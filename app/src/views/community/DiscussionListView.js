@@ -71,8 +71,6 @@ define(function(require, exports, module) {
 					} else if (_.contains(classList, 'create-post')) {
 						console.log("Show create-post page");
 						this._eventOutput.emit('create-post');
-//						var createPostSurface = new CreatePostView();
-//						this.renderController.show(createPostSurface);
 					}
 				}
 			}.bind(this));
@@ -119,7 +117,7 @@ define(function(require, exports, module) {
 								a: 'Yes',
 								b: 'No',
 								onA: function() {
-									Discussion.deleteDiscussion({id: discussion.id}, function(sucess){
+									Discussion.deleteDiscussion({id: discussion.id}, function(success){
 										var index = surfaceList.indexOf(discussionSurface);
 										surfaceList.splice(index, 1);
 										this.renderController.inTransformFrom(transition);
@@ -127,7 +125,6 @@ define(function(require, exports, module) {
 									}.bind(this));
 								}.bind(this),
 								onB: function() {
-									this.renderController.show(scrollView);
 								}.bind(this),
 							});
 						} else {
@@ -149,7 +146,6 @@ define(function(require, exports, module) {
 			scrollView.sequenceFrom(surfaceList);
 			this.renderController.show(scrollView);
 		}.bind(this));
-
 	}
 
 	module.exports = DiscussionListView;

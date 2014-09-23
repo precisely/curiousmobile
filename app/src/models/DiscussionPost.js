@@ -19,5 +19,24 @@ define( function(require, exports, module) {
 			}
 		});
 	};
+
+	DiscussionPost.deleteComment = function(args, callback) {
+		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
+			userId: User.getCurrentUserId(),
+			discussionId : args.discussionId,
+			clearPostId : args.clearPostId
+		});
+		console.log(args.clearPostId, args.discussionId);
+		u.backgroundJSON("loading discussion list", u.makeGetUrl("deleteComment"), 
+		  u.makeGetArgs(argsToSend), function(data) {
+			console.log(data);
+			if (data == 'success') {
+				callback(data);
+			} else {
+				this.u.showAlert('Failed to delete discussion, please try again');
+			}
+		}.bind(this));
+	};
+	
 	module.exports = DiscussionPost;
 });

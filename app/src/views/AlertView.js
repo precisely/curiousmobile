@@ -10,6 +10,7 @@ define(function(require, exports, module) {
 	var AlertTemplate = require('text!templates/alert.html');
 	var AlertABTemplate = require('text!templates/alert-ab.html');
 	var RenderController = require("famous/views/RenderController");
+	var Utils = require('util/Utils');
 
 	function AlertView() {
 		View.apply(this, arguments);
@@ -38,7 +39,7 @@ define(function(require, exports, module) {
 		});
 
 		messageModifier = new Modifier({
-			transform: Transform.translate(0, 88, 999),
+			transform: Transform.translate(200, 58, 999),
 			origin: [0.5, 0.5],
 		});
 
@@ -66,9 +67,12 @@ define(function(require, exports, module) {
 				} else if (_.contains(classList, 'a') && this.options.onA) {
 					console.log('Event A');
 					this.options.onA.call();
+					//close
+					Utils.closeAlerts;
 				} else if (_.contains(classList, 'b') && this.options.onB) {
 					console.log('Event B');
 					this.options.onB.call();
+					Utils.closeAlerts;
 				}
 			}
 		}.bind(this));
