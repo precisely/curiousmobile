@@ -43,7 +43,7 @@ define(function(require, exports, module) {
 			if (e instanceof CustomEvent) {
 				classList = e.srcElement.classList;
 				if (_.contains(classList, 'cancel')) {
-					this._eventOutput.emit('cancel-post-discussion');;
+					this._eventOutput.emit('cancel-post-discussion');
 				} else if (_.contains(classList, 'submit')) {
 					this.submit();
 					this._eventOutput.emit('post-success');

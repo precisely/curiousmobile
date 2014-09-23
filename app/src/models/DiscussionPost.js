@@ -37,6 +37,24 @@ define( function(require, exports, module) {
 			}
 		}.bind(this));
 	};
+
+	DiscussionPost.createComment = function(args, callback) {
+		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
+			userId: User.getCurrentUserId(),
+			discussionId : args.discussionId,
+			message : args.message,
+			plotIdMessage : args.plotIdMessage
+		});
+		u.backgroundJSON("loading discussion list", u.makeGetUrl("createComment"), 
+		  u.makeGetArgs(argsToSend), function(data) {
+			console.log(data);
+			if (data == 'success') {
+				callback(data);
+			} else {
+				this.u.showAlert('Failed to delete discussion, please try again');
+			}
+		}.bind(this));
+	};
 	
 	module.exports = DiscussionPost;
 });

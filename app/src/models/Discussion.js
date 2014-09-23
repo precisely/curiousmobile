@@ -13,19 +13,15 @@ define(function(require, exports, module) {
 		},
 		post: function(name, discussionPost, callback) {
 			this.u.queueJSON("posting in",
-//					this.u.makeGetUrl('createDiscussion'),
-					this.u.makeGetUrl('createData'),
-					this.u.makeGetArgs({
-						name: name,
-						discussionPost: discussionPost,
-						group: ""
-					}),
-					function(data) {
-				if (data['success']) {
-					callback(this.getUserData(data));
-				} else {
-					this.u.showAlert('Failed to post the discussion, please try again');
-				}
+			this.u.makeGetUrl('createDiscussion'),
+			this.u.makeGetArgs({
+				name: name,
+				discussionPost: discussionPost,
+				group: ""
+			}),
+			function(data) {
+					callback(data);
+//					this.u.showAlert('Failed to post the discussion, please try again');
 			}.bind(this));
 		}
 	});
@@ -41,7 +37,6 @@ define(function(require, exports, module) {
 		u.backgroundJSON("loading discussion list", u.makeGetUrl("listDiscussionData"), 
 		  u.makeGetArgs(argsToSend), function(discussions) {
 			if (u.checkData(discussions)) {
-				console.log('discussions from the server: ', discussions);
 				callback(discussions);
 			}
 		});
@@ -54,7 +49,6 @@ define(function(require, exports, module) {
 		});
 		u.backgroundJSON("loading discussion list", u.makeGetUrl("deleteDiscussionId"), 
 		  u.makeGetArgs(argsToSend), function(data) {
-			console.log(data);
 			if (data == 'success') {
 				callback(data);
 			} else {

@@ -45,8 +45,12 @@ define(function(require, exports, module) {
 			discussionPostSurface.on('click', function(e) {
 				var classList;
 				if (e instanceof CustomEvent) {
-					classList = e.srcElement.parentElement.classList;
-						if (_.contains(classList, 'delete-discussion')) {
+					if (e.srcElement.localName == 'a' || e.srcElement.localName == 'button') {
+						classList = e.srcElement.classList;
+					} else {
+						classList = e.srcElement.parentElement.classList;
+					}
+					if (_.contains(classList, 'delete-discussion')) {
 						this.alert = u.showAlert({
 							message: 'Are you sure to delete discussion ?',
 							a: 'Yes',
@@ -59,6 +63,11 @@ define(function(require, exports, module) {
 							onB: function() {
 							}.bind(this),
 						});
+					} else if (_.contains(classList, 'submit-comment')) {
+						var message = document.forms["commentForm"]["message"].value;
+						DiscussionPost.createComment({discussionId: discussionId, message: message}, function(success){
+							this.renderController.show(scrollView);
+						}.bind(this));
 					}
 				}
 			}.bind(this));
@@ -83,10 +92,8 @@ define(function(require, exports, module) {
 									onA: function() {
 										DiscussionPost.deleteComment( { discussionId : discussionId,
 											clearPostId : post.id }, function(sucess){
-											var index = surfaceList.indexOf(discussionSurface);
+											var index = surfaceList.indexOf(commentSurface);
 											surfaceList.splice(index, 1);
-											this.renderController.inTransformFrom(transition);
-											this.renderController.show(scrollView);
 										}.bind(this));
 									}.bind(this),
 									onB: function() {
@@ -95,7 +102,7 @@ define(function(require, exports, module) {
 							}
 						}
 					}.bind(this));
-					
+
 					surfaceList.push(commentSurface);
 					commentSurface.pipe(scrollView);
 				}

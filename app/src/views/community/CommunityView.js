@@ -32,6 +32,10 @@ define(function(require, exports, module) {
 					console.log('Creating Discussion Summary View');
 					var discussionSummarySurface = new DiscussionSummaryView(discussion.id);
 					this.renderController.show(discussionSummarySurface);
+					discussionSummarySurface.on('delete-post', function(e) {
+						this.renderController.show(this.discussionListView);
+					}.bind(this));
+
 				}.bind(this));
 
 				this.discussionListView.on('create-post', function(e) {
