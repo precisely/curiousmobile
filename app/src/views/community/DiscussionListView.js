@@ -9,16 +9,16 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var RenderController = require('famous/views/RenderController');
 	var Scrollview = require('famous/views/Scrollview');
-	var DiscussionCollection = require('models/DiscussionCollection');
+	var Discussion = require('models/Discussion');
 	var DiscussionTemplate = require('text!templates/discussion.html');
-    var SearchTemplate = require('text!templates/create-post-search-discussion.html');
+	var discussionHeaderTemplate = require('text!templates/discussion-header.html');
 	var TrueSurface = require('surfaces/TrueSurface');
 	var u = require('util/Utils');
-    var FormContainerSurface = require("famous/surfaces/FormContainerSurface");
-    var InputSurface = require("famous/surfaces/InputSurface");
-    var SequentialLayout = require("famous/views/SequentialLayout");
-    var CreatePostView = require("views/CreatePostView");
-    var DiscussionSummaryView = require("views/community/DiscussionSummaryView");
+	var FormContainerSurface = require("famous/surfaces/FormContainerSurface");
+	var InputSurface = require("famous/surfaces/InputSurface");
+	var SequentialLayout = require("famous/views/SequentialLayout");
+	var CreatePostView = require("views/CreatePostView");
+	var DiscussionSummaryView = require("views/community/DiscussionSummaryView");
 
 	function DiscussionListView(group) {
 		View.apply(this, arguments);
@@ -36,73 +36,73 @@ define(function(require, exports, module) {
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
 		this.add(this.renderController);
-        _createView.call(this);
+		_createView.call(this);
 		this.changeGroup(this.group);
 	};
 
 
-    function _createView(argument) {
-        
-    }
-	
+	function _createView(argument) {
 
-    DiscussionListView.prototype.submit = function() {
-        var searchDiscussion = document.forms["searchForm"]["searchDiscussion"].value;
-        if (!searchDiscussion){
-            u.showAlert("No search data!");
-        } else {
-            console.log('Fetch result from server');
-        }
-    };
-    
+	}
+
+
+	DiscussionListView.prototype.submit = function() {
+		var searchDiscussion = document.forms["searchForm"]["searchDiscussion"].value;
+		if (!searchDiscussion){
+			u.showAlert("No search data!");
+		} else {
+			console.log('Fetch result from server');
+		}
+	};
+
 	DiscussionListView.prototype.changeGroup = function(group) {
-		DiscussionCollection.fetch(group, function(discussions) {
+		Discussion.fetch(group, function(discussions) {
 			var surfaceList = [];
-            var $this = this;
+			var $this = this;
 			var scrollView = new Scrollview({
 				direction: Utility.Direction.Y,
 			});
 
 			this.searchAndPostSurface = new Surface({
-	            size: [undefined, true],
-	            content: _.template(SearchTemplate, templateSettings),
-	        });
-            surfaceList.push(this.searchAndPostSurface);
+				size: [undefined, true],
+				content: _.template(discussionHeaderTemplate, templateSettings),
+			});
+			surfaceList.push(this.searchAndPostSurface);
 
-	        this.searchAndPostSurface.on('click', function(e) {
-	            var classList;
-	            if (e instanceof CustomEvent) {
-	                classList = e.srcElement.parentElement.classList;
-	                if (_.contains(classList, 'submit')) {
-	                    console.log("Submit for search");
-	                    this.submit();
-	                } else if (_.contains(classList, 'create-post')) {
-	                    console.log("Show create-post page");
-	                    this._eventOutput.emit('create-post');
-	                    var createPostSurface = new CreatePostView();
-	                    this.renderController.show(createPostSurface);
-	                }
-	            }
-	        }.bind(this));
+			this.searchAndPostSurface.on('click', function(e) {
+				var classList;
+				if (e instanceof CustomEvent) {
+					classList = e.srcElement.parentElement.classList;
+					if (_.contains(classList, 'submit')) {
+						console.log("Submit for search");
+						this.submit();
+					} else if (_.contains(classList, 'create-post')) {
+						console.log("Show create-post page");
+						this._eventOutput.emit('create-post');
+						var createPostSurface = new CreatePostView();
+						this.renderController.show(createPostSurface);
+					}
+				}
+			}.bind(this));
 
-	        this.searchAndPostSurface.on('keydown', function (e) {
-	            if (e.keyCode == 13) {
-	                this.submit();
-	            }
-	        }.bind(this));
-			
+			this.searchAndPostSurface.on('keydown', function (e) {
+				if (e.keyCode == 13) {
+					this.submit();
+				}
+			}.bind(this));
+
 			discussions.dataList.forEach(function(discussion) {
 				var prettyDate = u.prettyDate(new Date(discussion.updated));
-                discussion.prettyDate =  prettyDate;
+				discussion.prettyDate =  prettyDate;
 
-                var iconImage='<i class="fa fa-comment close pull-right"></i>';
+				var iconImage='<i class="fa fa-comment close pull-right"></i>';
 
-                if (discussion.isPlot) {
-                    iconImage= '<i class="fa fa-area-chart close pull-right"></i>';
-                }
+				if (discussion.isPlot) {
+					iconImage= '<i class="fa fa-area-chart close pull-right"></i>';
+				}
 
-                discussion.iconImage =  iconImage;
-                
+				discussion.iconImage =  iconImage;
+
 				var discussionSurface = new Surface({
 					size: [undefined, true],
 					content: _.template(DiscussionTemplate, discussion, templateSettings),
@@ -116,35 +116,31 @@ define(function(require, exports, module) {
 						this.setSize([width, height]);
 					}.bind(this), 2);
 				});
-				
-				discussionSurface.on('click', function(e) {
-				    var classList;
-				    if (e instanceof CustomEvent) {
-		                classList = e.srcElement.parentElement.classList;
-		                if (_.contains(classList, 'close-discussion')) {
-                            console.log("close ");
-                            var index = surfaceList.indexOf(discussionSurface);
-                            surfaceList.splice(index, 1);
-                            $this.renderController.inTransformFrom(transition);
-                            $this.renderController.show(scrollView);
-		                } else {
-                            console.log("Discussion Title");
-                            console.log(discussion.name);
-                            var detailedDiscussionSurface = new Surface({
-                                size: [undefined, true],
-                                content: _.template(DiscussionTemplate, discussion, templateSettings),
-                            });
 
-                            $this._eventOutput.emit('show-detailed-view', {discussionId: discussion.id});
-                            
-//                          $this.renderController.hide(scrollView);
-//                            $this.renderController.show(detailedDiscussionSurface);
-//                            var discussionSummarySurface = new DiscussionSummaryView(discussion.id);
-//                            $this.renderController.show(discussionSummarySurface);
-//                            $this.renderController.hide(scrollView);
-		                }
-				    }
-                }.bind(this));
+				discussionSurface.on('click', function(e) {
+					var classList;
+					if (e instanceof CustomEvent) {
+						classList = e.srcElement.parentElement.classList;
+						if (_.contains(classList, 'close-discussion')) {
+							console.log("close ");
+							var index = surfaceList.indexOf(discussionSurface);
+							surfaceList.splice(index, 1);
+							$this.renderController.inTransformFrom(transition);
+							$this.renderController.show(scrollView);
+						} else {
+							console.log("Discussion Title");
+							console.log(discussion.name);
+							var detailedDiscussionSurface = new Surface({
+								size: [undefined, true],
+								content: _.template(DiscussionTemplate, 
+									discussion, templateSettings),
+							});
+
+							$this._eventOutput.emit('show-detailed-view',
+								{discussionId: discussion.id});
+						}
+					}
+				}.bind(this));
 				surfaceList.push(discussionSurface);
 				discussionSurface.pipe(scrollView);
 			});

@@ -3,18 +3,18 @@ require.config({
 	shim: {
 		exoskeleton: {
 			deps: [
-				'underscore'
+			'underscore'
 			],
 			exports: 'Backbone'
 		},
 		underscore: {
 			exports: '_',
 			init: function () {
-this._.extend(this._.templateSettings, {
-	interpolate: /\{\{(.+?)\}\}/g
-});
-return this._;
-}
+				this._.extend(this._.templateSettings, {
+					interpolate: /\{\{(.+?)\}\}/g
+				});
+				return this._;
+			}
 		}
 	},
 	paths: {

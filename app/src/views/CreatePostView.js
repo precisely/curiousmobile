@@ -5,13 +5,13 @@ define(function(require, exports, module) {
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
-    var RenderController = require('famous/views/RenderController');
+	var RenderController = require('famous/views/RenderController');
 	var FormContainerSurface = require("famous/surfaces/FormContainerSurface");
 	var InputSurface = require("famous/surfaces/InputSurface");
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var PostTemplate = require('text!templates/create-post.html');
-    var DiscussionListView = require('views/community/DiscussionListView');
-	var Post = require('models/Post');
+	var DiscussionListView = require('views/community/DiscussionListView');
+	var Discussion = require('models/Discussion');
 	var u = require('util/Utils');
 
 	function CreatePostView() {
@@ -25,11 +25,11 @@ define(function(require, exports, module) {
 
 	CreatePostView.DEFAULT_OPTIONS = {};
 	var $this;
-	
+
 	function _createView(argument) {
 		var template = PostTemplate;
-        this.renderController = new RenderController();
-        this.add(this.renderController);
+		this.renderController = new RenderController();
+		this.add(this.renderController);
 		this.postSurface = new Surface({
 			content: _.template(template, this.options, templateSettings),
 			properties: {
@@ -59,24 +59,24 @@ define(function(require, exports, module) {
 
 
 	CreatePostView.prototype.submit = function() {
-        var postDiscussion = new Post();
-        var name = document.forms["postForm"]["name"].value;
-        var discussionPost = document.forms["postForm"]["discussionPost"].value;
-        if (!name){
-            u.showAlert("Topic is a required field!");
-        } else if (!discussionPost){
-            u.showAlert("Detail is a required field!");
-        } else {
-            postDiscussion.post(
-                name,
-                discussionPost,
-                function(post) {
-                    console.log('Posting new discussion');
-                    this._eventOutput.emit('post-success');
-                }.bind(this)
-            )
-        }
-    };
+		var discussion = new Discussion();
+		var name = document.forms["postForm"]["name"].value;
+		var discussionPost = document.forms["postForm"]["discussionPost"].value;
+		if (!name){
+			u.showAlert("Topic is a required field!");
+		} else if (!discussionPost){
+			u.showAlert("Detail is a required field!");
+		} else {
+			discussion.post(
+					name,
+					discussionPost,
+					function(post) {
+						console.log('Posting new discussion');
+						this._eventOutput.emit('post-success');
+					}.bind(this)
+			)
+		}
+	};
 
 	module.exports = CreatePostView;
 });

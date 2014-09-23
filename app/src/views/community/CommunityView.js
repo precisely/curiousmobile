@@ -2,11 +2,11 @@ define(function(require, exports, module) {
 	'use strict';
 	var BaseView = require('views/BaseView');
 	var RenderController = require('famous/views/RenderController');
-    var DiscussionListView = require('views/community/DiscussionListView');
+	var DiscussionListView = require('views/community/DiscussionListView');
 	var Modifier = require('famous/core/Modifier');
 	var Transform = require('famous/core/Transform');
 	var Surface = require('famous/core/Surface');
-    var DiscussionSummaryView = require("views/community/DiscussionSummaryView");
+	var DiscussionSummaryView = require("views/community/DiscussionSummaryView");
 
 	function CommunityView() {
 		BaseView.apply(this, arguments);
@@ -29,12 +29,13 @@ define(function(require, exports, module) {
 			console.log('CommunityView: on show');
 			this.renderController.show(this.discussionListView);
 		}.bind(this));
-		
+
 		this._eventInput.on('show-detailed-view', function() {
-            console.log('comment view');
-            var discussionSummarySurface = new DiscussionSummaryView(discussion.id);
-            this.renderController.show(discussionSummarySurface);
-        }.bind(this));
+			console.log('comment view');
+			var discussionSummarySurface = new DiscussionSummaryView(discussion.id);
+			this.renderController.show(discussionSummarySurface);
+		}.bind(this));
+
 	}
 
 	module.exports = CommunityView;
