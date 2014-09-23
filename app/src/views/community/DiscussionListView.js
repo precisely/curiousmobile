@@ -17,7 +17,6 @@ define(function(require, exports, module) {
 	var FormContainerSurface = require("famous/surfaces/FormContainerSurface");
 	var InputSurface = require("famous/surfaces/InputSurface");
 	var SequentialLayout = require("famous/views/SequentialLayout");
-	var CreatePostView = require("views/CreatePostView");
 	var DiscussionSummaryView = require("views/community/DiscussionSummaryView");
 
 	function DiscussionListView(group) {
@@ -36,15 +35,8 @@ define(function(require, exports, module) {
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
 		this.add(this.renderController);
-		_createView.call(this);
 		this.changeGroup(this.group);
 	};
-
-
-	function _createView(argument) {
-
-	}
-
 
 	DiscussionListView.prototype.submit = function() {
 		var searchDiscussion = document.forms["searchForm"]["searchDiscussion"].value;
@@ -79,8 +71,8 @@ define(function(require, exports, module) {
 					} else if (_.contains(classList, 'create-post')) {
 						console.log("Show create-post page");
 						this._eventOutput.emit('create-post');
-						var createPostSurface = new CreatePostView();
-						this.renderController.show(createPostSurface);
+//						var createPostSurface = new CreatePostView();
+//						this.renderController.show(createPostSurface);
 					}
 				}
 			}.bind(this));
@@ -122,28 +114,37 @@ define(function(require, exports, module) {
 					if (e instanceof CustomEvent) {
 						classList = e.srcElement.parentElement.classList;
 						if (_.contains(classList, 'close-discussion')) {
-							console.log("close ");
-							var index = surfaceList.indexOf(discussionSurface);
-							surfaceList.splice(index, 1);
-							$this.renderController.inTransformFrom(transition);
-							$this.renderController.show(scrollView);
+							this.alert = u.showAlert({
+								message: 'Are you sure to delete ' + discussion.name + ' ?',
+								a: 'Yes',
+								b: 'No',
+								onA: function() {
+									Discussion.deleteDiscussion({id: discussion.id}, function(sucess){
+										var index = surfaceList.indexOf(discussionSurface);
+										surfaceList.splice(index, 1);
+										this.renderController.inTransformFrom(transition);
+										this.renderController.show(scrollView);
+									}.bind(this));
+								}.bind(this),
+								onB: function() {
+									this.renderController.show(scrollView);
+								}.bind(this),
+							});
 						} else {
 							console.log("Discussion Title");
-							console.log(discussion.name);
 							var detailedDiscussionSurface = new Surface({
 								size: [undefined, true],
 								content: _.template(DiscussionTemplate, 
 									discussion, templateSettings),
 							});
-
-							$this._eventOutput.emit('show-detailed-view',
-								{discussionId: discussion.id});
+							this._eventOutput.emit('show-detailed-view',
+								{id: discussion.id});
 						}
 					}
 				}.bind(this));
 				surfaceList.push(discussionSurface);
 				discussionSurface.pipe(scrollView);
-			});
+			}.bind(this));
 
 			scrollView.sequenceFrom(surfaceList);
 			this.renderController.show(scrollView);

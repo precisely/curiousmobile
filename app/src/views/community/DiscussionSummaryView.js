@@ -9,16 +9,17 @@ define(function(require, exports, module) {
 	var Utility = require('famous/utilities/Utility');
 	var Scrollview = require('famous/views/Scrollview');
 	var RenderController = require('famous/views/RenderController');
-	var Comment = require('models/Comment');
-	var commentTemplate = require('text!templates/comment.html');
+	var DiscussionPost = require('models/DiscussionPost');
+	var discussionPostTemplate = require('text!templates/discussion-post.html');
+	var LoginTemplate = require('text!templates/login.html');
 
 	function DiscussionSummaryView(discussionId) {
 		View.apply(this, arguments);
-		var transition = new Transitionable(Transform.translate(0, 400, 0));
+		var transition = new Transitionable(Transform.translate(0, 70, 0));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
 		this.add(this.renderController);
-		this.init(discussionId)
+		this.init(this, discussionId);
 	}
 
 	DiscussionSummaryView.prototype = Object.create(View.prototype);
@@ -26,23 +27,23 @@ define(function(require, exports, module) {
 
 	DiscussionSummaryView.DEFAULT_OPTIONS = {};
 
-	DiscussionSummaryView.prototype.init = function(discussionId) {
-		var $this = this;
+	DiscussionSummaryView.prototype.init = function(argument, discussionId) {
 		var surfaceList = [];
-		Comment.fetch(discussionId, function(comments) {
+		this.add(this.loginSurface);
+//		{{discussionTitle}} {{firstPost.message}}
+		DiscussionPost.fetch(discussionId, function(discussionPost) {
 			var scrollView = new Scrollview({
 				direction: Utility.Direction.Y,
 			});
-			var prettyDate = u.prettyDate(new Date(comments.updated));
-			comments.prettyDate =  prettyDate;
-
-			comments.posts.forEach(function(post) {
-				var commentSurface = new Surface({
+			var prettyDate = u.prettyDate(new Date(discussionPost.updated));
+			discussionPost.prettyDate =  prettyDate;
+			discussionPost.posts.forEach(function(post) {
+				var discussionPostSurface = new Surface({
 					size: [undefined, true],
-					content: _.template(commentTemplate, post, templateSettings),
+					content: _.template(discussionPostTemplate, post, templateSettings),
 				});
-				surfaceList.push(commentSurface);
-				commentSurface.pipe(scrollView);
+				surfaceList.push(discussionPostSurface);
+				discussionPostSurface.pipe(scrollView);
 			});
 			scrollView.sequenceFrom(surfaceList);
 			this.renderController.show(scrollView);

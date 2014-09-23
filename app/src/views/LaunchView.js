@@ -23,15 +23,6 @@ define(function(require, exports, module) {
 	LaunchView.DEFAULT_OPTIONS = {};
 
 	function _createView() {
-		var logoSurface = new ImageSurface({
-			size: [205, 230],
-			content: 'content/images/logo.gif'
-		});
-
-		var logoModifier = new Modifier({
-			origin: [0.5, 0.1],
-		});
-
 		var transition = new Transitionable(Transform.translate(0, 0, 2));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);

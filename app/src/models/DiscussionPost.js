@@ -2,10 +2,9 @@ define( function(require, exports, module) {
 	var u = require('util/Utils');
 	var User = require('models/User');
 
-	function Comment(){
+	function DiscussionPost(){
 	}
-
-	Comment.fetch = function(discussionId, callback) {
+	DiscussionPost.fetch = function(discussionId, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			Id: User.getCurrentUserId(),
 			discussionId: discussionId,
@@ -20,12 +19,5 @@ define( function(require, exports, module) {
 			}
 		});
 	};
-
-	Comment.getFromCache = function(key){
-		var cache = window.App.discussionCache;
-		return cache.getItem(key);
-	}
-
-
-	module.exports = Comment;
+	module.exports = DiscussionPost;
 });

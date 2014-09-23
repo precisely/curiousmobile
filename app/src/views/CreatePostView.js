@@ -3,6 +3,7 @@ define(function(require, exports, module) {
 	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
+	var Transitionable = require('famous/transitions/Transitionable');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
 	var RenderController = require('famous/views/RenderController');
@@ -16,20 +17,20 @@ define(function(require, exports, module) {
 
 	function CreatePostView() {
 		View.apply(this, arguments);
+		var transition = new Transitionable(Transform.translate(0, 50, 0));
+		this.renderController = new RenderController();
+		this.renderController.inTransformFrom(transition);
+		this.add(this.renderController);
 		_createView.call(this);
-		$this = this;
 	}
 
 	CreatePostView.prototype = Object.create(View.prototype);
 	CreatePostView.prototype.constructor = CreatePostView;
 
 	CreatePostView.DEFAULT_OPTIONS = {};
-	var $this;
 
 	function _createView(argument) {
 		var template = PostTemplate;
-		this.renderController = new RenderController();
-		this.add(this.renderController);
 		this.postSurface = new Surface({
 			content: _.template(template, this.options, templateSettings),
 			properties: {
@@ -41,22 +42,17 @@ define(function(require, exports, module) {
 			var classList;
 			if (e instanceof CustomEvent) {
 				classList = e.srcElement.classList;
-				if (_.contains(classList, 'submit-post')) {
-					console.log("Submit post");
+				if (_.contains(classList, 'cancel')) {
+					this._eventOutput.emit('cancel-post-discussion');;
+				} else if (_.contains(classList, 'submit')) {
 					this.submit();
+					this._eventOutput.emit('post-success');
 				}
-			}
-		}.bind(this));
-
-		this.postSurface.on('keydown', function (e) {
-			if (e.keyCode == 13) {
-				this.submit();
 			}
 		}.bind(this));
 
 		this.renderController.show(this.postSurface);
 	}
-
 
 	CreatePostView.prototype.submit = function() {
 		var discussion = new Discussion();
@@ -68,12 +64,12 @@ define(function(require, exports, module) {
 			u.showAlert("Detail is a required field!");
 		} else {
 			discussion.post(
-					name,
-					discussionPost,
-					function(post) {
-						console.log('Posting new discussion');
-						this._eventOutput.emit('post-success');
-					}.bind(this)
+				name,
+				discussionPost,
+				function(result) {
+					console.log('Posted a new discussion');
+					this._eventOutput.emit('post-success');
+				}.bind(this)
 			)
 		}
 	};

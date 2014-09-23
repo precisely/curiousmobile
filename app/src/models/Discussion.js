@@ -13,8 +13,8 @@ define(function(require, exports, module) {
 		},
 		post: function(name, discussionPost, callback) {
 			this.u.queueJSON("posting in",
-					this.u.makeGetUrl('createDiscussion'),
-//					this.u.makeGetUrl('createData'),
+//					this.u.makeGetUrl('createDiscussion'),
+					this.u.makeGetUrl('createData'),
 					this.u.makeGetArgs({
 						name: name,
 						discussionPost: discussionPost,
@@ -35,9 +35,9 @@ define(function(require, exports, module) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 //			q : "searchQuery",
 			userId: User.getCurrentUserId(),
+			max : 20,
 			timeZoneName: window.jstz.determine().name()
 		});
-		console.log('Fetching discussions from the server: ');
 		u.backgroundJSON("loading discussion list", u.makeGetUrl("listDiscussionData"), 
 		  u.makeGetArgs(argsToSend), function(discussions) {
 			if (u.checkData(discussions)) {
@@ -47,10 +47,21 @@ define(function(require, exports, module) {
 		});
 	};
 
-	Discussion.getFromCache = function(key){
-		var cache = window.App.discussionCache;
-		return cache.getItem(key);
-	}
+	Discussion.deleteDiscussion = function(args, callback) {
+		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
+			userId: User.getCurrentUserId(),
+			id : args.id
+		});
+		u.backgroundJSON("loading discussion list", u.makeGetUrl("deleteDiscussionId"), 
+		  u.makeGetArgs(argsToSend), function(data) {
+			console.log(data);
+			if (data == 'success') {
+				callback(data);
+			} else {
+				this.u.showAlert('Failed to delete discussion, please try again');
+			}
+		}.bind(this));
+	};
 
 	module.exports = Discussion;
 });
