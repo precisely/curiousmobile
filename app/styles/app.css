@@ -1,5 +1,5 @@
 html {
-  background: #fff;
+	background: #fff;
 }
 
 a {
@@ -22,8 +22,8 @@ a {
 }
 
 .backfaceVisibility {
-  -webkit-backface-visibility: visible;
-  backface-visibility: visible;
+	-webkit-backface-visibility: visible;
+	backface-visibility: visible;
 }
 
 .ghost {
@@ -98,21 +98,21 @@ a {
 	width:100px;
 }
 
- .progress-first{
+.progress-first{
 	float: left;
 	margin-right: 10px;
 	margin-left: 15px;
- }
- 
- .progress-second{
+}
+
+.progress-second{
 	float: left;
 	margin-left: 15%;
- }
-  
- .progress-third{
+}
+
+.progress-third{
 	float: left;
 	margin-right: 15px;
- }
+}
 
 #progressBar {
 	width:100%;
@@ -120,6 +120,29 @@ a {
 
 .float-left {
 	float: left;
+}
+
+.day {
+	text-transform: uppercase;
+	font-size: 11px;
+	font-weight: bold;
+}
+
+.month-date {
+	font-size: 22px;
+	font-weight: bold;
+}
+
+.select-date .fa-chevron-down {
+	position: absolute;
+	top: 25px;
+	margin-left: 3px;
+}
+
+.select-date {
+	width: 270px;
+	text-align: center;
+	margin-top: 9px;
 }
 
 @media screen and (max-width: 768px) {

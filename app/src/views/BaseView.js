@@ -42,9 +42,9 @@ define(function(require, exports, module) {
 
 	function _createHeader() {
 		var backgroundSurface = new Surface({
-			size: [undefined, 44],
+			size: [undefined, 70],
 			properties: {
-				backgroundColor: '#b1336a'
+				backgroundColor: '#ffffff'
 			}
 		});
 
@@ -56,7 +56,11 @@ define(function(require, exports, module) {
 
 		this.hamburgerSurface = new ImageSurface({
 			size: [44, 44],
-			content: 'content/images/menu-icon.png'
+			content: 'content/images/menu-icon.png',
+			properties: {
+				marginTop: '15px',
+				marginLeft: '5px',
+			}
 		});
 
 
