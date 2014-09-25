@@ -4,6 +4,7 @@ define(function(require, exports, module) {
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var RenderController = require("famous/views/RenderController");
+	var u = require('util/Utils');
 
 	function EntryReadView(entry) {
 		View.apply(this, arguments);
@@ -23,8 +24,8 @@ define(function(require, exports, module) {
 		});
 		this.add(this.renderController);
 		this.entrySurface = new Surface({
-			size: [undefined, 44],
-			content: this.entry.toString(),
+			size: [undefined, 64],
+			content: this.getHelpText() + this.entry.toString(),
 			classes: this.entry.repeatTypeAsClass(),
 			properties: {
 				padding: '12px',
@@ -66,6 +67,20 @@ define(function(require, exports, module) {
 		//});
 		//rc.hide();
 		//rc.show(this.entrySurface);
+	}
+
+	EntryReadView.prototype.getHelpText = function() {
+		var date = new Date(this.entry.date);
+		var time = u.formatAMPM(date);
+		if (this.entry.isContinuous()) {
+			return '<div class="help"><i class="fa fa-star"></i> Favorite</div>';	
+		} else if (this.entry.isRemind()) {
+			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every other day</div>';	
+		} else if (this.entry.isRepeat() && this.entry.isGhost()) {
+			return '<div class="help"><i class="fa fa-bell"></i> Reminder set (' + u.mmddyy(date) + ' ' + 
+				+ time + ')</div>';	
+		}
+		return '<div style="height: 9px"></div>';
 	}
 
 	module.exports = EntryReadView;

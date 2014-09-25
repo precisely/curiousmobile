@@ -97,7 +97,7 @@ define(function(require, exports, module) {
 		this.selectedIndex = undefined;
 		this.sequentialLayout = new SequentialLayout({
 			direction: 1,
-			defaultItemSize: [undefined, 44],
+			defaultItemSize: [undefined, 64],
 			itemSpacing: 0,
 		});
 		this.entries.forEach(function(entry) {
@@ -106,7 +106,7 @@ define(function(require, exports, module) {
 
 		this.sequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
-            offset = index * 44;
+            offset = index * 64;
 			//console.log("["+ offset + ", " + index + "]");
 			var currentView = this.entryViews[index];
 			if (!currentView) {

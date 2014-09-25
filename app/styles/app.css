@@ -30,6 +30,20 @@ a {
 	color: #c0c0c0;
 }
 
+.ghost.continuous {
+	background: #ec2d35;
+	color: #ffffff;
+}
+
+.ghost.repeat {
+	background: #ad326c;
+	color: #ffffff;
+}
+
+.ghost.remind {
+	background: #e97948;
+	color: #ffffff;
+}
 .selected {
 	background-color: #FFFFFF !important;
 }
