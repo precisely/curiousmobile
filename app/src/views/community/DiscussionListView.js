@@ -125,6 +125,7 @@ define(function(require, exports, module) {
 									}.bind(this));
 								}.bind(this),
 								onB: function() {
+									u.closeAlerts;
 								}.bind(this),
 							});
 						} else {

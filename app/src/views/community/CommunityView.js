@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 	var Transform = require('famous/core/Transform');
 	var Surface = require('famous/core/Surface');
 	var DiscussionSummaryView = require("views/community/DiscussionSummaryView");
-	var CreatePostView = require("views/CreatePostView");
+	var CreatePostView = require('views/CreatePostView');
 
 	function CommunityView() {
 		BaseView.apply(this, arguments);

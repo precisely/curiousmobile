@@ -1,21 +1,21 @@
 <div align="center">
 	<strong class="">CREATE A NEW POST </strong>
 </div>
-<hr style="border-color: inherit;margin-bottom: 10px; margin-top: 10px;">
+<hr class="gutter-hr">
 
 <div class="row">
-	<span class="pull-right cancel" style="padding-right: 25px;">CANCEL</span>
-	<span class="pull-left submit" style="padding-left: 25px;">POST IT</span>
+	<span class="pull-right cancel-post">CANCEL</span>
+	<span class="pull-left submit-post">POST IT</span>
 </div>
-<hr style="border-color: inherit; margin-top: 10px; margin-bottom: 0px;">
+<hr class="gutter-hr">
 
-<form role="form" class="form-footer-login" name="postForm" method="post" 
-  onSubmit="return false;">
+<form role="form" class="form-footer-login" name="postForm">
 	<div class="form-group">
-		<label>Topic</label> 
-		<input class="form-control" placeholder="New question or discussion topic?"
-		  type="text" id="topic" name="name" value="" style="width: 100%" /> <br>
-		<textarea class="form-control" class="full-width"
-			name="discussionPost" style="height: 320px"></textarea>
+		<label>Topic</label> <input class="form-control"
+			placeholder="New question or discussion topic?" type="text"
+			name="name" value="" /> 
+		<br>
+		<textarea rows="14" class="form-control" class="full-width"
+			name="discussionPost"></textarea>
 	</div>
 </form>

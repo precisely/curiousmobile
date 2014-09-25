@@ -1,4 +1,5 @@
 define(function(require, exports, module) {
+	'use strict';
 	var exoskeleton = require('exoskeleton');
 	var EventHandler = require("famous/core/EventHandler");
 	var store = require('store');
@@ -20,8 +21,7 @@ define(function(require, exports, module) {
 				group: ""
 			}),
 			function(data) {
-					callback(data);
-//					this.u.showAlert('Failed to post the discussion, please try again');
+				callback(data);
 			}.bind(this));
 		}
 	});
@@ -35,7 +35,7 @@ define(function(require, exports, module) {
 			timeZoneName: window.jstz.determine().name()
 		});
 		u.backgroundJSON("loading discussion list", u.makeGetUrl("listDiscussionData"), 
-		  u.makeGetArgs(argsToSend), function(discussions) {
+				u.makeGetArgs(argsToSend), function(discussions) {
 			if (u.checkData(discussions)) {
 				callback(discussions);
 			}
