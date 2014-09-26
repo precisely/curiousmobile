@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 	var Scrollview = require("famous/views/Scrollview");
 	var EntryListView = require('views/entry/EntryListView');
 	var EntryView = require('views/entry/EntryView');
+	var EntryFormView = require('views/entry/EntryFormView');
 	var CalendarView = require('views/calendar/CalendarView');
 	var Entry = require('models/Entry');
 	var EntryCollection = require('models/EntryCollection');
@@ -39,13 +40,22 @@ define(function(require, exports, module) {
 	}
 
 	function _createBody() {
-		this.createView = new EntryView(new Entry(), true);
-
+		this.createView = new EntryFormView(new Entry());
 		this.createView.on('new-entry', function(data) {
 			console.log("New Entry - TrackView event");
-			if (this.listViewKeyMap[data.key]) {
-				this.listViewKeyMap[data.key].refreshEntries(data.entries);
+			if (this.currentListView) {
+				this.currentListView.refreshEntries(data.entries);
 			}
+		}.bind(this));
+
+		this.createView.on('showing-form-view', function(e) {
+			console.log('EventHandler: this.createView event: showing-form-view');
+			this.currentListView.blur();
+		}.bind(this));
+
+		this.createView.on('hiding-form-view', function(e) {
+			console.log('EventHandler: this.createView event: hiding-form-view');
+			this.currentListView.unBlur();
 		}.bind(this));
 
 		var backgroundModifier = new StateModifier({
@@ -80,19 +90,11 @@ define(function(require, exports, module) {
 	}
 
 	TrackView.prototype.changeDate = function(date) {
-		this.listViewKeyMap = {};
 		date = u.getMidnightDate(date);
-		this.entryListViewCache = [];
-		//creating 11 cached list views by default
-		//5 days before and 5 days after today
 
 		EntryCollection.fetchEntries(_getDefaultDates(date), function(collections) {
-			for (var i = 0, l = collections.length; i < l; i++) {
-				var entryListView = new EntryListView(collections[i]);
-				this.entryListViewCache.push(entryListView);
-				this.listViewKeyMap[collections[i].key] = entryListView;
-			}
-			this.currentListView = this.entryListViewCache[5];
+			//5 days before and 5 days after today
+			this.currentListView = new EntryListView(collections[5]);
 			//setting the scroll position to today
 			//this.scrollView.goToPage(5);
 			this.renderController.show(this.currentListView, {

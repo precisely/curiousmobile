@@ -44,6 +44,23 @@ a {
 	background: #e97948;
 	color: #ffffff;
 }
+
+.blur {
+	-webkit-filter: blur(20px);
+	-moz-filter: blur(20px);
+	-o-filter: blur(20px);
+	-ms-filter: blur(20px);
+	filter: blur(20px);
+	opacity: 0.4;
+	border: 0px;
+}
+
+.entry-form .fa {
+	font-size: 30px;
+	margin-left: 10px;
+	color: white;
+}
+
 .selected {
 	background-color: #FFFFFF !important;
 }

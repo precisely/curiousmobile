@@ -8,7 +8,7 @@ define(function(require, exports, module) {
 		RenderController = require("famous/views/RenderController"),
 		EntryCollection = require('models/EntryCollection'),
 		Entry = require('models/Entry'),
-		EntryView = require('views/entry/EntryView');
+		EntryReadView = require('views/entry/EntryReadView');
 	var TransitionableTransform = require("famous/transitions/TransitionableTransform");
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var TweenTransition = require('famous/transitions/TweenTransition');
@@ -16,7 +16,7 @@ define(function(require, exports, module) {
 
 	function EntryListView(collection) {
 		View.apply(this, arguments);
-		this.entryViews = [];
+		this.entryReadViews = [];
 		this.entries = collection;
 		this.renderController = new RenderController();
 		_createList.call(this);
@@ -36,7 +36,6 @@ define(function(require, exports, module) {
 			size: [320, 543],
 			properties: {
 				backgroundColor: 'white',
-				border: '2px solid #c0c0c0'
 			}
 		});
 		this.add(backgroundSurface);
@@ -51,40 +50,40 @@ define(function(require, exports, module) {
 		if (this.selectedEntry && entry.id == this.selectedEntry.id) {
 			formView = true;	
 		}
-		var entryView = new EntryView(entry, formView);
-		entryView.pipe(this._eventOutput);
-		this.entryViews.push(entryView);
+		var entryReadView = new EntryReadView(entry, formView);
+		entryReadView.pipe(this._eventOutput);
+		this.entryReadViews.push(entryReadView);
 
 		//Handle entry selection handler
-		entryView.on('select-entry', function(entry) {
+		entryReadView.on('select-entry', function(entry) {
 			console.log('entry selected with id: ' + entry.id);
 			this.selectedEntry = entry;
 			this.refreshEntries();
 		}.bind(this));
 
-		entryView.on('delete-entry', function(entry) {
+		entryReadView.on('delete-entry', function(entry) {
 			console.log('EntryListView: Deleting an entry');
 			this.entries.remove(entry);
 			Entry.cacheEntries(this.entries.key, this.entries);
 			this.refreshEntries();
 		}.bind(this));
 
-		entryView.on('update-entry', function(resp) {
+		entryReadView.on('update-entry', function(resp) {
 			console.log('EntryListView: Updating an entry');
 			this.selectedEntry = undefined;
 			this.refreshEntries(resp.entries, resp.glowEntry);
 		}.bind(this));
 
-		entryView.on('new-entry', function(resp) {
+		entryReadView.on('new-entry', function(resp) {
 			console.log('EntryListView: New entry');
 			this.selectedEntry = undefined;
 			this.refreshEntries(resp.entries, resp.glowEntry);
 		}.bind(this));
-		return entryView;
+		return entryReadView;
 	}
 
 	EntryListView.prototype.refreshEntries = function(entries, glowEntry) {
-		this.entryViews = [];
+		this.entryReadViews = [];
 		if (!entries && this.entries) {
 			entries = EntryCollection.getFromCache(this.entries.key);
 		}
@@ -108,7 +107,7 @@ define(function(require, exports, module) {
 			//Bumping the offset to add additional padding on the left
             offset = index * 64;
 			//console.log("["+ offset + ", " + index + "]");
-			var currentView = this.entryViews[index];
+			var currentView = this.entryReadViews[index];
 			if (!currentView) {
 				return;
 			}
@@ -119,19 +118,28 @@ define(function(require, exports, module) {
 			if (this.selectedIndex && index > this.selectedIndex) {
 				offset += 20;
 			}
-			var transform = Transform.translate(0, offset);
+			var transform = Transform.translate(0, offset, 0);
 			return {
 				transform: transform,
 				target: input.render()
 			};
 		}.bind(this));
 
-		this.sequentialLayout.sequenceFrom(this.entryViews);
+		this.sequentialLayout.sequenceFrom(this.entryReadViews);
 		this.renderController.show(this.sequentialLayout);
 	}
 
-	EntryListView.prototype.deleteEntry = function() {
+	EntryListView.prototype.blur = function() {
+		_.each(this.entryReadViews, function(readView, index) {
+			readView.entrySurface.addClass('blur');
+		});
+	}
 
+
+	EntryListView.prototype.unBlur = function() {
+		_.each(this.entryReadViews, function(readView, index) {
+			readView.entrySurface.removeClass('blur');
+		});
 	}
 
 	module.exports = EntryListView;

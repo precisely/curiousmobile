@@ -46,41 +46,31 @@ define(function(require, exports, module) {
 
 	function _createForm() {
 		var formContainerSurface = new ContainerSurface({
-			size: [undefined,70],
+			classes: ['entry-form'],
 			properties: {
-				backgroundColor: '#c0c0c0'
 			}
 		});
 
-		var sequentialLayout = new SequentialLayout({
-			direction: 0,
-			itemSpacing: 20,
-			defaultItemSize: [24, 24],
+		this.backgroundModifier = new Modifier({
+			size: [undefined,70],
+			transform: Transform.translate(0, 0, _zIndex())
 		});
 
-		sequentialLayout.setOutputFunction(function(input, offset, index) {
-			//Bumping the offset to add additional padding on the left
-			offset += 10;
-			var transform = Transform.translate(offset, 40, 2);
-			return {
-				transform: transform,
-				target: input.render()
-			};
+		this.backgroundSurface = new Surface({
+			properties: {
+				backgroundColor: '#ad326c',
+			}
 		});
-
-		this.iconModifier = new Modifier({
-			transform: Transform.translate(0, 5, _zIndex())
-		});
-
+		formContainerSurface.add(this.backgroundModifier).add(this.backgroundSurface);
 		this.inputModifier = new Modifier({
 			align: [0, 0],
-			transform: Transform.translate(5, 5, _zIndex())
+			transform: Transform.translate(15, 15, _zIndex())
 		});
 
 		this.inputModifier.sizeFrom(function() {
 			var mainContext = window.mainContext;
 			var size = mainContext.getSize();
-			return [0.97 * size[0], 30];
+			return [0.90 * size[0], 30];
 		});
 
 		var text = '';
@@ -88,7 +78,8 @@ define(function(require, exports, module) {
 			text = this.entry.toString();
 		}
 		this.inputSurface = new InputSurface({
-			value: text
+			value: text,
+			placeholder: 'Enter Tags Here (Example: Caffeine)'
 		});
 
 		this.toggleSuffix();
@@ -102,10 +93,21 @@ define(function(require, exports, module) {
 			} 		
 		}.bind(this));
 
+		this.inputSurface.on('blur', function(e) {
+			this.renderController.hide({duration: 0});
+			this._eventOutput.emit('hiding-form-view');
+			this.backgroundModifier.setSize([undefined, 70]);
+			this.backgroundSurface.removeClass('blur');
+		}.bind(this));
+
 		this.inputSurface.on('click', function(e) {
 			if (e instanceof CustomEvent && this.entry) {
 				var selectionRange = this.entry.getSelectionRange();
 				e.srcElement.setSelectionRange(selectionRange);
+				this.renderController.show(this.buttonsAndHelp);
+				this._eventOutput.emit('showing-form-view');
+				this.backgroundModifier.setSize([undefined, 300]);
+				this.backgroundSurface.addClass('blur');
 			}
 		}.bind(this));
 
@@ -117,9 +119,26 @@ define(function(require, exports, module) {
 
 		//		this.inputSurface.setValue('test');
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
+		this.formContainerSurface = formContainerSurface;
 
-		this.repeatSurface = new ImageSurface({
-			content: 'content/images/repeat.png',
+		var sequentialLayout = new SequentialLayout({
+			direction: 0,
+			itemSpacing: 60,
+			defaultItemSize: [100, 24],
+		});
+
+		sequentialLayout.setOutputFunction(function(input, offset, index) {
+			//Bumping the offset to add additional padding on the left
+			offset += 40;
+			var transform = Transform.translate(offset, 40, 0);
+			return {
+				transform: transform,
+				target: input.render()
+			};
+		});
+
+		this.repeatSurface = new Surface({
+			content: '<i class="fa fa-repeat"></i> <br/> Repeat',
 			size: [24, 24],
 		});
 
@@ -130,8 +149,8 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.remindSurface = new ImageSurface({
-			content: 'content/images/remind.png',
+		this.remindSurface = new Surface({
+			content: '<i class="fa fa-bell"></i> <br/> Remind',
 			size: [24, 24],
 		});
 
@@ -141,8 +160,8 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.pinSurface = new ImageSurface({
-			content: 'content/images/pin.png',
+		this.pinSurface = new Surface({
+			content: '<i class="fa fa-star"></i><br/> Favorite',
 			size: [24, 24],
 		});
 
@@ -152,8 +171,31 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 		sequentialLayout.sequenceFrom([this.repeatSurface, this.pinSurface, this.remindSurface]);
-		formContainerSurface.add(sequentialLayout);
+		this.buttonsAndHelp = new ContainerSurface({
+			size: [undefined, 320],
+			properties: {
+				color: '#ffffff'	
+			}
+		});
+		this.renderController.inTransformFrom(function() {
+			return Transform.translate(0, 40, _zIndex());
+		});
+		formContainerSurface.add(this.renderController);
+		this.buttonsAndHelp.add(sequentialLayout);
+		var helpSurface = new Surface({
+			size: [260, undefined],
+			content: 'You can repeat this tag, favorite it (keep it at the top of your list), or remind yourself later.',
+			properties: {
+				fontStyle: 'italic',
+				color: 'white',
+				paddingTop: '20px',
+				borderTop: '1px solid white',
+				marginTop: '110px',
+				marginLeft: '20px'
+			}
+		});
 
+		this.buttonsAndHelp.add(helpSurface);
 		if (!this.newEntryForm) {
 			var deleteSurface = new Surface({
 				content: 'x',
@@ -176,6 +218,7 @@ define(function(require, exports, module) {
 				}
 			}.bind(this));
 		}
+
 		this.add(formContainerSurface);
 	}
 
