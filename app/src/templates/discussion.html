@@ -1,18 +1,15 @@
 <div class="panel panel-default discussion">
+	<div class="close-discussion">
+		<i class="fa fa-times-circle pull-right"></i> 
+		{{iconImage}}
+	</div>
 	<div class="panel-body">
 		<div class="media">
 			<div class="media-body">
-				<a class="pull-left" href="#">
-					<span class="glyphicon glyphicon-user"></span>
-				</a>
-				<span class="media-heading">{{userName}}</span> 
-				{{prettyDate}} &nbsp; &nbsp; &nbsp;
-				<br/>
-				<strong>{{groupName}}</strong>
-				<div class="title">
-					{{name}}
-				</div>
-
+				<i class="fa fa-picture-o fa-3x pull-left"></i>
+				<span class="media-heading">{{userName}}</span> <br>
+				{{prettyDate}} &nbsp; &nbsp; <br> Group: {{groupName}} <br />
+				<br /> <strong> {{name}} </strong>
 			</div>
 		</div>
 	</div>

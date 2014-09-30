@@ -90,7 +90,14 @@ define(function(require, exports, module) {
 			if (e.keyCode == 13) {
 				this.blur(e);
 				this._eventOutput.emit('refresh-list-view');
-			} 		
+			} else {
+				enteredKey = e.srcElement.value;
+				if (!enteredKey) {
+					enteredKey = "/";
+				}
+//				autoCompleteSurface.getAutoCompletes(enteredKey);
+//				formContainerSurface.add(autoCompleteSurface);
+			}
 		}.bind(this));
 
 		this.inputSurface.on('blur', function(e) {

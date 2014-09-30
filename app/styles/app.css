@@ -14,6 +14,7 @@ a {
 
 .panel {
 	margin: 5px;
+	border-radius: 0px;
 }
 
 .discussion .panel-footer {
@@ -69,11 +70,11 @@ a {
 	background-color: #c0c0c0;
 }
 
-.form-footer-registration{
+.form-footer-registration {
 	padding: 15px;
 }
 
-.header-login{ 
+.header-login {
 	position: absolute;
 	height: 100%;
 	left: 0px;
@@ -82,13 +83,13 @@ a {
 	z-index: -1;
 }
 
-.footer-wrapper-login{
+.footer-wrapper-login {
 	position: relative;
 	width: 100%;
 	overflow: hidden;
 }
 
-.footer-login { 
+.footer-login {
 	position: absolute;
 	height: 315px;
 	border-top: 100px solid transparent;
@@ -97,12 +98,13 @@ a {
 	z-index: -1;
 }
 
-.bottom-position-login{
+.bottom-position-login {
 	position: absolute;
-	bottom:0px;
-	width:100%;
+	bottom: 0px;
+	width: 100%;
 }
-.form-footer-login{
+
+.form-footer-login {
 	padding: 15px;
 }
 
@@ -116,37 +118,37 @@ a {
 }
 
 .logo-img {
-	display: block; 
+	display: block;
 	margin-left: auto;
-	margin-right: auto; 
-	width:200px;
+	margin-right: auto;
+	width: 200px;
 }
 
 .logo-img-registration {
-	display: block; 
+	display: block;
 	margin-left: auto;
-	margin-right: auto; 
-	width:100px;
+	margin-right: auto;
+	width: 100px;
 }
 
-.progress-first{
+.progress-first {
 	float: left;
 	margin-right: 10px;
 	margin-left: 15px;
 }
 
-.progress-second{
+.progress-second {
 	float: left;
 	margin-left: 15%;
 }
 
-.progress-third{
+.progress-third {
 	float: left;
 	margin-right: 15px;
 }
 
 #progressBar {
-	width:100%;
+	width: 100%;
 }
 
 .float-left {
@@ -176,23 +178,77 @@ a {
 	margin-top: 9px;
 }
 
-@media screen and (max-width: 768px) {
-	.header-login{ 
-		border-left: 600px solid transparent;
-	}
-} 
+.close-discussion {
+	font-size: 1.5em;
+	padding: 2px;
+}
+
+.cancel-post {
+	padding-right: 25px;
+}
+
+.submit-post {
+	padding-left: 25px;
+}
+
+.post-area {
+	height: 300px;
+}
+
+
+.df-gutter {
+    padding: 15px
+}
+
+.df-gutter-left {
+    padding-left: 15px
+}
+
+.df-gutter-right {
+    padding-right: 15px
+}
+
+.df-gutter-top {
+    padding-top: 15px
+}
+
+.df-gutter-bottom {
+    padding-bottom: 15px
+}
+
+.df-gutter-vertical {
+    padding-top: 15px
+    padding-bottom: 15px
+}
+
+.df-gutter-horizontal {
+    padding-left: 15px
+    padding-right: 15px
+}
+    
+.gutter-hr {
+	border-color: inherit;
+	margin-bottom: 10px;
+	margin-top: 10px;
+}
 
 @media screen and (max-width: 768px) {
-	.logo-img {
-		display: block; 
-		margin-left: auto;
-		margin-right: auto; 
-		width:120px;
+	.header-login {
+		border-left: 600px solid transparent;
 	}
 }
 
 @media screen and (max-width: 768px) {
-	.footer-login { 
+	.logo-img {
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+		width: 120px;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.footer-login {
 		border-left: 800px solid #c04f7f;
 	}
-} 
+}
