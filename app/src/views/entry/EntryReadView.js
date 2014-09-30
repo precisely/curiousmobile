@@ -28,8 +28,7 @@ define(function(require, exports, module) {
 			content: this.getHelpText() + this.entry.toString(),
 			classes: this.entry.repeatTypeAsClass(),
 			properties: {
-				padding: '12px',
-				borderBottom: '2px solid #c0c0c0',
+				padding: '15px',
 			}
 		});
 		this.entrySurface.pipe(this._eventOutput);

@@ -88,7 +88,7 @@ define(function(require, exports, module) {
 			console.log('keyup on formview');
 			//on enter
 			if (e.keyCode == 13) {
-				this.blur(e);
+				this.submit(e);
 				this._eventOutput.emit('refresh-list-view');
 			} else {
 				enteredKey = e.srcElement.value;
@@ -100,12 +100,6 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.inputSurface.on('blur', function(e) {
-			this.renderController.hide({duration: 0});
-			this._eventOutput.emit('hiding-form-view');
-			this.backgroundModifier.setSize([undefined, 70]);
-			this.backgroundSurface.removeClass('blur');
-		}.bind(this));
 
 		this.inputSurface.on('click', function(e) {
 			if (e instanceof CustomEvent && this.entry) {
@@ -113,7 +107,7 @@ define(function(require, exports, module) {
 				e.srcElement.setSelectionRange(selectionRange);
 				this.renderController.show(this.buttonsAndHelp);
 				this._eventOutput.emit('showing-form-view');
-				this.backgroundModifier.setSize([undefined, 300]);
+				this.backgroundModifier.setSize([undefined, undefined]);
 				this.backgroundSurface.addClass('blur');
 			}
 		}.bind(this));
@@ -230,9 +224,7 @@ define(function(require, exports, module) {
 	}
 
 	EntryFormView.prototype.toggleSuffix = function(suffix) {
-
 		var text = this.inputSurface.getValue();
-
 		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned')) {
 			text = text.substr(0, text.length - 7);
 		} else if (typeof suffix != 'undefined') {
@@ -257,9 +249,15 @@ define(function(require, exports, module) {
 	}
 
 	EntryFormView.prototype.blur = function(e) {
+		this.renderController.hide({duration: 0});
+		this._eventOutput.emit('hiding-form-view');
+		this.backgroundModifier.setSize([undefined, 70]);
+		this.backgroundSurface.removeClass('blur');
+	}
+
+	EntryFormView.prototype.submit = function(e) {
 		var entry = this.entry;
 		var newText = e.srcElement.value;
-		$(e.srcElement).blur();
 		if (!u.isOnline()) {
 			u.showAlert("Please wait until online to add an entry");
 			return;
@@ -273,6 +271,7 @@ define(function(require, exports, module) {
 				this._eventOutput.emit('new-entry', resp);
 				this.inputSurface.setValue('');
 				this.entry = null;
+				this.blur();
 			}.bind(this));
 			return;
 		} else if (!entry.isRemind() && entry.toString() == newText) {
@@ -306,7 +305,7 @@ define(function(require, exports, module) {
 			}
 			this._eventOutput.emit('update-entry', resp);
 		}.bind(this));
-
+		this.blur();
 	}
 
 	EntryFormView.prototype.createEntry = function(){

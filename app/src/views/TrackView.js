@@ -40,21 +40,31 @@ define(function(require, exports, module) {
 	}
 
 	function _createBody() {
-		this.createView = new EntryFormView(new Entry());
-		this.createView.on('new-entry', function(data) {
+		this.formView = new EntryFormView(new Entry());
+		this.formView.on('new-entry', function(data) {
 			console.log("New Entry - TrackView event");
 			if (this.currentListView) {
 				this.currentListView.refreshEntries(data.entries);
 			}
 		}.bind(this));
 
-		this.createView.on('showing-form-view', function(e) {
-			console.log('EventHandler: this.createView event: showing-form-view');
+		this.formView.on('update-entry', function(resp) {
+			console.log('EntryListView: Updating an entry');
+			this.currentListView.refreshEntries(resp.entries, resp.glowEntry);
+		}.bind(this));
+
+		this.formView.on('new-entry', function(resp) {
+			console.log('EntryListView: New entry');
+			this.currentListView.refreshEntries(resp.entries, resp.glowEntry);
+		}.bind(this));
+
+		this.formView.on('showing-form-view', function(e) {
+			console.log('EventHandler: this.formView event: showing-form-view');
 			this.currentListView.blur();
 		}.bind(this));
 
-		this.createView.on('hiding-form-view', function(e) {
-			console.log('EventHandler: this.createView event: hiding-form-view');
+		this.formView.on('hiding-form-view', function(e) {
+			console.log('EventHandler: this.formView event: hiding-form-view');
 			this.currentListView.unBlur();
 		}.bind(this));
 
@@ -63,7 +73,7 @@ define(function(require, exports, module) {
 			transform: Transform.translate(0, 70, 0),
 			//            size: [400,400]
 		});
-		this.layout.content.add(backgroundModifier).add(this.createView);
+		this.layout.content.add(backgroundModifier).add(this.formView);
 		var scrollModifier = new StateModifier({
 			origin: [0,0],
 			transform: Transform.translate(0, 140, 1)
@@ -95,6 +105,11 @@ define(function(require, exports, module) {
 		EntryCollection.fetchEntries(_getDefaultDates(date), function(collections) {
 			//5 days before and 5 days after today
 			this.currentListView = new EntryListView(collections[5]);
+			//Handle entry selection handler
+			this.currentListView.on('select-entry', function(entry) {
+				console.log('entry selected with id: ' + entry.id);
+				this.formView.setEntry(entry);
+			}.bind(this));
 			//setting the scroll position to today
 			//this.scrollView.goToPage(5);
 			this.renderController.show(this.currentListView, {

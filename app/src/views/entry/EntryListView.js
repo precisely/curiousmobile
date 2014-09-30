@@ -46,20 +46,9 @@ define(function(require, exports, module) {
 	}
 
 	EntryListView.prototype.addEntry = function(entry) {
-		var formView = false;
-		if (this.selectedEntry && entry.id == this.selectedEntry.id) {
-			formView = true;	
-		}
-		var entryReadView = new EntryReadView(entry, formView);
+		var entryReadView = new EntryReadView(entry);
 		entryReadView.pipe(this._eventOutput);
 		this.entryReadViews.push(entryReadView);
-
-		//Handle entry selection handler
-		entryReadView.on('select-entry', function(entry) {
-			console.log('entry selected with id: ' + entry.id);
-			this.selectedEntry = entry;
-			this.refreshEntries();
-		}.bind(this));
 
 		entryReadView.on('delete-entry', function(entry) {
 			console.log('EntryListView: Deleting an entry');
@@ -68,17 +57,6 @@ define(function(require, exports, module) {
 			this.refreshEntries();
 		}.bind(this));
 
-		entryReadView.on('update-entry', function(resp) {
-			console.log('EntryListView: Updating an entry');
-			this.selectedEntry = undefined;
-			this.refreshEntries(resp.entries, resp.glowEntry);
-		}.bind(this));
-
-		entryReadView.on('new-entry', function(resp) {
-			console.log('EntryListView: New entry');
-			this.selectedEntry = undefined;
-			this.refreshEntries(resp.entries, resp.glowEntry);
-		}.bind(this));
 		return entryReadView;
 	}
 
@@ -93,7 +71,6 @@ define(function(require, exports, module) {
 			this.renderController.hide(this.sequentialLayout);
 		}
 
-		this.selectedIndex = undefined;
 		this.sequentialLayout = new SequentialLayout({
 			direction: 1,
 			defaultItemSize: [undefined, 64],
@@ -107,17 +84,6 @@ define(function(require, exports, module) {
 			//Bumping the offset to add additional padding on the left
             offset = index * 64;
 			//console.log("["+ offset + ", " + index + "]");
-			var currentView = this.entryReadViews[index];
-			if (!currentView) {
-				return;
-			}
-			if (this.selectedEntry && currentView.entry.id == this.selectedEntry.id) {
-				this.selectedView = currentView;
-				this.selectedIndex = index;	
-			}
-			if (this.selectedIndex && index > this.selectedIndex) {
-				offset += 20;
-			}
 			var transform = Transform.translate(0, offset, 0);
 			return {
 				transform: transform,

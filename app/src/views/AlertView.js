@@ -67,13 +67,11 @@ define(function(require, exports, module) {
 				} else if (_.contains(classList, 'a') && this.options.onA) {
 					console.log('Event A');
 					this.options.onA.call();
-					// Todo : close alert
-					u.closeAlerts;
+					u.closeAlerts();
 				} else if (_.contains(classList, 'b') && this.options.onB) {
 					console.log('Event B');
 					this.options.onB.call();
-					// Todo : close alert
-					u.closeAlerts;
+					u.closeAlerts();
 				}
 			}
 		}.bind(this));
