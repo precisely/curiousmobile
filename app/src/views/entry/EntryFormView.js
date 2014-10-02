@@ -244,6 +244,11 @@ define(function(require, exports, module) {
 		this.setEntryText(entry.toString());
 	}
 
+	EntryFormView.prototype.unsetEntry = function() {
+		this.entry = null;
+		this.setEntryText('');
+	}
+
 	EntryFormView.prototype.setEntryText = function(text){
 		this.inputSurface.setValue(text);
 	}
@@ -253,6 +258,8 @@ define(function(require, exports, module) {
 		this._eventOutput.emit('hiding-form-view');
 		this.backgroundModifier.setSize([undefined, 70]);
 		this.backgroundSurface.removeClass('blur');
+		this.unsetEntry();
+		cordova.plugins.Keyboard.close();	
 	}
 
 	EntryFormView.prototype.submit = function(e) {
@@ -300,12 +307,9 @@ define(function(require, exports, module) {
 	EntryFormView.prototype.saveEntry = function(allFuture) {
 		var entry = this.entry;
 		entry.save(allFuture, function(resp) {
-			if (this.alert) {
-				this.alert.controller.hide();
-			}
 			this._eventOutput.emit('update-entry', resp);
+			this.blur();
 		}.bind(this));
-		this.blur();
 	}
 
 	EntryFormView.prototype.createEntry = function(){

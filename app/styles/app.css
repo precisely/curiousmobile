@@ -29,6 +29,7 @@ a {
 
 .ghost {
 	color: #c0c0c0;
+	opacity: 0.6 !important;
 }
 
 .ghost.continuous {
@@ -105,7 +106,6 @@ a {
 }
 
 .form-footer-login {
-	padding: 15px;
 }
 
 .other-links {
@@ -115,6 +115,36 @@ a {
 
 .form-footer-forgot {
 	padding: 15px;
+}
+
+.wrapper {
+	background: #c04f7f;
+	height: 100%;
+}
+
+.parallelogram {
+	background: white;
+	transform: rotate(90deg) skew(-10deg);
+	-webkit-transform: rotate(90deg) skew(-10deg);
+	-moz-transform: rotate(90deg) skew(-10deg);
+	-o-transform: rotate(90deg) skew(-10deg);
+	position: relative;
+	top: 140px;
+	height: 320px;
+}
+
+.parallelogram .content {
+	transform: skew(10deg) rotate(270deg);
+	-webkit-transform: skew(10deg) rotate(270deg);
+	-moz-transform: skew(10deg) rotate(270deg);
+	-o-transform: skew(10deg) rotate(270deg);
+	padding: 9px 15px;
+	height: 318px;
+	width: 322px;
+}
+
+.login-form {
+	margin-top: 10px;
 }
 
 .logo-img {
@@ -197,35 +227,35 @@ a {
 
 
 .df-gutter {
-    padding: 15px
+	padding: 15px
 }
 
 .df-gutter-left {
-    padding-left: 15px
+	padding-left: 15px
 }
 
 .df-gutter-right {
-    padding-right: 15px
+	padding-right: 15px
 }
 
 .df-gutter-top {
-    padding-top: 15px
+	padding-top: 15px
 }
 
 .df-gutter-bottom {
-    padding-bottom: 15px
+	padding-bottom: 15px
 }
 
 .df-gutter-vertical {
-    padding-top: 15px
-    padding-bottom: 15px
+	padding-top: 15px
+	padding-bottom: 15px
 }
 
 .df-gutter-horizontal {
-    padding-left: 15px
-    padding-right: 15px
+	padding-left: 15px
+	padding-right: 15px
 }
-    
+
 .gutter-hr {
 	border-color: inherit;
 	margin-bottom: 10px;
