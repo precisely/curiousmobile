@@ -49,25 +49,10 @@ define(function(require, exports, module) {
 		var formContainerSurface = new ContainerSurface({
 			classes: ['entry-form'],
 			properties: {
-			}
-		});
-
-		this.backgroundSurface = new Surface({
-			properties: {
 				backgroundColor: '#ad326c',
 			}
 		});
-		this.backgroundSurface.transitionable = new Transitionable(70);
-		this.backgroundSurface.state = new Modifier({
-			size: [undefined,70],
-			transform: Transform.translate(0, 0, _zIndex())
-		});
 
-		this.backgroundSurface.state.sizeFrom(function() {
-			return [undefined, this.backgroundSurface.transitionable.get()]	
-		}.bind(this));
-
-		formContainerSurface.add(this.backgroundSurface.state).add(this.backgroundSurface);
 		this.inputModifier = new Modifier({
 			align: [0, 0],
 			transform: Transform.translate(15, 15, _zIndex())
@@ -134,7 +119,7 @@ define(function(require, exports, module) {
 		sequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
 			offset += 40;
-			var transform = Transform.translate(offset, 40, _zIndex() + 1);
+			var transform = Transform.translate(offset, 10, _zIndex() + 1);
 			return {
 				transform: transform,
 				target: input.render()
@@ -177,15 +162,20 @@ define(function(require, exports, module) {
 		sequentialLayout.sequenceFrom([this.repeatSurface, this.pinSurface, this.remindSurface]);
 		this.buttonsAndHelp = new ContainerSurface({
 			size: [undefined, 320],
+			classes: ['entry-form'],
 			properties: {
-				color: '#ffffff'	
+				color: '#ffffff',
+				backgroundColor: '#ad326c',
 			}
 		});
 		this.renderController.inTransformFrom(function() {
-			return Transform.translate(0, 40, _zIndex() + 1);
+			return Transform.translate(0, 64, _zIndex() + 5);
 		});
-		formContainerSurface.add(this.renderController);
+		this.add(this.renderController);
 		this.buttonsAndHelp.add(sequentialLayout);
+		var helpContainer = new ContainerSurface({
+			size:[undefined, undefined]	
+		});
 		var helpSurface = new Surface({
 			size: [260, undefined],
 			content: 'You can repeat this tag, favorite it (keep it at the top of your list), or remind yourself later.',
@@ -194,12 +184,13 @@ define(function(require, exports, module) {
 				color: 'white',
 				paddingTop: '20px',
 				borderTop: '1px solid white',
-				marginTop: '110px',
+				marginTop: '80px',
 				marginLeft: '20px'
 			}
 		});
+		helpContainer.add(helpSurface);
+		this.buttonsAndHelp.add(helpContainer);
 
-		this.buttonsAndHelp.add(helpSurface);
 		var cancelSurface = new Surface({
 			content: 'Cancel',
 			properties: {
@@ -208,10 +199,10 @@ define(function(require, exports, module) {
 		});
 
 		var cancelModifier = new Modifier({
-			transform: Transform.translate(20, 200 , _zIndex() + 2)
+			transform: Transform.translate(20, 170 , _zIndex() + 2)
 		});
 
-		this.buttonsAndHelp.add(cancelModifier).add(cancelSurface);
+		helpContainer.add(cancelModifier).add(cancelSurface);
 
 		cancelSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
@@ -220,7 +211,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		var saveModifier = new Modifier({
-			transform: Transform.translate(window.innerWidth - 60, 200 , _zIndex() + 2)
+			transform: Transform.translate(window.innerWidth - 60, 170 , _zIndex() + 2)
 		});
 
 		var saveSurface = new Surface({
@@ -239,7 +230,7 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.buttonsAndHelp.add(saveModifier).add(saveSurface);
+		helpContainer.add(saveModifier).add(saveSurface);
 
 		this.add(formContainerSurface);
 	}
@@ -260,9 +251,12 @@ define(function(require, exports, module) {
 
 	EntryFormView.prototype.removeSuffix = function(text) {
 		text = text ? text : this.inputSurface.getValue();
-		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned')
+		if (text.endsWith(' repeat') || text.endsWith(' pinned')
 			|| text.endsWith(' button')) {
 				text = text.substr(0, text.length - 7);
+			}
+			if (text.endsWith(' favorite')) {
+				text = text.substr(0, text.length - 8);
 			}
 			return text;
 	}
@@ -280,7 +274,7 @@ define(function(require, exports, module) {
 		inputElement.setSelectionRange(selectionRange);
 		this.renderController.show(this.buttonsAndHelp);
 		this._eventOutput.emit('showing-form-view');
-		this.backgroundSurface.transitionable.set(undefined);
+		//this.backgroundSurface.transitionable.set(window.innerHeight);
 		//this.backgroundSurface.addClass('blur');
 	}
 
@@ -302,8 +296,6 @@ define(function(require, exports, module) {
 		this.focused = false;
 		this.renderController.hide({duration: 0});
 		this._eventOutput.emit('hiding-form-view');
-		this.backgroundSurface.transitionable.set(70);
-		//this.backgroundSurface.removeClass('blur');
 		this.unsetEntry();
 		//if (cordova) {
 			//cordova.plugins.Keyboard.close();	
@@ -322,7 +314,8 @@ define(function(require, exports, module) {
 			newEntry.set('date', window.App.selectedDate);
 			this.entry = newEntry;
 			if (entry.isContinuous()) {
-				this.entry.setText(this.removeSuffix() + ' button');
+				newText = entry.toString();
+				this.entry.setText(this.removeSuffix(newText));
 			} else {
 				this.entry.setText(newText);
 			}

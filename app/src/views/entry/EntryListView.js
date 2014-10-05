@@ -60,7 +60,8 @@ define(function(require, exports, module) {
 		entryReadView.pipe(draggable);
 		entryReadView.pipe(this._eventOutput);
 		draggableNode.add(entryReadView);
-		this.entryReadViews.push(draggableNode);
+		this.entryReadViews.push(entryReadView);
+		this.draggableList.push(draggableNode);
 		//entryReadView.pipe(this.scrollView);
 		entryReadView.on('delete-entry', function(entry) {
 			console.log('EntryListView: Deleting an entry');
@@ -74,6 +75,8 @@ define(function(require, exports, module) {
 
 	EntryListView.prototype.refreshEntries = function(entries, glowEntry) {
 		this.entryReadViews = [];
+		this.draggableList = [];
+
 		if (!entries && this.entries) {
 			entries = EntryCollection.getFromCache(this.entries.key);
 		}
@@ -107,7 +110,7 @@ define(function(require, exports, module) {
 			};
 		}.bind(this));
 
-		this.sequentialLayout.sequenceFrom(this.entryReadViews);
+		this.sequentialLayout.sequenceFrom(this.draggableList);
 		this.renderController.show(this.sequentialLayout);
 	}
 

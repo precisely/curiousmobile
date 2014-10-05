@@ -5,6 +5,7 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var RenderController = require("famous/views/RenderController");
 	var u = require('util/Utils');
+	var FastClick = require('famous/inputs/FastClick');
 
 	function EntryReadView(entry) {
 		View.apply(this, arguments);
@@ -53,6 +54,7 @@ define(function(require, exports, module) {
 		});
 		this.entrySurface.on('click', function(e) {
 			console.log("entrySurface event");
+			if (_.contains(e.origin.getClassList(), 'blur')) return false;
 			this._eventOutput.emit('select-entry', this.entry);
 		}.bind(this));
 
@@ -77,7 +79,7 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 		deleteModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth, 0, 0)
+			transform: Transform.translate(window.innerWidth, 2, 0)
 		});
 		this.add(deleteModifier).add(this.deleteSurface);
 		this.add(this.entrySurface);
