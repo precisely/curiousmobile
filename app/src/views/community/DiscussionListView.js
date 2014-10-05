@@ -66,7 +66,7 @@ define(function(require, exports, module) {
 
 			this.searchAndPostSurface.on('click', function(e) {
 				var classList;
-				if (e instanceof CustomEvent) {
+				if (e) {
 					classList = e.srcElement.parentElement.classList;
 					if (_.contains(classList, 'submit')) {
 						console.log("Submit for search");
@@ -112,7 +112,7 @@ define(function(require, exports, module) {
 
 				discussionSurface.on('click', function(e) {
 					var classList;
-					if (e instanceof CustomEvent) {
+					if (e) {
 						classList = e.srcElement.parentElement.classList;
 						if (_.contains(classList, 'close-discussion')) {
 							this.alert = u.showAlert({

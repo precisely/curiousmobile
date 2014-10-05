@@ -3,6 +3,7 @@ define(function(require, exports, module) {
 	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
+	var Timer = require('famous/utilities/Timer');
 	var Transitionable = require('famous/transitions/Transitionable');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var u = require('util/Utils');
@@ -16,7 +17,7 @@ define(function(require, exports, module) {
 
 	function DiscussionSummaryView(discussionId) {
 		View.apply(this, arguments);
-		var transition = new Transitionable(Transform.translate(0, 50, 0));
+		var transition = new Transitionable(Transform.translate(0, 5, 0));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
 		this.add(this.renderController);
@@ -40,38 +41,45 @@ define(function(require, exports, module) {
 				size: [undefined, true],
 				content: _.template(discussionPostTemplate, discussionPost, templateSettings),
 			});
+
+			discussionPostSurface.on('deploy', function() {
+				Timer.every(function() {
+					var size = this.getSize();
+					var width = (size[0] == true) ? this._currTarget.offsetWidth : size[0];
+					var height = (size[1] == true) ? this._currTarget.offsetHeight : size[1];
+					this.setSize([width, height]);
+				}.bind(this), 2);
+			});
 			surfaceList.push(discussionPostSurface)
-			
+
 			discussionPostSurface.on('click', function(e) {
 				var classList;
-				if (e instanceof CustomEvent) {
-					if (e.srcElement.localName == 'a' || e.srcElement.localName == 'button') {
-						classList = e.srcElement.classList;
-					} else {
-						classList = e.srcElement.parentElement.classList;
-					}
-					if (_.contains(classList, 'delete-discussion')) {
-						this.alert = u.showAlert({
-							message: 'Are you sure to delete discussion ?',
-							a: 'Yes',
-							b: 'No',
-							onA: function() {
-								Discussion.deleteDiscussion({id: discussionId}, function(success){
-									this.renderController.show(scrollView);
-								}.bind(this));
-							}.bind(this),
-							onB: function() {
-							}.bind(this),
-						});
-					} else if (_.contains(classList, 'submit-comment')) {
-						var message = document.forms["commentForm"]["message"].value;
-						DiscussionPost.createComment({discussionId: discussionId, message: message}, function(success){
-							this.renderController.show(scrollView);
-						}.bind(this));
-					}
+				if (e.srcElement.localName == 'a' || e.srcElement.localName == 'button') {
+					classList = e.srcElement.classList;
+				} else {
+					classList = e.srcElement.parentElement.classList;
+				}
+				if (_.contains(classList, 'delete-discussion')) {
+					this.alert = u.showAlert({
+						message: 'Are you sure to delete discussion ?',
+						a: 'Yes',
+						b: 'No',
+						onA: function() {
+							Discussion.deleteDiscussion({id: discussionId}, function(success){
+								this.renderController.show(scrollView);
+							}.bind(this));
+						}.bind(this),
+						onB: function() {
+						}.bind(this),
+					});
+				} else if (_.contains(classList, 'submit-comment')) {
+					var message = document.forms["commentForm"]["message"].value;
+					DiscussionPost.createComment({discussionId: discussionId, message: message}, function(success){
+						this.renderController.show(scrollView);
+					}.bind(this));
 				}
 			}.bind(this));
-			
+
 			discussionPost.prettyDate =  prettyDate;
 			discussionPost.posts.forEach(function(post) {
 				if (post.message) {
@@ -79,27 +87,34 @@ define(function(require, exports, module) {
 						size: [undefined, true],
 						content: _.template(commentTemplate, post, templateSettings),
 					});
-					
+
+
+					commentSurface.on('deploy', function() {
+						Timer.every(function() {
+							var size = this.getSize();
+							var width = (size[0] == true) ? this._currTarget.offsetWidth : size[0];
+							var height = (size[1] == true) ? this._currTarget.offsetHeight : size[1];
+							this.setSize([width, height]);
+						}.bind(this), 2);
+					});
 					commentSurface.on('click', function(e) {
 						var classList;
-						if (e instanceof CustomEvent) {
-							classList = e.srcElement.parentElement.classList;
-							if (_.contains(classList, 'delete-comment')) {
-								this.alert = u.showAlert({
-									message: 'Are you sure to delete this comment ?',
-									a: 'Yes',
-									b: 'No',
-									onA: function() {
-										DiscussionPost.deleteComment( { discussionId : discussionId,
-											clearPostId : post.id }, function(sucess){
+						classList = e.srcElement.parentElement.classList;
+						if (_.contains(classList, 'delete-comment')) {
+							u.showAlert({
+								message: 'Are you sure to delete this comment ?',
+								a: 'Yes',
+								b: 'No',
+								onA: function() {
+									DiscussionPost.deleteComment( { discussionId : discussionId,
+										clearPostId : post.id }, function(sucess){
 											var index = surfaceList.indexOf(commentSurface);
 											surfaceList.splice(index, 1);
 										}.bind(this));
-									}.bind(this),
-									onB: function() {
-									}.bind(this),
-								});
-							}
+								}.bind(this),
+								onB: function() {
+								}.bind(this),
+							});
 						}
 					}.bind(this));
 

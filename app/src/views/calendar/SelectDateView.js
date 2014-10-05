@@ -20,12 +20,13 @@ define(function(require, exports, module) {
 			content: '<img src="content/images/left.png" />',	
 			size: [44,44],
 			properties: {
-				textAlign: 'center'	
+				textAlign: 'center',
+				paddingTop: '10px'
 			}
 		});
 
 		var leftModifier = new StateModifier({
-			transform: Transform.translate(-5, 25, 1),
+			transform: Transform.translate(-5, 15, 1),
 		});
 		this.add(leftModifier).add(leftSurface);	
 
@@ -34,7 +35,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		var dateSurface = new Surface({
-			size: [100, 44],
+			size: [115, 44],
 			properties: {
 				color: '#e83838',	
 				textAlign: 'center',

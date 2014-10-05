@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
+	var Transitionable = require('famous/transitions/Transitionable');
 	var Easing = require("famous/transitions/Easing");
 	var RenderController = require("famous/views/RenderController");
 	var SequentialLayout = require("famous/views/SequentialLayout");
@@ -51,17 +52,22 @@ define(function(require, exports, module) {
 			}
 		});
 
-		this.backgroundModifier = new StateModifier({
-			size: [undefined,70],
-			transform: Transform.translate(0, 0, _zIndex())
-		});
-
 		this.backgroundSurface = new Surface({
 			properties: {
 				backgroundColor: '#ad326c',
 			}
 		});
-		formContainerSurface.add(this.backgroundModifier).add(this.backgroundSurface);
+		this.backgroundSurface.transitionable = new Transitionable(70);
+		this.backgroundSurface.state = new Modifier({
+			size: [undefined,70],
+			transform: Transform.translate(0, 0, _zIndex())
+		});
+
+		this.backgroundSurface.state.sizeFrom(function() {
+			return [undefined, this.backgroundSurface.transitionable.get()]	
+		}.bind(this));
+
+		formContainerSurface.add(this.backgroundSurface.state).add(this.backgroundSurface);
 		this.inputModifier = new Modifier({
 			align: [0, 0],
 			transform: Transform.translate(15, 15, _zIndex())
@@ -107,6 +113,10 @@ define(function(require, exports, module) {
 			if (e instanceof CustomEvent && this.entry) {
 				this.focus(e);
 			}
+		}.bind(this));
+
+		this.inputSurface.on('blur', function(e) {
+			this.focused = false;
 		}.bind(this));
 
 		//update input field
@@ -178,7 +188,7 @@ define(function(require, exports, module) {
 		this.renderController.inTransformFrom(function() {
 			return Transform.translate(0, 40, _zIndex() + 1);
 		});
-		formContainerSurface.add(this.renderController);
+		this.add(this.renderController);
 		this.buttonsAndHelp.add(sequentialLayout);
 		var helpSurface = new Surface({
 			size: [260, undefined],
@@ -264,7 +274,7 @@ define(function(require, exports, module) {
 		inputElement.setSelectionRange(selectionRange);
 		this.renderController.show(this.buttonsAndHelp);
 		this._eventOutput.emit('showing-form-view');
-		this.backgroundModifier.setSize([undefined, undefined]);
+		this.backgroundSurface.transitionable.set(undefined);
 		//this.backgroundSurface.addClass('blur');
 	}
 
@@ -286,8 +296,8 @@ define(function(require, exports, module) {
 		this.focused = false;
 		this.renderController.hide({duration: 0});
 		this._eventOutput.emit('hiding-form-view');
-		this.backgroundModifier.setSize([undefined, 70]);
-		this.backgroundSurface.removeClass('blur');
+		this.backgroundSurface.transitionable.set(70);
+		//this.backgroundSurface.removeClass('blur');
 		this.unsetEntry();
 		//if (cordova) {
 			//cordova.plugins.Keyboard.close();	
