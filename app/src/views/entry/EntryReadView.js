@@ -26,16 +26,17 @@ define(function(require, exports, module) {
 		});
 		this.add(this.renderController);
 		var repeatTypeAsClass = this.entry.repeatTypeAsClass();
-		var entryTextColor = 'white';
-		if (repeatTypeAsClass.length < 2) {
-			entryTextColor = '#b0366b';	
+		var entryTextColor = '#b0366b';
+		if (_.contains(repeatTypeAsClass, 'ghost')) {
+			entryTextColor = 'white';	
 		}
 		this.entrySurface = new Surface({
-			size: [undefined, this.options.entryHeight],
-			content: this.getHelpText() + this.entry.toString(),
+			size: [window.innerWidth - 4, this.options.entryHeight],
+			content: this.getDisplayText(),
 			classes: this.entry.repeatTypeAsClass(),
 			properties: {
 				padding: '15px',
+				margin: '2px',
 				color: entryTextColor,
 			}
 		});
@@ -97,18 +98,19 @@ define(function(require, exports, module) {
 			//rc.show(this.entrySurface);
 	}
 
-	EntryReadView.prototype.getHelpText = function() {
+	EntryReadView.prototype.getDisplayText = function() {
 		var date = new Date(this.entry.date);
 		var time = u.formatAMPM(date);
+		var displayText = this.entry.removeSuffix();
 		if (this.entry.isContinuous()) {
-			return '<div class="help"><i class="fa fa-star"></i> Favorite</div>';	
+			return '<div class="help"><i class="fa fa-star"></i></div>' + displayText;	
 		} else if (this.entry.isRemind()) {
-			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every other day</div>';	
+			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every other day</div>' + displayText;	
 		} else if (this.entry.isRepeat() && this.entry.isGhost()) {
 			return '<div class="help"><i class="fa fa-bell"></i> Reminder set (' + u.mmddyy(date) + ' ' + 
-+ time + ')</div>';	
++ time + ')</div>' + displayText;	
 		}
-		return '<div style="height: 9px"></div>';
+		return '<div style="height: 9px"></div>' + displayText;
 	}
 
 	module.exports = EntryReadView;

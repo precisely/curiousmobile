@@ -115,10 +115,6 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.inputSurface.on('blur', function(e) {
-			this.focused = false;
-		}.bind(this));
-
 		//update input field
 		autoCompleteSurface.onSelect(function(inputLabel) {
 			console.log(inputLabel);
@@ -188,7 +184,7 @@ define(function(require, exports, module) {
 		this.renderController.inTransformFrom(function() {
 			return Transform.translate(0, 40, _zIndex() + 1);
 		});
-		this.add(this.renderController);
+		formContainerSurface.add(this.renderController);
 		this.buttonsAndHelp.add(sequentialLayout);
 		var helpSurface = new Surface({
 			size: [260, undefined],
@@ -262,6 +258,16 @@ define(function(require, exports, module) {
 		return text.length > 0;
 	}
 
+	EntryFormView.prototype.removeSuffix = function(text) {
+		text = text ? text : this.inputSurface.getValue();
+		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned')
+			|| text.endsWith(' button')) {
+				text = text.substr(0, text.length - 7);
+			}
+			return text;
+	}
+
+
 	EntryFormView.prototype.focus = function(e) {
 		var inputElement = this.inputSurface._currTarget;
 		if (this.focused) {
@@ -315,7 +321,11 @@ define(function(require, exports, module) {
 			var newEntry = new Entry();
 			newEntry.set('date', window.App.selectedDate);
 			this.entry = newEntry;
-			this.entry.setText(newText);
+			if (entry.isContinuous()) {
+				this.entry.setText(this.removeSuffix() + ' button');
+			} else {
+				this.entry.setText(newText);
+			}
 			this.entry.create(function(resp) {
 				this._eventOutput.emit('new-entry', resp);
 				this.inputSurface.setValue('');

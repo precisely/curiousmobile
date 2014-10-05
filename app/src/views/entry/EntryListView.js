@@ -14,6 +14,8 @@ define(function(require, exports, module) {
 	var TweenTransition = require('famous/transitions/TweenTransition');
 	var Draggable = require('famous/modifiers/Draggable');
 	var RenderNode = require('famous/core/RenderNode');
+	var Utility = require('famous/utilities/Utility');
+	var Scrollview = require('famous/views/Scrollview');
 	TweenTransition.registerCurve('inSine', Easing.inSine);
 
 	function EntryListView(collection) {
@@ -59,7 +61,7 @@ define(function(require, exports, module) {
 		entryReadView.pipe(this._eventOutput);
 		draggableNode.add(entryReadView);
 		this.entryReadViews.push(draggableNode);
-
+		//entryReadView.pipe(this.scrollView);
 		entryReadView.on('delete-entry', function(entry) {
 			console.log('EntryListView: Deleting an entry');
 			this.entries.remove(entry);
@@ -86,13 +88,17 @@ define(function(require, exports, module) {
 			defaultItemSize: [undefined, 74],
 			itemSpacing: 0,
 		});
+
+		this.scrollView = new Scrollview({
+			direction: Utility.Direction.Y,
+		});
 		this.entries.forEach(function(entry) {
 			this.addEntry(entry);
 		}.bind(this));
 
 		this.sequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
-            offset = index * 74;
+            offset = index * 76;
 			//console.log("["+ offset + ", " + index + "]");
 			var transform = Transform.translate(0, offset, window.App.zIndex.readView);
 			return {

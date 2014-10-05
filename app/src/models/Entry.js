@@ -109,6 +109,17 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 
 				return "";
 			},
+			removeSuffix: function() {
+				var text = this.toString();
+				if (text.endsWith(' repeat') || text.endsWith(' pinned')
+					|| text.endsWith(' button')) {
+						text = text.substr(0, text.length - 7);
+					}
+					if (text.endsWith(' favorite')) {
+						text = text.substr(0, text.length - 8);
+					}
+					return text;
+			},
 			create: function(callback) {
 				var collectionCache = window.App.collectionCache;
 				var baseDate = window.App.selectedDate;
@@ -122,7 +133,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				})
 
 				u.queueJSON("adding new entry", u.makeGetUrl("addEntrySData"), u.makeGetArgs(argsToSend), function(
-					entries) {
+				entries) {
 					if (u.checkData(entries)) {
 						if (entries[1] != null) {
 							u.showAlert(entries[1]);
@@ -134,8 +145,8 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 							key: Entry.getCacheKey(baseDate)
 						});
 						//if (entries[2] != null)
-						//updateAutocomplete(entries[2][0], entries[2][1], entries[2][2],
-						//entries[2][3]);
+							//updateAutocomplete(entries[2][0], entries[2][1], entries[2][2],
+				//entries[2][3]);
 					} else {
 						u.showAlert("Error adding entry");
 					}
@@ -156,33 +167,33 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				});
 
 				u.queueJSON("saving entry", u.makeGetUrl("updateEntrySData"), u.makeGetArgs(argsToSend),
-					function(entries) {
-						if (entries == "") {
-							return;
-						}
-						// Temporary fix since checkData fails
-						if (typeof entries[0] != 'undefined' && entries[0].length > 0) {
-							_.each(entries[0], function(entry) {
-								// Finding entry which is recently updated.
-								if (entry.id == this.id) {
-									this.set(entry);
-								}
-							}.bind(this));
-							Entry.cacheEntries(baseDate, entries[0]);
-							callback({
-								entries: entries[0],
-								glowEntry: this
-							});
-							//if (entries[1] != null)
+				function(entries) {
+					if (entries == "") {
+						return;
+					}
+					// Temporary fix since checkData fails
+					if (typeof entries[0] != 'undefined' && entries[0].length > 0) {
+						_.each(entries[0], function(entry) {
+							// Finding entry which is recently updated.
+							if (entry.id == this.id) {
+								this.set(entry);
+							}
+						}.bind(this));
+						Entry.cacheEntries(baseDate, entries[0]);
+						callback({
+							entries: entries[0],
+							glowEntry: this
+						});
+						//if (entries[1] != null)
 							//updateAutocomplete(entries[1][0], entries[1][1],
-							//entries[1][2], entries[1][3]);
-							//if (entries[2] != null)
-							//updateAutocomplete(entries[2][0], entries[2][1],
-							//entries[2][2], entries[2][3]);
-						} else {
-							u.showAlert("Error updating entry");
-						}
-					}.bind(this));
+				//entries[1][2], entries[1][3]);
+				//if (entries[2] != null)
+					//updateAutocomplete(entries[2][0], entries[2][1],
+				//entries[2][2], entries[2][3]);
+					} else {
+						u.showAlert("Error updating entry");
+					}
+				}.bind(this));
 
 			},
 			delete: function(callback) {
@@ -215,18 +226,18 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 							displayDate: baseDate
 						});
 
-					u.queueJSON("deleting entry", u.makeGetUrl("deleteEntrySData"), u.makeGetArgs(argsToSend),
+						u.queueJSON("deleting entry", u.makeGetUrl("deleteEntrySData"), u.makeGetArgs(argsToSend),
 						function(entries) {
 							if (u.checkData(entries)) {
 								Entry.cacheEntries(baseDate, entries[0]);
 								callback(entries[0]);
 								//if (entries[1] != null)
-								//updateAutocomplete(entries[1][0], entries[1][1],
-								//entries[1][2], entries[1][3]);
-								//if (entries[2] != null)
-								//updateAutocomplete(entries[2][0],
+									//updateAutocomplete(entries[1][0], entries[1][1],
+						//entries[1][2], entries[1][3]);
+						//if (entries[2] != null)
+							//updateAutocomplete(entries[2][0],
 								//entries[2][1], entries[2][2],
-								//entries[2][3]);
+						//entries[2][3]);
 							} else {
 								u.showAlert("Error deleting entry");
 							}
@@ -239,12 +250,12 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				var collectionCache = window.App.collectionCache;
 				var selectedDate = window.App.selectedDate;
 				u.queueJSON("deleting entry", u.makeGetUrl("deleteGhostEntryData"),
-					u.makeGetArgs(u.getCSRFPreventionObject(
-						"deleteGhostEntryDataCSRF", {
-							entryId: this.id,
-							all: allFuture,
-							date: selectedDate.toUTCString()
-						})),
+				u.makeGetArgs(u.getCSRFPreventionObject(
+					"deleteGhostEntryDataCSRF", {
+						entryId: this.id,
+						all: allFuture,
+						date: selectedDate.toUTCString()
+					})),
 					function(ret) {
 						console.log('deleteGhost: Response received' + u.checkData(ret, 'success', "Error deleting entry"));
 						if (u.checkData(ret, 'success', "Error deleting entry")) {
@@ -268,7 +279,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 		});
 
 		Entry.RepeatType = RepeatType;
-		
+
 		Entry.getCacheKey = function _getCacheKey(date) {
 			var dateStr;
 			if (typeof date == 'object') {
