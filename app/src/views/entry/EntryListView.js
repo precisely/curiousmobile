@@ -12,6 +12,8 @@ define(function(require, exports, module) {
 	var TransitionableTransform = require("famous/transitions/TransitionableTransform");
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var TweenTransition = require('famous/transitions/TweenTransition');
+	var Draggable = require('famous/modifiers/Draggable');
+	var RenderNode = require('famous/core/RenderNode');
 	TweenTransition.registerCurve('inSine', Easing.inSine);
 
 	function EntryListView(collection) {
@@ -46,9 +48,17 @@ define(function(require, exports, module) {
 	}
 
 	EntryListView.prototype.addEntry = function(entry) {
+		var draggable = new Draggable( {
+			xRange: [-100, 0],
+			yRange: [0, 0],
+		});
+		
+		var draggableNode = new RenderNode(draggable);
 		var entryReadView = new EntryReadView(entry);
+		entryReadView.pipe(draggable);
 		entryReadView.pipe(this._eventOutput);
-		this.entryReadViews.push(entryReadView);
+		draggableNode.add(entryReadView);
+		this.entryReadViews.push(draggableNode);
 
 		entryReadView.on('delete-entry', function(entry) {
 			console.log('EntryListView: Deleting an entry');
