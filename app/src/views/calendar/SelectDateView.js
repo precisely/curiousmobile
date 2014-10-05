@@ -18,11 +18,14 @@ define(function(require, exports, module) {
 	function _createNavigation(date) {
 		var leftSurface = new Surface({
 			content: '<img src="content/images/left.png" />',	
-			size: [24,44],
+			size: [44,44],
+			properties: {
+				textAlign: 'center'	
+			}
 		});
 
 		var leftModifier = new StateModifier({
-			transform: Transform.translate(10, 25, 1),
+			transform: Transform.translate(-5, 25, 1),
 		});
 		this.add(leftModifier).add(leftSurface);	
 
@@ -31,8 +34,11 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		var dateSurface = new Surface({
+			size: [100, 44],
 			properties: {
-				color: '#e83838'	
+				color: '#e83838',	
+				textAlign: 'center',
+				marginTop: '9px'
 			}
 		});
 
@@ -45,19 +51,19 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 
-		//var dateModifier = new StateModifier({
-			//transform: Transform.translate(60, 10,1)	
-		//});
+		var dateModifier = new StateModifier({
+			transform: Transform.translate((window.innerWidth/2) - 100, 0, 0)	
+		});
 
-		this.add(dateSurface);
+		this.add(dateModifier).add(dateSurface);
 
 		var rightModifier = new StateModifier({
-			transform: Transform.translate(240, 15, 1),
+			transform: Transform.translate(window.innerWidth - 84, 15, 1),
 		});
 
 		var rightSurface = new Surface({
 			content: '<img src="content/images/right.png" />',	
-			size: [24,44],
+			size: [44,44],
 			properties: {
 				marginTop: '10px'
 			}

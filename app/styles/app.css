@@ -197,15 +197,7 @@ a {
 }
 
 .select-date .fa-chevron-down {
-	position: absolute;
-	top: 25px;
 	margin-left: 3px;
-}
-
-.select-date {
-	width: 270px;
-	text-align: center;
-	margin-top: 9px;
 }
 
 .close-discussion {
