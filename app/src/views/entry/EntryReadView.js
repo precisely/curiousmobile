@@ -15,7 +15,9 @@ define(function(require, exports, module) {
 	EntryReadView.prototype = Object.create(View.prototype);
 	EntryReadView.prototype.constructor = EntryReadView;
 
-	EntryReadView.DEFAULT_OPTIONS = {};
+	EntryReadView.DEFAULT_OPTIONS = {
+		entryHeight: 74,
+	};
 
 	function _addSurface() {
 		this.renderController = new RenderController();
@@ -29,7 +31,7 @@ define(function(require, exports, module) {
 			entryTextColor = '#b0366b';	
 		}
 		this.entrySurface = new Surface({
-			size: [undefined, 74],
+			size: [undefined, this.options.entryHeight],
 			content: this.getHelpText() + this.entry.toString(),
 			classes: this.entry.repeatTypeAsClass(),
 			properties: {
@@ -50,13 +52,34 @@ define(function(require, exports, module) {
 		});
 		this.entrySurface.on('click', function(e) {
 			console.log("entrySurface event");
+			this._eventOutput.emit('select-entry', this.entry);
+		}.bind(this));
+
+		this.deleteSurface = new Surface({
+			size: [100, this.options.entryHeight],
+			content: 'Delete',
+			properties: {
+				padding: '20px',
+				backgroundColor: '#dc6059',
+				fontSize: '18px',
+				color: 'white',
+				fontWeight: 'bold'
+			}
+		});
+
+		this.deleteSurface.on('click', function(e) {
+			console.log('EventHandler: this.deleteSurface event: click');
 			if (e instanceof CustomEvent) {
-				this._eventOutput.emit('select-entry', this.entry);
+				this.entry.delete(function(){
+					this._eventOutput.emit('delete-entry',this.entry);
+				}.bind(this));
 			}
 		}.bind(this));
-		this.renderController.show(this.entrySurface, {
-			duration: 0
+		deleteModifier = new StateModifier({
+			transform: Transform.translate(window.innerWidth, 0, 0)
 		});
+		this.add(deleteModifier).add(this.deleteSurface);
+		this.add(this.entrySurface);
 
 	}
 
@@ -69,9 +92,9 @@ define(function(require, exports, module) {
 		//var rc = this.renderController;
 		//rc.show(this.glowSurface, {
 			//duration: 1000
-		//});
-		//rc.hide();
-		//rc.show(this.entrySurface);
+//});
+			//rc.hide();
+			//rc.show(this.entrySurface);
 	}
 
 	EntryReadView.prototype.getHelpText = function() {
@@ -83,7 +106,7 @@ define(function(require, exports, module) {
 			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every other day</div>';	
 		} else if (this.entry.isRepeat() && this.entry.isGhost()) {
 			return '<div class="help"><i class="fa fa-bell"></i> Reminder set (' + u.mmddyy(date) + ' ' + 
-				+ time + ')</div>';	
++ time + ')</div>';	
 		}
 		return '<div style="height: 9px"></div>';
 	}
