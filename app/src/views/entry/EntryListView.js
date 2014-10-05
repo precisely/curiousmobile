@@ -26,7 +26,7 @@ define(function(require, exports, module) {
 	EntryListView.prototype.constructor = EntryListView;
 
 	EntryListView.DEFAULT_OPTIONS = {
-		entryHeight: 44,
+		entryHeight: 74,
 		selectionPadding: 24,
 	};
 
@@ -73,7 +73,7 @@ define(function(require, exports, module) {
 
 		this.sequentialLayout = new SequentialLayout({
 			direction: 1,
-			defaultItemSize: [undefined, 64],
+			defaultItemSize: [undefined, 74],
 			itemSpacing: 0,
 		});
 		this.entries.forEach(function(entry) {
@@ -82,7 +82,7 @@ define(function(require, exports, module) {
 
 		this.sequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
-            offset = index * 64;
+            offset = index * 74;
 			//console.log("["+ offset + ", " + index + "]");
 			var transform = Transform.translate(0, offset, 0);
 			return {

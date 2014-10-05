@@ -95,20 +95,15 @@ define(function(require, exports, module) {
 				if (!enteredKey) {
 					enteredKey = "/";
 				}
-//				autoCompleteSurface.getAutoCompletes(enteredKey);
-//				formContainerSurface.add(autoCompleteSurface);
+				//				autoCompleteSurface.getAutoCompletes(enteredKey);
+				//				formContainerSurface.add(autoCompleteSurface);
 			}
 		}.bind(this));
 
 
 		this.inputSurface.on('click', function(e) {
 			if (e instanceof CustomEvent && this.entry) {
-				var selectionRange = this.entry.getSelectionRange();
-				e.srcElement.setSelectionRange(selectionRange);
-				this.renderController.show(this.buttonsAndHelp);
-				this._eventOutput.emit('showing-form-view');
-				this.backgroundModifier.setSize([undefined, undefined]);
-				this.backgroundSurface.addClass('blur');
+				this.focus(e);
 			}
 		}.bind(this));
 
@@ -227,7 +222,9 @@ define(function(require, exports, module) {
 		var text = this.inputSurface.getValue();
 		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned')) {
 			text = text.substr(0, text.length - 7);
-		} else if (typeof suffix != 'undefined') {
+		}
+		
+		if (typeof suffix != 'undefined') {
 			text += ' ' + suffix;
 		}
 		this.inputSurface.setValue(text);
@@ -235,8 +232,21 @@ define(function(require, exports, module) {
 		return text.length > 0;
 	}
 
-	EntryFormView.prototype.focus = function(arguments) {
+	EntryFormView.prototype.focus = function(e) {
+		var inputElement = e.srcElement;
+		if (this.focused) {
+			//already focused
+			return;	
+		}
+
+		this.focused = true;
 		this.inputSurface.focus();
+		var selectionRange = this.entry.getSelectionRange();
+		e.srcElement.setSelectionRange(selectionRange);
+		this.renderController.show(this.buttonsAndHelp);
+		this._eventOutput.emit('showing-form-view');
+		this.backgroundModifier.setSize([undefined, undefined]);
+		//this.backgroundSurface.addClass('blur');
 	}
 
 	EntryFormView.prototype.setEntry = function(entry) {
@@ -254,6 +264,7 @@ define(function(require, exports, module) {
 	}
 
 	EntryFormView.prototype.blur = function(e) {
+		this.focused = false;
 		this.renderController.hide({duration: 0});
 		this._eventOutput.emit('hiding-form-view');
 		this.backgroundModifier.setSize([undefined, 70]);

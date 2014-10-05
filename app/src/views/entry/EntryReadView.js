@@ -24,7 +24,7 @@ define(function(require, exports, module) {
 		});
 		this.add(this.renderController);
 		this.entrySurface = new Surface({
-			size: [undefined, 64],
+			size: [undefined, 74],
 			content: this.getHelpText() + this.entry.toString(),
 			classes: this.entry.repeatTypeAsClass(),
 			properties: {

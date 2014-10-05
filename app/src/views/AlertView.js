@@ -40,7 +40,7 @@ define(function(require, exports, module) {
 
 		messageModifier = new Modifier({
 			transform: Transform.translate(200, 58, 999),
-			origin: [0.5, 0.5],
+			origin: [0, 0],
 		});
 
 		var template = AlertTemplate;
