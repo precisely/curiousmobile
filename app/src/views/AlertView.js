@@ -39,7 +39,7 @@ define(function(require, exports, module) {
 		});
 
 		messageModifier = new Modifier({
-			transform: Transform.translate(200, 58, 999),
+			transform: Transform.translate(20, 74, 999),
 			origin: [0, 0],
 		});
 

@@ -60,12 +60,12 @@ define(function(require, exports, module) {
 
 		this.formView.on('showing-form-view', function(e) {
 			console.log('EventHandler: this.formView event: showing-form-view');
-			this.currentListView.blur();
+			//this.currentListView.blur();
 		}.bind(this));
 
 		this.formView.on('hiding-form-view', function(e) {
 			console.log('EventHandler: this.formView event: hiding-form-view');
-			this.currentListView.unBlur();
+			//this.currentListView.unBlur();
 		}.bind(this));
 
 		var backgroundModifier = new StateModifier({
@@ -109,6 +109,7 @@ define(function(require, exports, module) {
 			this.currentListView.on('select-entry', function(entry) {
 				console.log('entry selected with id: ' + entry.id);
 				this.formView.setEntry(entry);
+				this.formView.focus();
 			}.bind(this));
 			//setting the scroll position to today
 			//this.scrollView.goToPage(5);

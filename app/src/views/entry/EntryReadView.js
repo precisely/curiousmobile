@@ -23,12 +23,18 @@ define(function(require, exports, module) {
 			return Transform.translate(0, 0, window.App.zIndex.readView);	
 		});
 		this.add(this.renderController);
+		var repeatTypeAsClass = this.entry.repeatTypeAsClass();
+		var entryTextColor = 'white';
+		if (repeatTypeAsClass.length < 2) {
+			entryTextColor = '#b0366b';	
+		}
 		this.entrySurface = new Surface({
 			size: [undefined, 74],
 			content: this.getHelpText() + this.entry.toString(),
 			classes: this.entry.repeatTypeAsClass(),
 			properties: {
 				padding: '15px',
+				color: entryTextColor,
 			}
 		});
 		this.entrySurface.pipe(this._eventOutput);

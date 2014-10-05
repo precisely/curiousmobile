@@ -90,7 +90,9 @@ define(function(require, exports, module) {
 			if (e.keyCode == 13) {
 				this.submit(e);
 				this._eventOutput.emit('refresh-list-view');
-			} else {
+			} else if (e.keyCode == 27) {
+				this.blur(e);
+			}else {
 				enteredKey = e.srcElement.value;
 				if (!enteredKey) {
 					enteredKey = "/";
@@ -192,28 +194,46 @@ define(function(require, exports, module) {
 		});
 
 		this.buttonsAndHelp.add(helpSurface);
-		if (!this.newEntryForm) {
-			var deleteSurface = new Surface({
-				content: 'x',
-				size: [24, 24],
-				properties: {
-					color: 'black',
-				}
-			});
+		var cancelSurface = new Surface({
+			content: 'Cancel',
+			properties: {
+				fontWeight: 'bold'	
+			}
+		});
 
-			var deleteModifier = new Modifier({
-				transform: Transform.translate(window.innerWidth * 0.95, 44, _zIndex())
-			});
+		var cancelModifier = new Modifier({
+			transform: Transform.translate(20, 200 , _zIndex())
+		});
 
-			formContainerSurface.add(deleteModifier).add(deleteSurface);
-			deleteSurface.on('click', function(e) {
-				if (e instanceof CustomEvent) {
-					this.entry.delete(function(){
-						this._eventOutput.emit('delete-entry',this.entry);
-					}.bind(this))
-				}
-			}.bind(this));
-		}
+		this.buttonsAndHelp.add(cancelModifier).add(cancelSurface);
+
+		cancelSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				this.blur(e);
+			}
+		}.bind(this));
+
+		var saveModifier = new Modifier({
+			transform: Transform.translate(window.innerWidth - 60, 200 , _zIndex())
+		});
+
+		var saveSurface = new Surface({
+			content: 'Save',
+			origin: [1,1],
+			align: [1,1],
+			properties: {
+				fontWeight: 'bold'	
+			}
+		});
+
+		saveSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				this.submit(e);
+				this._eventOutput.emit('refresh-list-view');
+			}
+		}.bind(this));
+
+		this.buttonsAndHelp.add(saveModifier).add(saveSurface);
 
 		this.add(formContainerSurface);
 	}
@@ -223,7 +243,7 @@ define(function(require, exports, module) {
 		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned')) {
 			text = text.substr(0, text.length - 7);
 		}
-		
+
 		if (typeof suffix != 'undefined') {
 			text += ' ' + suffix;
 		}
@@ -233,16 +253,15 @@ define(function(require, exports, module) {
 	}
 
 	EntryFormView.prototype.focus = function(e) {
-		var inputElement = e.srcElement;
+		var inputElement = this.inputSurface._currTarget;
 		if (this.focused) {
 			//already focused
 			return;	
 		}
 
 		this.focused = true;
-		this.inputSurface.focus();
 		var selectionRange = this.entry.getSelectionRange();
-		e.srcElement.setSelectionRange(selectionRange);
+		inputElement.setSelectionRange(selectionRange);
 		this.renderController.show(this.buttonsAndHelp);
 		this._eventOutput.emit('showing-form-view');
 		this.backgroundModifier.setSize([undefined, undefined]);
@@ -270,12 +289,14 @@ define(function(require, exports, module) {
 		this.backgroundModifier.setSize([undefined, 70]);
 		this.backgroundSurface.removeClass('blur');
 		this.unsetEntry();
-		cordova.plugins.Keyboard.close();	
+		//if (cordova) {
+			//cordova.plugins.Keyboard.close();	
+			//}
 	}
 
 	EntryFormView.prototype.submit = function(e) {
 		var entry = this.entry;
-		var newText = e.srcElement.value;
+		var newText = this.inputSurface._currTarget.value;
 		if (!u.isOnline()) {
 			u.showAlert("Please wait until online to add an entry");
 			return;
