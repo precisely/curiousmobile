@@ -27,7 +27,7 @@ define( function(require, exports, module) {
 			clearPostId : args.clearPostId
 		});
 		console.log(args.clearPostId, args.discussionId);
-		u.backgroundJSON("loading discussion list", u.makeGetUrl("deleteComment"), 
+		u.backgroundJSON("loading discussion list", u.makeGetUrl("deleteCommentData"), 
 		  u.makeGetArgs(argsToSend), function(data) {
 			console.log(data);
 			if (data == 'success') {
@@ -45,7 +45,7 @@ define( function(require, exports, module) {
 			message : args.message,
 			plotIdMessage : args.plotIdMessage
 		});
-		u.backgroundJSON("loading discussion list", u.makeGetUrl("createComment"), 
+		u.backgroundJSON("loading discussion list", u.makeGetUrl("createCommentData"), 
 		  u.makeGetArgs(argsToSend), function(data) {
 			console.log(data);
 			if (data == 'success') {

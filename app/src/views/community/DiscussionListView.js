@@ -31,7 +31,7 @@ define(function(require, exports, module) {
 	DiscussionListView.DEFAULT_OPTIONS = {};
 
 	DiscussionListView.prototype.init = function() {
-		var transition = new Transitionable(Transform.translate(0, 70, 0));
+		var transition = new Transitionable(Transform.translate(0, 0, 0));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
 		this.add(this.renderController);
@@ -56,8 +56,11 @@ define(function(require, exports, module) {
 			});
 
 			this.searchAndPostSurface = new Surface({
-				size: [undefined, true],
+				size: [undefined, 40],
 				content: _.template(discussionHeaderTemplate, templateSettings),
+				properties: {
+					marginTop: '10px'	
+				}
 			});
 			surfaceList.push(this.searchAndPostSurface);
 

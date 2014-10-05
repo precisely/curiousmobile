@@ -9,7 +9,7 @@ define(function(require, exports, module) {
 	var DiscussionSummaryView = require("views/community/DiscussionSummaryView");
 	var CreatePostView = require('views/CreatePostView');
 
-	function CommunityView() {
+	function CommunityView(options) {
 		BaseView.apply(this, arguments);
 		this.init();
 	}
@@ -17,11 +17,13 @@ define(function(require, exports, module) {
 	CommunityView.prototype = Object.create(BaseView.prototype);
 	CommunityView.prototype.constructor = CommunityView;
 
-	CommunityView.DEFAULT_OPTIONS = {};
+	CommunityView.DEFAULT_OPTIONS = {
+		header: false,	
+	};
 	CommunityView.prototype.init = function() {
 		this.renderController = new RenderController();
 		this.add(this.renderController);
-		this.setHeaderLabel('Community Feed');
+		//this.setHeaderLabel('Community Feed');
 		this._eventInput.on('on-show', function() {
 
 			if (!this.discussionListView) {

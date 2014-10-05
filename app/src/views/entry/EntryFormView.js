@@ -51,7 +51,7 @@ define(function(require, exports, module) {
 			}
 		});
 
-		this.backgroundModifier = new Modifier({
+		this.backgroundModifier = new StateModifier({
 			size: [undefined,70],
 			transform: Transform.translate(0, 0, _zIndex())
 		});
@@ -128,7 +128,7 @@ define(function(require, exports, module) {
 		sequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
 			offset += 40;
-			var transform = Transform.translate(offset, 40, 0);
+			var transform = Transform.translate(offset, 40, _zIndex() + 1);
 			return {
 				transform: transform,
 				target: input.render()
@@ -176,7 +176,7 @@ define(function(require, exports, module) {
 			}
 		});
 		this.renderController.inTransformFrom(function() {
-			return Transform.translate(0, 40, _zIndex());
+			return Transform.translate(0, 40, _zIndex() + 1);
 		});
 		formContainerSurface.add(this.renderController);
 		this.buttonsAndHelp.add(sequentialLayout);
@@ -202,7 +202,7 @@ define(function(require, exports, module) {
 		});
 
 		var cancelModifier = new Modifier({
-			transform: Transform.translate(20, 200 , _zIndex())
+			transform: Transform.translate(20, 200 , _zIndex() + 2)
 		});
 
 		this.buttonsAndHelp.add(cancelModifier).add(cancelSurface);
@@ -214,7 +214,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		var saveModifier = new Modifier({
-			transform: Transform.translate(window.innerWidth - 60, 200 , _zIndex())
+			transform: Transform.translate(window.innerWidth - 60, 200 , _zIndex() + 2)
 		});
 
 		var saveSurface = new Surface({

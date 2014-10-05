@@ -73,7 +73,7 @@ define(function(require, exports, module) {
 	}
 
 	function _renderTransitions() {
-		var transition = new Transitionable(Transform.translate(-20, 44, _zIndex()));
+		var transition = new Transitionable(Transform.translate(-20, 74, _zIndex()));
 		this.renderController.inTransformFrom(transition);
 		this.renderController.outTransformFrom(transition);
 	}

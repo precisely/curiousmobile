@@ -14,10 +14,12 @@ define(function(require, exports, module) {
 	var FooterTemplate = require('text!templates/footer.html');
 	var SequentialLayout = require('famous/views/SequentialLayout');
 
-	function BaseView() {
+	function BaseView(options) {
+		this._header = options? options.header : true;	
 		View.apply(this, arguments);
 		_createLayout.call(this);
 		_createHeader.call(this);
+		_createFooter.call(this);
 		_setListeners.call(this);
 	}
 
@@ -26,6 +28,8 @@ define(function(require, exports, module) {
 
 	BaseView.DEFAULT_OPTIONS = {
 		headerSize: 44,
+		header: true,
+		
 	};
 
 	function _createLayout() {
@@ -41,6 +45,9 @@ define(function(require, exports, module) {
 	}
 
 	function _createHeader() {
+		if (!this.options.header) {
+			return;
+		}
 		var backgroundSurface = new Surface({
 			size: [undefined, 70],
 			properties: {
@@ -63,6 +70,10 @@ define(function(require, exports, module) {
 			}
 		});
 
+		this.hamburgerSurface.on('click', function() {
+			console.log("Clicked on menu icon image");
+			this._eventOutput.emit('show-menu');
+		}.bind(this));
 
 		var iconSurface = new ImageSurface({
 			size: [44, 44],
@@ -73,13 +84,15 @@ define(function(require, exports, module) {
 			align: [0, 0]
 		});
 
-
 		var iconModifier = new StateModifier({
 			origin: [1, 0.5],
 			align: [1, 0.5]
 		});
 		this.layout.header.add(hamburgerModifier).add(this.hamburgerSurface);
 
+	}
+
+	function _createFooter() {
 		var footerModifier = new StateModifier({
 			transform: Transform.translate(0, 0, window.App.zIndex.menu)	
 		});
@@ -105,12 +118,7 @@ define(function(require, exports, module) {
 		this.layout.footer.add(footerModifier).add(footerSurface);
 	}
 
-
 	function _setListeners() {
-		this.hamburgerSurface.on('click', function() {
-			console.log("Clicked on menu icon image");
-			this._eventOutput.emit('show-menu');
-		}.bind(this));
 	}
 
 	BaseView.prototype.setHeaderLabel = function(title) {

@@ -5,6 +5,7 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
 	var RenderController = require("famous/views/RenderController");
+	var Transitionable = require('famous/transitions/Transitionable');
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var DateUtil = require('util/DateUtil');
 	function DateGridView(date) {
@@ -34,7 +35,8 @@ define(function(require, exports, module) {
 			date = new Date();
 		}
 		var backgroundSurface = new Surface({
-			size: [285, 275],
+			//size: [285, 275],
+			size: [undefined, undefined],
 			properties: {
 				backgroundColor: 'white',
 				border: '1px solid #c0c0c0',
@@ -42,10 +44,15 @@ define(function(require, exports, module) {
 			}
 		});
 		this.backgroundSurface = backgroundSurface;
-		this.backgroudModifier = new Modifier({
+		this.backgroundSurface.transitionable = new Transitionable(275);
+		this.backgroundSurface.state = new Modifier({
 			transform: Transform.translate(0, 0, _zIndex())
 		});
-		this.add(backgroundSurface);
+
+		this.backgroundSurface.state.sizeFrom(function() {
+			return [285, this.backgroundSurface.transitionable.get()]	
+		}.bind(this));
+		this.add(this.backgroundSurface.state).add(backgroundSurface);
 		var leftSurface = new Surface({
 			content: '&#9664;',
 			size: [24, 44],
@@ -178,12 +185,12 @@ define(function(require, exports, module) {
 
 		var weekRowLayout = new SequentialLayout({
 			direction: 1,
-			itemSpacing: 0,
+			itemSpacing: 9,
 		});
 
 		weekRowLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
-			offset = 30 * index;
+			offset = 38 * index;
 			offset += 70;
 			var transform = Transform.translate(0, offset, _zIndex() + 1);
 			return {
@@ -219,8 +226,8 @@ define(function(require, exports, module) {
 			}
 			printDate = new Date(printDate.getFullYear(), printDate.getMonth(), printDate.getDate() + 1);
 		}
-
-		this.backgroundSurface.setSize([285, 62 * rowsToShow]);
+		console.log('DateGridView: changing background height');
+		this.backgroundSurface.transitionable.set(80 + (37 * rowsToShow));
 		for (var i = 0, len = this.weekRows.length; i < len; i++) {
 			if (i < rowsToShow) {
 				this.weekRenderControllers[i].show(this.weekRows[i]);

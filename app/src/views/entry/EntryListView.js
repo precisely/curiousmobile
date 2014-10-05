@@ -94,7 +94,7 @@ define(function(require, exports, module) {
 			//Bumping the offset to add additional padding on the left
             offset = index * 74;
 			//console.log("["+ offset + ", " + index + "]");
-			var transform = Transform.translate(0, offset, 0);
+			var transform = Transform.translate(0, offset, window.App.zIndex.readView);
 			return {
 				transform: transform,
 				target: input.render()

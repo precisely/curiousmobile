@@ -26,7 +26,9 @@ define(function(require, exports, module) {
 	TrackView.prototype = Object.create(BaseView.prototype);
 	TrackView.prototype.constructor = TrackView;
 
-	TrackView.DEFAULT_OPTIONS = {};
+	TrackView.DEFAULT_OPTIONS = {
+		header: true	
+	};
 
 	function _getDefaultDates(date) {
 		var dates = [];
