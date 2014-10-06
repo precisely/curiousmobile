@@ -58,7 +58,6 @@ define(function(require, exports, module) {
 		var draggableNode = new RenderNode(draggable);
 		var entryReadView = new EntryReadView(entry);
 		entryReadView.pipe(draggable);
-		entryReadView.pipe(this._eventOutput);
 		draggableNode.add(entryReadView);
 		this.entryReadViews.push(entryReadView);
 		this.draggableList.push(draggableNode);
@@ -68,6 +67,11 @@ define(function(require, exports, module) {
 			this.entries.remove(entry);
 			Entry.cacheEntries(this.entries.key, this.entries);
 			this.refreshEntries();
+		}.bind(this));
+
+		entryReadView.on('select-entry', function(entry) {
+			console.log('EntryListView: Selecting an entry');
+			this._eventOutput.emit('select-entry', entry);
 		}.bind(this));
 
 		return entryReadView;

@@ -64,7 +64,7 @@ define(function(require, exports, module) {
 		});
 
 		this.inputSurface = new Surface({
-			content: _.template(inputSurfaceTemplate, {}, templateSettings),
+			content: _.template(inputSurfaceTemplate, {tag:''}, templateSettings),
 		});
 
 		this.inputSurface.on('keyup', function(e) {
@@ -234,12 +234,18 @@ define(function(require, exports, module) {
 	}
 
 	EntryFormView.prototype.setEntryText = function(text){
-		document.getElementsByName("entry-description")[0].value = text;
+		this.inputSurface.setContent(_.template(inputSurfaceTemplate, {tag:text}, templateSettings))
 	}
 
 	EntryFormView.prototype.submit = function(e) {
 		var entry = this.entry;
 		var newText = document.getElementsByName("entry-description")[0].value;
+
+		if (e instanceof Entry) {
+			this.entry = e;
+			entry = e;
+			newText = entry.toString();
+		}
 		if (!u.isOnline()) {
 			u.showAlert("Please wait until online to add an entry");
 			return;

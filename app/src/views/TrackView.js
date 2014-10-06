@@ -64,7 +64,7 @@ define(function(require, exports, module) {
 		});
 
 		this.inputSurface = new Surface({
-			content: _.template(inputSurfaceTemplate, {}, templateSettings),
+			content: _.template(inputSurfaceTemplate, {tag: ''}, templateSettings),
 		});
 
 		this.inputSurface.on('click', function(e) {
@@ -73,7 +73,7 @@ define(function(require, exports, module) {
 				this._eventOutput.emit('create-entry');
 			}
 		}.bind(this));
-		
+
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
 		var formModifier = new StateModifier({
 			origin: [0,0],
@@ -113,7 +113,10 @@ define(function(require, exports, module) {
 			//5 days before and 5 days after today
 			this.currentListView = new EntryListView(collections[5]);
 			//Handle entry selection handler
-			this.currentListView.pipe(this);
+			this.currentListView.on('select-entry', function(entry) {
+				console.log('TrackView: Selecting an entry');
+				this._eventOutput.emit('select-entry', entry);
+			}.bind(this));
 			//setting the scroll position to today
 			//this.scrollView.goToPage(5);
 			this.renderController.show(this.currentListView, {

@@ -61,9 +61,9 @@ define(function(require, exports, module) {
 				backgroundColor: '#c0c0c0'
 			}
 		});
+
 		this.entrySurface.on('click', function(e) {
 			console.log("entrySurface event");
-			if (_.contains(e.origin.getClassList(), 'blur')) return false;
 			this._eventOutput.emit('select-entry', this.entry);
 		}.bind(this));
 

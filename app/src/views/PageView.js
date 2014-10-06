@@ -81,15 +81,14 @@ define(function(require, exports, module) {
 	function _createTrackPage() {
 		this.trackView = new TrackView();
 		this.pageMap['track'] = this.trackView;
-		this.trackView.pipe(this._eventOutput);
 		this.trackView.on('select-entry', function(entry) {
 			console.log('entry selected with id: ' + entry.id);
-			this.formView.setEntry(entry);
 			if (entry.isContinuous()) {
-				this.formView.submit();
+				this.entryFormView.submit(entry);
 				return;
 			}
 			this.changePage('form-view');
+			this.entryFormView.setEntry(entry);
 		}.bind(this));
 
 		this.trackView.on('create-entry', function(e) {
