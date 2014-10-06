@@ -119,6 +119,7 @@ define(function(require, exports, module) {
 			}.bind(this));
 			//setting the scroll position to today
 			//this.scrollView.goToPage(5);
+			this.renderController.hide({duration:0});
 			this.renderController.show(this.currentListView, {
 				duration: 0
 			});

@@ -81,6 +81,7 @@ define(function(require, exports, module) {
 	function _createTrackPage() {
 		this.trackView = new TrackView();
 		this.pageMap['track'] = this.trackView;
+		this.trackView.pipe(this._eventOutput);
 		this.trackView.on('select-entry', function(entry) {
 			console.log('entry selected with id: ' + entry.id);
 			if (entry.isContinuous()) {
@@ -137,9 +138,9 @@ define(function(require, exports, module) {
 			this.changePage('track');
 		}.bind(this));
 
-		this.entryFormView.on('showing-form-view', function(e) {
-			console.log('EventHandler: this.entryFormView event: showing-form-view');
-			this.changePage('form-view');
+		this.entryFormView.on('go-back', function(e) {
+			console.log('EventHandler: this.entryFormView event: go-back');
+			this.changePage('track');
 		}.bind(this));
 
 		this.entryFormView.on('hiding-form-view', function(e) {
@@ -173,7 +174,7 @@ define(function(require, exports, module) {
 	*/
 	PageView.prototype.changePage = function(pageName) {
 		var lastPageName = store.get('lastPage');
-		this.renderController.hide(); //hides the last page
+		this.renderController.hide({duration: 0}); //hides the last page
 		var view = this.getPage(pageName);
 		this.renderController.show(view, {
 			duration: 0

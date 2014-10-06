@@ -87,7 +87,7 @@ define(function(require, exports, module) {
 
 		this.entries.set(entries);
 		if (this.sequentialLayout) {
-			this.renderController.hide(this.sequentialLayout);
+			this.renderController.hide({duration:0});
 		}
 
 		this.sequentialLayout = new SequentialLayout({
@@ -103,19 +103,8 @@ define(function(require, exports, module) {
 			this.addEntry(entry);
 		}.bind(this));
 
-		this.sequentialLayout.setOutputFunction(function(input, offset, index) {
-			//Bumping the offset to add additional padding on the left
-            offset = index * 76;
-			//console.log("["+ offset + ", " + index + "]");
-			var transform = Transform.translate(0, offset, window.App.zIndex.readView);
-			return {
-				transform: transform,
-				target: input.render()
-			};
-		}.bind(this));
-
 		this.sequentialLayout.sequenceFrom(this.draggableList);
-		this.renderController.show(this.sequentialLayout);
+		this.renderController.show(this.sequentialLayout, {duration:0});
 	}
 
 	EntryListView.prototype.blur = function() {

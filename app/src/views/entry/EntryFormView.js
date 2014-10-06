@@ -21,6 +21,7 @@ define(function(require, exports, module) {
 	function EntryFormView() {
 		BaseView.apply(this, arguments);
 		_createForm.call(this);
+		_setListeners.call(this);
 	}
 
 	EntryFormView.prototype = Object.create(BaseView.prototype);
@@ -28,6 +29,7 @@ define(function(require, exports, module) {
 
 	EntryFormView.DEFAULT_OPTIONS = {
 		header: true,	
+		backButton: true,
 	};
 	//EntryFormView.prototype.eventHandler = new EventHandler();
 	//var autoCompleteSurface = new AutoCompleteView();
@@ -41,6 +43,10 @@ define(function(require, exports, module) {
 		//this.autoCompleteSurface.on('updateInputSurface', function(){
 			//console.log('update the Input Surface');
 		//}.bind(this));
+		this._eventInput.on('on-show', function() {
+			var inputElement = document.getElementById("entry-description").focus();
+
+		});
 	}
 
 	function _createForm() {

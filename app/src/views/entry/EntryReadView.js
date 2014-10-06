@@ -91,7 +91,10 @@ define(function(require, exports, module) {
 			transform: Transform.translate(window.innerWidth, 2, 0)
 		});
 		this.add(deleteModifier).add(this.deleteSurface);
-		this.add(this.entrySurface);
+		var entryModifier = new StateModifier({
+			transform: Transform.translate(0, 0, window.App.zIndex.readView)
+		});
+		this.add(entryModifier).add(this.entrySurface);
 
 	}
 

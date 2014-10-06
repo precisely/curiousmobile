@@ -32,6 +32,10 @@ a {
 	opacity: 0.6 !important;
 }
 
+.entry {
+	background-color: #FF935F;
+}
+
 .continuous {
 	background: #ffffff;
 	color: #ec2d35;
@@ -40,17 +44,20 @@ a {
 }
 
 .repeat {
-	background: #ad326c;
+	background: #FC3F28;
 	color: #ffffff;
 }
 
 .remind {
-	background: #e97948;
+	background: #C83A6E;
 	color: #ffffff;
 }
 
 .entry .help {
 	font-size: 11px;
+	text-transform: uppercase;
+	color: #cccccc;
+	opacity: 0.8;
 }
 
 .blur {
@@ -280,14 +287,14 @@ a {
 		border-left: 800px solid #c04f7f;
 	}
 }
-.input-group-addon {
+.entry-input-surface .input-group-addon {
 	background: #ffffff;
 	border-right: 0px;
 	color:    #C04F7F;
 	padding-right: 0px;
 }
 
-.input-group input {
+.entry-input-surface.input-group input {
 	height: 40px;
 	border-left: 0;
 	color:    #C04F7F;

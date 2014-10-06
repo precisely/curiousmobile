@@ -29,7 +29,8 @@ define(function(require, exports, module) {
 	BaseView.DEFAULT_OPTIONS = {
 		headerSize: 44,
 		header: true,
-		
+		backButton: false,
+
 	};
 
 	function _createLayout() {
@@ -61,35 +62,41 @@ define(function(require, exports, module) {
 
 		this.layout.header.add(backgroundModifier).add(backgroundSurface);
 
-		this.hamburgerSurface = new ImageSurface({
-			size: [44, 44],
-			content: 'content/images/menu-icon.png',
-			properties: {
-				marginTop: '15px',
-				marginLeft: '5px',
-			}
-		});
+		if (this.options.backButton) {
+			var leftSurface = new Surface({
+				content: '<img src="content/images/left.png" />',	
+				size: [44,44],
+				properties: {
+					marginTop: '26px',
+					marginLeft: '20px',
+				}
+			});
+			leftSurface.on('click', function() {
+				console.log("Clicked on menu icon image");
+				this._eventOutput.emit('go-back');
+			}.bind(this));
+			this.layout.header.add(leftSurface);
+		} else {
 
-		this.hamburgerSurface.on('click', function() {
-			console.log("Clicked on menu icon image");
-			this._eventOutput.emit('show-menu');
-		}.bind(this));
+			this.hamburgerSurface = new ImageSurface({
+				size: [44, 44],
+				content: 'content/images/menu-icon.png',
+				properties: {
+					marginTop: '15px',
+					marginLeft: '5px',
+				}
+			});
 
-		var iconSurface = new ImageSurface({
-			size: [44, 44],
-			content: 'content/images/icon.png'
-		});
-		var hamburgerModifier = new StateModifier({
-			origin: [0, 0],
-			align: [0, 0]
-		});
-
-		var iconModifier = new StateModifier({
-			origin: [1, 0.5],
-			align: [1, 0.5]
-		});
-		this.layout.header.add(hamburgerModifier).add(this.hamburgerSurface);
-
+			this.hamburgerSurface.on('click', function() {
+				console.log("Clicked on menu icon image");
+				this._eventOutput.emit('show-menu');
+			}.bind(this));
+			var hamburgerModifier = new StateModifier({
+				origin: [0, 0],
+				align: [0, 0]
+			});
+			this.layout.header.add(hamburgerModifier).add(this.hamburgerSurface);
+		}
 	}
 
 	function _createFooter() {
