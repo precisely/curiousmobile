@@ -123,17 +123,29 @@ define(function(require, exports, module) {
 
 	BaseView.prototype.setHeaderLabel = function(title) {
 		var labelModifier = new Modifier({
-			transform: Transform.translate(window.innerWidth * 0.25, 5, 0)
+			transform: Transform.translate(44, 0, 3)
 		});
 		var labelSurface = new Surface({
+			size: [window.innerWidth - 44, 74],
 			content: title,
 			properties: {
-				fontSize: '20px',
-				color: 'white'
+				fontSize: '22px',
+				fontWeight: 'bold',
+				color: '#e83838',	
+				textAlign: 'center',
+				padding: '24px 0'
 			}
 		});
 
 		this.layout.header.add(labelModifier).add(labelSurface);
+	}
+
+	BaseView.prototype.setBody = function(body) {
+		var bodyModifier = new StateModifier({
+			origin: [0,0],
+			transform: Transform.translate(0, 70, 1)
+		});
+		this.layout.content.add(bodyModifier).add(body);
 	}
 	module.exports = BaseView;
 });

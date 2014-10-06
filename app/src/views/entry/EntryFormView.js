@@ -1,4 +1,5 @@
 define(function(require, exports, module) {
+	var BaseView = require('views/BaseView');
 	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
 	var ImageSurface = require('famous/surfaces/ImageSurface');
@@ -16,36 +17,33 @@ define(function(require, exports, module) {
 	var Entry = require('models/Entry');
 	var EventHandler = require('famous/core/EventHandler');
 
-	function EntryFormView(entry) {
-		View.apply(this, arguments);
-		this.entry = entry;
-		if (!entry.get('id')) {
-			this.newEntryForm = true;
-		}
-		this.renderController = new RenderController();
-		this.iconRenderController = new RenderController();
+	function EntryFormView() {
+		BaseView.apply(this, arguments);
 		_createForm.call(this);
 	}
 
-	EntryFormView.prototype = Object.create(View.prototype);
+	EntryFormView.prototype = Object.create(BaseView.prototype);
 	EntryFormView.prototype.constructor = EntryFormView;
 
-	EntryFormView.DEFAULT_OPTIONS = {};
-	EntryFormView.prototype.eventHandler = new EventHandler();
-	var autoCompleteSurface = new AutoCompleteView();
-	var enteredKey;
+	EntryFormView.DEFAULT_OPTIONS = {
+		header: true,	
+	};
+	//EntryFormView.prototype.eventHandler = new EventHandler();
+	//var autoCompleteSurface = new AutoCompleteView();
+	//var enteredKey;
 
 	function _zIndex(argument) {
 		return window.App.zIndex.formView;
 	}
 
 	function _setListeners() {
-		this.autoCompleteSurface.on('updateInputSurface', function(){
-			console.log('update the Input Surface');
-		}.bind(this));
+		//this.autoCompleteSurface.on('updateInputSurface', function(){
+			//console.log('update the Input Surface');
+		//}.bind(this));
 	}
 
 	function _createForm() {
+		this.setHeaderLabel('Enter Tag');
 		var formContainerSurface = new ContainerSurface({
 			classes: ['entry-form'],
 			properties: {
@@ -101,10 +99,10 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		//update input field
-		autoCompleteSurface.onSelect(function(inputLabel) {
-			console.log(inputLabel);
-			this.inputSurface.setValue(inputLabel);
-		}.bind(this));
+		//autoCompleteSurface.onSelect(function(inputLabel) {
+			//console.log(inputLabel);
+			//this.inputSurface.setValue(inputLabel);
+		//}.bind(this));
 
 		//		this.inputSurface.setValue('test');
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
@@ -119,7 +117,7 @@ define(function(require, exports, module) {
 		sequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
 			offset += 40;
-			var transform = Transform.translate(offset, 10, _zIndex() + 1);
+			var transform = Transform.translate(offset, 60, _zIndex() + 1);
 			return {
 				transform: transform,
 				target: input.render()
@@ -168,14 +166,7 @@ define(function(require, exports, module) {
 				backgroundColor: '#ad326c',
 			}
 		});
-		this.renderController.inTransformFrom(function() {
-			return Transform.translate(0, 64, _zIndex() + 5);
-		});
-		this.add(this.renderController);
 		this.buttonsAndHelp.add(sequentialLayout);
-		var helpContainer = new ContainerSurface({
-			size:[undefined, undefined]	
-		});
 		var helpSurface = new Surface({
 			size: [260, undefined],
 			content: 'You can repeat this tag, favorite it (keep it at the top of your list), or remind yourself later.',
@@ -188,51 +179,14 @@ define(function(require, exports, module) {
 				marginLeft: '20px'
 			}
 		});
-		helpContainer.add(helpSurface);
-		this.buttonsAndHelp.add(helpContainer);
 
-		var cancelSurface = new Surface({
-			content: 'Cancel',
-			properties: {
-				fontWeight: 'bold'	
-			}
+		var helpModifier = new Modifier({
+			transform: Transform.translate(0, 50, 0)
 		});
+		this.buttonsAndHelp.add(helpModifier).add(helpSurface);
 
-		var cancelModifier = new Modifier({
-			transform: Transform.translate(20, 170 , _zIndex() + 2)
-		});
-
-		helpContainer.add(cancelModifier).add(cancelSurface);
-
-		cancelSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
-				this.blur(e);
-			}
-		}.bind(this));
-
-		var saveModifier = new Modifier({
-			transform: Transform.translate(window.innerWidth - 60, 170 , _zIndex() + 2)
-		});
-
-		var saveSurface = new Surface({
-			content: 'Save',
-			origin: [1,1],
-			align: [1,1],
-			properties: {
-				fontWeight: 'bold'	
-			}
-		});
-
-		saveSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
-				this.submit(e);
-				this._eventOutput.emit('refresh-list-view');
-			}
-		}.bind(this));
-
-		helpContainer.add(saveModifier).add(saveSurface);
-
-		this.add(formContainerSurface);
+		formContainerSurface.add(this.buttonsAndHelp);
+		this.setBody(formContainerSurface);
 	}
 
 	EntryFormView.prototype.toggleSuffix = function(suffix) {
@@ -263,19 +217,8 @@ define(function(require, exports, module) {
 
 
 	EntryFormView.prototype.focus = function(e) {
-		var inputElement = this.inputSurface._currTarget;
-		if (this.focused) {
-			//already focused
-			return;	
-		}
-
-		this.focused = true;
 		var selectionRange = this.entry.getSelectionRange();
 		inputElement.setSelectionRange(selectionRange);
-		this.renderController.show(this.buttonsAndHelp);
-		this._eventOutput.emit('showing-form-view');
-		//this.backgroundSurface.transitionable.set(window.innerHeight);
-		//this.backgroundSurface.addClass('blur');
 	}
 
 	EntryFormView.prototype.setEntry = function(entry) {
@@ -292,10 +235,8 @@ define(function(require, exports, module) {
 		this.inputSurface.setValue(text);
 	}
 
-	EntryFormView.prototype.blur = function(e) {
-		this.focused = false;
-		this.renderController.hide({duration: 0});
-		this._eventOutput.emit('hiding-form-view');
+	EntryFormView.prototype.cancel = function(e) {
+		this._eventOutput.emit('cancel');
 		this.unsetEntry();
 		//if (cordova) {
 			//cordova.plugins.Keyboard.close();	

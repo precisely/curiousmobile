@@ -1,8 +1,11 @@
 define(function(require, exports, module) {
 	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
+	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var InputSurface = require('famous/surfaces/InputSurface');
+	var Modifier = require('famous/core/Modifier');
 	var RenderController = require("famous/views/RenderController");
 	var Utility = require("famous/utilities/Utility");
 	var Scrollview = require("famous/views/Scrollview");
@@ -42,46 +45,48 @@ define(function(require, exports, module) {
 	}
 
 	function _createBody() {
-		this.formView = new EntryFormView(new Entry());
-		this.formView.on('new-entry', function(data) {
-			console.log("New Entry - TrackView event");
-			if (this.currentListView) {
-				this.currentListView.refreshEntries(data.entries);
+		var formContainerSurface = new ContainerSurface({
+			classes: ['entry-form'],
+			properties: {
+				backgroundColor: '#ad326c',
+			}
+		});
+
+		this.inputModifier = new Modifier({
+			align: [0, 0],
+			transform: Transform.translate(15, 15, 2)
+		});
+
+		this.inputModifier.sizeFrom(function() {
+			var mainContext = window.mainContext;
+			var size = mainContext.getSize();
+			return [0.90 * size[0], 30];
+		});
+
+		this.inputSurface = new InputSurface({
+			placeholder: 'Enter Tags Here (Example: Caffeine)'
+		});
+
+		this.inputSurface.on('click', function(e) {
+			console.log('TrackView: Clicking on dummy input surface');
+			if (e instanceof CustomEvent) {
+				this._eventOutput.emit('create-entry');
 			}
 		}.bind(this));
-
-		this.formView.on('update-entry', function(resp) {
-			console.log('EntryListView: Updating an entry');
-			this.currentListView.refreshEntries(resp.entries, resp.glowEntry);
-		}.bind(this));
-
-		this.formView.on('new-entry', function(resp) {
-			console.log('EntryListView: New entry');
-			this.currentListView.refreshEntries(resp.entries, resp.glowEntry);
-		}.bind(this));
-
-		this.formView.on('showing-form-view', function(e) {
-			console.log('EventHandler: this.formView event: showing-form-view');
-			this.currentListView.blur();
-		}.bind(this));
-
-		this.formView.on('hiding-form-view', function(e) {
-			console.log('EventHandler: this.formView event: hiding-form-view');
-			this.currentListView.unBlur();
-		}.bind(this));
-
-		var backgroundModifier = new StateModifier({
+		
+		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
+		var formModifier = new StateModifier({
 			origin: [0,0],
-			transform: Transform.translate(0, 70, 0),
+			transform: Transform.translate(0, 74, 0),
 			//            size: [400,400]
 		});
-		this.layout.content.add(backgroundModifier).add(this.formView);
-		var scrollModifier = new StateModifier({
-			origin: [0,0],
-			transform: Transform.translate(0, 140, 1)
-		});
 		this.renderController = new RenderController();
-		this.layout.content.add(scrollModifier).add(this.renderController);
+		this.renderController.inTransformFrom(function(progress){
+			return Transform.translate(0, 70, window.App.zIndex.readView);	
+		});
+		formContainerSurface.add(this.renderController);
+		this.setBody(formContainerSurface);
+
 		if (User.isLoggedIn()) {
 			this.changeDate(new Date());
 		}
@@ -108,15 +113,7 @@ define(function(require, exports, module) {
 			//5 days before and 5 days after today
 			this.currentListView = new EntryListView(collections[5]);
 			//Handle entry selection handler
-			this.currentListView.on('select-entry', function(entry) {
-				console.log('entry selected with id: ' + entry.id);
-				this.formView.setEntry(entry);
-				if (entry.isContinuous()) {
-					this.formView.submit();
-					return;
-				}
-				this.formView.focus();
-			}.bind(this));
+			this.currentListView.pipe(this);
 			//setting the scroll position to today
 			//this.scrollView.goToPage(5);
 			this.renderController.show(this.currentListView, {

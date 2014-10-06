@@ -10,6 +10,7 @@ define(function(require, exports, module) {
 	var QuickHelpView = require('views/QuickHelpView');
 	var LaunchView = require('views/LaunchView');
 	var CommunityView = require('views/community/CommunityView');
+	var EntryFormView = require('views/entry/EntryFormView');
 	var Utils = require('util/Utils');
 	var store = require('store');
 	var User = require('models/User');
@@ -62,12 +63,14 @@ define(function(require, exports, module) {
 			_createTrackPage.call(this);
 		}.bind(this));
 
+		_createEntryFormView.call(this);
 		this.communityView = new CommunityView('');
 		this.pageMap['community'] = this.communityView;
 		this.communityView.pipe(this._eventOutput);
 		this.quickHelpView = new QuickHelpView();
 		this.pageMap['help'] = this.quickHelpView;
 		this.quickHelpView.pipe(this._eventOutput);
+
 		if (!User.isLoggedIn()) {
 			this.changePage('launch');
 		} else {
@@ -79,6 +82,21 @@ define(function(require, exports, module) {
 		this.trackView = new TrackView();
 		this.pageMap['track'] = this.trackView;
 		this.trackView.pipe(this._eventOutput);
+		this.trackView.on('select-entry', function(entry) {
+			console.log('entry selected with id: ' + entry.id);
+			this.formView.setEntry(entry);
+			if (entry.isContinuous()) {
+				this.formView.submit();
+				return;
+			}
+			this.changePage('form-view');
+		}.bind(this));
+
+		this.trackView.on('create-entry', function(e) {
+			console.log('EventHandler: this.trackView.on event: create-entry');
+			this.changePage('form-view')
+		}.bind(this));
+
 		this.changePage('track');
 	}
 
@@ -101,6 +119,45 @@ define(function(require, exports, module) {
 		}.bind(this));
 	}
 
+	function _createEntryFormView() {
+		this.entryFormView = new EntryFormView();
+		this.pageMap['form-view'] = this.entryFormView;
+		this.entryFormView.pipe(this._eventOutput);
+
+		this.entryFormView.on('new-entry', function(data) {
+			console.log("New Entry - TrackView event");
+			var currentListView = this.trackView.currentListView;
+			if (currentListView) {
+				currentListView.refreshEntries(data.entries);
+			}
+		}.bind(this));
+
+		this.entryFormView.on('update-entry', function(resp) {
+			console.log('EntryListView: Updating an entry');
+			var currentListView = this.trackView.currentListView;
+			currentListView.refreshEntries(resp.entries, resp.glowEntry);
+		}.bind(this));
+
+		this.entryFormView.on('new-entry', function(resp) {
+			console.log('EntryListView: New entry');
+			var currentListView = this.trackView.currentListView;
+			currentListView.refreshEntries(resp.entries, resp.glowEntry);
+		}.bind(this));
+
+		this.entryFormView.on('showing-form-view', function(e) {
+			console.log('EventHandler: this.entryFormView event: showing-form-view');
+			var currentListView = this.trackView.currentListView;
+			currentListView.blur();
+		}.bind(this));
+
+		this.entryFormView.on('hiding-form-view', function(e) {
+			console.log('EventHandler: this.entryFormView event: hiding-form-view');
+			var currentListView = this.trackView.currentListView;
+			currentListView.unBlur();
+		}.bind(this));
+	}
+
+	
 	/**
 	* Track the last page visited by the user
 	* @param {string} page - name of the page
