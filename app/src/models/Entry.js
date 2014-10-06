@@ -59,11 +59,12 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				if (this.isTimed(repeatType)) {
 					classes.push('timedrepeat');
 				}
-				if (this.isRepeat(repeatType)) {
-					classes.push('repeat');
-				}
 				if (this.isRemind(repeatType)) {
 					classes.push('remind');
+					return classes;
+				}
+				if (this.isRepeat(repeatType)) {
+					classes.push('repeat');
 				}
 				return classes;
 			},

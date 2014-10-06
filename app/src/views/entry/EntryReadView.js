@@ -88,7 +88,7 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 		deleteModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth, 2, 0)
+			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView)
 		});
 		this.add(deleteModifier).add(this.deleteSurface);
 		var entryModifier = new StateModifier({

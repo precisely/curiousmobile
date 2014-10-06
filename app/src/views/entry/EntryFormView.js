@@ -132,7 +132,9 @@ define(function(require, exports, module) {
 		this.repeatSurface.on('click', function(e) {
 			console.log("repeatSurface event");
 			if (e instanceof CustomEvent) {
+				this.removeSuffix();
 				this.toggleSuffix('repeat');
+				this.submit();
 			}
 		}.bind(this));
 
@@ -143,7 +145,9 @@ define(function(require, exports, module) {
 
 		this.remindSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
+				this.removeSuffix();
 				this.toggleSuffix('remind');
+				this.submit();
 			}
 		}.bind(this));
 
@@ -154,7 +158,9 @@ define(function(require, exports, module) {
 
 		this.pinSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
+				this.removeSuffix();
 				this.toggleSuffix('pinned');
+				this.submit();
 			}
 		}.bind(this));
 		sequentialLayout.sequenceFrom([this.repeatSurface, this.pinSurface, this.remindSurface]);
@@ -190,7 +196,7 @@ define(function(require, exports, module) {
 	}
 
 	EntryFormView.prototype.toggleSuffix = function(suffix) {
-		var text = this.inputSurface.getValue();
+		var text = document.getElementsByName("entry-description")[0].value;
 		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned')) {
 			text = text.substr(0, text.length - 7);
 		}
@@ -198,13 +204,13 @@ define(function(require, exports, module) {
 		if (typeof suffix != 'undefined') {
 			text += ' ' + suffix;
 		}
-		this.inputSurface.setValue(text);
+		document.getElementsByName("entry-description")[0].value = text ;
 
 		return text.length > 0;
 	}
 
 	EntryFormView.prototype.removeSuffix = function(text) {
-		text = text ? text : this.inputSurface.getValue();
+		text = text ? text : document.getElementsByName("entry-description")[0].value;
 		if (text.endsWith(' repeat') || text.endsWith(' pinned')
 			|| text.endsWith(' button')) {
 				text = text.substr(0, text.length - 7);
@@ -248,9 +254,9 @@ define(function(require, exports, module) {
 		var newText = document.getElementsByName("entry-description")[0].value;
 
 		if (e instanceof Entry) {
-			this.entry = e;
-			entry = e;
-			newText = entry.toString();
+			this.setEntry(e);
+			entry = this.entry;
+			newText = this.removeSuffix(entry.toString());
 		}
 		if (!u.isOnline()) {
 			u.showAlert("Please wait until online to add an entry");
@@ -270,6 +276,10 @@ define(function(require, exports, module) {
 			return;
 		} else {
 			entry.setText(newText);
+		}
+
+		if (newText.indexOf('repeat') > -1) {
+			window.App.collectionCache.clear();	
 		}
 
 		if (this.hasFuture()) {
