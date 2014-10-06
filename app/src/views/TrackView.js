@@ -46,9 +46,8 @@ define(function(require, exports, module) {
 
 	function _createBody() {
 		var formContainerSurface = new ContainerSurface({
-			classes: ['entry-form'],
 			properties: {
-				backgroundColor: '#ad326c',
+				backgroundColor: '#eaeaea',
 			}
 		});
 
@@ -60,7 +59,7 @@ define(function(require, exports, module) {
 		this.inputModifier.sizeFrom(function() {
 			var mainContext = window.mainContext;
 			var size = mainContext.getSize();
-			return [0.90 * size[0], 30];
+			return [0.90 * size[0], 40];
 		});
 
 		this.inputSurface = new InputSurface({

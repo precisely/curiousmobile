@@ -27,25 +27,30 @@ a {
 	backface-visibility: visible;
 }
 
-.ghost {
+.ghost.remind {
 	color: #c0c0c0;
 	opacity: 0.6 !important;
 }
 
-.ghost.continuous {
-	background: #ec2d35;
-	color: #ffffff;
+.continuous {
+	background: #ffffff;
+	color: #ec2d35;
+	border: solid 2px #ec2d35;
 	border-radius: 4px;
 }
 
-.ghost.repeat {
+.repeat {
 	background: #ad326c;
 	color: #ffffff;
 }
 
-.ghost.remind {
+.remind {
 	background: #e97948;
 	color: #ffffff;
+}
+
+.entry .help {
+	font-size: 11px;
 }
 
 .blur {

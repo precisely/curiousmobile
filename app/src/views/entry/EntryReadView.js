@@ -31,15 +31,23 @@ define(function(require, exports, module) {
 		if (_.contains(repeatTypeAsClass, 'ghost')) {
 			entryTextColor = 'white';	
 		}
+
+		var properties = {
+				padding: '15px',
+				fontSize: '18px'
+		};
+ 
+		var size = [window.innerWidth, this.options.entryHeight];
+		if (this.entry.isContinuous()) {
+			properties.margin = '5px'	
+			size[0] = size[0] - 10;
+			size[1] = size[1] - 10;
+		}
 		this.entrySurface = new Surface({
-			size: [window.innerWidth - 4, this.options.entryHeight],
+			size: size,
 			content: this.getDisplayText(),
 			classes: this.entry.repeatTypeAsClass(),
-			properties: {
-				padding: '15px',
-				margin: '2px',
-				color: entryTextColor,
-			}
+			properties: properties
 		});
 		this.entrySurface.pipe(this._eventOutput);
 		this.glowSurface = new Surface({
@@ -104,9 +112,7 @@ define(function(require, exports, module) {
 		var date = new Date(this.entry.date);
 		var time = u.formatAMPM(date);
 		var displayText = this.entry.removeSuffix();
-		if (this.entry.isContinuous()) {
-			return '<div class="help"><i class="fa fa-star"></i></div>' + displayText;	
-		} else if (this.entry.isRemind()) {
+		if (this.entry.isRemind()) {
 			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every other day</div>' + displayText;	
 		} else if (this.entry.isRepeat() && this.entry.isGhost()) {
 			return '<div class="help"><i class="fa fa-bell"></i> Reminder set (' + u.mmddyy(date) + ' ' + 
