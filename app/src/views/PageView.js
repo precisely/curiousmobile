@@ -3,6 +3,7 @@
 define(function(require, exports, module) {
 	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
+	var Timer = require('famous/utilities/Timer');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var RenderController = require("famous/views/RenderController");
@@ -140,6 +141,7 @@ define(function(require, exports, module) {
 
 		this.entryFormView.on('go-back', function(e) {
 			console.log('EventHandler: this.entryFormView event: go-back');
+			this.entryFormView.unsetEntry();
 			this.changePage('track');
 		}.bind(this));
 
@@ -178,11 +180,15 @@ define(function(require, exports, module) {
 		var view = this.getPage(pageName);
 		this.renderController.show(view, {
 			duration: 0
-		});
+		},function(){
+			console.log("PageView: show complete");	
+			Timer.setTimeout(function(){
+				this._eventInput.trigger('on-show');
+			}.bind(this), 300);
+		}.bind(view));
 		if (pageName === 'launch') {
 			view.showLogin();	
 		}
-		view._eventInput.trigger('on-show');
 		this._eventOutput.emit('page-change-complete');
 	}
 

@@ -35,7 +35,8 @@ define(function(require, exports, module) {
 
 		var properties = {
 				padding: '15px',
-				fontSize: '18px'
+				fontSize: '18px',
+				lineHeight: '15px'
 		};
  
 		var size = [window.innerWidth, this.options.entryHeight];
@@ -66,6 +67,23 @@ define(function(require, exports, module) {
 			console.log("entrySurface event");
 			this._eventOutput.emit('select-entry', this.entry);
 		}.bind(this));
+
+		this.showMoreSurface = new Surface({
+			content: '<i class="fa fa-chevron-circle-down"></i>',
+			size: [24, 24],
+			properties: {
+				color: 'white',
+				fontSize: '26px'
+			}
+		});
+		var showMoreModifier = new StateModifier({
+			transform: Transform.translate(window.innerWidth - 40, 17, window.App.zIndex.readView)
+		});
+		this.showMoreSurface.on('click', function(e) {
+			console.log("entrySurface event");
+			this._eventOutput.emit('select-entry', this.entry);
+		}.bind(this));
+		this.add(showMoreModifier).add(this.showMoreSurface);
 
 		this.deleteSurface = new Surface({
 			size: [100, this.options.entryHeight],

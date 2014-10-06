@@ -95,8 +95,8 @@ define(function(require, exports, module) {
 		var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 		var dayOfTheWeekday = weekday[date.getDay()];
 		var monthName = months[date.getMonth()];
-		var dateHTML = '<div class="select-date"><span class="day">' + dayOfTheWeekday + '</span><br/>' +
-			'<span class="month-date">' + monthName + ', '  + this.getOrdinalSuffix(date.getDate()) + '</span>' +
+		var dateHTML = '<div class="select-date"><div class="day">' + dayOfTheWeekday + '</div>' +
+			'<div class="month-date">' + monthName + ' '  + this.getOrdinalSuffix(date.getDate()) + '</div>' +
 			'<i class="fa fa-chevron-down"></i></div>';
 
 		this.dateSurface.setContent(dateHTML);

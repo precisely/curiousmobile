@@ -110,14 +110,14 @@ define(function(require, exports, module) {
 
 		var sequentialLayout = new SequentialLayout({
 			direction: 0,
-			itemSpacing: 60,
+			itemSpacing: 80,
 			defaultItemSize: [100, 24],
 		});
 
 		sequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
-			offset += 40;
-			var transform = Transform.translate(offset, 70, _zIndex() + 1);
+			offset += 30;
+			var transform = Transform.translate(offset, 90, _zIndex() + 1);
 			return {
 				transform: transform,
 				target: input.render()
@@ -152,7 +152,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.pinSurface = new Surface({
-			content: '<i class="fa fa-star"></i><br/> Favorite',
+			content: '<i class="fa fa-star"></i><br/> Button',
 			size: [24, 24],
 		});
 
@@ -174,20 +174,19 @@ define(function(require, exports, module) {
 		});
 		this.buttonsAndHelp.add(sequentialLayout);
 		var helpSurface = new Surface({
-			size: [260, undefined],
+			size: [window.innerWidth - 40, undefined],
 			content: 'You can repeat this tag, favorite it (keep it at the top of your list), or remind yourself later.',
 			properties: {
 				fontStyle: 'italic',
 				color: 'white',
-				paddingTop: '20px',
+				margin: '30px 20px',
+				padding: '30px 10px',
 				borderTop: '1px solid white',
-				marginTop: '80px',
-				marginLeft: '20px'
 			}
 		});
 
 		var helpModifier = new Modifier({
-			transform: Transform.translate(0, 60, 0)
+			transform: Transform.translate(0, 150, 0)
 		});
 		this.buttonsAndHelp.add(helpModifier).add(helpSurface);
 

@@ -71,11 +71,16 @@ define(function(require, exports, module) {
 					marginLeft: '20px',
 				}
 			});
-			leftSurface.on('click', function() {
-				console.log("Clicked on menu icon image");
-				this._eventOutput.emit('go-back');
+			leftSurface.on('click', function(e) {
+				if (e instanceof CustomEvent) {
+					console.log("Clicked on menu icon image");
+					this._eventOutput.emit('go-back');
+				}
 			}.bind(this));
-			this.layout.header.add(leftSurface);
+			var leftModifier = new StateModifier({
+				transform: Transform.translate(0,0,5)
+			});
+			this.layout.header.add(leftModifier).add(leftSurface);
 		} else {
 
 			this.hamburgerSurface = new ImageSurface({
@@ -87,9 +92,11 @@ define(function(require, exports, module) {
 				}
 			});
 
-			this.hamburgerSurface.on('click', function() {
-				console.log("Clicked on menu icon image");
-				this._eventOutput.emit('show-menu');
+			this.hamburgerSurface.on('click', function(e) {
+				if (e instanceof CustomEvent) {
+					console.log("Clicked on menu icon image");
+					this._eventOutput.emit('show-menu');
+				}
 			}.bind(this));
 			var hamburgerModifier = new StateModifier({
 				origin: [0, 0],
@@ -130,10 +137,10 @@ define(function(require, exports, module) {
 
 	BaseView.prototype.setHeaderLabel = function(title) {
 		var labelModifier = new Modifier({
-			transform: Transform.translate(44, 0, 3)
+			transform: Transform.translate(0, 0, 3)
 		});
 		var labelSurface = new Surface({
-			size: [window.innerWidth - 44, 74],
+			size: [window.innerWidth, 74],
 			content: title,
 			properties: {
 				fontSize: '22px',

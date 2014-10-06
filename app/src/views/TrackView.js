@@ -17,7 +17,7 @@ define(function(require, exports, module) {
 	var EntryCollection = require('models/EntryCollection');
 	var User = require('models/User');
 	var u = require('util/Utils');
-	var inputSurfaceTemplate = require('text!templates/input-surface.html');
+	var inputSurfaceTemplate = require('text!templates/input-surface-dummy.html');
 
 
 	function TrackView() {
