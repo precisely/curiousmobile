@@ -127,37 +127,28 @@ define(function(require, exports, module) {
 		this.entryFormView.on('new-entry', function(data) {
 			console.log("New Entry - TrackView event");
 			var currentListView = this.trackView.currentListView;
-			if (currentListView) {
-				currentListView.refreshEntries(data.entries);
-			}
+			currentListView.refreshEntries(data.entries, data.glowEntry);
+			this.changePage('track');
 		}.bind(this));
 
 		this.entryFormView.on('update-entry', function(resp) {
 			console.log('EntryListView: Updating an entry');
 			var currentListView = this.trackView.currentListView;
 			currentListView.refreshEntries(resp.entries, resp.glowEntry);
-		}.bind(this));
-
-		this.entryFormView.on('new-entry', function(resp) {
-			console.log('EntryListView: New entry');
-			var currentListView = this.trackView.currentListView;
-			currentListView.refreshEntries(resp.entries, resp.glowEntry);
+			this.changePage('track');
 		}.bind(this));
 
 		this.entryFormView.on('showing-form-view', function(e) {
 			console.log('EventHandler: this.entryFormView event: showing-form-view');
-			var currentListView = this.trackView.currentListView;
-			currentListView.blur();
+			this.changePage('form-view');
 		}.bind(this));
 
 		this.entryFormView.on('hiding-form-view', function(e) {
 			console.log('EventHandler: this.entryFormView event: hiding-form-view');
-			var currentListView = this.trackView.currentListView;
-			currentListView.unBlur();
+			this.changePage('track');
 		}.bind(this));
 	}
 
-	
 	/**
 	* Track the last page visited by the user
 	* @param {string} page - name of the page

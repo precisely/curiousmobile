@@ -17,6 +17,7 @@ define(function(require, exports, module) {
 	var EntryCollection = require('models/EntryCollection');
 	var User = require('models/User');
 	var u = require('util/Utils');
+	var inputSurfaceTemplate = require('text!templates/input-surface.html');
 
 
 	function TrackView() {
@@ -62,8 +63,8 @@ define(function(require, exports, module) {
 			return [0.90 * size[0], 40];
 		});
 
-		this.inputSurface = new InputSurface({
-			placeholder: 'Enter Tags Here (Example: Caffeine)'
+		this.inputSurface = new Surface({
+			content: _.template(inputSurfaceTemplate, {}, templateSettings),
 		});
 
 		this.inputSurface.on('click', function(e) {

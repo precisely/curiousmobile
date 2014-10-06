@@ -63,7 +63,7 @@ a {
 	/*border: 0px;*/
 }
 
-.entry-form .fa {
+.entry-form-buttons .fa {
 	font-size: 30px;
 	margin-left: 10px;
 	color: white;
@@ -280,3 +280,33 @@ a {
 		border-left: 800px solid #c04f7f;
 	}
 }
+.input-group-addon {
+	background: #ffffff;
+	border-right: 0px;
+	color:    #C04F7F;
+	padding-right: 0px;
+}
+
+.input-group input {
+	height: 40px;
+	border-left: 0;
+	color:    #C04F7F;
+	-webkit-box-shadow: inset 0 0 0 0 !important;
+	box-shadow: inset 0 0 0 0 !important;
+}
+
+::-webkit-input-placeholder { /* WebKit browsers */
+	color:    #C04F7F !important;
+}
+:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
+	color:    #C04F7F !important;
+	opacity:  1;
+}
+::-moz-placeholder { /* Mozilla Firefox 19+ */
+	color:    #C04F7F !important;
+	opacity:  1;
+}
+:-ms-input-placeholder { /* Internet Explorer 10+ */
+	color:    #C04F7F !important;
+}
+

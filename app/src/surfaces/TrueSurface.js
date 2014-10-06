@@ -26,8 +26,14 @@ define(function(require, exports, module) {
 		} else {
 			target.innerHTML = content;
 		}
-		width = this.size[0] === true ? this.target.offsetWidth : this.size[0];
-		height = this.size[1] === true ? this.target.offsetHeight : this.size[1];
+		width = this.target.offsetWidth;
+		height = this.target.offsetHeight;
+		if (height < this.options.entryHeight) {
+			height = this.options.entryHeight;
+		}
+		//var properties = this.getProperties();
+		//properties.lineHeight = height * (2/3);
+		//this.setProperties(properties);
 		return this.size = [width, height];
 	}
 

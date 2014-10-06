@@ -16,6 +16,7 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 	var Entry = require('models/Entry');
 	var EventHandler = require('famous/core/EventHandler');
+	var inputSurfaceTemplate = require('text!templates/input-surface.html');
 
 	function EntryFormView() {
 		BaseView.apply(this, arguments);
@@ -59,19 +60,12 @@ define(function(require, exports, module) {
 		this.inputModifier.sizeFrom(function() {
 			var mainContext = window.mainContext;
 			var size = mainContext.getSize();
-			return [0.90 * size[0], 30];
+			return [0.90 * size[0], 40];
 		});
 
-		var text = '';
-		if (this.entry) {
-			text = this.entry.toString();
-		}
-		this.inputSurface = new InputSurface({
-			value: text,
-			placeholder: 'Enter Tags Here (Example: Caffeine)'
+		this.inputSurface = new Surface({
+			content: _.template(inputSurfaceTemplate, {}, templateSettings),
 		});
-
-		this.toggleSuffix();
 
 		this.inputSurface.on('keyup', function(e) {
 			console.log('keyup on formview');
@@ -117,7 +111,7 @@ define(function(require, exports, module) {
 		sequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
 			offset += 40;
-			var transform = Transform.translate(offset, 60, _zIndex() + 1);
+			var transform = Transform.translate(offset, 70, _zIndex() + 1);
 			return {
 				transform: transform,
 				target: input.render()
@@ -160,7 +154,7 @@ define(function(require, exports, module) {
 		sequentialLayout.sequenceFrom([this.repeatSurface, this.pinSurface, this.remindSurface]);
 		this.buttonsAndHelp = new ContainerSurface({
 			size: [undefined, 320],
-			classes: ['entry-form'],
+			classes: ['entry-form-buttons'],
 			properties: {
 				color: '#ffffff',
 				backgroundColor: '#ad326c',
@@ -181,7 +175,7 @@ define(function(require, exports, module) {
 		});
 
 		var helpModifier = new Modifier({
-			transform: Transform.translate(0, 50, 0)
+			transform: Transform.translate(0, 60, 0)
 		});
 		this.buttonsAndHelp.add(helpModifier).add(helpSurface);
 
@@ -221,6 +215,14 @@ define(function(require, exports, module) {
 		inputElement.setSelectionRange(selectionRange);
 	}
 
+	EntryFormView.prototype.blur = function(e) {
+		this._eventOutput.emit('hiding-form-view');
+		this.unsetEntry();
+		//if (cordova) {
+			//cordova.plugins.Keyboard.close();	
+			//}
+	}
+
 	EntryFormView.prototype.setEntry = function(entry) {
 		this.entry = entry;
 		this.setEntryText(entry.toString());
@@ -232,20 +234,12 @@ define(function(require, exports, module) {
 	}
 
 	EntryFormView.prototype.setEntryText = function(text){
-		this.inputSurface.setValue(text);
-	}
-
-	EntryFormView.prototype.cancel = function(e) {
-		this._eventOutput.emit('cancel');
-		this.unsetEntry();
-		//if (cordova) {
-			//cordova.plugins.Keyboard.close();	
-			//}
+		document.getElementsByName("entry-description")[0].value = text;
 	}
 
 	EntryFormView.prototype.submit = function(e) {
 		var entry = this.entry;
-		var newText = this.inputSurface._currTarget.value;
+		var newText = document.getElementsByName("entry-description")[0].value;
 		if (!u.isOnline()) {
 			u.showAlert("Please wait until online to add an entry");
 			return;
@@ -254,16 +248,9 @@ define(function(require, exports, module) {
 			var newEntry = new Entry();
 			newEntry.set('date', window.App.selectedDate);
 			this.entry = newEntry;
-			if (entry.isContinuous()) {
-				newText = entry.toString();
-				this.entry.setText(this.removeSuffix(newText));
-			} else {
-				this.entry.setText(newText);
-			}
+			this.entry.setText(newText);
 			this.entry.create(function(resp) {
 				this._eventOutput.emit('new-entry', resp);
-				this.inputSurface.setValue('');
-				this.entry = null;
 				this.blur();
 			}.bind(this));
 			return;
