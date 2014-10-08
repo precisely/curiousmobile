@@ -82,9 +82,20 @@ define(function(require, exports, module) {
 		});
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(function(progress){
-			return Transform.translate(0, 70, window.App.zIndex.readView);	
+			return Transform.translate(0, 0, window.App.zIndex.readView);	
 		});
-		formContainerSurface.add(this.renderController);
+		var entryListContainer = new ContainerSurface({
+			properties: {
+				overflow: 'hidden',
+			}
+		});
+		var entryListModifier = new StateModifier({
+			origin: [0,0],
+			transform: Transform.translate(0, 70, 0),
+			//            size: [400,400]
+		});
+		entryListContainer.add(this.renderController);
+		formContainerSurface.add(entryListModifier).add(entryListContainer);
 		this.setBody(formContainerSurface);
 
 		if (User.isLoggedIn()) {

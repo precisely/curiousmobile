@@ -1,21 +1,22 @@
 define(function(require, exports, module) {
 	var View = require('famous/core/View'),
-		Surface = require('famous/core/Surface'),
-		Transform = require('famous/core/Transform'),
-		Easing = require("famous/transitions/Easing"),
-		Modifier = require('famous/core/Modifier'),
-		StateModifier = require('famous/modifiers/StateModifier'),
-		RenderController = require("famous/views/RenderController"),
-		EntryCollection = require('models/EntryCollection'),
-		Entry = require('models/Entry'),
-		EntryReadView = require('views/entry/EntryReadView');
+	Surface = require('famous/core/Surface'),
+	Transform = require('famous/core/Transform'),
+	Easing = require("famous/transitions/Easing"),
+	Modifier = require('famous/core/Modifier'),
+	StateModifier = require('famous/modifiers/StateModifier'),
+	RenderController = require("famous/views/RenderController"),
+	EntryCollection = require('models/EntryCollection'),
+	Entry = require('models/Entry'),
+	EntryReadView = require('views/entry/EntryReadView');
 	var TransitionableTransform = require("famous/transitions/TransitionableTransform");
-	var SequentialLayout = require("famous/views/SequentialLayout");
+	var Scrollview = require("famous/views/Scrollview");
+	var RenderNode = require('famous/core/RenderNode');
 	var TweenTransition = require('famous/transitions/TweenTransition');
 	var Draggable = require('famous/modifiers/Draggable');
 	var FixedRenderNode = require('util/FixedRenderNode');
 	var Utility = require('famous/utilities/Utility');
-	var Scrollview = require('famous/views/Scrollview');
+	//var Scrollview = require('famous/views/Scrollview');
 	TweenTransition.registerCurve('inSine', Easing.inSine);
 
 	function EntryListView(collection) {
@@ -54,11 +55,12 @@ define(function(require, exports, module) {
 			xRange: [-100, 0],
 			yRange: [0, 0],
 		});
-		
+
 		var draggableNode = new FixedRenderNode(draggable);
 		var entryReadView = new EntryReadView(entry);
 		entryReadView.pipe(draggable);
 		draggableNode.add(entryReadView);
+		entryReadView.pipe(this.scrollView);
 		this.entryReadViews.push(entryReadView);
 		this.draggableList.push(draggableNode);
 		//entryReadView.pipe(this.scrollView);
@@ -86,25 +88,29 @@ define(function(require, exports, module) {
 		}
 
 		this.entries.set(entries);
-		if (this.sequentialLayout) {
+		if (this.scrollView) {
 			this.renderController.hide({duration:0});
 		}
 
-		this.sequentialLayout = new SequentialLayout({
+		var scrollModifier = new Modifier();
+		scrollModifier.sizeFrom(function(){
+			return [320,window.innerHeight - 140]
+		});
+		var scrollNode = new RenderNode(scrollModifier);
+		this.scrollView = new Scrollview({
 			direction: 1,
-			defaultItemSize: [undefined, 90],
+			defaultItemSize: [320, 90],
 			itemSpacing: 0,
+			clipSize: window.innerHeight - 140
 		});
 
-		this.scrollView = new Scrollview({
-			direction: Utility.Direction.Y,
-		});
+		scrollNode.add(this.scrollView);
 		this.entries.forEach(function(entry) {
 			this.addEntry(entry);
 		}.bind(this));
 
-		this.sequentialLayout.sequenceFrom(this.draggableList);
-		this.renderController.show(this.sequentialLayout, {duration:0});
+		this.scrollView.sequenceFrom(this.draggableList);
+		this.renderController.show(scrollNode, {duration:0});
 	}
 
 	EntryListView.prototype.blur = function() {
