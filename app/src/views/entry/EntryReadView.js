@@ -1,7 +1,6 @@
 define(function(require, exports, module) {
 	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
-	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var TrueSurface = require('surfaces/TrueSurface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
@@ -9,13 +8,13 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 	var FastClick = require('famous/inputs/FastClick');
 
-	function EntryReadView(entry, args) {
-		ContainerSurface.apply(this, args);
+	function EntryReadView(entry) {
+		View.apply(this, arguments);
 		this.entry = entry;
 		_addSurface.call(this);
 	}
 
-	EntryReadView.prototype = Object.create(ContainerSurface.prototype);
+	EntryReadView.prototype = Object.create(View.prototype);
 	EntryReadView.prototype.constructor = EntryReadView;
 
 	EntryReadView.DEFAULT_OPTIONS = {
@@ -54,7 +53,7 @@ define(function(require, exports, module) {
 			classes: this.entry.repeatTypeAsClass(),
 			properties: properties
 		});
-		//this.entrySurface.pipe(this._eventOutput);
+		this.entrySurface.pipe(this._eventOutput);
 		this.glowSurface = new Surface({
 			size: [undefined, 44],
 			content: this.entry.toString(),

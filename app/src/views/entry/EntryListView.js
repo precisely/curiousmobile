@@ -1,19 +1,19 @@
 define(function(require, exports, module) {
 	var View = require('famous/core/View'),
-	Surface = require('famous/core/Surface'),
-	Transform = require('famous/core/Transform'),
-	Easing = require("famous/transitions/Easing"),
-	Modifier = require('famous/core/Modifier'),
-	StateModifier = require('famous/modifiers/StateModifier'),
-	RenderController = require("famous/views/RenderController"),
-	EntryCollection = require('models/EntryCollection'),
-	Entry = require('models/Entry'),
-	EntryReadView = require('views/entry/EntryReadView');
+		Surface = require('famous/core/Surface'),
+		Transform = require('famous/core/Transform'),
+		Easing = require("famous/transitions/Easing"),
+		Modifier = require('famous/core/Modifier'),
+		StateModifier = require('famous/modifiers/StateModifier'),
+		RenderController = require("famous/views/RenderController"),
+		EntryCollection = require('models/EntryCollection'),
+		Entry = require('models/Entry'),
+		EntryReadView = require('views/entry/EntryReadView');
 	var TransitionableTransform = require("famous/transitions/TransitionableTransform");
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var TweenTransition = require('famous/transitions/TweenTransition');
 	var Draggable = require('famous/modifiers/Draggable');
-	var RenderNode = require('famous/core/RenderNode');
+	var FixedRenderNode = require('util/FixedRenderNode');
 	var Utility = require('famous/utilities/Utility');
 	var Scrollview = require('famous/views/Scrollview');
 	TweenTransition.registerCurve('inSine', Easing.inSine);
@@ -54,13 +54,9 @@ define(function(require, exports, module) {
 			xRange: [-100, 0],
 			yRange: [0, 0],
 		});
-
-		var draggableNode = new RenderNode(draggable);
-		var entryReadView = new EntryReadView(entry, {
-			properties: {
-				height: this.options.entryHeight + 'px'	
-			}	
-		});
+		
+		var draggableNode = new FixedRenderNode(draggable);
+		var entryReadView = new EntryReadView(entry);
 		entryReadView.pipe(draggable);
 		draggableNode.add(entryReadView);
 		this.entryReadViews.push(entryReadView);
