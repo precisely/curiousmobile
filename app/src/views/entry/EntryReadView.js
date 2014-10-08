@@ -18,7 +18,8 @@ define(function(require, exports, module) {
 	EntryReadView.prototype.constructor = EntryReadView;
 
 	EntryReadView.DEFAULT_OPTIONS = {
-		entryHeight: 74,
+		entryHeight: 90,
+		lineHeight: 24,
 	};
 
 	function _addSurface() {
@@ -35,8 +36,8 @@ define(function(require, exports, module) {
 
 		var properties = {
 				padding: '15px',
-				fontSize: '18px',
-				lineHeight: '15px'
+				fontSize: this.options.lineHeight + 'px',
+				lineHeight: (this.options.lineHeight + 2) + 'px',
 		};
  
 		var size = [window.innerWidth, this.options.entryHeight];
@@ -68,16 +69,20 @@ define(function(require, exports, module) {
 			this._eventOutput.emit('select-entry', this.entry);
 		}.bind(this));
 
+		var showMoreColor = 'white';
+		if (_.contains(repeatTypeAsClass, 'continuous')) {
+			showMoreColor = '#ec2d35';	
+		}
 		this.showMoreSurface = new Surface({
 			content: '<i class="fa fa-chevron-circle-down"></i>',
 			size: [24, 24],
 			properties: {
-				color: 'white',
+				color: showMoreColor,
 				fontSize: '26px'
 			}
 		});
 		var showMoreModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth - 40, 17, window.App.zIndex.readView)
+			transform: Transform.translate(window.innerWidth - 40, this.options.lineHeight, window.App.zIndex.readView)
 		});
 		this.showMoreSurface.on('click', function(e) {
 			console.log("entrySurface event");
@@ -89,11 +94,11 @@ define(function(require, exports, module) {
 			size: [100, this.options.entryHeight],
 			content: 'Delete',
 			properties: {
-				padding: '20px',
+				padding: '20px 15px',
 				backgroundColor: '#dc6059',
-				fontSize: '18px',
+				fontSize: '24px',
+				lineHeight: '45px',
 				color: 'white',
-				fontWeight: 'bold'
 			}
 		});
 
@@ -136,7 +141,7 @@ define(function(require, exports, module) {
 		var displayText = this.entry.removeSuffix();
 		if (this.entry.isRemind()) {
 			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every other day</div>' + displayText;	
-		} else if (this.entry.isRepeat() && this.entry.isGhost()) {
+		} else if (this.entry.isRepeat()) {
 			return '<div class="help"><i class="fa fa-bell"></i> Reminder set (' + u.mmddyy(date) + ' ' + 
 + time + ')</div>' + displayText;	
 		}

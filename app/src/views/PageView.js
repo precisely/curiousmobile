@@ -176,10 +176,10 @@ define(function(require, exports, module) {
 	*/
 	PageView.prototype.changePage = function(pageName) {
 		var lastPageName = store.get('lastPage');
-		this.renderController.hide({duration: 0}); //hides the last page
+		this.renderController.hide({duration: 200}); //hides the last page
 		var view = this.getPage(pageName);
 		this.renderController.show(view, {
-			duration: 0
+			duration: 200
 		},function(){
 			console.log("PageView: show complete");	
 			Timer.setTimeout(function(){

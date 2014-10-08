@@ -30,7 +30,7 @@ define(function(require, exports, module) {
 	EntryListView.prototype.constructor = EntryListView;
 
 	EntryListView.DEFAULT_OPTIONS = {
-		entryHeight: 74,
+		entryHeight: 90,
 		selectionPadding: 24,
 	};
 
@@ -92,7 +92,7 @@ define(function(require, exports, module) {
 
 		this.sequentialLayout = new SequentialLayout({
 			direction: 1,
-			defaultItemSize: [undefined, 74],
+			defaultItemSize: [undefined, 90],
 			itemSpacing: 0,
 		});
 

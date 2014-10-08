@@ -1,0 +1,54 @@
+.icon {
+	background-image: url('../content/images/m-icons.png');
+	background-size: 450px auto;
+	border: 1px dashed;
+}
+
+.icon-track {
+	width: 37px;
+	height: 58px;
+	background-position: 441px -114px;
+}
+
+.icon-track.active {
+	width: 37px;
+	height: 58px;
+	background-position: 441px -11px;
+}
+
+.icon-signals {
+	width: 47px;
+	height: 63px;
+	background-position: 357px -111px;
+}
+
+
+.icon-signals.active {
+	width: 47px;
+	height: 63px;
+	background-position: 357px -10px;
+}
+
+.icon-chart {
+	width: 47px;
+	height: 58px;
+	background-position: 266px -117px;
+}
+
+.icon-chart.active {
+	width: 47px;
+	height: 58px;
+	background-position: 266px -13px;
+}
+
+.icon-feed {
+	width: 50px;
+	height: 57px;
+	background-position: 183px -117px;
+}
+
+.icon-feed.active {
+	width: 50px;
+	height: 57px;
+	background-position: 183px -13px;
+}

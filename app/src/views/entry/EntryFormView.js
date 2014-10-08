@@ -272,6 +272,8 @@ define(function(require, exports, module) {
 			}.bind(this));
 			return;
 		} else if (!entry.isRemind() && entry.toString() == newText) {
+			console.log("EntryFormView: No changes made");
+			this.blur();
 			return;
 		} else {
 			entry.setText(newText);

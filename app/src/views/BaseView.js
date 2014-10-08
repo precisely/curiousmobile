@@ -49,26 +49,26 @@ define(function(require, exports, module) {
 		if (!this.options.header) {
 			return;
 		}
+
 		var backgroundSurface = new Surface({
-			size: [undefined, 70],
+			origin: [0,0],
+			align: [0,0],
+			size: [window.innerWidth, 74],
 			properties: {
-				backgroundColor: '#ffffff'
+				backgroundColor: 'white'
 			}
 		});
 
 		var backgroundModifier = new StateModifier({
-			transform: Transform.behind
+			transform: Transform.translate(0,0,1)
 		});
-
 		this.layout.header.add(backgroundModifier).add(backgroundSurface);
-
 		if (this.options.backButton) {
 			var leftSurface = new Surface({
 				content: '<img src="content/images/left.png" />',	
-				size: [44,44],
+				size: [61, 74],
 				properties: {
-					marginTop: '26px',
-					marginLeft: '20px',
+					padding: '20px'
 				}
 			});
 			leftSurface.on('click', function(e) {
@@ -78,7 +78,7 @@ define(function(require, exports, module) {
 				}
 			}.bind(this));
 			var leftModifier = new StateModifier({
-				transform: Transform.translate(0,0,5)
+				transform: Transform.translate(0, 0, window.App.zIndex.header)	
 			});
 			this.layout.header.add(leftModifier).add(leftSurface);
 		} else {
@@ -100,7 +100,8 @@ define(function(require, exports, module) {
 			}.bind(this));
 			var hamburgerModifier = new StateModifier({
 				origin: [0, 0],
-				align: [0, 0]
+				align: [0, 0],
+				transform: Transform.translate(0, 0, window.App.zIndex.header)	
 			});
 			this.layout.header.add(hamburgerModifier).add(this.hamburgerSurface);
 		}
