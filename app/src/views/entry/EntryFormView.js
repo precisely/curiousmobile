@@ -44,9 +44,13 @@ define(function(require, exports, module) {
 			//console.log('update the Input Surface');
 		//}.bind(this));
 		this._eventInput.on('on-show', function() {
+			if (!this.entry) {
+				this.setEntryText('');	
+			}
 			var inputElement = document.getElementById("entry-description").focus();
 
-		});
+
+		}.bind(this));
 	}
 
 	function _createForm() {
@@ -267,8 +271,8 @@ define(function(require, exports, module) {
 			this.entry = newEntry;
 			this.entry.setText(newText);
 			this.entry.create(function(resp) {
-				this._eventOutput.emit('new-entry', resp);
 				this.blur();
+				this._eventOutput.emit('new-entry', resp);
 			}.bind(this));
 			return;
 		} else if (!entry.isRemind() && entry.toString() == newText) {

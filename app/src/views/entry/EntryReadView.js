@@ -1,6 +1,7 @@
 define(function(require, exports, module) {
 	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
+	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var TrueSurface = require('surfaces/TrueSurface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
@@ -8,13 +9,13 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 	var FastClick = require('famous/inputs/FastClick');
 
-	function EntryReadView(entry) {
-		View.apply(this, arguments);
+	function EntryReadView(entry, args) {
+		ContainerSurface.apply(this, args);
 		this.entry = entry;
 		_addSurface.call(this);
 	}
 
-	EntryReadView.prototype = Object.create(View.prototype);
+	EntryReadView.prototype = Object.create(ContainerSurface.prototype);
 	EntryReadView.prototype.constructor = EntryReadView;
 
 	EntryReadView.DEFAULT_OPTIONS = {
@@ -35,11 +36,12 @@ define(function(require, exports, module) {
 		}
 
 		var properties = {
-				padding: '15px',
-				fontSize: this.options.lineHeight + 'px',
-				lineHeight: (this.options.lineHeight + 2) + 'px',
+			padding: '15px',
+			fontSize: this.options.lineHeight + 'px',
+			lineHeight: (this.options.lineHeight + 2) + 'px',
+			textOverflow: 'ellipsis'
 		};
- 
+
 		var size = [window.innerWidth, this.options.entryHeight];
 		if (this.entry.isContinuous()) {
 			properties.margin = '5px'	
@@ -52,7 +54,7 @@ define(function(require, exports, module) {
 			classes: this.entry.repeatTypeAsClass(),
 			properties: properties
 		});
-		this.entrySurface.pipe(this._eventOutput);
+		//this.entrySurface.pipe(this._eventOutput);
 		this.glowSurface = new Surface({
 			size: [undefined, 44],
 			content: this.entry.toString(),
@@ -66,7 +68,9 @@ define(function(require, exports, module) {
 
 		this.entrySurface.on('click', function(e) {
 			console.log("entrySurface event");
-			this._eventOutput.emit('select-entry', this.entry);
+			if (e instanceof CustomEvent) {
+				this._eventOutput.emit('select-entry', this.entry);
+			}
 		}.bind(this));
 
 		var showMoreColor = 'white';
@@ -82,7 +86,7 @@ define(function(require, exports, module) {
 			}
 		});
 		var showMoreModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth - 40, this.options.lineHeight, window.App.zIndex.readView)
+			transform: Transform.translate(window.innerWidth - 40, this.options.lineHeight, window.App.zIndex.readView + 1)
 		});
 		this.showMoreSurface.on('click', function(e) {
 			console.log("entrySurface event");
@@ -111,11 +115,11 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 		deleteModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView)
+			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView + 1)
 		});
 		this.add(deleteModifier).add(this.deleteSurface);
 		var entryModifier = new StateModifier({
-			transform: Transform.translate(0, 0, window.App.zIndex.readView)
+			transform: Transform.translate(0, 0, window.App.zIndex.readView + 1)
 		});
 		this.add(entryModifier).add(this.entrySurface);
 
@@ -130,7 +134,7 @@ define(function(require, exports, module) {
 		//var rc = this.renderController;
 		//rc.show(this.glowSurface, {
 			//duration: 1000
-//});
+			//});
 			//rc.hide();
 			//rc.show(this.entrySurface);
 	}
