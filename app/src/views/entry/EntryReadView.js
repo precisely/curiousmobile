@@ -67,7 +67,7 @@ define(function(require, exports, module) {
 
 		this.entrySurface.on('click', function(e) {
 			console.log("entrySurface event");
-			if (e instanceof CustomEvent) {
+			if (!this.deleted) {
 				this._eventOutput.emit('select-entry', this.entry);
 			}
 		}.bind(this));
@@ -107,13 +107,11 @@ define(function(require, exports, module) {
 
 		this.deleteSurface.on('click', function(e) {
 			console.log('EventHandler: this.deleteSurface event: click');
-			if (e instanceof CustomEvent) {
 				this.deleted = true;
 				this.entry.delete(function(){
 					window.App.collectionCache.clear();	
 					this._eventOutput.emit('delete-entry',this.entry);
 				}.bind(this));
-			}
 		}.bind(this));
 		deleteModifier = new StateModifier({
 			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView + 6)

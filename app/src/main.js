@@ -16,16 +16,17 @@ define(function(require, exports, module) {
 	App.CSRF.SyncTokenKeyName = "SYNCHRONIZER_TOKEN"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_KEY
 	App.CSRF.SyncTokenUriName = "SYNCHRONIZER_URI"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_URI
 	App.zIndex = {
-		menu: 11,
-		readView: 9,
-		formView: 11, 
-		baseHeader: 12,
+		menu: 12,
+		readView: 20,
+		formView: 14, 
+		header: 18,
 		datePicker: 13,
+		alertView: 20,
 	};
 
 	App.collectionCache = collectionCache;
 	App.serverUrl = "http://192.168.0.31:8080";
-	//App.serverUrl = "http://192.168.0.103:8080";
+	//App.serverUrl = "http://192.168.0.106:8080";
 	//App.serverUrl = "http://dev.wearecurio.us";
 	//App.serverUrl = "http://127.0.0.1:8080";
 

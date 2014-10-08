@@ -38,11 +38,11 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		var dateSurface = new Surface({
-			size: [115, 44],
+			size: [115, 74],
 			properties: {
 				color: '#e83838',	
 				textAlign: 'center',
-				marginTop: '9px'
+				paddingTop: '9px'
 			}
 		});
 

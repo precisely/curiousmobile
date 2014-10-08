@@ -42,11 +42,11 @@ define(function(require, exports, module) {
 	function _setListeners() {
 		//this.autoCompleteSurface.on('updateInputSurface', function(){
 			//console.log('update the Input Surface');
-		//}.bind(this));
-		this._eventInput.on('on-show', function() {
-			var inputElement = document.getElementById("entry-description");
-			inputElement.focus();
-		}.bind(this));
+			//}.bind(this));
+			this._eventInput.on('on-show', function() {
+				var inputElement = document.getElementById("entry-description");
+				inputElement.focus();
+			}.bind(this));
 	}
 
 	function _createForm() {
@@ -102,96 +102,96 @@ define(function(require, exports, module) {
 		//autoCompleteSurface.onSelect(function(inputLabel) {
 			//console.log(inputLabel);
 			//this.inputSurface.setValue(inputLabel);
-		//}.bind(this));
+			//}.bind(this));
 
-		//		this.inputSurface.setValue('test');
-		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
-		this.formContainerSurface = formContainerSurface;
+			//		this.inputSurface.setValue('test');
+			formContainerSurface.add(this.inputModifier).add(this.inputSurface);
+			this.formContainerSurface = formContainerSurface;
 
-		var sequentialLayout = new SequentialLayout({
-			direction: 0,
-			itemSpacing: 80,
-			defaultItemSize: [100, 24],
-		});
+			var sequentialLayout = new SequentialLayout({
+				direction: 0,
+				itemSpacing: 80,
+				defaultItemSize: [100, 24],
+			});
 
-		sequentialLayout.setOutputFunction(function(input, offset, index) {
-			//Bumping the offset to add additional padding on the left
-			offset += 30;
-			var transform = Transform.translate(offset, 90, _zIndex() + 1);
-			return {
-				transform: transform,
-				target: input.render()
-			};
-		});
+			sequentialLayout.setOutputFunction(function(input, offset, index) {
+				//Bumping the offset to add additional padding on the left
+				offset += 30;
+				var transform = Transform.translate(offset, 90, _zIndex() + 1);
+				return {
+					transform: transform,
+					target: input.render()
+				};
+			});
 
-		this.repeatSurface = new Surface({
-			content: '<i class="fa fa-repeat"></i> <br/> Repeat',
-			size: [24, 24],
-		});
+			this.repeatSurface = new Surface({
+				content: '<i class="fa fa-repeat"></i> <br/> Repeat',
+				size: [24, 24],
+			});
 
-		this.repeatSurface.on('click', function(e) {
-			console.log("repeatSurface event");
-			if (e instanceof CustomEvent) {
-				this.removeSuffix();
-				this.toggleSuffix('repeat');
-				this.submit();
-			}
-		}.bind(this));
+			this.repeatSurface.on('click', function(e) {
+				console.log("repeatSurface event");
+				if (e instanceof CustomEvent) {
+					this.removeSuffix();
+					this.toggleSuffix('repeat');
+					this.submit();
+				}
+			}.bind(this));
 
-		this.remindSurface = new Surface({
-			content: '<i class="fa fa-bell"></i> <br/> Remind',
-			size: [24, 24],
-		});
+			this.remindSurface = new Surface({
+				content: '<i class="fa fa-bell"></i> <br/> Remind',
+				size: [24, 24],
+			});
 
-		this.remindSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
-				this.removeSuffix();
-				this.toggleSuffix('remind');
-				this.submit();
-			}
-		}.bind(this));
+			this.remindSurface.on('click', function(e) {
+				if (e instanceof CustomEvent) {
+					this.removeSuffix();
+					this.toggleSuffix('remind');
+					this.submit();
+				}
+			}.bind(this));
 
-		this.pinSurface = new Surface({
-			content: '<i class="fa fa-star"></i><br/> Button',
-			size: [24, 24],
-		});
+			this.pinSurface = new Surface({
+				content: '<i class="fa fa-star"></i><br/> Button',
+				size: [24, 24],
+			});
 
-		this.pinSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
-				this.removeSuffix();
-				this.toggleSuffix('pinned');
-				this.submit();
-			}
-		}.bind(this));
-		sequentialLayout.sequenceFrom([this.repeatSurface, this.pinSurface, this.remindSurface]);
-		this.buttonsAndHelp = new ContainerSurface({
-			size: [undefined, 320],
-			classes: ['entry-form-buttons'],
-			properties: {
-				color: '#ffffff',
-				backgroundColor: '#ad326c',
-			}
-		});
-		this.buttonsAndHelp.add(sequentialLayout);
-		var helpSurface = new Surface({
-			size: [window.innerWidth - 40, undefined],
-			content: 'You can repeat this tag, favorite it (keep it at the top of your list), or remind yourself later.',
-			properties: {
-				fontStyle: 'italic',
-				color: 'white',
-				margin: '30px 20px',
-				padding: '30px 10px',
-				borderTop: '1px solid white',
-			}
-		});
+			this.pinSurface.on('click', function(e) {
+				if (e instanceof CustomEvent) {
+					this.removeSuffix();
+					this.toggleSuffix('pinned');
+					this.submit();
+				}
+			}.bind(this));
+			sequentialLayout.sequenceFrom([this.repeatSurface, this.pinSurface, this.remindSurface]);
+			this.buttonsAndHelp = new ContainerSurface({
+				size: [undefined, 320],
+				classes: ['entry-form-buttons'],
+				properties: {
+					color: '#ffffff',
+					backgroundColor: '#ad326c',
+				}
+			});
+			this.buttonsAndHelp.add(sequentialLayout);
+			var helpSurface = new Surface({
+				size: [window.innerWidth - 40, undefined],
+				content: 'You can repeat this tag, favorite it (keep it at the top of your list), or remind yourself later.',
+				properties: {
+					fontStyle: 'italic',
+					color: 'white',
+					margin: '30px 20px',
+					padding: '30px 10px',
+					borderTop: '1px solid white',
+				}
+			});
 
-		var helpModifier = new Modifier({
-			transform: Transform.translate(0, 150, 0)
-		});
-		this.buttonsAndHelp.add(helpModifier).add(helpSurface);
+			var helpModifier = new Modifier({
+				transform: Transform.translate(0, 150, 0)
+			});
+			this.buttonsAndHelp.add(helpModifier).add(helpSurface);
 
-		formContainerSurface.add(this.buttonsAndHelp);
-		this.setBody(formContainerSurface);
+			formContainerSurface.add(this.buttonsAndHelp);
+			this.setBody(formContainerSurface);
 	}
 
 	EntryFormView.prototype.toggleSuffix = function(suffix) {
@@ -272,6 +272,9 @@ define(function(require, exports, module) {
 			this.entry.setText(newText);
 			this.entry.create(function(resp) {
 				this.blur();
+				if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1) {
+					window.App.collectionCache.clear();	
+				}
 				this._eventOutput.emit('new-entry', resp);
 			}.bind(this));
 			return;
@@ -322,7 +325,7 @@ define(function(require, exports, module) {
 
 	EntryFormView.prototype.hasFuture = function(options) {
 		var entry = this.entry;
-		return((entry.isRepeat() && !entry.isRemind()) || entry.isGhost()) && entry.isTodayOrLater()
+		return ((entry.isRepeat() && !entry.isRemind()) || entry.isGhost()) && entry.isTodayOrLater();
 	}
 
 	module.exports = EntryFormView;
