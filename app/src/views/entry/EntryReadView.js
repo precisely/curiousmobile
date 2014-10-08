@@ -67,7 +67,7 @@ define(function(require, exports, module) {
 
 		this.entrySurface.on('click', function(e) {
 			console.log("entrySurface event");
-			if (!this.deleted) {
+			if (e instanceof CustomEvent) {
 				this._eventOutput.emit('select-entry', this.entry);
 			}
 		}.bind(this));
@@ -85,7 +85,7 @@ define(function(require, exports, module) {
 			}
 		});
 		var showMoreModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth - 40, this.options.lineHeight, window.App.zIndex.readView + 5)
+			transform: Transform.translate(window.innerWidth - 40, this.options.lineHeight, window.App.zIndex.readView + 6)
 		});
 		this.showMoreSurface.on('click', function(e) {
 			console.log("entrySurface event");
@@ -107,11 +107,14 @@ define(function(require, exports, module) {
 
 		this.deleteSurface.on('click', function(e) {
 			console.log('EventHandler: this.deleteSurface event: click');
-				this.deleted = true;
+			this.deleted = true;
+			if (e instanceof CustomEvent) {
 				this.entry.delete(function(){
 					window.App.collectionCache.clear();	
 					this._eventOutput.emit('delete-entry',this.entry);
 				}.bind(this));
+
+			}
 		}.bind(this));
 		deleteModifier = new StateModifier({
 			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView + 6)
@@ -133,7 +136,7 @@ define(function(require, exports, module) {
 		//var rc = this.renderController;
 		//rc.show(this.glowSurface, {
 			//duration: 1000
-//});
+			//});
 			//rc.hide();
 			//rc.show(this.entrySurface);
 	}

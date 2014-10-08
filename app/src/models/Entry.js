@@ -168,7 +168,11 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					baseDate: baseDate.toUTCString(),
 					timeZoneName: u.getTimezone(),
 					defaultToNow: '1'
-				})
+				});
+
+				argsToSend.text = argsToSend.text.replace('Repeat', 'repeat');
+				argsToSend.text = argsToSend.text.replace('Remind', 'remind');
+				argsToSend.text = argsToSend.text.replace('Button', 'button');
 
 				u.queueJSON("adding new entry", u.makeGetUrl("addEntrySData"), u.makeGetArgs(argsToSend), function(
 				entries) {

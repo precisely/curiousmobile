@@ -33,11 +33,8 @@ define(function(require, exports, module) {
 	};
 
 	function _createAlert() {
-		var containerSurface = new ContainerSurface({
-			size: [window.innerWidth, 40],
-		});
 
-		messageModifier = new Modifier({
+		var messageModifier = new Modifier({
 			transform: Transform.translate(20, 74, 999),
 			origin: [0, 0],
 		});
@@ -76,9 +73,7 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		containerSurface.add(messageModifier).add(messageSurface);
-
-		this.add(containerSurface);
+		this.add(messageModifier).add(messageSurface);
 	}
 	module.exports = AlertView;
 });
