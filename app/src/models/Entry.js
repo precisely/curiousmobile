@@ -87,15 +87,40 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				if (!this.get('id')) {
 					return '';
 				}
+				var entryStr = escapeHTML(entry.description);
+				var amounts = entry.amounts;
+				var i = 0, iString;
+				while ((iString = (i++).toString()) in amounts) {
+					var amountEntry = amounts[iString];
+					var amount = amountEntry.amount;
+					var amountPrecision = amountEntry.amountPrecision;
+					var units = amountEntry.units;
+
+					var formattedAmount = this.formattedAmount({amount: amount, amountPrecision: amountPrecision});
+
+					// store first amount for post-selection highlighting
+					//if (selectStart == null) {
+						//selectStart = (timeAfterTag ? 0 : dateStr.length) + description.length + 1 + (formattedAmount.length == 0 ? 1 : 0);
+						//selectEnd = selectStart + formattedAmount.length - 1;
+						//entrySelectData[id] = [selectStart, selectEnd, amountPrecision < 0 && amount != null]; // if third item is true, insert extra space at cursor
+						//}
+						entryStr += escapeHTML(formattedAmount) + escapeHTML(this.formatUnits(units))
+				}
+				entryStr += escapeHTML(dateStr) + (entry.comment != '' ? ' ' + escapeHTML(entry.comment) : '')
+
 				if (this.get('datePrecisionSecs') < 43200) {
 					dateStr = u.dateToTimeStr(new Date(entry.date), false);
 					dateStr = ' ' + dateStr;
 				}
-				var entryStr = escapeHTML(entry.description) + escapeHTML(this.formattedAmount()) + escapeHTML(this.formatUnits()) + escapeHTML(dateStr) + (entry.comment != '' ? ' ' + escapeHTML(entry.comment) : '')
 				return entryStr;
 			},
-			formattedAmount: function(argument) {
-				var entry = this.attributes;
+			formattedAmount: function(args) {
+				var entry;
+				if (args) {
+					entry = args;
+				} else {
+					entry = this.attributes;
+				}
 				if (entry.amount == null) return " ___";
 				if (entry.amountPrecision < 0) return "";
 				if (entry.amountPrecision == 0) {
@@ -103,8 +128,10 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				}
 				return " " + entry.amount;
 			},
-			formatUnits: function() {
-				var units = this.get('units');
+			formatUnits: function(units) {
+				if (!units) {
+					units = this.get('units');
+				}
 				if (units && units.length > 0)
 					return " " + units;
 
