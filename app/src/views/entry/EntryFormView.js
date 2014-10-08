@@ -44,12 +44,8 @@ define(function(require, exports, module) {
 			//console.log('update the Input Surface');
 		//}.bind(this));
 		this._eventInput.on('on-show', function() {
-			if (!this.entry) {
-				this.setEntryText('');	
-			}
-			var inputElement = document.getElementById("entry-description").focus();
-
-
+			var inputElement = document.getElementById("entry-description");
+			inputElement.focus();
 		}.bind(this));
 	}
 
@@ -244,6 +240,10 @@ define(function(require, exports, module) {
 	}
 
 	EntryFormView.prototype.unsetEntry = function() {
+		var inputElement = document.getElementById("entry-description");
+		if (inputElement) {
+			inputElement.value = '';
+		}
 		this.entry = null;
 		this.setEntryText('');
 	}
