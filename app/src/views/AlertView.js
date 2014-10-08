@@ -63,7 +63,7 @@ define(function(require, exports, module) {
 					classList = e.srcElement.parentElement.classList;
 				}
 				if (_.contains(classList, 'close')) {
-					this.controller.hide();
+					u.closeAlerts();
 				} else if (_.contains(classList, 'a') && this.options.onA) {
 					console.log('Event A');
 					this.options.onA.call();

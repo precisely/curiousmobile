@@ -143,8 +143,18 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					|| text.endsWith(' button')) {
 						text = text.substr(0, text.length - 7);
 					}
+
 					if (text.endsWith(' favorite')) {
 						text = text.substr(0, text.length - 8);
+					}
+
+				if (text.startsWith('repeat') || text.startsWith('pinned')
+					|| text.startsWith('button')) {
+						text = text.substr(6, text.length);
+					}
+
+					if (text.startsWith('favorite')) {
+						text = text.substr(7, text.length);
 					}
 					return text;
 			},
@@ -300,7 +310,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				this.text = text;
 			},
 			isTodayOrLater: function() {
-				return new Date() - (24 * 60 * 60000) < window.App.selectedDate.getTime();
+				return new Date().getTime() - (24 * 60 * 60000) < window.App.selectedDate.getTime();
 
 			}
 
