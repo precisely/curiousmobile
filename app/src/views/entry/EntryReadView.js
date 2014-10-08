@@ -108,6 +108,7 @@ define(function(require, exports, module) {
 		this.deleteSurface.on('click', function(e) {
 			console.log('EventHandler: this.deleteSurface event: click');
 			if (e instanceof CustomEvent) {
+				this.deleted = true;
 				this.entry.delete(function(){
 					this._eventOutput.emit('delete-entry',this.entry);
 				}.bind(this));
@@ -118,7 +119,7 @@ define(function(require, exports, module) {
 		});
 		this.add(deleteModifier).add(this.deleteSurface);
 		var entryModifier = new StateModifier({
-			transform: Transform.translate(0, 0, window.App.zIndex.readView + 1)
+			transform: Transform.translate(0, 0, window.App.zIndex.readView + 5)
 		});
 		this.add(entryModifier).add(this.entrySurface);
 
@@ -143,10 +144,9 @@ define(function(require, exports, module) {
 		var time = u.formatAMPM(date);
 		var displayText = this.entry.removeSuffix();
 		if (this.entry.isRemind()) {
-			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every other day</div>' + displayText;	
+			return '<div class="help"><i class="fa fa-bell"></i> Reminder set </div>' + displayText;	
 		} else if (this.entry.isRepeat()) {
-			return '<div class="help"><i class="fa fa-bell"></i> Reminder set (' + u.mmddyy(date) + ' ' + 
-+ time + ')</div>' + displayText;	
+			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every other day</div>' + displayText;	
 		}
 		return '<div style="height: 9px"></div>' + displayText;
 	}

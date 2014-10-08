@@ -54,7 +54,7 @@ define(function(require, exports, module) {
 
 		this.inputModifier = new Modifier({
 			align: [0, 0],
-			transform: Transform.translate(15, 15, 2)
+			transform: Transform.translate(15, 15, window.App.zIndex.readView)
 		});
 
 		this.inputModifier.sizeFrom(function() {
@@ -69,9 +69,7 @@ define(function(require, exports, module) {
 
 		this.inputSurface.on('click', function(e) {
 			console.log('TrackView: Clicking on dummy input surface');
-			if (e instanceof CustomEvent) {
 				this._eventOutput.emit('create-entry');
-			}
 		}.bind(this));
 
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);

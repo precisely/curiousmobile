@@ -18,20 +18,23 @@ define(function(require, exports, module) {
 	function _createNavigation(date) {
 		var leftSurface = new Surface({
 			content: '<img src="content/images/left.png" />',	
-			size: [50, 74],
+			size: [79, 74],
 			properties: {
 				textAlign: 'center',
-				paddingTop: '24px'
+				paddingTop: '24px',
+				paddingRight: '20px'
 			}
 		});
 
 		var leftModifier = new StateModifier({
-			transform: Transform.translate(-5, 0, window.App.zIndex.header),
+			transform: Transform.translate(-5, 0, window.App.zIndex.datePicker),
 		});
 		this.add(leftModifier).add(leftSurface);	
 
-		leftSurface.on('click', function() {
-			this._eventOutput.emit('date-minus');	
+		leftSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				this._eventOutput.emit('date-minus');	
+			}
 		}.bind(this));
 
 		var dateSurface = new Surface({
@@ -46,32 +49,36 @@ define(function(require, exports, module) {
 		this.dateSurface = dateSurface;
 		this.setDate(date);
 
-		this.dateSurface.on('click', function() {
+		this.dateSurface.on('click', function(e) {
 			console.log("dateSurface event");
-			this._eventOutput.emit('toggle-date-grid');
+			if (e instanceof CustomEvent) {
+				this._eventOutput.emit('toggle-date-grid');
+			}
 		}.bind(this));
 
 
 		var dateModifier = new StateModifier({
-			transform: Transform.translate((window.innerWidth/2) - 100, 0, window.App.zIndex.header)	
+			transform: Transform.translate((window.innerWidth/2) - 100, 0, window.App.zIndex.datePicker)	
 		});
 
 		this.add(dateModifier).add(dateSurface);
 
 		var rightModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth - 110, 0, window.App.zIndex.header),
+			transform: Transform.translate(window.innerWidth - 110, 0, window.App.zIndex.datePicker),
 		});
 
 		var rightSurface = new Surface({
 			content: '<img src="content/images/right.png" />',	
-			size: [60, 74],
+			size: [90, 74],
 			properties: {
-				padding: '25px 20px'
+				padding: '24px 29px'
 			}
 		});
 		this.add(rightModifier).add(rightSurface);
-		rightSurface.on('click', function() {
-			this._eventOutput.emit('date-add');	
+		rightSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				this._eventOutput.emit('date-add');	
+			}
 		}.bind(this));
 
 	}

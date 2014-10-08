@@ -9,7 +9,6 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var HeaderFooter = require('famous/views/HeaderFooterLayout');
 	var ImageSurface = require('famous/surfaces/ImageSurface');
-	var FastClick = require('famous/inputs/FastClick');
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var FooterTemplate = require('text!templates/footer.html');
 	var SequentialLayout = require('famous/views/SequentialLayout');
@@ -72,10 +71,8 @@ define(function(require, exports, module) {
 				}
 			});
 			leftSurface.on('click', function(e) {
-				if (e instanceof CustomEvent) {
-					console.log("Clicked on menu icon image");
-					this._eventOutput.emit('go-back');
-				}
+				console.log("Clicked on menu icon image");
+				this._eventOutput.emit('go-back');
 			}.bind(this));
 			var leftModifier = new StateModifier({
 				transform: Transform.translate(0, 0, window.App.zIndex.header)	
