@@ -44,7 +44,11 @@ define(function(require, exports, module) {
             
             autocompletes.forEach(function(autocomplete) {
                 var myView = new View();
+				var backgroundColor = 'white';
 
+				if (i % 2 == 0) {
+					backgroundColor = '#cccccc';
+				}
                 if (i == autocompletes.length-1){
                     borderProperty = '1px solid #aaaaaa';
                 } 
@@ -54,9 +58,9 @@ define(function(require, exports, module) {
                 myView.autoCompleteSurface = new Surface({
                     content: autocomplete.label,
                     properties: {
-                        backgroundColor: 'white',
-                        padding: '15px',
-                        paddingTop: '5px',
+                        backgroundColor: backgroundColor,
+                        padding: '24px',
+						fontSize: '24px',
                         borderBottom: borderProperty,
                         borderLeft: '1px solid #aaaaaa',
                         borderRight: '1px solid #aaaaaa'
@@ -64,8 +68,8 @@ define(function(require, exports, module) {
                 });
 
                 myView.autoCompleteModifier = new StateModifier({
-                    transform:Transform.translate(4,35,12),
-                    size: [window.innerWidth * 0.972, 25]
+                    transform:Transform.translate(15,55, 1000),
+                    size: [window.innerWidth - 30, 90]
                 });
 
                 myView.autoCompleteSurface.on('click', function() {

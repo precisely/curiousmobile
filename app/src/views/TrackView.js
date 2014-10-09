@@ -60,7 +60,7 @@ define(function(require, exports, module) {
 		this.inputModifier.sizeFrom(function() {
 			var mainContext = window.mainContext;
 			var size = mainContext.getSize();
-			return [0.90 * size[0], 40];
+			return [window.innerWidth - 30, 40];
 		});
 
 		this.inputSurface = new Surface({

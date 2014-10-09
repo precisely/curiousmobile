@@ -20,8 +20,8 @@ define(function(require, exports, module) {
 
 	function EntryFormView() {
 		BaseView.apply(this, arguments);
-		_createForm.call(this);
 		_setListeners.call(this);
+		_createForm.call(this);
 	}
 
 	EntryFormView.prototype = Object.create(BaseView.prototype);
@@ -31,22 +31,22 @@ define(function(require, exports, module) {
 		header: true,	
 		backButton: true,
 	};
-	//EntryFormView.prototype.eventHandler = new EventHandler();
-	//var autoCompleteSurface = new AutoCompleteView();
-	//var enteredKey;
+	EntryFormView.prototype.eventHandler = new EventHandler();
+	var enteredKey;
 
 	function _zIndex(argument) {
 		return window.App.zIndex.formView;
 	}
 
 	function _setListeners() {
-		//this.autoCompleteSurface.on('updateInputSurface', function(){
-			//console.log('update the Input Surface');
-			//}.bind(this));
-			this._eventInput.on('on-show', function() {
-				var inputElement = document.getElementById("entry-description");
-				inputElement.focus();
-			}.bind(this));
+		this.autoCompleteSurface = new AutoCompleteView();
+		this.autoCompleteSurface.on('updateInputSurface', function(){
+			console.log('update the Input Surface');
+		}.bind(this));
+		this._eventInput.on('on-show', function() {
+			var inputElement = document.getElementById("entry-description");
+			inputElement.focus();
+		}.bind(this));
 	}
 
 	function _createForm() {
@@ -66,7 +66,7 @@ define(function(require, exports, module) {
 		this.inputModifier.sizeFrom(function() {
 			var mainContext = window.mainContext;
 			var size = mainContext.getSize();
-			return [0.90 * size[0], 40];
+			return [window.innerWidth - 30, 40];
 		});
 
 		this.inputSurface = new Surface({
@@ -86,8 +86,8 @@ define(function(require, exports, module) {
 				if (!enteredKey) {
 					enteredKey = "/";
 				}
-				//				autoCompleteSurface.getAutoCompletes(enteredKey);
-				//				formContainerSurface.add(autoCompleteSurface);
+				this.autoCompleteSurface.getAutoCompletes(enteredKey);
+				formContainerSurface.add(this.autoCompleteSurface);
 			}
 		}.bind(this));
 
@@ -99,99 +99,98 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		//update input field
-		//autoCompleteSurface.onSelect(function(inputLabel) {
-			//console.log(inputLabel);
-			//this.inputSurface.setValue(inputLabel);
-			//}.bind(this));
+		this.autoCompleteSurface.onSelect(function(inputLabel) {
+			console.log(inputLabel);
+			this.setEntryText(inputLabel);
+		}.bind(this));
 
-			//		this.inputSurface.setValue('test');
-			formContainerSurface.add(this.inputModifier).add(this.inputSurface);
-			this.formContainerSurface = formContainerSurface;
+		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
+		this.formContainerSurface = formContainerSurface;
 
-			var sequentialLayout = new SequentialLayout({
-				direction: 0,
-				itemSpacing: 80,
-				defaultItemSize: [100, 24],
-			});
+		var sequentialLayout = new SequentialLayout({
+			direction: 0,
+			itemSpacing: 80,
+			defaultItemSize: [100, 24],
+		});
 
-			sequentialLayout.setOutputFunction(function(input, offset, index) {
-				//Bumping the offset to add additional padding on the left
-				offset += 30;
-				var transform = Transform.translate(offset, 90, _zIndex() + 1);
-				return {
-					transform: transform,
-					target: input.render()
-				};
-			});
+		sequentialLayout.setOutputFunction(function(input, offset, index) {
+			//Bumping the offset to add additional padding on the left
+			offset += 30;
+			var transform = Transform.translate(offset, 90, _zIndex() + 1);
+			return {
+				transform: transform,
+				target: input.render()
+			};
+		});
 
-			this.repeatSurface = new Surface({
-				content: '<i class="fa fa-repeat"></i> <br/> Repeat',
-				size: [24, 24],
-			});
+		this.repeatSurface = new Surface({
+			content: '<i class="fa fa-repeat"></i> <br/> Repeat',
+			size: [24, 24],
+		});
 
-			this.repeatSurface.on('click', function(e) {
-				console.log("repeatSurface event");
-				if (e instanceof CustomEvent) {
-					this.removeSuffix();
-					this.toggleSuffix('repeat');
-					this.submit();
-				}
-			}.bind(this));
+		this.repeatSurface.on('click', function(e) {
+			console.log("repeatSurface event");
+			if (e instanceof CustomEvent) {
+				this.removeSuffix();
+				this.toggleSuffix('repeat');
+				this.submit();
+			}
+		}.bind(this));
 
-			this.remindSurface = new Surface({
-				content: '<i class="fa fa-bell"></i> <br/> Remind',
-				size: [24, 24],
-			});
+		this.remindSurface = new Surface({
+			content: '<i class="fa fa-bell"></i> <br/> Remind',
+			size: [24, 24],
+		});
 
-			this.remindSurface.on('click', function(e) {
-				if (e instanceof CustomEvent) {
-					this.removeSuffix();
-					this.toggleSuffix('remind');
-					this.submit();
-				}
-			}.bind(this));
+		this.remindSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				this.removeSuffix();
+				this.toggleSuffix('remind');
+				this.submit();
+			}
+		}.bind(this));
 
-			this.pinSurface = new Surface({
-				content: '<i class="fa fa-star"></i><br/> Button',
-				size: [24, 24],
-			});
+		this.pinSurface = new Surface({
+			content: '<i class="fa fa-star"></i><br/> Button',
+			size: [24, 24],
+		});
 
-			this.pinSurface.on('click', function(e) {
-				if (e instanceof CustomEvent) {
-					this.removeSuffix();
-					this.toggleSuffix('pinned');
-					this.submit();
-				}
-			}.bind(this));
-			sequentialLayout.sequenceFrom([this.repeatSurface, this.pinSurface, this.remindSurface]);
-			this.buttonsAndHelp = new ContainerSurface({
-				size: [undefined, 320],
-				classes: ['entry-form-buttons'],
-				properties: {
-					color: '#ffffff',
-					backgroundColor: '#ad326c',
-				}
-			});
-			this.buttonsAndHelp.add(sequentialLayout);
-			var helpSurface = new Surface({
-				size: [window.innerWidth - 40, undefined],
-				content: 'You can repeat this tag, favorite it (keep it at the top of your list), or remind yourself later.',
-				properties: {
-					fontStyle: 'italic',
-					color: 'white',
-					margin: '30px 20px',
-					padding: '30px 10px',
-					borderTop: '1px solid white',
-				}
-			});
+		this.pinSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				this.removeSuffix();
+				this.toggleSuffix('pinned');
+				this.submit();
+			}
+		}.bind(this));
+		sequentialLayout.sequenceFrom([this.repeatSurface, this.pinSurface, this.remindSurface]);
+		this.buttonsAndHelp = new ContainerSurface({
+			size: [undefined, 320],
+			classes: ['entry-form-buttons'],
+			properties: {
+				color: '#ffffff',
+				backgroundColor: '#ad326c',
+			}
+		});
+		this.buttonsAndHelp.add(sequentialLayout);
+		var helpSurface = new Surface({
+			size: [window.innerWidth - 40, undefined],
+			content: 'You can repeat this tag, favorite it (keep it at the top of your list), or remind yourself later.',
+			properties: {
+				fontStyle: 'italic',
+				color: 'white',
+				margin: '30px 20px',
+				padding: '30px 10px',
+				borderTop: '1px solid white',
+			}
+		});
 
-			var helpModifier = new Modifier({
-				transform: Transform.translate(0, 150, 0)
-			});
-			this.buttonsAndHelp.add(helpModifier).add(helpSurface);
+		var helpModifier = new Modifier({
+			transform: Transform.translate(0, 150, 0)
+		});
+		this.buttonsAndHelp.add(helpModifier).add(helpSurface);
 
-			formContainerSurface.add(this.buttonsAndHelp);
-			this.setBody(formContainerSurface);
+		formContainerSurface.add(this.buttonsAndHelp);
+		this.setBody(formContainerSurface);
 	}
 
 	EntryFormView.prototype.toggleSuffix = function(suffix) {

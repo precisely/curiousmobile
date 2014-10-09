@@ -90,8 +90,13 @@ define(function(require, exports, module) {
 		});
 		this.showMoreSurface.pipe(this._eventOutput);
 		this.showMoreSurface.on('click', function(e) {
-			console.log("entrySurface event");
-			this._eventOutput.emit('select-entry', this.entry);
+			console.log("showMoreSurface event");
+			if (!this.deleted) {
+				this._eventOutput.emit('select-entry', this.entry);
+			} else {
+				this.deleted = false;	
+			}
+
 		}.bind(this));
 		this.add(showMoreModifier).add(this.showMoreSurface);
 
@@ -123,7 +128,7 @@ define(function(require, exports, module) {
 		});
 		this.add(deleteModifier).add(this.deleteSurface);
 		var entryModifier = new StateModifier({
-			transform: Transform.translate(0, 0, window.App.zIndex.readView + 6)
+			transform: Transform.translate(0, 0, window.App.zIndex.readView + 5)
 		});
 		this.add(entryModifier).add(this.entrySurface);
 
