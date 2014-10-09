@@ -50,7 +50,7 @@ define(function(require, exports, module) {
 	}
 
 	function _createForm() {
-		this.setHeaderLabel('Enter Tag');
+		this.setHeaderLabel('ENTER TAG');
 		var formContainerSurface = new ContainerSurface({
 			classes: ['entry-form'],
 			properties: {
@@ -102,6 +102,8 @@ define(function(require, exports, module) {
 		this.autoCompleteSurface.onSelect(function(inputLabel) {
 			console.log(inputLabel);
 			this.setEntryText(inputLabel);
+			var inputElement = document.getElementById("entry-description");
+			inputElement.focus();
 		}.bind(this));
 
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
