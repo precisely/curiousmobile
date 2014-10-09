@@ -106,12 +106,13 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						//}
 						entryStr += escapeHTML(formattedAmount) + escapeHTML(this.formatUnits(units))
 				}
-				entryStr += escapeHTML(dateStr) + (entry.comment != '' ? ' ' + escapeHTML(entry.comment) : '')
 
 				if (this.get('datePrecisionSecs') < 43200) {
 					dateStr = u.dateToTimeStr(new Date(entry.date), false);
 					dateStr = ' ' + dateStr;
 				}
+
+				entryStr += escapeHTML(dateStr) + (entry.comment != '' ? ' ' + escapeHTML(entry.comment) : '')
 				return entryStr;
 			},
 			formattedAmount: function(args) {

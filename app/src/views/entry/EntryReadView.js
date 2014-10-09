@@ -78,14 +78,15 @@ define(function(require, exports, module) {
 		}
 		this.showMoreSurface = new Surface({
 			content: '<i class="fa fa-chevron-circle-down"></i>',
-			size: [24, 24],
+			size: [320, 90],
 			properties: {
 				color: showMoreColor,
-				fontSize: '26px'
+				fontSize: '26px',
+				padding: '24px 0px 0 279px'
 			}
 		});
 		var showMoreModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth - 40, this.options.lineHeight, window.App.zIndex.readView + 6)
+			transform: Transform.translate(0, 0 , window.App.zIndex.readView + 6)
 		});
 		this.showMoreSurface.on('click', function(e) {
 			console.log("entrySurface event");
@@ -117,7 +118,7 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 		deleteModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView + 6)
+			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView + 5)
 		});
 		this.add(deleteModifier).add(this.deleteSurface);
 		var entryModifier = new StateModifier({
@@ -148,7 +149,7 @@ define(function(require, exports, module) {
 		if (this.entry.isRemind()) {
 			return '<div class="help"><i class="fa fa-bell"></i> Reminder set </div>' + displayText;	
 		} else if (this.entry.isRepeat()) {
-			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every other day</div>' + displayText;	
+			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every day</div>' + displayText;	
 		}
 		return '<div style="height: 9px"></div>' + displayText;
 	}
