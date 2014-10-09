@@ -146,7 +146,7 @@ define(function(require, exports, module) {
 				fontWeight: 'bold',
 				color: '#e83838',	
 				textAlign: 'center',
-				padding: '24px 0'
+				padding: '18px 0'
 			}
 		});
 

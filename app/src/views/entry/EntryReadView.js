@@ -67,9 +67,9 @@ define(function(require, exports, module) {
 
 		this.entrySurface.on('click', function(e) {
 			console.log("entrySurface event");
-			if (e instanceof CustomEvent) {
-				this._eventOutput.emit('select-entry', this.entry);
-			}
+			//if (e instanceof CustomEvent) {
+				//this._eventOutput.emit('select-entry', this.entry);
+			//}
 		}.bind(this));
 
 		var showMoreColor = 'white';
@@ -91,10 +91,10 @@ define(function(require, exports, module) {
 		this.showMoreSurface.pipe(this._eventOutput);
 		this.showMoreSurface.on('click', function(e) {
 			console.log("showMoreSurface event");
-			if (!this.deleted) {
+			if (!window.deletedEntry) {
 				this._eventOutput.emit('select-entry', this.entry);
 			} else {
-				this.deleted = false;	
+				window.deletedEntry = false;	
 			}
 
 		}.bind(this));
@@ -114,7 +114,7 @@ define(function(require, exports, module) {
 
 		this.deleteSurface.on('click', function(e) {
 			console.log('EventHandler: this.deleteSurface event: click');
-			this.deleted = true;
+			window.deletedEntry = true;
 			if (e instanceof CustomEvent) {
 				this.entry.delete(function(){
 					window.App.collectionCache.clear();	

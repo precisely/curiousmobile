@@ -140,7 +140,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			},
 			removeSuffix: function() {
 				var text = this.toString();
-				if (text.endsWith(' repeat') || text.endsWith(' pinned')
+				if (text.endsWith(' repeat') || text.endsWith(' pinned') || text.endsWith(' remind')
 					|| text.endsWith(' button')) {
 						text = text.substr(0, text.length - 7);
 					}
@@ -149,7 +149,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						text = text.substr(0, text.length - 8);
 					}
 
-				if (text.startsWith('repeat') || text.startsWith('pinned')
+				if (text.startsWith('repeat') || text.startsWith('pinned') || text.startsWith('remind')
 					|| text.startsWith('button')) {
 						text = text.substr(6, text.length);
 					}

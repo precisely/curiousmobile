@@ -101,8 +101,8 @@ define(function(require, exports, module) {
 		//update input field
 		this.autoCompleteSurface.onSelect(function(inputLabel) {
 			console.log(inputLabel);
-			this.setEntryText(inputLabel);
 			var inputElement = document.getElementById("entry-description");
+			inputElement.value = inputLabel;
 			inputElement.focus();
 		}.bind(this));
 

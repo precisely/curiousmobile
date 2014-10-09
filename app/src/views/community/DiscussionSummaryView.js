@@ -17,7 +17,7 @@ define(function(require, exports, module) {
 
 	function DiscussionSummaryView(discussionId) {
 		View.apply(this, arguments);
-		var transition = new Transitionable(Transform.translate(0, 5, 0));
+		var transition = new Transitionable(Transform.translate(0, 75, 0));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
 		this.add(this.renderController);

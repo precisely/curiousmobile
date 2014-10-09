@@ -31,7 +31,7 @@ define(function(require, exports, module) {
 	DiscussionListView.DEFAULT_OPTIONS = {};
 
 	DiscussionListView.prototype.init = function() {
-		var transition = new Transitionable(Transform.translate(0, 60, 0));
+		var transition = new Transitionable(Transform.translate(0, 70, 0));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
 		this.add(this.renderController);
