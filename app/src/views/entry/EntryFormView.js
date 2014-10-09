@@ -2,6 +2,7 @@ define(function(require, exports, module) {
 	var BaseView = require('views/BaseView');
 	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
+	var Timer = require('famous/utilities/Timer');
 	var ImageSurface = require('famous/surfaces/ImageSurface');
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var InputSurface = require('famous/surfaces/InputSurface');
@@ -101,9 +102,11 @@ define(function(require, exports, module) {
 		//update input field
 		this.autoCompleteSurface.onSelect(function(inputLabel) {
 			console.log(inputLabel);
-			var inputElement = document.getElementById("entry-description");
-			inputElement.value = inputLabel;
-			inputElement.focus();
+			Timer.setTimeout(function(){
+				var inputElement = document.getElementById("entry-description");
+				inputElement.value = inputLabel;
+				inputElement.focus();
+			}.bind(this), 500);
 		}.bind(this));
 
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);

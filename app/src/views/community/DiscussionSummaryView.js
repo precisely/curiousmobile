@@ -21,7 +21,8 @@ define(function(require, exports, module) {
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
 		this.add(this.renderController);
-		this.init(this, discussionId);
+		this.discussionId = discussionId;
+		this.init();
 	}
 
 	DiscussionSummaryView.prototype = Object.create(View.prototype);
@@ -29,9 +30,13 @@ define(function(require, exports, module) {
 
 	DiscussionSummaryView.DEFAULT_OPTIONS = {};
 
-	DiscussionSummaryView.prototype.init = function(argument, discussionId) {
-		DiscussionPost.fetch(discussionId, function(discussionPost) {
+	DiscussionSummaryView.prototype.init = function() {
+		DiscussionPost.fetch(this.discussionId, function(discussionPost) {
+			this.refresh(discussionPost);
+		}.bind(this));
+	}
 
+	DiscussionSummaryView.prototype.refresh = function(discussionPost) {
 			var surfaceList = [];
 			var scrollView = new Scrollview({
 				direction: Utility.Direction.Y,
@@ -66,8 +71,8 @@ define(function(require, exports, module) {
 						a: 'Yes',
 						b: 'No',
 						onA: function() {
-							Discussion.deleteDiscussion({id: discussionId}, function(success){
-								this.renderController.show(scrollView);
+							Discussion.deleteDiscussion({id: this.discussionId}, function(success){
+								this.init();
 							}.bind(this));
 						}.bind(this),
 						onB: function() {
@@ -75,7 +80,7 @@ define(function(require, exports, module) {
 					});
 				} else if (_.contains(classList, 'submit-comment')) {
 					var message = document.forms["commentForm"]["message"].value;
-					DiscussionPost.createComment({discussionId: discussionId, message: message}, function(success){
+					DiscussionPost.createComment({discussionId: this.discussionId, message: message}, function(success){
 						this.renderController.show(scrollView);
 					}.bind(this));
 				}
@@ -107,7 +112,7 @@ define(function(require, exports, module) {
 								a: 'Yes',
 								b: 'No',
 								onA: function() {
-									DiscussionPost.deleteComment( { discussionId : discussionId,
+									DiscussionPost.deleteComment( { discussionId : this.discussionId,
 										clearPostId : post.id }, function(sucess){
 											var index = surfaceList.indexOf(commentSurface);
 											surfaceList.splice(index, 1);
@@ -125,8 +130,7 @@ define(function(require, exports, module) {
 			});
 			scrollView.sequenceFrom(surfaceList);
 			this.renderController.show(scrollView);
-		}.bind(this));
-	}
+	};
 
 	module.exports = DiscussionSummaryView;
 });
