@@ -37,6 +37,7 @@ define(function(require, exports, module) {
 				direction: Utility.Direction.Y,
 			});
 			var prettyDate = u.prettyDate(new Date(discussionPost.updated));
+			discussionPost.prettyDate = prettyDate;
 			var discussionPostSurface = new Surface({
 				size: [undefined, true],
 				content: _.template(discussionPostTemplate, discussionPost, templateSettings),

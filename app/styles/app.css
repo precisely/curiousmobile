@@ -27,8 +27,30 @@ a {
 }
 
 .discussion .panel-footer {
-	padding-bottom: 0px;
-	padding-top: 0px;
+	background-color: #ffffff;
+	color: #c0c0c0;
+	padding: 0 15px 10px 15px;
+}
+
+.discussion .share {
+	top: -3px;
+	display: inline-block;
+	position: relative;
+}
+
+.discussion .comment {
+	top: -3px;
+	left: 5px;
+	display: inline-block;
+	position: relative;
+}
+
+.discussion .fa-circle {
+	color: #FF935F;
+}
+
+.comment-form {
+	margin: 0 5px;
 }
 
 .backfaceVisibility {
@@ -94,7 +116,8 @@ a {
 }
 
 .discussion .footer {
-	background-color: #c0c0c0;
+	/*background-color: #c0c0c0;*/
+	/*border-top: 1px solid #c0c0c0;*/
 }
 
 .form-footer-registration {
