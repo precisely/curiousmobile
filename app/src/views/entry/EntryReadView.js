@@ -88,6 +88,7 @@ define(function(require, exports, module) {
 		var showMoreModifier = new StateModifier({
 			transform: Transform.translate(0, 0 , window.App.zIndex.readView + 6)
 		});
+		this.showMoreSurface.pipe(this._eventOutput);
 		this.showMoreSurface.on('click', function(e) {
 			console.log("entrySurface event");
 			this._eventOutput.emit('select-entry', this.entry);
