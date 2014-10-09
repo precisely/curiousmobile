@@ -17,7 +17,7 @@ define(function(require, exports, module) {
 
 	function CreatePostView() {
 		View.apply(this, arguments);
-		var transition = new Transitionable(Transform.translate(0, 20, 0));
+		var transition = new Transitionable(Transform.translate(0, 34, 0));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
 		this.add(this.renderController);

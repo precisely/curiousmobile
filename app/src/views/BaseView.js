@@ -111,10 +111,11 @@ define(function(require, exports, module) {
 
 		var footerSurface = new Surface({
 			content: FooterTemplate,
-			size: [undefined, 25],
+			size: [undefined, 70],
 			properties: {
 				borderTop: '1px solid #c0c0c0',
-				backgroundColor: 'white'
+				backgroundColor: 'white',
+				padding: '5px 0'
 			}
 		});
 
@@ -152,6 +153,13 @@ define(function(require, exports, module) {
 		this.layout.header.add(labelModifier).add(labelSurface);
 	}
 
+	BaseView.prototype.setHeaderSurface = function(headerSurface) {
+		var labelModifier = new Modifier({
+			transform: Transform.translate(0, 0, 3)
+		});
+
+		this.layout.header.add(labelModifier).add(headerSurface);
+	}
 	BaseView.prototype.setBody = function(body) {
 		var bodyModifier = new StateModifier({
 			origin: [0,0],

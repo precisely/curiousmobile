@@ -19,6 +19,7 @@ a {
 	font-weight: bold;
 	color: rgb(83, 83, 83);
 	font-size: 12px;
+	display: block;
 }
 
 .panel {
@@ -257,6 +258,10 @@ a {
 	padding: 2px;
 }
 
+.close-discussion .fa {
+	padding: 5px;
+}
+
 .cancel-post {
 	padding-right: 25px;
 }
@@ -269,6 +274,16 @@ a {
 	height: 300px;
 }
 
+.post {
+	float: right;
+	/* margin-right: 20px; */
+	position: relative;
+	left: -20px;
+}
+
+.discussion-post-form {
+	margin: 0 10px;
+}
 
 .df-gutter {
 	padding: 15px

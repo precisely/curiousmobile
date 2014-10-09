@@ -31,7 +31,7 @@ define(function(require, exports, module) {
 	DiscussionListView.DEFAULT_OPTIONS = {};
 
 	DiscussionListView.prototype.init = function() {
-		var transition = new Transitionable(Transform.translate(0, 0, 0));
+		var transition = new Transitionable(Transform.translate(0, 60, 0));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
 		this.add(this.renderController);
@@ -55,34 +55,31 @@ define(function(require, exports, module) {
 				direction: Utility.Direction.Y,
 			});
 
-			this.searchAndPostSurface = new Surface({
-				size: [undefined, 40],
-				content: _.template(discussionHeaderTemplate, templateSettings),
-				properties: {
-					marginTop: '10px'	
-				}
-			});
-			surfaceList.push(this.searchAndPostSurface);
+			//this.searchAndPostSurface = new Surface({
+				//size: [undefined, 40],
+				//content: _.template(discussionHeaderTemplate, templateSettings),
+			//});
+			//surfaceList.push(this.searchAndPostSurface);
 
-			this.searchAndPostSurface.on('click', function(e) {
-				var classList;
-				if (e) {
-					classList = e.srcElement.parentElement.classList;
-					if (_.contains(classList, 'submit')) {
-						console.log("Submit for search");
-						this.submit();
-					} else if (_.contains(classList, 'create-post')) {
-						console.log("Show create-post page");
-						this._eventOutput.emit('create-post');
-					}
-				}
-			}.bind(this));
+			//this.searchAndPostSurface.on('click', function(e) {
+				//var classList;
+				//if (e) {
+					//classList = e.srcElement.parentElement.classList;
+					//if (_.contains(classList, 'submit')) {
+						//console.log("Submit for search");
+						//this.submit();
+					//} else if (_.contains(classList, 'create-post')) {
+						//console.log("Show create-post page");
+						//this._eventOutput.emit('create-post');
+					//}
+				//}
+			//}.bind(this));
 
-			this.searchAndPostSurface.on('keydown', function (e) {
-				if (e.keyCode == 13) {
-					this.submit();
-				}
-			}.bind(this));
+			//this.searchAndPostSurface.on('keydown', function (e) {
+				//if (e.keyCode == 13) {
+					//this.submit();
+				//}
+			//}.bind(this));
 
 			discussions.dataList.forEach(function(discussion) {
 				var prettyDate = u.prettyDate(new Date(discussion.updated));

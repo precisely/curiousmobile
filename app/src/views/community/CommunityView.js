@@ -18,12 +18,23 @@ define(function(require, exports, module) {
 	CommunityView.prototype.constructor = CommunityView;
 
 	CommunityView.DEFAULT_OPTIONS = {
-		header: false,	
+		header: true,	
 	};
 	CommunityView.prototype.init = function() {
 		this.renderController = new RenderController();
 		this.add(this.renderController);
-		//this.setHeaderLabel('Community Feed');
+		this.headerSurface = new Surface({
+			size: [window.innerWidth, 74],
+			content: 'FEED <i class="post fa fa-pencil"></i>',
+			properties: {
+				fontSize: '22px',
+				fontWeight: 'bold',
+				color: '#e83838',	
+				textAlign: 'center',
+				padding: '24px 0'
+			}
+		});
+		this.setHeaderSurface(this.headerSurface);
 		this._eventInput.on('on-show', function() {
 
 			if (!this.discussionListView) {
@@ -40,7 +51,7 @@ define(function(require, exports, module) {
 
 				}.bind(this));
 
-				this.discussionListView.on('create-post', function(e) {
+				this.headerSurface.on('click', function(e) {
 					var createPostSurface = new CreatePostView();
 					this.renderController.show(createPostSurface);
 					createPostSurface.on('cancel-post-discussion', function(e) {
