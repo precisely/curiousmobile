@@ -84,9 +84,6 @@ define(function(require, exports, module) {
 				this.blur(e);
 			}else {
 				enteredKey = e.srcElement.value;
-				if (!enteredKey) {
-					enteredKey = "/";
-				}
 				this.autoCompleteSurface.getAutoCompletes(enteredKey);
 				formContainerSurface.add(this.autoCompleteSurface);
 			}
@@ -179,7 +176,7 @@ define(function(require, exports, module) {
 		this.buttonsAndHelp.add(sequentialLayout);
 		var helpSurface = new Surface({
 			size: [window.innerWidth - 40, undefined],
-			content: 'You can repeat this tag, favorite it (keep it at the top of your list), or remind yourself later.',
+			content: 'You can repeat the tag, make a button out of it (for instant access), or remind yourself later.',
 			properties: {
 				fontStyle: 'italic',
 				color: 'white',
