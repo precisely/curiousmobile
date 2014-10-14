@@ -83,6 +83,7 @@ define(function(require, exports, module) {
 			return Transform.translate(0, 0, window.App.zIndex.readView);	
 		});
 		var entryListContainer = new ContainerSurface({
+			size: [320, window.innerHeight - 140],
 			properties: {
 				overflow: 'hidden',
 			}
@@ -90,7 +91,7 @@ define(function(require, exports, module) {
 		var entryListModifier = new StateModifier({
 			origin: [0,0],
 			transform: Transform.translate(0, 70, 0),
-			//            size: [400,400]
+			size: [320,358]
 		});
 		entryListContainer.add(this.renderController);
 		formContainerSurface.add(entryListModifier).add(entryListContainer);

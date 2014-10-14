@@ -94,14 +94,13 @@ define(function(require, exports, module) {
 
 		var scrollModifier = new Modifier();
 		scrollModifier.sizeFrom(function(){
-			return [320,window.innerHeight - 140]
+			return [320,window.innerHeight - 210]
 		});
 		var scrollNode = new RenderNode(scrollModifier);
 		this.scrollView = new Scrollview({
 			direction: 1,
 			defaultItemSize: [320, 90],
 			itemSpacing: 0,
-			clipSize: window.innerHeight - 140
 		});
 
 		scrollNode.add(this.scrollView);

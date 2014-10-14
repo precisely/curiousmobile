@@ -91,12 +91,9 @@ define(function(require, exports, module) {
 		this.showMoreSurface.pipe(this._eventOutput);
 		this.showMoreSurface.on('click', function(e) {
 			console.log("showMoreSurface event");
-			if (!window.deletedEntry) {
+			if (e instanceof CustomEvent) {
 				this._eventOutput.emit('select-entry', this.entry);
-			} else {
-				window.deletedEntry = false;	
-			}
-
+			} 
 		}.bind(this));
 		this.add(showMoreModifier).add(this.showMoreSurface);
 
@@ -114,7 +111,6 @@ define(function(require, exports, module) {
 
 		this.deleteSurface.on('click', function(e) {
 			console.log('EventHandler: this.deleteSurface event: click');
-			window.deletedEntry = true;
 			if (e instanceof CustomEvent) {
 				this.entry.delete(function(){
 					window.App.collectionCache.clear();	

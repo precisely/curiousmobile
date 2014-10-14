@@ -11,14 +11,14 @@ require.config({
 			exports: '_',
 			init: function () {
 this._.extend(this._.templateSettings, {
-	interpolate: /\{\{(.+?)\}\}/g
+interpolate: /\{\{(.+?)\}\}/g
 });
 return this._;
 }
 		}
 	},
 	paths: {
-		famous: '../lib/famous',
+		famous: '../lib/famous/src',
 		requirejs: '../lib/requirejs/require',
 		almond: '../lib/almond/almond',
 		angularjs: '../lib/angularjs/angular',
