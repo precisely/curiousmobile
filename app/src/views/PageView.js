@@ -85,10 +85,6 @@ define(function(require, exports, module) {
 		this.trackView.pipe(this._eventOutput);
 		this.trackView.on('select-entry', function(entry) {
 			console.log('entry selected with id: ' + entry.id);
-			if (entry.isContinuous()) {
-				this.entryFormView.submit(entry);
-				return;
-			}
 			this.changePage('form-view');
 			this.entryFormView.setEntry(entry);
 		}.bind(this));

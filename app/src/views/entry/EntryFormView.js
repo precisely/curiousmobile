@@ -47,6 +47,7 @@ define(function(require, exports, module) {
 		this._eventInput.on('on-show', function() {
 			var inputElement = document.getElementById("entry-description");
 			inputElement.focus();
+			this.focus();
 		}.bind(this));
 	}
 
@@ -153,8 +154,8 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.pinSurface = new Surface({
-			content: '<i class="fa fa-star"></i><br/> Button',
-			size: [24, 24],
+			content: '<i class="fa fa-thumb-tack"></i><br/> Pin It',
+			size: [34, 24],
 		});
 
 		this.pinSurface.on('click', function(e) {
@@ -181,13 +182,13 @@ define(function(require, exports, module) {
 				fontStyle: 'italic',
 				color: 'white',
 				margin: '30px 20px',
-				padding: '30px 10px',
+				padding: '12px 10px',
 				borderTop: '1px solid white',
 			}
 		});
 
 		var helpModifier = new Modifier({
-			transform: Transform.translate(0, 150, 0)
+			transform: Transform.translate(0, 120, 0)
 		});
 		this.buttonsAndHelp.add(helpModifier).add(helpSurface);
 
@@ -223,8 +224,16 @@ define(function(require, exports, module) {
 
 
 	EntryFormView.prototype.focus = function(e) {
+		var inputElement = document.getElementById("entry-description");
+		var entryText = inputElement.value;
 		var selectionRange = this.entry.getSelectionRange();
-		inputElement.setSelectionRange(selectionRange);
+		if (selectionRange != undefined) {
+			if (selectionRange[2]) { // insert space at selectionRange[0]
+				entryText = entryText.substr(0, selectionRange[0] - 1) + " " + entryText.substr(selectionRange[0] - 1);
+			}
+			inputElement.value = entryText;
+			inputElement.setSelectionRange(selectionRange[0], selectionRange[1]);
+		}
 	}
 
 	EntryFormView.prototype.blur = function(e) {
@@ -257,11 +266,10 @@ define(function(require, exports, module) {
 		var entry = this.entry;
 		var newText = document.getElementsByName("entry-description")[0].value;
 
-		if (e instanceof Entry) {
-			this.setEntry(e);
-			entry = this.entry;
+		if (entry && entry.isContinuous()) {
 			newText = this.removeSuffix(entry.toString());
 		}
+
 		if (!u.isOnline()) {
 			u.showAlert("Please wait until online to add an entry");
 			return;

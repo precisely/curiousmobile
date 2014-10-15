@@ -70,12 +70,15 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			},
 			getSelectionRange: function(argument) {
 				var formattedAmount = this.formattedAmount();
+
 				if (!this.get('description')) {
 					return [0, 0];
 				}
-				var selectStart = this.get('description').length + 1 + (formattedAmount.length == 0 ? 1 : 0);
-				var selectEnd = selectStart + formattedAmount.length - 1;
-				return [selectStart, selectEnd]; // if third item is true, insert extra space at cursor
+				// store first amount for post-selection highlighting
+				this.selectStart = this.get('description').length + 1 + (formattedAmount.length == 0 ? 1 : 0);
+				this.selectEnd = this.selectStart + formattedAmount.length - 1;
+				return [this.selectStart, this.selectEnd, this.get('amountPrecision') < 0 && this.get('amount') != null]; 
+				// if third item is true, insert extra space at cursor
 			},
 			needExtraSpace: function() {
 				return this.get('amountPrecision') < 0;
@@ -97,22 +100,10 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					var units = amountEntry.units;
 
 					var formattedAmount = this.formattedAmount({amount: amount, amountPrecision: amountPrecision});
-
-					// store first amount for post-selection highlighting
-					//if (selectStart == null) {
-						//selectStart = (timeAfterTag ? 0 : dateStr.length) + description.length + 1 + (formattedAmount.length == 0 ? 1 : 0);
-						//selectEnd = selectStart + formattedAmount.length - 1;
-						//entrySelectData[id] = [selectStart, selectEnd, amountPrecision < 0 && amount != null]; // if third item is true, insert extra space at cursor
-						//}
-						entryStr += escapeHTML(formattedAmount) + escapeHTML(this.formatUnits(units))
+					entryStr += escapeHTML(formattedAmount) + escapeHTML(this.formatUnits(units))
 				}
 
-				if (this.get('datePrecisionSecs') < 43200) {
-					dateStr = u.dateToTimeStr(new Date(entry.date), false);
-					dateStr = ' ' + dateStr;
-				}
-
-				entryStr += escapeHTML(dateStr) + (entry.comment != '' ? ' ' + escapeHTML(entry.comment) : '')
+				entryStr += escapeHTML(this.dateStr()) + (entry.comment != '' ? ' ' + escapeHTML(entry.comment) : '')
 				return entryStr;
 			},
 			formattedAmount: function(args) {
@@ -138,6 +129,14 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 
 				return "";
 			},
+			dateStr: function () {
+				var dateStr = '';
+				if (this.get('datePrecisionSecs') < 43200) {
+					dateStr = u.dateToTimeStr(new Date(this.get('date')), false);
+					dateStr = ' ' + dateStr;
+				}
+				return dateStr;
+			},
 			removeSuffix: function() {
 				var text = this.toString();
 				if (text.endsWith(' repeat') || text.endsWith(' pinned') || text.endsWith(' remind')
@@ -149,15 +148,15 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						text = text.substr(0, text.length - 8);
 					}
 
-				if (text.startsWith('repeat') || text.startsWith('pinned') || text.startsWith('remind')
-					|| text.startsWith('button')) {
-						text = text.substr(6, text.length);
-					}
+					if (text.startsWith('repeat') || text.startsWith('pinned') || text.startsWith('remind')
+						|| text.startsWith('button')) {
+							text = text.substr(6, text.length);
+						}
 
-					if (text.startsWith('favorite')) {
-						text = text.substr(7, text.length);
-					}
-					return text;
+						if (text.startsWith('favorite')) {
+							text = text.substr(7, text.length);
+						}
+						return text;
 			},
 			create: function(callback) {
 				var collectionCache = window.App.collectionCache;
