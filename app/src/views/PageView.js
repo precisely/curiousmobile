@@ -85,8 +85,12 @@ define(function(require, exports, module) {
 		this.trackView.pipe(this._eventOutput);
 		this.trackView.on('select-entry', function(entry) {
 			console.log('entry selected with id: ' + entry.id);
-			this.changePage('form-view');
 			this.entryFormView.setEntry(entry);
+			if (entry.isContinuous()) {
+				this.entryFormView.submit(entry);
+				return;
+			}
+			this.changePage('form-view');
 		}.bind(this));
 
 		this.trackView.on('create-entry', function(e) {
@@ -137,7 +141,7 @@ define(function(require, exports, module) {
 
 		this.entryFormView.on('go-back', function(e) {
 			console.log('EventHandler: this.entryFormView event: go-back');
-			this.entryFormView.unsetEntry();
+			this.entryFormView.blur();
 			this.changePage('track');
 		}.bind(this));
 

@@ -224,6 +224,9 @@ define(function(require, exports, module) {
 
 
 	EntryFormView.prototype.focus = function(e) {
+		if (!this.entry) {
+			return;
+		}
 		var inputElement = document.getElementById("entry-description");
 		var entryText = inputElement.value;
 		var selectionRange = this.entry.getSelectionRange();
@@ -238,6 +241,7 @@ define(function(require, exports, module) {
 
 	EntryFormView.prototype.blur = function(e) {
 		this._eventOutput.emit('hiding-form-view');
+		this.autoCompleteSurface.renderController.hide({duration:0});
 		this.unsetEntry();
 		//if (cordova) {
 			//cordova.plugins.Keyboard.close();	
@@ -259,6 +263,9 @@ define(function(require, exports, module) {
 	}
 
 	EntryFormView.prototype.setEntryText = function(text){
+		if (this.entry && this.entry.isContinuous()) {
+			text = this.removeSuffix(text);
+		}
 		this.inputSurface.setContent(_.template(inputSurfaceTemplate, {tag:text}, templateSettings))
 	}
 
@@ -266,9 +273,6 @@ define(function(require, exports, module) {
 		var entry = this.entry;
 		var newText = document.getElementsByName("entry-description")[0].value;
 
-		if (entry && entry.isContinuous()) {
-			newText = this.removeSuffix(entry.toString());
-		}
 
 		if (!u.isOnline()) {
 			u.showAlert("Please wait until online to add an entry");

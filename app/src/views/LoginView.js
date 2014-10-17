@@ -3,6 +3,7 @@ define(function(require, exports, module) {
 	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
+	var Timer = require('famous/utilities/Timer');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
 	var FormContainerSurface = require("famous/surfaces/FormContainerSurface");
@@ -55,7 +56,9 @@ define(function(require, exports, module) {
 		this.loginSurface.on('keydown', function (e) {
 			if (e.keyCode == 13) {
 				$(e.srcElement).blur();
-				this.submit();
+				Timer.setTimeout(function(){
+					this.submit();
+				}.bind(this), 500);
 			}
 		}.bind(this));
 

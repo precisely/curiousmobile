@@ -23,11 +23,11 @@ define(function(require, exports, module) {
 	};
 
 	function _addSurface() {
-		this.renderController = new RenderController();
-		this.renderController.inTransformFrom(function(progress){
-			return Transform.translate(0, 0, window.App.zIndex.readView + 5);	
-		});
-		this.add(this.renderController);
+		//this.renderController = new RenderController();
+		//this.renderController.inTransformFrom(function(progress){
+			//return Transform.translate(0, 0, window.App.zIndex.readView + 5);	
+		//});
+		//this.add(this.renderController);
 		var repeatTypeAsClass = this.entry.repeatTypeAsClass();
 		var entryTextColor = '#b0366b';
 		if (_.contains(repeatTypeAsClass, 'ghost')) {
@@ -86,14 +86,18 @@ define(function(require, exports, module) {
 			}
 		});
 		var showMoreModifier = new StateModifier({
-			transform: Transform.translate(0, 0 , window.App.zIndex.readView + 6)
+			transform: Transform.translate(0, 0 , window.App.zIndex.readView + 1)
 		});
 		this.showMoreSurface.pipe(this._eventOutput);
 		this.showMoreSurface.on('click', function(e) {
 			console.log("showMoreSurface event");
-			if (e instanceof CustomEvent) {
+			if (e instanceof MouseEvent && !window.deleteEventFired) {
 				this._eventOutput.emit('select-entry', this.entry);
 			} 
+
+			if (e instanceof MouseEvent && window.deleteEventFired) {
+				window.deleteEventFired = false;
+			}
 		}.bind(this));
 		this.add(showMoreModifier).add(this.showMoreSurface);
 
@@ -112,6 +116,7 @@ define(function(require, exports, module) {
 		this.deleteSurface.on('click', function(e) {
 			console.log('EventHandler: this.deleteSurface event: click');
 			if (e instanceof CustomEvent) {
+				window.deleteEventFired = true;
 				this.entry.delete(function(){
 					window.App.collectionCache.clear();	
 					this._eventOutput.emit('delete-entry',this.entry);
@@ -120,11 +125,11 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 		deleteModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView + 5)
+			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView)
 		});
 		this.add(deleteModifier).add(this.deleteSurface);
 		var entryModifier = new StateModifier({
-			transform: Transform.translate(0, 0, window.App.zIndex.readView + 5)
+			transform: Transform.translate(0, 0, window.App.zIndex.readView)
 		});
 		this.add(entryModifier).add(this.entrySurface);
 
