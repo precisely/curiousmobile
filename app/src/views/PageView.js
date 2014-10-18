@@ -186,9 +186,6 @@ define(function(require, exports, module) {
 				this._eventInput.trigger('on-show');
 			}.bind(this), 300);
 		}.bind(view));
-		if (pageName === 'launch') {
-			view.showLogin();	
-		}
 		this._eventOutput.emit('page-change-complete');
 	}
 

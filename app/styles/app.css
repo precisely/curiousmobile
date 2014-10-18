@@ -172,27 +172,6 @@ a {
 	height: 100%;
 }
 
-.parallelogram {
-	background: white;
-	transform: rotate(90deg) skew(-10deg);
-	-webkit-transform: rotate(90deg) skew(-10deg);
-	-moz-transform: rotate(90deg) skew(-10deg);
-	-o-transform: rotate(90deg) skew(-10deg);
-	position: relative;
-	top: 140px;
-	height: 320px;
-}
-
-.parallelogram .content {
-	transform: skew(10deg) rotate(270deg);
-	-webkit-transform: skew(10deg) rotate(270deg);
-	-moz-transform: skew(10deg) rotate(270deg);
-	-o-transform: skew(10deg) rotate(270deg);
-	padding: 9px 15px;
-	height: 318px;
-	width: 322px;
-}
-
 .login-form {
 	margin-top: 10px;
 }
@@ -372,5 +351,42 @@ a {
 }
 :-ms-input-placeholder { /* Internet Explorer 10+ */
 	color:    #C04F7F !important;
+}
+
+
+/*HOME*/
+
+.home {
+	color: #FC3F28;
+	text-align: right;
+}
+
+.home .text  {
+	padding: 9.35%;
+	padding-top: 0;
+}
+
+.home ul {
+	list-style: none;
+	font-size: 19px;
+}
+
+.home h1 {
+	font-size: 24px;
+	margin-top: 11.02%;
+}
+
+.home .buttons {
+	margin-top: 49%;
+	margin-right: 3%;
+}
+
+.home .btn {
+	width: 135px;
+	height: 45px;
+	background-color: #ffffff;
+	color: #c04f7f;
+	font-size: 19px;
+	margin-right: 10px;
 }
 

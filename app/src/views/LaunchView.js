@@ -1,16 +1,16 @@
 define(function(require, exports, module) {
 	'use strict';
 	var View = require('famous/core/View');
+	var Surface = require('famous/core/Surface');
 	var Modifier = require('famous/core/Modifier');
 	var RenderController = require('famous/views/RenderController');
 	var Transitionable = require('famous/transitions/Transitionable');
 	var Transform = require('famous/core/Transform');
-	var ImageSurface = require('famous/surfaces/ImageSurface');
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
+	var HomeView = require('views/HomeView');
 	var LoginView = require('views/LoginView');
 	var RegisterView = require('views/RegisterView');
 	var ForgotPasswordView = require('views/ForgotPasswordView');
-
 
 	function LaunchView() {
 		View.apply(this, arguments);
@@ -23,23 +23,14 @@ define(function(require, exports, module) {
 	LaunchView.DEFAULT_OPTIONS = {};
 
 	function _createView() {
-		var logoSurface = new ImageSurface({
-			size: [205, 230],
-			content: 'content/images/logo.gif'
-		});
-
-		var logoModifier = new Modifier({
-			origin: [0.5, 0.1],
-		});
-		var transition = new Transitionable(Transform.translate(0, 0, 2));
 		this.renderController = new RenderController();
-		this.renderController.inTransformFrom(transition);
 		this.add(this.renderController);
+		this.homeView = new HomeView();
 		this.loginView = new LoginView();
-		this.renderController.show(this.loginView);
+		this.showView(this.homeView);
 		this.registerView = new RegisterView();
 		this.forgotPasswordView = new ForgotPasswordView();
-
+		
 		this.loginView.on('forgot-password', function() {
 			this.showView(this.forgotPasswordView);
 		}.bind(this));
@@ -70,6 +61,9 @@ define(function(require, exports, module) {
 			this._eventOutput.emit('registered', e);
 		}.bind(this));
 
+		this.on('on-show', function(e){
+			this.showHome();
+		});
 
 	}
 
@@ -77,8 +71,13 @@ define(function(require, exports, module) {
 		this.showView(this.loginView);	
 	};
 
+	LaunchView.prototype.showHome = function() {
+		this.showView(this.homeView);	
+	};
+
 	LaunchView.prototype.showView = function(view){
 		this.renderController.show(view);
+		this.currentView = view;
 	}
 
 	module.exports = LaunchView;
