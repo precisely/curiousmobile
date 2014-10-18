@@ -339,20 +339,25 @@ a {
 }
 
 ::-webkit-input-placeholder { /* WebKit browsers */
-	color:    #C04F7F !important;
+	color:    #FC3F28 !important;
 }
 :-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-	color:    #C04F7F !important;
+	color:     #FC3F28 !important;
 	opacity:  1;
 }
 ::-moz-placeholder { /* Mozilla Firefox 19+ */
-	color:    #C04F7F !important;
+	color:    #FC3F28 !important;
 	opacity:  1;
 }
 :-ms-input-placeholder { /* Internet Explorer 10+ */
-	color:    #C04F7F !important;
+	color:    #FC3F28 !important;
 }
 
+/* individual: webkit */
+#entry-description::-webkit-input-placeholder { color:#C04F7F !important; }
+
+/* individual: mozilla */
+#entry-description::-moz-placeholder { color:#C04F7F !important;}
 
 /*HOME*/
 
@@ -362,13 +367,13 @@ a {
 }
 
 .home .text  {
-	padding: 9.35%;
 	padding-top: 0;
 }
 
 .home ul {
 	list-style: none;
 	font-size: 19px;
+	font-weight: lighter;
 }
 
 .home h1 {
@@ -377,11 +382,11 @@ a {
 }
 
 .home .buttons {
-	margin-top: 49%;
+	margin-top: 55%;
 	margin-right: 3%;
 }
 
-.home .btn {
+.home-buttons .btn {
 	width: 135px;
 	height: 45px;
 	background-color: #ffffff;
@@ -390,3 +395,35 @@ a {
 	margin-right: 10px;
 }
 
+.not-loggedin .form-control {
+	height: 50px;
+	border: 1px solid #FC3F28;
+	color: #FC3F28; 
+}
+
+.not-loggedin {
+	margin: 0 20px;
+	font-size: 18px;
+}
+
+.not-loggedin .btn {
+	background: #FC3F28;
+	color: white;
+	width: 100%;
+	height: 50px;
+	font-size: 18px;
+}
+
+.not-loggedin .form-group {
+	margin-bottom: 5px;
+}
+
+.help-password {
+	font-style: italic;
+	font-weight: lighter;
+	color: #5d5d5d;
+	width: 280px;
+	margin: 20px auto 40px auto;
+	font-size: 17px;
+	text-align: center;
+}

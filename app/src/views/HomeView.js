@@ -32,11 +32,32 @@ define(function(require, exports, module) {
 		this.add(logoModifier).add(logoSurface);
 		this.homeSurface = new Surface({
 			classes: ['home'],
-			size: [undefined, window.innerHeight - 160],
+			size: [265, window.innerHeight - 160],
 			content: _.template(HomeTemplate, {}, templateSettings),
 			properties: {
 			}
 		});
+
+		this.buttonSurface = new Surface({
+			size: [undefined, 200],
+			content: '<div class="home-buttons">' +
+				'<button type="button" class="btn login">Log In</button>' +
+				'<button type="button" class="btn create-account">Get Started</button>' + 
+				'</div>',
+		});
+
+		this.buttonSurface.on('click', function(e) {
+			console.log('EventHandler: this.homeSurface.on event: click');
+			if (!e instanceof CustomEvent) {
+				return;	
+			}
+
+			if (e.srcElement.classList.contains('login')) {
+				this._eventOutput.emit('login');	
+			} else if (e.srcElement.classList.contains('create-account')) {
+				this._eventOutput.emit('create-account');	
+			}
+		}.bind(this));
 
 		this.bottomTriangle = new Surface({
 			size: [0,0],
@@ -53,9 +74,18 @@ define(function(require, exports, module) {
 		this.add(this.triangleModifier).add(this.bottomTriangle);
 
 		this.homeSurfaceModifier = new Modifier({
-			transform: Transform.translate(0, 150, 4)
+			origin:[0.5, 0.5],
+			align: [0.5, 0.6],
+			transform: Transform.translate(0, 0, 2)
 		});
 		this.add(this.homeSurfaceModifier).add(this.homeSurface);
+
+		this.buttonsModifier = new Modifier({
+			origin:[0.5, 0.5],
+			align: [0.5, 1],
+			transform: Transform.translate(20, 5, 4)
+		});
+		this.add(this.buttonsModifier).add(this.buttonSurface);
 	};
 
 	module.exports = HomeView;

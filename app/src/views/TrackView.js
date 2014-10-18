@@ -31,7 +31,8 @@ define(function(require, exports, module) {
 	TrackView.prototype.constructor = TrackView;
 
 	TrackView.DEFAULT_OPTIONS = {
-		header: true	
+		header: true,
+		footer: true,
 	};
 
 	function _getDefaultDates(date) {

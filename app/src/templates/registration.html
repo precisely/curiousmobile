@@ -1,36 +1,23 @@
-<br>
-<img src="content/images/logo.gif" class="logo-img-registration" />
-<br>
-
-<div class="bottom-position">
-	<div class="footer-wrapper">
-		<form role="form" class="form-footer-registration" name="registerForm" method="post" onSubmit="return false;">
-			<h3>Create a new account</h3>
-			<div class="form-group">
-				<input type="email" class="form-control" name="email" placeholder="EMAIL">
-			</div>
-			<div class="form-group">
-				<input type="text" class="form-control" name="username" placeholder="USER NAME">
-			</div>
-			<div class="form-group">
-				<p>alphanumberic, plus at least one symbol (e.g. &,#,%)</p>
-			</div>
-			<div class="form-group">
-				<input type="password" class="form-control" name="password" placeholder="PASSWORD" onKeyUp="checkProgress()">
-			</div>
-			<div class="form-group">
-				<input type="password" class="form-control" placeholder="VERIFY PASSWORD" name="re-password">
-			</div>
-			<div class="row"> 
-				<div class="progress-first float-left"> too weak </div>
-				<div class="progress-second"> kind of OK </div>
-				<div class="progress-third pull-right"> good job </div>  
-			</div>
-			<div class="form-group">
-				<progress value="0" max="10" id="progressBar"></progress>
-			</div>
-			<button type="submit" class="btn btn-default submit">SUBMIT</button>
-		</form>
-		<br><br>
-	</div>
+<div class="not-loggedin create-account">
+	<form role="form" name="registerForm" method="post" onSubmit="return false;">
+		<div class="form-group">
+			<input type="email" class="form-control" name="email" placeholder="EMAIL">
+		</div>
+		<div class="form-group">
+			<input type="text" class="form-control" name="username" placeholder="USER NAME">
+		</div>
+		<!--<div class="form-group">-->
+			<!--<p>alphanumberic, plus at least one symbol (e.g. &,#,%)</p>-->
+		<!--</div>-->
+		<div class="form-group">
+			<input type="password" class="form-control" name="password" placeholder="PASSWORD" onKeyUp="checkProgress()">
+		</div>
+		<div class="form-group">
+			<input type="password" class="form-control" placeholder="VERIFY PASSWORD" name="re-password">
+		</div>
+		<div class="form-group">
+			<button type="submit" class="btn submit">Create Account</button>
+		</div>
+	</form>
+	<br><br>
 </div>

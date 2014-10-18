@@ -1,6 +1,7 @@
 define(function(require, exports, module) {
 	'use strict';
 	var View = require('famous/core/View');
+	var BaseView = require('views/BaseView');
 	var Surface = require("famous/core/Surface");
 	var InputSurface = require('famous/surfaces/InputSurface');
 	var FormContainerSurface = require('famous/surfaces/FormContainerSurface');
@@ -11,14 +12,18 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 
 	function ForgotPasswordView() {
-		View.apply(this, arguments);
+		BaseView.apply(this, arguments);
 		_createView.call(this);
 	}
 
-	ForgotPasswordView.prototype = Object.create(View.prototype);
+	ForgotPasswordView.prototype = Object.create(BaseView.prototype);
 	ForgotPasswordView.prototype.constructor = ForgotPasswordView;
 
-	ForgotPasswordView.DEFAULT_OPTIONS = {};
+	ForgotPasswordView.DEFAULT_OPTIONS = {
+		header: true,	
+		footer: false,
+		backButton: true,
+	};
 
 	function _createView() {
 		var template = ForgotPasswordTemplate;
@@ -32,38 +37,33 @@ define(function(require, exports, module) {
 		forgotSurface.on('click', function(e) {
 			var classList;
 			if (e instanceof CustomEvent) {
-				if (e.srcElement.localName == 'button') {
-					classList = e.srcElement.classList;
-				} else {
-					classList = e.srcElement.parentElement.classList;
-				}
-				if (_.contains(classList, 'cancel')) {
-					console.log('password reset cancelled');
-					this._eventOutput.emit('cancel-forgot-password');;
-				} else if (_.contains(classList, 'submit')) {
+				classList = e.srcElement.classList;
+				if (_.contains(classList, 'btn')) {
 					this.submit();
 				}
 			}
 		}.bind(this));
-		this.add(forgotSurface);
+
+		this.setHeaderLabel('FORGOT PASSWORD');
+		this.setBody(forgotSurface);
 
 	}
 
 	ForgotPasswordView.prototype.submit = function() {
-		var name = document.forms["forgotPasswordForm"]["username"].value;
+		var email = document.forms["forgotPasswordForm"]["email"].value;
 		u.queueJSON('password recovery',
-				u.makeGetUrl('doforgotData'),
-				u.makeGetArgs({
-					username: name
-				}),
-				function(data) {
-			if (data.success) {
-				u.showAlert('Look for instructions on recovering your account information in your email.');
-				this._eventOutput.emit('password-reset');
-			} else {
-				u.showAlert(data.message + ' Please try again or hit Cancel to return to the login screen.');
-			}
-		}.bind(this));
+			u.makeGetUrl('doforgotData'),
+			u.makeGetArgs({
+				email: email
+			}),
+			function(data) {
+				if (data.success) {
+					u.showAlert('Look for instructions on recovering your account information in your email.');
+					this._eventOutput.emit('password-reset');
+				} else {
+					u.showAlert(data.message + ' Please try again or hit Cancel to return to the login screen.');
+				}
+			}.bind(this));
 	};
 
 	ForgotPasswordView.prototype.reset = function(){

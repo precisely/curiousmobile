@@ -67,9 +67,9 @@ define(function(require, exports, module) {
 
 		this.entrySurface.on('click', function(e) {
 			console.log("entrySurface event");
-			//if (e instanceof CustomEvent) {
-				//this._eventOutput.emit('select-entry', this.entry);
-			//}
+			if (e instanceof CustomEvent) {
+				this._eventOutput.emit('select-entry', this.entry);
+			}
 		}.bind(this));
 
 		var showMoreColor = 'white';
@@ -78,26 +78,21 @@ define(function(require, exports, module) {
 		}
 		this.showMoreSurface = new Surface({
 			content: '<i class="fa fa-chevron-circle-down"></i>',
-			size: [320, 90],
+			size: [24, 24],
 			properties: {
 				color: showMoreColor,
-				fontSize: '26px',
-				padding: '24px 0px 0 279px'
+				fontSize: '26px'
 			}
 		});
 		var showMoreModifier = new StateModifier({
-			transform: Transform.translate(0, 0 , window.App.zIndex.readView + 1)
+			transform: Transform.translate(window.innerWidth - 40, this.options.lineHeight, window.App.zIndex.readView + 6)
 		});
 		this.showMoreSurface.pipe(this._eventOutput);
 		this.showMoreSurface.on('click', function(e) {
 			console.log("showMoreSurface event");
-			if (e instanceof MouseEvent && !window.deleteEventFired) {
+			if (e instanceof CustomEvent) {
 				this._eventOutput.emit('select-entry', this.entry);
 			} 
-
-			if (e instanceof MouseEvent && window.deleteEventFired) {
-				window.deleteEventFired = false;
-			}
 		}.bind(this));
 		this.add(showMoreModifier).add(this.showMoreSurface);
 

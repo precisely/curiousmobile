@@ -1,6 +1,7 @@
 define(function(require, exports, module) {
 	'use strict';
 	var View = require('famous/core/View');
+	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
 	var Timer = require('famous/utilities/Timer');
@@ -14,14 +15,18 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 
 	function LoginView() {
-		View.apply(this, arguments);
+		BaseView.apply(this, arguments);
 		_createView.call(this);
 	}
 
-	LoginView.prototype = Object.create(View.prototype);
+	LoginView.prototype = Object.create(BaseView.prototype);
 	LoginView.prototype.constructor = LoginView;
 
-	LoginView.DEFAULT_OPTIONS = {};
+	LoginView.DEFAULT_OPTIONS = {
+		header: true,	
+		footer: false,
+		backButton: true,
+	};
 
 	function _createView(argument) {
 		var template = LoginTemplate;
@@ -35,12 +40,9 @@ define(function(require, exports, module) {
 		this.loginSurface.on('click', function(e) {
 			var classList;
 			if (e instanceof CustomEvent) {
-				if (e.srcElement.localName == 'a' || e.srcElement.localName == 'button') {
-					classList = e.srcElement.classList;
-				} else {
-					classList = e.srcElement.parentElement.classList;
-				}
-				if (_.contains(classList, 'submit')) {
+				classList = e.srcElement.classList;
+
+				if (_.contains(classList, 'btn')) {
 					console.log("Submit login");
 					this.submit();
 				} else if (_.contains(classList, 'create-account')) {
@@ -56,13 +58,12 @@ define(function(require, exports, module) {
 		this.loginSurface.on('keydown', function (e) {
 			if (e.keyCode == 13) {
 				$(e.srcElement).blur();
-				Timer.setTimeout(function(){
-					this.submit();
-				}.bind(this), 500);
+				this.submit();
 			}
 		}.bind(this));
 
-		this.add(this.loginSurface);
+		this.setBody(this.loginSurface);
+		this.setHeaderLabel('LOGIN');
 	}
 
 	LoginView.prototype.submit = function() {

@@ -35,13 +35,22 @@ define(function(require, exports, module) {
 			this.showView(this.forgotPasswordView);
 		}.bind(this));
 
-		this.loginView.on('create-account', function() {
+		this.homeView.on('create-account', function() {
 			this.showView(this.registerView);
+		}.bind(this));
+
+		this.homeView.on('login', function() {
+			this.showView(this.loginView);
 		}.bind(this));
 
 		this.loginView.on('login-success', function() {
 			console.log('LaunchView: login success');
 			this._eventOutput.emit('login-success');
+		}.bind(this));
+
+		this.loginView.on('go-back', function() {
+			console.log('LaunchView: login success');
+			this.showHome();
 		}.bind(this));
 
 		this.forgotPasswordView.on('cancel-forgot-password', function(e) {
@@ -52,8 +61,18 @@ define(function(require, exports, module) {
 			this.showView(this.loginView);
 		}.bind(this));
 
+		this.forgotPasswordView.on('go-back', function() {
+			console.log('LaunchView: ForgotPasswordView Go Back');
+			this.showHome();
+		}.bind(this));
+
 		this.registerView.on('cancel-registration', function(e) {
-			this.showView(this.loginView);
+			this.showHome();
+		}.bind(this));
+
+		this.registerView.on('go-back', function() {
+			console.log('LaunchView: login success');
+			this.showHome();
 		}.bind(this));
 
 		this.registerView.on('registration-success', function(e) {
@@ -76,7 +95,7 @@ define(function(require, exports, module) {
 	};
 
 	LaunchView.prototype.showView = function(view){
-		this.renderController.show(view);
+		this.renderController.show(view, {duration: 0});
 		this.currentView = view;
 	}
 

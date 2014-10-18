@@ -29,7 +29,7 @@ define(function(require, exports, module) {
 		headerSize: 44,
 		header: true,
 		backButton: false,
-
+		footer: false,
 	};
 
 	function _createLayout() {
@@ -105,6 +105,9 @@ define(function(require, exports, module) {
 	}
 
 	function _createFooter() {
+		if (!this.options.footer) {
+			return;
+		}
 		var footerModifier = new StateModifier({
 			transform: Transform.translate(0, 0, window.App.zIndex.menu)	
 		});
@@ -143,7 +146,7 @@ define(function(require, exports, module) {
 			content: title,
 			properties: {
 				fontSize: '22px',
-				fontWeight: 'bold',
+				fontWeight: 'lighter',
 				color: '#e83838',	
 				textAlign: 'center',
 				padding: '18px 0'
@@ -163,7 +166,7 @@ define(function(require, exports, module) {
 	BaseView.prototype.setBody = function(body) {
 		var bodyModifier = new StateModifier({
 			origin: [0,0],
-			transform: Transform.translate(0, 70, 1)
+			transform: Transform.translate(0, 74, 2)
 		});
 		this.layout.content.add(bodyModifier).add(body);
 	}

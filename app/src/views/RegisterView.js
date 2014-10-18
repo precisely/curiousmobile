@@ -1,6 +1,7 @@
 define(function(require, exports, module) {
 	'use strict';
 	var View = require('famous/core/View');
+	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
@@ -12,18 +13,23 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 
 	function RegisterView() {
-		View.apply(this, arguments);
+		BaseView.apply(this, arguments);
 		this.createView();
 	}
 
-	RegisterView.prototype = Object.create(View.prototype);
+	RegisterView.prototype = Object.create(BaseView.prototype);
 	RegisterView.prototype.constructor = RegisterView;
 
-	RegisterView.DEFAULT_OPTIONS = {};
+	RegisterView.DEFAULT_OPTIONS = {
+		header: true,	
+		footer: false,
+		backButton: true,
+	};
 
 	RegisterView.prototype.createView = function() {
 		var template = RegisterTemplate;
 		var registerSurface = new Surface({
+			size: [undefined, 270],
 			content: _.template(template, this.options, templateSettings),
 			properties: {
 				backgroundColor: 'white'
@@ -33,18 +39,15 @@ define(function(require, exports, module) {
 		registerSurface.on('click', function(e) {
 			var classList;
 			if (e instanceof CustomEvent) {
-				if (e.srcElement.localName == 'button') {
-					classList = e.srcElement.classList;
-				} else {
-					classList = e.srcElement.parentElement.classList;
-				}
+				classList = e.srcElement.classList;
 				if (_.contains(classList, 'submit')) {
 					console.log('RegisterView: submit form');
 					this.submit();
 				}
 			}
 		}.bind(this));
-		this.add(registerSurface);
+		this.setHeaderLabel('GET STARTED');
+		this.setBody(registerSurface);
 	};
 
 	RegisterView.prototype.submit = function() {
@@ -66,12 +69,12 @@ define(function(require, exports, module) {
 			u.showAlert("Passwords don't match!");
 		} else {
 			user.register(
-					email,
-					username,
-					password,
-					function (user) {
-						this._eventOutput.emit('registration-success');
-					}.bind(this)
+				email,
+				username,
+				password,
+				function (user) {
+					this._eventOutput.emit('registration-success');
+				}.bind(this)
 			)
 		}
 	};

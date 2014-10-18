@@ -1,16 +1,16 @@
-<div class="login-form">
+<div class="login-form not-loggedin">
 	<form role="form" class="form-footer-login" name="loginForm" method="post" onSubmit="return false;">
 		<div class="form-group">
 			<input type="text" class="form-control" name="username" placeholder="USER NAME">
 		</div>
-		<div class="input-group">
-			<input type="password" class="form-control float-left" name="password" placeholder="PASSWORD">
-			<span class="input-group-btn">
-				<button type="submit" class="input-group btn submit">
-					<i class="fa fa-arrow-circle-right fa-1x"></i>
-				</button>
-			</span>
-		</div><br>
+		<div class="form-group">
+			<input type="password" class="form-control" name="password" placeholder="PASSWORD">
+		</div>
+		<div class="form-group">
+			<button class="form-control btn" type="submit">
+				LOGIN
+			</button>
+		</div>
 		<a href="#" class="other-links create-account">CREATE ACCOUNT</a><br> 
 		<a href="#" class="other-links forgot-password">FORGOT INFO ?</a>
 	</form>
