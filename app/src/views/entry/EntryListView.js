@@ -24,7 +24,7 @@ define(function(require, exports, module) {
 		this.entryReadViews = [];
 		this.entries = collection;
 		this.renderController = new RenderController();
-		_createList.call(this);
+		_createList.call(this, this.entries);
 	}
 
 	EntryListView.prototype = Object.create(View.prototype);
@@ -35,7 +35,7 @@ define(function(require, exports, module) {
 		selectionPadding: 24,
 	};
 
-	function _createList(argument) {
+	function _createList(entries) {
 
 		var backgroundSurface = new Surface({
 			size: [320, 543],
@@ -46,7 +46,7 @@ define(function(require, exports, module) {
 		this.add(backgroundSurface);
 		backgroundSurface.pipe(this._eventOutput);
 		this.add(this.renderController);
-		this.refreshEntries();
+		this.refreshEntries(entries);
 
 	}
 
@@ -87,7 +87,12 @@ define(function(require, exports, module) {
 			entries = EntryCollection.getFromCache(this.entries.key);
 		}
 
-		this.entries.set(entries);
+		if (entries instanceof EntryCollection) {
+			this.entries = entries;	
+		} else {
+			this.entries.set(entries);
+		}
+
 		if (this.scrollView) {
 			this.renderController.hide({duration:0});
 		}

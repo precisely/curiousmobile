@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 	var FormContainerSurface = require('famous/surfaces/FormContainerSurface');
 	var InputSurface = require('famous/surfaces/InputSurface');
 	var SequentialLayout = require('famous/views/SequentialLayout');
+	var FastClick = require('famous/inputs/FastClick');
 	var User = require('models/User');
 	var RegisterTemplate = require('text!templates/registration.html');
 	var u = require('util/Utils');

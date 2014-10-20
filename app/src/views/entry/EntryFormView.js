@@ -273,6 +273,11 @@ define(function(require, exports, module) {
 		var entry = this.entry;
 		var newText = document.getElementsByName("entry-description")[0].value;
 
+		if (e instanceof Entry) {
+			this.setEntry(e);
+			entry = this.entry;
+			newText = this.removeSuffix(entry.toString());
+		}
 
 		if (!u.isOnline()) {
 			u.showAlert("Please wait until online to add an entry");

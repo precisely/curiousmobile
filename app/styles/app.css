@@ -121,73 +121,13 @@ a {
 	/*border-top: 1px solid #c0c0c0;*/
 }
 
-.form-footer-registration {
-	padding: 15px;
-}
-
-.header-login {
-	position: absolute;
-	height: 100%;
-	left: 0px;
-	border-top: 121px solid #c04f7f;
-	border-left: 1297px solid transparent;
-	z-index: -1;
-}
-
-.footer-wrapper-login {
-	position: relative;
-	width: 100%;
-	overflow: hidden;
-}
-
-.footer-login {
-	position: absolute;
-	height: 315px;
-	border-top: 100px solid transparent;
-	border-left: 1500px solid #c04f7f;
-	border-right: 0px solid transparent;
-	z-index: -1;
-}
-
-.bottom-position-login {
-	position: absolute;
-	bottom: 0px;
-	width: 100%;
-}
-
-.form-footer-login {
-}
-
 .other-links {
 	color: inherit;
 	text-decoration: none;
 }
 
-.form-footer-forgot {
-	padding: 15px;
-}
-
-.wrapper {
-	background: #c04f7f;
-	height: 100%;
-}
-
 .login-form {
 	margin-top: 10px;
-}
-
-.logo-img {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-	width: 200px;
-}
-
-.logo-img-registration {
-	display: block;
-	margin-left: auto;
-	margin-right: auto;
-	width: 100px;
 }
 
 .progress-first {
@@ -299,6 +239,10 @@ a {
 	border-color: inherit;
 	margin-bottom: 10px;
 	margin-top: 10px;
+}
+
+button.close {
+	padding: 5px;
 }
 
 @media screen and (max-width: 768px) {

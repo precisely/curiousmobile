@@ -95,6 +95,7 @@ define(function(require, exports, module) {
 	};
 
 	LaunchView.prototype.showView = function(view){
+		this.renderController.hide({duration:0});
 		this.renderController.show(view, {duration: 0});
 		this.currentView = view;
 	}

@@ -120,9 +120,9 @@ define(function(require, exports, module) {
 	TrackView.prototype.changeDate = function(date) {
 		date = u.getMidnightDate(date);
 
-		EntryCollection.fetchEntries(_getDefaultDates(date), function(collections) {
+		EntryCollection.fetchEntries(_getDefaultDates(date), function(entries) {
 			//5 days before and 5 days after today
-			this.currentListView = new EntryListView(collections[5]);
+			this.currentListView = new EntryListView(entries);
 			//Handle entry selection handler
 			this.currentListView.on('select-entry', function(entry) {
 				console.log('TrackView: Selecting an entry');

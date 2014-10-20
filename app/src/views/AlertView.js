@@ -54,11 +54,7 @@ define(function(require, exports, module) {
 			var u = require('util/Utils');
 			var classList;
 			if (e instanceof CustomEvent) {
-				if (e.srcElement.localName == 'button') {
-					classList = e.srcElement.classList;
-				} else {
-					classList = e.srcElement.parentElement.classList;
-				}
+				classList = e.srcElement.classList;
 				if (_.contains(classList, 'close')) {
 					u.closeAlerts();
 				} else if (_.contains(classList, 'a') && this.options.onA) {

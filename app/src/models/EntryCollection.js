@@ -14,7 +14,7 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 		EntryCollection.fetchEntries = function(dates, callback) {
 			var collectionCache = window.App.collectionCache;
 			var argDates = [];
-
+			var dataSentToCallback = false;
 			if (typeof dates == 'undefined') {
 				console.log('fetchEntries: Missing dates');
 			}
@@ -22,6 +22,10 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 			for (var i = 0, len = dates.length; i < len; i++) {
 				var key = Entry.getCacheKey(dates[i]);
 				var cachedCollection = collectionCache.getItem(key);
+				if (cachedCollection && i == 5) {
+					callback(new EntryCollection(cachedCollection));
+					dataSentToCallback = true;
+				}
 				if (!cachedCollection) {
 					argDates.push(dates[i].toUTCString());
 				}
@@ -52,7 +56,9 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 							entryCollection.key = key;
 							collections.push(entryCollection);
 						}
-						callback(collections);
+						if (!dataSentToCallback) {
+							callback(collections[5]);
+						}
 					}
 				});
 		};
