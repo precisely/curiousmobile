@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 	var Transform = require('famous/core/Transform');
 	var RenderController = require('famous/views/RenderController');
 	var Scrollview = require('famous/views/Scrollview');
+	var FastClick = require('famous/inputs/FastClick');
 	var u = require('util/Utils');
 	var AutoComplete = require('models/AutoComplete');
 	var AutoCompleteObj;
@@ -93,7 +94,8 @@ define(function(require, exports, module) {
 			size: [window.innerWidth - 30, 40]
 		});
 
-		myView.autoCompleteSurface.on('click', function() {
+		myView.autoCompleteSurface.on('click', function(e) {
+			console.log('Autocomplete click: ' + e);
 			this.renderController.hide(this.scrollView);
 			onSelectCallback(autocomplete.label);
 		}.bind(this));

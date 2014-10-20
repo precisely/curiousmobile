@@ -5,8 +5,9 @@ define(function(require, exports, module) {
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var RenderController = require("famous/views/RenderController");
-	var u = require('util/Utils');
 	var FastClick = require('famous/inputs/FastClick');
+	var u = require('util/Utils');
+	var Entry = require('models/Entry');
 
 	function EntryReadView(entry) {
 		View.apply(this, arguments);
@@ -85,7 +86,7 @@ define(function(require, exports, module) {
 			}
 		});
 		var showMoreModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth - 40, this.options.lineHeight, window.App.zIndex.readView + 6)
+			transform: Transform.translate(window.innerWidth - 40, this.options.lineHeight, window.App.zIndex.readView + 1)
 		});
 		this.showMoreSurface.pipe(this._eventOutput);
 		this.showMoreSurface.on('click', function(e) {
@@ -111,16 +112,21 @@ define(function(require, exports, module) {
 		this.deleteSurface.on('click', function(e) {
 			console.log('EventHandler: this.deleteSurface event: click');
 			if (e instanceof CustomEvent) {
-				window.deleteEventFired = true;
 				this.entry.delete(function(){
-					window.App.collectionCache.clear();	
+					var collectionCache = window.App.collectionCache;
+					var entryDate = this.entry.get('date');
+					if (entryDate instanceof String) {
+						entryDate = new Date(entryDate);
+					}
+					var keyToBeRefreshed = Entry.getCacheKey(entryDate);
+					collectionCache.setItem(keyToBeRefreshed, null);
 					this._eventOutput.emit('delete-entry',this.entry);
 				}.bind(this));
 
 			}
 		}.bind(this));
 		deleteModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView)
+			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView + 1)
 		});
 		this.add(deleteModifier).add(this.deleteSurface);
 		var entryModifier = new StateModifier({

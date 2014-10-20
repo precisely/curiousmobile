@@ -12,6 +12,7 @@ define(function(require, exports, module) {
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var FooterTemplate = require('text!templates/footer.html');
 	var SequentialLayout = require('famous/views/SequentialLayout');
+	var FastClick = require('famous/inputs/FastClick');
 
 	function BaseView(options) {
 		this._header = options? options.header : true;	
