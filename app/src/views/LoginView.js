@@ -61,6 +61,11 @@ define(function(require, exports, module) {
 				this.submit();
 			}
 		}.bind(this));
+		
+		this.on('on-show', function() {
+			var inputElement = document.getElementById("username");
+			inputElement.focus();
+		}.bind(this));
 
 		this.setBody(this.loginSurface);
 		this.setHeaderLabel('LOGIN');

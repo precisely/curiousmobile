@@ -3,6 +3,7 @@ define(function(require, exports, module) {
 	var Surface       = require('famous/core/Surface');
 	var Transform     = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var FastClick = require('famous/inputs/FastClick');
 
 	function SelectDateView(date) {
 		View.apply(this, arguments);

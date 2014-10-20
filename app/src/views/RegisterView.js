@@ -47,6 +47,11 @@ define(function(require, exports, module) {
 				}
 			}
 		}.bind(this));
+
+		this.on('on-show', function() {
+			var inputElement = document.getElementById("email");
+			inputElement.focus();
+		}.bind(this));
 		this.setHeaderLabel('GET STARTED');
 		this.setBody(registerSurface);
 	};

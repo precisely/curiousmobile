@@ -98,6 +98,7 @@ define(function(require, exports, module) {
 		this.renderController.hide({duration:0});
 		this.renderController.show(view, {duration: 0});
 		this.currentView = view;
+		view._eventOutput.emit('on-show');
 	}
 
 	module.exports = LaunchView;
