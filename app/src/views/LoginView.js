@@ -10,6 +10,7 @@ define(function(require, exports, module) {
 	var FormContainerSurface = require("famous/surfaces/FormContainerSurface");
 	var InputSurface = require("famous/surfaces/InputSurface");
 	var SequentialLayout = require("famous/views/SequentialLayout");
+	var FastClick = require('famous/inputs/FastClick');
 	var LoginTemplate = require('text!templates/login.html');
 	var User = require('models/User');
 	var u = require('util/Utils');

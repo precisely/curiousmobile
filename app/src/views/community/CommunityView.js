@@ -19,6 +19,7 @@ define(function(require, exports, module) {
 
 	CommunityView.DEFAULT_OPTIONS = {
 		header: true,	
+		footer: true,
 	};
 	CommunityView.prototype.init = function() {
 		this.renderController = new RenderController();

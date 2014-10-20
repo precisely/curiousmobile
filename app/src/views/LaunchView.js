@@ -6,6 +6,7 @@ define(function(require, exports, module) {
 	var RenderController = require('famous/views/RenderController');
 	var Transitionable = require('famous/transitions/Transitionable');
 	var Transform = require('famous/core/Transform');
+	var Timer = require('famous/utilities/Timer');
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var HomeView = require('views/HomeView');
 	var LoginView = require('views/LoginView');
@@ -30,7 +31,7 @@ define(function(require, exports, module) {
 		this.showView(this.homeView);
 		this.registerView = new RegisterView();
 		this.forgotPasswordView = new ForgotPasswordView();
-		
+
 		this.loginView.on('forgot-password', function() {
 			this.showView(this.forgotPasswordView);
 		}.bind(this));
@@ -98,7 +99,9 @@ define(function(require, exports, module) {
 		this.renderController.hide({duration:0});
 		this.renderController.show(view, {duration: 0});
 		this.currentView = view;
-		view._eventOutput.emit('on-show');
+		Timer.setTimeout(function(){
+			this._eventOutput.emit('on-show');
+		}.bind(view), 300);
 	}
 
 	module.exports = LaunchView;

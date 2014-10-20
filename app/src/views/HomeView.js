@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var HomeTemplate = require('text!templates/home.html');
 	var ImageSurface = require('famous/surfaces/ImageSurface');
+	var FastClick = require('famous/inputs/FastClick');
 
 	function HomeView() {
 		View.apply(this, arguments);

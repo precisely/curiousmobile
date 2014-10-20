@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var FastClick = require('famous/inputs/FastClick');
 	var ForgotPasswordTemplate = require('text!templates/forgot-password.html');
 	var u = require('util/Utils');
 
