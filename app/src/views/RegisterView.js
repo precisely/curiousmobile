@@ -57,7 +57,6 @@ define(function(require, exports, module) {
 		var email = document.forms["registerForm"]["email"].value;
 		var username = document.forms["registerForm"]["username"].value;
 		var password = document.forms["registerForm"]["password"].value;
-		var rePassword = document.forms["registerForm"]["re-password"].value;
 		if (!email){
 			u.showAlert("Email is a required field!");
 		} else if (email.search(emailRegEx) == -1){
@@ -66,8 +65,6 @@ define(function(require, exports, module) {
 			u.showAlert("Username is a required field!");
 		} else if (!password){
 			u.showAlert("Password is a required field!");
-		} else if (password !== rePassword){
-			u.showAlert("Passwords don't match!");
 		} else {
 			user.register(
 				email,
