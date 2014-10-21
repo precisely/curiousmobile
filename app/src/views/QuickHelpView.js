@@ -15,7 +15,10 @@ define(function(require, exports, module) {
 
 	QuickHelpView.prototype = Object.create(BaseView.prototype);
 	QuickHelpView.prototype.constructor = QuickHelpView;
-	QuickHelpView.DEFAULT_OPTIONS = {};
+	QuickHelpView.DEFAULT_OPTIONS = {
+		header: true,
+		footer: true,
+	};
 
 	var surfaceList = [];
 

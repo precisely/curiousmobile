@@ -54,9 +54,8 @@
 			function onDeviceReady() {
 				// Now safe to use the Cordova API
 				StatusBar.hide();
-				console.log('Keyboard about to be trigged ' + Keyboard);
-				Keyboard.shrinkView(true);
-				Keyboard.hideFormAccessoryBar(true);
+
+				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 			}
 
 			function checkProgress() {

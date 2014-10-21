@@ -59,10 +59,7 @@ define(function(require, exports, module) {
 			}
 		});
 
-		var backgroundModifier = new StateModifier({
-			transform: Transform.translate(0,0,1)
-		});
-		this.layout.header.add(backgroundModifier).add(backgroundSurface);
+		this.layout.header.add(backgroundSurface);
 		if (this.options.backButton) {
 			var leftSurface = new Surface({
 				content: '<img src="content/images/left.png" />',	
@@ -76,7 +73,7 @@ define(function(require, exports, module) {
 				this._eventOutput.emit('go-back');
 			}.bind(this));
 			var leftModifier = new StateModifier({
-				transform: Transform.translate(0, 0, window.App.zIndex.header)	
+				transform: Transform.translate(0, 0, window.App.zIndex.header + 1)	
 			});
 			this.layout.header.add(leftModifier).add(leftSurface);
 		} else {
@@ -110,7 +107,7 @@ define(function(require, exports, module) {
 			return;
 		}
 		var footerModifier = new StateModifier({
-			transform: Transform.translate(0, 0, window.App.zIndex.menu)	
+			transform: Transform.translate(0, 0, window.App.zIndex.header)	
 		});
 
 		var footerSurface = new Surface({
@@ -128,7 +125,9 @@ define(function(require, exports, module) {
 				console.log('footerSurface event');
 				var classList = e.srcElement.classList;				
 				e.data = classList[0];
-				this._eventOutput.emit('change-page', e);
+				if (e.data == 'track' || e.data == 'community') {
+					this._eventOutput.emit('change-page', e);
+				}
 			}
 		}.bind(this));
 

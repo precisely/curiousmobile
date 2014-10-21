@@ -6,6 +6,7 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var RenderController = require("famous/views/RenderController");
 	var FastClick = require('famous/inputs/FastClick');
+	var EventHandler = require('famous/core/EventHandler');
 	var u = require('util/Utils');
 	var Entry = require('models/Entry');
 
@@ -66,6 +67,7 @@ define(function(require, exports, module) {
 			}
 		});
 
+		
 		this.entrySurface.on('click', function(e) {
 			console.log("entrySurface event");
 			if (e instanceof CustomEvent) {
@@ -126,14 +128,13 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 		deleteModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView + 1)
+			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView + 2)
 		});
 		this.add(deleteModifier).add(this.deleteSurface);
 		var entryModifier = new StateModifier({
 			transform: Transform.translate(0, 0, window.App.zIndex.readView)
 		});
 		this.add(entryModifier).add(this.entrySurface);
-
 	}
 
 	EntryReadView.prototype.setEntry = function(entry) {
