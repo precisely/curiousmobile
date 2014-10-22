@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 	var Transform = require('famous/core/Transform');
 	var Transitionable = require('famous/transitions/Transitionable');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var FastClick = require('famous/inputs/FastClick');
 	var RenderController = require('famous/views/RenderController');
 	var Scrollview = require('famous/views/Scrollview');
 	var Discussion = require('models/Discussion');
@@ -60,37 +61,18 @@ define(function(require, exports, module) {
 				direction: Utility.Direction.Y,
 			});
 
-			//this.searchAndPostSurface = new Surface({
-				//size: [undefined, 40],
-				//content: _.template(discussionHeaderTemplate, templateSettings),
-			//});
-			//surfaceList.push(this.searchAndPostSurface);
-
-			//this.searchAndPostSurface.on('click', function(e) {
-				//var classList;
-				//if (e) {
-					//classList = e.srcElement.parentElement.classList;
-					//if (_.contains(classList, 'submit')) {
-						//console.log("Submit for search");
-						//this.submit();
-					//} else if (_.contains(classList, 'create-post')) {
-						//console.log("Show create-post page");
-						//this._eventOutput.emit('create-post');
-					//}
-				//}
-			//}.bind(this));
-
-			//this.searchAndPostSurface.on('keydown', function (e) {
-				//if (e.keyCode == 13) {
-					//this.submit();
-				//}
-			//}.bind(this));
 
 			discussions.dataList.forEach(function(discussion) {
 				var prettyDate = u.prettyDate(new Date(discussion.updated));
 				discussion.prettyDate =  prettyDate;
 
 				var iconImage='<i class="fa fa-comment close pull-right"></i>';
+				discussion.deleteIcon = '';
+				if (discussion.isAdmin) {
+					discussion.deleteIcon = '<div class="close-discussion">' +
+						'<i class="fa fa-times-circle pull-right"></i>' +
+						'</div>';
+				}
 
 				if (discussion.isPlot) {
 					iconImage= '<i class="fa fa-area-chart close pull-right"></i>';
@@ -114,7 +96,7 @@ define(function(require, exports, module) {
 
 				discussionSurface.on('click', function(e) {
 					var classList;
-					if (e) {
+					if (e instanceof CustomEvent) {
 						classList = e.srcElement.parentElement.classList;
 						if (_.contains(classList, 'close-discussion')) {
 							this.alert = u.showAlert({
@@ -123,10 +105,7 @@ define(function(require, exports, module) {
 								b: 'No',
 								onA: function() {
 									Discussion.deleteDiscussion({id: discussion.id}, function(success){
-										var index = surfaceList.indexOf(discussionSurface);
-										surfaceList.splice(index, 1);
-										this.renderController.inTransformFrom(transition);
-										this.renderController.show(scrollView);
+										this.refresh();
 									}.bind(this));
 								}.bind(this),
 								onB: function() {
@@ -138,10 +117,10 @@ define(function(require, exports, module) {
 							var detailedDiscussionSurface = new Surface({
 								size: [undefined, true],
 								content: _.template(DiscussionTemplate, 
-									discussion, templateSettings),
+								discussion, templateSettings),
 							});
 							this._eventOutput.emit('show-detailed-view',
-								{id: discussion.id});
+							{id: discussion.id});
 						}
 					}
 				}.bind(this));
