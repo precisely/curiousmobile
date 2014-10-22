@@ -17,7 +17,7 @@ define(function(require, exports, module) {
 	var FormContainerSurface = require("famous/surfaces/FormContainerSurface");
 	var InputSurface = require("famous/surfaces/InputSurface");
 	var SequentialLayout = require("famous/views/SequentialLayout");
-	var DiscussionSummaryView = require("views/community/DiscussionSummaryView");
+	var DiscussionDetailView = require("views/community/DiscussionDetailView");
 
 	function DiscussionListView(group) {
 		View.apply(this, arguments);
@@ -45,6 +45,11 @@ define(function(require, exports, module) {
 		} else {
 			console.log('Fetch result from server');
 		}
+	};
+
+
+	DiscussionListView.prototype.refresh = function() {
+		this.changeGroup(this.group);	
 	};
 
 	DiscussionListView.prototype.changeGroup = function(group) {

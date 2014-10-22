@@ -12,30 +12,31 @@ define(function(require, exports, module) {
 			this.u = require('util/Utils');
 			Backbone.Model.apply(this, arguments);
 		},
-		post: function(name, discussionPost, callback) {
-			this.u.queueJSON("posting in",
-			this.u.makeGetUrl('createDiscussion'),
-			this.u.makeGetArgs({
+	});
+
+
+	Discussion.post = function(name, discussionPost, callback) {
+		u.queueJSON("posting in",
+			u.makeGetUrl('createDiscussionData'),
+			u.makeGetArgs({
 				name: name,
 				discussionPost: discussionPost,
 				group: ""
 			}),
 			function(data) {
 				callback(data);
-			}.bind(this));
-		}
-	});
-
+			});
+	};
 
 	Discussion.fetch = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
-//			q : "searchQuery",
+			//			q : "searchQuery",
 			userId: User.getCurrentUserId(),
 			max : 20,
 			timeZoneName: window.jstz.determine().name()
 		});
 		u.backgroundJSON("loading discussion list", u.makeGetUrl("listDiscussionData"), 
-				u.makeGetArgs(argsToSend), function(discussions) {
+		u.makeGetArgs(argsToSend), function(discussions) {
 			if (u.checkData(discussions)) {
 				callback(discussions);
 			}
@@ -48,7 +49,7 @@ define(function(require, exports, module) {
 			id : args.id
 		});
 		u.backgroundJSON("loading discussion list", u.makeGetUrl("deleteDiscussionId"), 
-		  u.makeGetArgs(argsToSend), function(data) {
+		u.makeGetArgs(argsToSend), function(data) {
 			if (data == 'success') {
 				callback(data);
 			} else {

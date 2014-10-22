@@ -5,6 +5,7 @@ define(function(require, exports, module) {
 	var Transform = require('famous/core/Transform');
 	var Timer = require('famous/utilities/Timer');
 	var Transitionable = require('famous/transitions/Transitionable');
+	var FastClick = require('famous/inputs/FastClick');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var u = require('util/Utils');
 	var Utility = require('famous/utilities/Utility');
@@ -15,7 +16,7 @@ define(function(require, exports, module) {
 	var discussionPostTemplate = require('text!templates/discussion-post.html');
 	var commentTemplate = require('text!templates/comments.html');
 
-	function DiscussionSummaryView(discussionId) {
+	function DiscussionDetailView(discussionId) {
 		View.apply(this, arguments);
 		var transition = new Transitionable(Transform.translate(0, 75, 0));
 		this.renderController = new RenderController();
@@ -25,18 +26,18 @@ define(function(require, exports, module) {
 		this.init();
 	}
 
-	DiscussionSummaryView.prototype = Object.create(View.prototype);
-	DiscussionSummaryView.prototype.constructor = DiscussionSummaryView;
+	DiscussionDetailView.prototype = Object.create(View.prototype);
+	DiscussionDetailView.prototype.constructor = DiscussionDetailView;
 
-	DiscussionSummaryView.DEFAULT_OPTIONS = {};
+	DiscussionDetailView.DEFAULT_OPTIONS = {};
 
-	DiscussionSummaryView.prototype.init = function() {
+	DiscussionDetailView.prototype.init = function() {
 		DiscussionPost.fetch(this.discussionId, function(discussionPost) {
 			this.refresh(discussionPost);
 		}.bind(this));
 	}
 
-	DiscussionSummaryView.prototype.refresh = function(discussionPost) {
+	DiscussionDetailView.prototype.refresh = function(discussionPost) {
 			var surfaceList = [];
 			var scrollView = new Scrollview({
 				direction: Utility.Direction.Y,
@@ -59,12 +60,7 @@ define(function(require, exports, module) {
 			surfaceList.push(discussionPostSurface)
 
 			discussionPostSurface.on('click', function(e) {
-				var classList;
-				if (e.srcElement.localName == 'a' || e.srcElement.localName == 'button') {
-					classList = e.srcElement.classList;
-				} else {
-					classList = e.srcElement.parentElement.classList;
-				}
+				var	classList = e.srcElement.classList;
 				if (_.contains(classList, 'delete-discussion')) {
 					this.alert = u.showAlert({
 						message: 'Are you sure to delete discussion ?',
@@ -132,5 +128,5 @@ define(function(require, exports, module) {
 			this.renderController.show(scrollView);
 	};
 
-	module.exports = DiscussionSummaryView;
+	module.exports = DiscussionDetailView;
 });

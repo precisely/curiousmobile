@@ -6,7 +6,7 @@ define(function(require, exports, module) {
 	var Modifier = require('famous/core/Modifier');
 	var Transform = require('famous/core/Transform');
 	var Surface = require('famous/core/Surface');
-	var DiscussionSummaryView = require("views/community/DiscussionSummaryView");
+	var DiscussionDetailView = require("views/community/DiscussionDetailView");
 	var CreatePostView = require('views/CreatePostView');
 
 	function CommunityView(options) {
@@ -43,10 +43,10 @@ define(function(require, exports, module) {
 				this.discussionListView = new DiscussionListView('');
 				
 				this.discussionListView.on('show-detailed-view', function(discussion) {
-					console.log('Creating Discussion Summary View');
-					var discussionSummarySurface = new DiscussionSummaryView(discussion.id);
-					this.renderController.show(discussionSummarySurface);
-					discussionSummarySurface.on('delete-post', function(e) {
+					console.log('Creating Discussion Detail View');
+					var discussionDetailSurface = new DiscussionDetailView(discussion.id);
+					this.renderController.show(discussionDetailSurface);
+					discussionDetailSurface.on('delete-post', function(e) {
 						this.renderController.show(this.discussionListView);
 					}.bind(this));
 
@@ -60,6 +60,7 @@ define(function(require, exports, module) {
 					}.bind(this));
 
 					createPostSurface.on('post-success', function(e) {
+						this.discussionListView.refresh();
 						this.renderController.show(this.discussionListView);
 					}.bind(this));
 				}.bind(this));

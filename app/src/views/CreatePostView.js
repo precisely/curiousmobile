@@ -46,7 +46,6 @@ define(function(require, exports, module) {
 					this._eventOutput.emit('cancel-post-discussion');
 				} else if (_.contains(classList, 'submit-post')) {
 					this.submit();
-					this._eventOutput.emit('post-success');
 				}
 			}
 		}.bind(this));
@@ -55,7 +54,6 @@ define(function(require, exports, module) {
 	}
 
 	CreatePostView.prototype.submit = function() {
-		var discussion = new Discussion();
 		var name = document.forms["postForm"]["name"].value;
 		var discussionPost = document.forms["postForm"]["discussionPost"].value;
 		if (!name){
@@ -63,7 +61,7 @@ define(function(require, exports, module) {
 		} else if (!discussionPost){
 			u.showAlert("Detail is a required field!");
 		} else {
-			discussion.post(
+			Discussion.post(
 				name,
 				discussionPost,
 				function(result) {
