@@ -113,12 +113,6 @@ define(function(require, exports, module) {
 								}.bind(this),
 							});
 						} else {
-							console.log("Discussion Title");
-							var detailedDiscussionSurface = new Surface({
-								size: [undefined, true],
-								content: _.template(DiscussionTemplate, 
-								discussion, templateSettings),
-							});
 							this._eventOutput.emit('show-detailed-view',
 							{id: discussion.id});
 						}

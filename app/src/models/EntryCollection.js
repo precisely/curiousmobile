@@ -68,6 +68,9 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 			return collectionCache.getItem(key);
 		}
 
+		EntryCollection.clearCache = function () {
+			window.App.collectionCache.clear();
+		}
 
 		module.exports = EntryCollection;
 	});

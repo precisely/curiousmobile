@@ -33,100 +33,114 @@ define(function(require, exports, module) {
 
 	DiscussionDetailView.prototype.init = function() {
 		DiscussionPost.fetch(this.discussionId, function(discussionPost) {
-			this.refresh(discussionPost);
+			this.discussionPost = discussionPost;
+			this.refresh();
 		}.bind(this));
 	}
 
 	DiscussionDetailView.prototype.refresh = function(discussionPost) {
-			var surfaceList = [];
-			var scrollView = new Scrollview({
-				direction: Utility.Direction.Y,
-			});
-			var prettyDate = u.prettyDate(new Date(discussionPost.updated));
-			discussionPost.prettyDate = prettyDate;
-			var discussionPostSurface = new Surface({
-				size: [undefined, true],
-				content: _.template(discussionPostTemplate, discussionPost, templateSettings),
-			});
+		var surfaceList = [];
+		var scrollView = new Scrollview({
+			direction: Utility.Direction.Y,
+		});
 
-			discussionPostSurface.on('deploy', function() {
-				Timer.every(function() {
-					var size = this.getSize();
-					var width = (size[0] == true) ? this._currTarget.offsetWidth : size[0];
-					var height = (size[1] == true) ? this._currTarget.offsetHeight : size[1];
-					this.setSize([width, height]);
-				}.bind(this), 2);
-			});
-			surfaceList.push(discussionPostSurface)
+		if (!discussionPost && this.discussionPost) {
+			discussionPost = this.discussionPost;
+		}
 
-			discussionPostSurface.on('click', function(e) {
-				var	classList = e.srcElement.classList;
-				if (_.contains(classList, 'delete-discussion')) {
-					this.alert = u.showAlert({
-						message: 'Are you sure to delete discussion ?',
-						a: 'Yes',
-						b: 'No',
-						onA: function() {
-							Discussion.deleteDiscussion({id: this.discussionId}, function(success){
-								this.init();
-							}.bind(this));
-						}.bind(this),
-						onB: function() {
-						}.bind(this),
-					});
-				} else if (_.contains(classList, 'submit-comment')) {
-					var message = document.forms["commentForm"]["message"].value;
-					DiscussionPost.createComment({discussionId: this.discussionId, message: message}, function(success){
-						this.renderController.show(scrollView);
-					}.bind(this));
-				}
-			}.bind(this));
+		var prettyDate = u.prettyDate(new Date(discussionPost.updated));
+		discussionPost.prettyDate = prettyDate;
+		var discussionPostSurface = new Surface({
+			size: [undefined, true],
+			content: _.template(discussionPostTemplate, discussionPost, templateSettings),
+		});
 
-			discussionPost.prettyDate =  prettyDate;
-			discussionPost.posts.forEach(function(post) {
-				if (post.message) {
-					var commentSurface = new Surface({
-						size: [undefined, true],
-						content: _.template(commentTemplate, post, templateSettings),
-					});
+		discussionPostSurface.on('deploy', function() {
+			Timer.every(function() {
+				var size = this.getSize();
+				var width = (size[0] == true) ? this._currTarget.offsetWidth : size[0];
+				var height = (size[1] == true) ? this._currTarget.offsetHeight : size[1];
+				this.setSize([width, height]);
+			}.bind(this), 2);
+		});
+		surfaceList.push(discussionPostSurface)
+
+		discussionPostSurface.on('keyup', function (e) {
+			if (e.keyCode == 13) {
+				this.postComment();
+			}	
+		}.bind(this));
+
+		discussionPostSurface.on('click', function(e) {
+			var	classList = e.srcElement.classList;
+			if (_.contains(classList, 'delete-discussion')) {
+				this.alert = u.showAlert({
+					message: 'Are you sure to delete discussion ?',
+					a: 'Yes',
+					b: 'No',
+					onA: function() {
+						Discussion.deleteDiscussion({id: this.discussionId}, function(success){
+							this.init();
+						}.bind(this));
+					}.bind(this),
+					onB: function() {
+					}.bind(this),
+				});
+			} else if (_.contains(classList, 'submit-comment')) {
+				this.postComment();
+			}
+		}.bind(this));
+
+		discussionPost.prettyDate =  prettyDate;
+		discussionPost.posts.forEach(function(post) {
+			if (post.message) {
+				var commentSurface = new Surface({
+					size: [undefined, true],
+					content: _.template(commentTemplate, post, templateSettings),
+				});
 
 
-					commentSurface.on('deploy', function() {
-						Timer.every(function() {
-							var size = this.getSize();
-							var width = (size[0] == true) ? this._currTarget.offsetWidth : size[0];
-							var height = (size[1] == true) ? this._currTarget.offsetHeight : size[1];
-							this.setSize([width, height]);
-						}.bind(this), 2);
-					});
-					commentSurface.on('click', function(e) {
-						var classList;
-						classList = e.srcElement.parentElement.classList;
-						if (_.contains(classList, 'delete-comment')) {
-							u.showAlert({
-								message: 'Are you sure to delete this comment ?',
-								a: 'Yes',
-								b: 'No',
-								onA: function() {
-									DiscussionPost.deleteComment( { discussionId : this.discussionId,
-										clearPostId : post.id }, function(sucess){
-											var index = surfaceList.indexOf(commentSurface);
-											surfaceList.splice(index, 1);
-										}.bind(this));
-								}.bind(this),
-								onB: function() {
-								}.bind(this),
-							});
-						}
-					}.bind(this));
+				commentSurface.on('deploy', function() {
+					Timer.every(function() {
+						var size = this.getSize();
+						var width = (size[0] == true) ? this._currTarget.offsetWidth : size[0];
+						var height = (size[1] == true) ? this._currTarget.offsetHeight : size[1];
+						this.setSize([width, height]);
+					}.bind(this), 2);
+				});
+				commentSurface.on('click', function(e) {
+					var classList;
+					classList = e.srcElement.parentElement.classList;
+					if (_.contains(classList, 'delete-comment')) {
+						u.showAlert({
+							message: 'Are you sure to delete this comment ?',
+							a: 'Yes',
+							b: 'No',
+							onA: function() {
+								DiscussionPost.deleteComment( { discussionId : post.discussionId,
+									clearPostId : post.id }, function(sucess){
+										this.init();
+									}.bind(this));
+							}.bind(this),
+							onB: function() {
+							}.bind(this),
+						});
+					}
+				}.bind(this));
 
-					surfaceList.push(commentSurface);
-					commentSurface.pipe(scrollView);
-				}
-			});
-			scrollView.sequenceFrom(surfaceList);
-			this.renderController.show(scrollView);
+				surfaceList.push(commentSurface);
+				commentSurface.pipe(scrollView);
+			}
+		}.bind(this));
+		scrollView.sequenceFrom(surfaceList);
+		this.renderController.show(scrollView);
 	};
 
+	DiscussionDetailView.prototype.postComment = function() {
+		var message = document.getElementById('message').value;
+		DiscussionPost.createComment({discussionId: this.discussionId, message: message}, function(success){
+			this.init();
+		}.bind(this));
+	};
 	module.exports = DiscussionDetailView;
 });

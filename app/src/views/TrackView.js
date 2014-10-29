@@ -2,11 +2,16 @@ define(function(require, exports, module) {
 	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
-	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var Transform = require('famous/core/Transform');
+	var Transitionable      = require("famous/transitions/Transitionable");
+	var SnapTransition = require("famous/transitions/SnapTransition");
+	Transitionable.registerMethod('snap', SnapTransition);
+	var Draggable = require('famous/modifiers/Draggable');
 	var InputSurface = require('famous/surfaces/InputSurface');
 	var Modifier = require('famous/core/Modifier');
 	var RenderController = require("famous/views/RenderController");
+	var RenderNode = require('famous/core/RenderNode');
 	var Utility = require("famous/utilities/Utility");
 	var Scrollview = require("famous/views/Scrollview");
 	var EntryListView = require('views/entry/EntryListView');
@@ -70,7 +75,7 @@ define(function(require, exports, module) {
 
 		this.inputSurface.on('click', function(e) {
 			console.log('TrackView: Clicking on dummy input surface');
-				this._eventOutput.emit('create-entry');
+			this._eventOutput.emit('create-entry');
 		}.bind(this));
 
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
@@ -83,24 +88,60 @@ define(function(require, exports, module) {
 		this.renderController.inTransformFrom(function(progress){
 			return Transform.translate(0, 0, window.App.zIndex.readView);	
 		});
+
+		var draggableToRefresh = new Draggable( {
+			xRange: [0, 0],
+			yRange: [0, 40],
+		});
+
+		var draggableNode = new RenderNode(draggableToRefresh);
+		var snapTransition = {
+			method: 'snap',
+			period: 300,
+			dampingRatio: 0.3,
+			velocity: 0
+		};
+
 		var entryListContainer = new ContainerSurface({
-			size: [320, window.innerHeight - 140],
+			size: [320, window.innerHeight - 210],
+			classes: ['entry-list-container'],
 			properties: {
 				overflow: 'hidden',
 			}
 		});
-		var entryListModifier = new StateModifier({
-			origin: [0,0],
-			transform: Transform.translate(0, 70, 0),
-			size: [320,358]
-		});
-		entryListContainer.add(this.renderController);
-		formContainerSurface.add(entryListModifier).add(entryListContainer);
-		this.setBody(formContainerSurface);
 
-		if (User.isLoggedIn()) {
-			this.changeDate(new Date());
-		}
+		//entryListContainer.on('touchstart', function(e) {
+			//console.log('Mouse up on entry list container');
+			//var touch = e.changedTouches[0];
+			//this.touchStart = { x: touch.screenX, y: touch.screenY };
+			//}.bind(this));
+
+			//entryListContainer.on('touchend', function(e) {
+				//console.log('Mouse up on entry list container');
+				//var touch = e.changedTouches[0];
+				//if (this.touchStart) {
+					//var movementY = this.touchStart.y - touch.screenY;
+					//if (movementY < -40 && draggableToRefresh.getPosition()[1] > 30) {
+						//}
+						//}
+						//}.bind(this));
+						var entryListModifier = new StateModifier({
+							origin: [0,0],
+							transform: Transform.translate(0, 70, 1),
+							size: [320,358]
+						});
+
+						entryListContainer.add(this.renderController);
+						//draggableNode.add(entryListContainer);
+						//entryListContainer.pipe(draggableToRefresh);
+						formContainerSurface.add(entryListModifier).add(entryListContainer);
+
+						//formContainerSurface.add(spinnerModifier).add(spinnerSurface);
+						this.setBody(formContainerSurface);
+
+						if (User.isLoggedIn()) {
+							this.changeDate(new Date());
+						}
 
 	}
 
@@ -108,8 +149,7 @@ define(function(require, exports, module) {
 		this.calendarView = new CalendarView();
 		var calendarModifier = new StateModifier({
 			transform: Transform.translate(50, 0, 0)
-		});
-
+		}); 
 		this.calendarView.on('manual-date-change', function(e) {
 			this.changeDate(e.date);
 		}.bind(this));
@@ -117,23 +157,32 @@ define(function(require, exports, module) {
 
 	}
 
-	TrackView.prototype.changeDate = function(date) {
+	TrackView.prototype.changeDate = function(date, callback) {
 		date = u.getMidnightDate(date);
 
 		EntryCollection.fetchEntries(_getDefaultDates(date), function(entries) {
 			//5 days before and 5 days after today
 			this.currentListView = new EntryListView(entries);
+
 			//Handle entry selection handler
 			this.currentListView.on('select-entry', function(entry) {
 				console.log('TrackView: Selecting an entry');
 				this._eventOutput.emit('select-entry', entry);
+			}.bind(this));
+
+			//Handle cache refresh
+			this.currentListView.on('refresh-entries', function(){
+				EntryCollection.clearCache();
+				this.changeDate(this.calendarView.selectedDate, function () {
+					console.log('TrackView: Entries refreshed');
+				}.bind(this));
 			}.bind(this));
 			//setting the scroll position to today
 			//this.scrollView.goToPage(5);
 			this.renderController.hide({duration:0});
 			this.renderController.show(this.currentListView, {
 				duration: 0
-			});
+			}, callback);
 		}.bind(this));
 	}
 

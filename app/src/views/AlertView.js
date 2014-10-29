@@ -45,7 +45,7 @@ define(function(require, exports, module) {
 		}
 
 		var messageSurface = new Surface({
-			size: [300, 40],
+			size: [280, 40],
 			content: _.template(template, this.options, templateSettings)
 		});
 
