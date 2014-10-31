@@ -53,6 +53,7 @@ define(function(require, exports, module) {
 
 	function _createBody() {
 		var formContainerSurface = new ContainerSurface({
+			size:[undefined, 70],
 			properties: {
 				backgroundColor: '#eaeaea',
 			}
@@ -79,11 +80,6 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
-		var formModifier = new StateModifier({
-			origin: [0,0],
-			transform: Transform.translate(0, 74, 0),
-			//            size: [400,400]
-		});
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(function(progress){
 			return Transform.translate(0, 0, window.App.zIndex.readView);	
@@ -110,38 +106,20 @@ define(function(require, exports, module) {
 			}
 		});
 
-		//entryListContainer.on('touchstart', function(e) {
-			//console.log('Mouse up on entry list container');
-			//var touch = e.changedTouches[0];
-			//this.touchStart = { x: touch.screenX, y: touch.screenY };
-			//}.bind(this));
+		var entryListModifier = new StateModifier({
+			origin: [0,0],
+			transform: Transform.translate(0, 144, 1),
+			size: [320,358]
+		});
 
-			//entryListContainer.on('touchend', function(e) {
-				//console.log('Mouse up on entry list container');
-				//var touch = e.changedTouches[0];
-				//if (this.touchStart) {
-					//var movementY = this.touchStart.y - touch.screenY;
-					//if (movementY < -40 && draggableToRefresh.getPosition()[1] > 30) {
-						//}
-						//}
-						//}.bind(this));
-						var entryListModifier = new StateModifier({
-							origin: [0,0],
-							transform: Transform.translate(0, 70, 1),
-							size: [320,358]
-						});
+		entryListContainer.add(this.renderController);
 
-						entryListContainer.add(this.renderController);
-						//draggableNode.add(entryListContainer);
-						//entryListContainer.pipe(draggableToRefresh);
-						formContainerSurface.add(entryListModifier).add(entryListContainer);
+		this.setBody(formContainerSurface);
+		this.addContent(entryListModifier, entryListContainer);
 
-						//formContainerSurface.add(spinnerModifier).add(spinnerSurface);
-						this.setBody(formContainerSurface);
-
-						if (User.isLoggedIn()) {
-							this.changeDate(new Date());
-						}
+		if (User.isLoggedIn()) {
+			this.changeDate(new Date());
+		}
 
 	}
 

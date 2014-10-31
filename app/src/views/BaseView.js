@@ -168,7 +168,16 @@ define(function(require, exports, module) {
 			origin: [0,0],
 			transform: Transform.translate(0, 74, 2)
 		});
-		this.layout.content.add(bodyModifier).add(body);
+		this.addContent(bodyModifier, body);
 	}
+
+	BaseView.prototype.addContent = function (modifier, renderable) {
+		if (modifier && renderable) {
+			this.layout.content.add(modifier).add(renderable);
+		} else if (renderable) {
+			this.layout.content.add(renderable);
+		}
+	}
+
 	module.exports = BaseView;
 });
