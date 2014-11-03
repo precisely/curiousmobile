@@ -192,7 +192,9 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					} else {
 						u.showAlert("Error adding entry");
 					}
-				});
+				}, function () {
+					callback({fail: true});
+				}, 0, false, false);
 
 			},
 			save: function(allFuture, callback) {
@@ -235,7 +237,9 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					} else {
 						u.showAlert("Error updating entry");
 					}
-				}.bind(this));
+				}.bind(this), function (argument) {
+					callback({fail: true});
+				}, 0, false, false);
 
 			},
 			delete: function(callback) {
@@ -269,21 +273,18 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						});
 
 						u.queueJSON("deleting entry", u.makeGetUrl("deleteEntrySData"), u.makeGetArgs(argsToSend),
-						function(entries) {
-							if (u.checkData(entries)) {
-								Entry.cacheEntries(baseDate, entries[0]);
-								callback(entries[0]);
-								//if (entries[1] != null)
-									//updateAutocomplete(entries[1][0], entries[1][1],
-						//entries[1][2], entries[1][3]);
-						//if (entries[2] != null)
-							//updateAutocomplete(entries[2][0],
-								//entries[2][1], entries[2][2],
-						//entries[2][3]);
-							} else {
-								u.showAlert("Error deleting entry");
-							}
-						});
+							function(entries) {
+								if (u.checkData(entries)) {
+									Entry.cacheEntries(baseDate, entries[0]);
+									callback(entries[0]);
+								} else {
+									u.showAlert("Error deleting entry");
+								}
+							},
+							function () {
+								callback({fail:true});
+							}, 0, false, false
+						);
 
 				}
 
@@ -306,7 +307,9 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 							return;
 						}
 
-					}.bind(this));
+					}.bind(this), function () {
+						callback({fail: true});
+					}, 0, false, false);
 
 			},
 			setText: function(text) {

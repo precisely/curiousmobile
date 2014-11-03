@@ -68,8 +68,13 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 			return collectionCache.getItem(key);
 		}
 
-		EntryCollection.clearCache = function () {
-			window.App.collectionCache.clear();
+		EntryCollection.clearCache = function (key) {
+			var collectionCache = window.App.collectionCache;
+			if (key) {
+				collectionCache.remove(key);
+			} else {
+				collectionCache.clear();	
+			}
 		}
 
 		module.exports = EntryCollection;

@@ -81,9 +81,15 @@ define(function(require, exports, module) {
 		//entryReadView.pipe(this.scrollView);
 		entryReadView.on('delete-entry', function(entry) {
 			console.log('EntryListView: Deleting an entry');
-			this.entries.remove(entry);
-			Entry.cacheEntries(this.entries.key, this.entries);
-			this.refreshEntries();
+			if (entry.fail) {
+				console.log('EntryListView:85 failed to delete entry. Reloading cache');
+				EntryCollection.clearCache(this.entries.key);
+				this._eventOutput.emit('delete-failed');
+			} else {
+				this.entries.remove(entry);
+				Entry.cacheEntries(this.entries.key, this.entries);
+				this.refreshEntries();
+			}
 		}.bind(this));
 
 		entryReadView.on('select-entry', function(entry) {

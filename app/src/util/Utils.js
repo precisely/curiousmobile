@@ -254,16 +254,9 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 						}
 					}
 					if (msg == "timeout") {
-						if (delay * 2 > 1000000) { // stop retrying after delay too large
 							u.showAlert("Server down... giving up");
+							failCallback();
 							return;
-						}
-						if (!(delay > 0))
-							u.showAlert("Server not responding... retrying " + description);
-						delay = (delay > 0 ? delay * 2 : 5000);
-						window.setTimeout(function() {
-							u.queueJSON(description, url, args, successCallback, failCallback, delay, background);
-						}, delay);
 					}
 				};
 				if ((!background) && (u.numJSONCalls > 0)) { // json call in progress

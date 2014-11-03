@@ -155,6 +155,12 @@ define(function(require, exports, module) {
 					console.log('TrackView: Entries refreshed');
 				}.bind(this));
 			}.bind(this));
+
+			this.currentListView.on('delete-failed', function () {
+				this.changeDate(this.calendarView.selectedDate, function () {
+					console.log('TrackView: Entries refreshed after a failed delete');
+				}.bind(this));
+			});
 			//setting the scroll position to today
 			//this.scrollView.goToPage(5);
 			this.renderController.hide({duration:0});

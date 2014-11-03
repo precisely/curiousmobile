@@ -72,6 +72,7 @@ define(function(require, exports, module) {
 		});
 
 		this.inputSurface = new Surface({
+			classes: ['input-surface'],
 			content: _.template(inputSurfaceTemplate, {tag:''}, templateSettings),
 		});
 
