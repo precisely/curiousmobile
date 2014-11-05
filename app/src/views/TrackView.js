@@ -99,17 +99,20 @@ define(function(require, exports, module) {
 		};
 
 		var entryListContainer = new ContainerSurface({
-			size: [320, window.innerHeight - 210],
 			classes: ['entry-list-container'],
 			properties: {
 				overflow: 'hidden',
 			}
 		});
 
-		var entryListModifier = new StateModifier({
-			origin: [0,0],
+		var entryListModifier = new Modifier({
 			transform: Transform.translate(0, 144, 1),
-			size: [320,358]
+		});
+
+		entryListModifier.sizeFrom(function() {
+			var mainContext = window.mainContext;
+			var size = mainContext.getSize();
+			return [undefined, size[1] - 210];
 		});
 
 		entryListContainer.add(this.renderController);
@@ -171,7 +174,7 @@ define(function(require, exports, module) {
 	}
 
 	TrackView.prototype.getSelectedDate = function() {
-		return this.calendarView.getCurrentDate();
+		return this.calendarView.getSelectedDate();
 	}
 
 

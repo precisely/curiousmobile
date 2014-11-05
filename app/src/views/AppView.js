@@ -88,5 +88,9 @@ define(function(require, exports, module) {
 		this.pageModifier.setTransform(Transform.translate(0, 0, 0), this.options.transition);
 	};
 
+	AppView.prototype.getSelectedDate = function () {
+		this.pageView.trackView.getSelectedDate();
+	}
+
 	module.exports = AppView;
 });

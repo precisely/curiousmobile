@@ -114,14 +114,11 @@ define(function(require, exports, module) {
 		this.deleteSurface.on('click', function(e) {
 			console.log('EventHandler: this.deleteSurface event: click');
 			if (e instanceof CustomEvent) {
-				this.entry.delete(function(){
-					var collectionCache = window.App.collectionCache;
-					var entryDate = this.entry.get('date');
-					if (entryDate instanceof String) {
-						entryDate = new Date(entryDate);
+				this.entry.delete(function(data){
+					if (data && data.fail) {
+						this._eventOutput.emit('delete-entry',data);
+						return;	
 					}
-					var keyToBeRefreshed = Entry.getCacheKey(entryDate);
-					collectionCache.setItem(keyToBeRefreshed, null);
 					this._eventOutput.emit('delete-entry',this.entry);
 				}.bind(this));
 

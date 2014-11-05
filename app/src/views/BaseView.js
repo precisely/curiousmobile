@@ -70,7 +70,9 @@ define(function(require, exports, module) {
 			});
 			leftSurface.on('click', function(e) {
 				console.log("Clicked on menu icon image");
-				this._eventOutput.emit('go-back');
+				if (e instanceof CustomEvent) {
+					this._eventOutput.emit('go-back');
+				}
 			}.bind(this));
 			var leftModifier = new StateModifier({
 				transform: Transform.translate(0, 0, window.App.zIndex.header + 1)	

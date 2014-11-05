@@ -47,15 +47,23 @@
 		<script type="text/javascript">
 			function onLoad() {
 				document.addEventListener("deviceready", onDeviceReady, false);
+				document.addEventListener("resume", onAppResume, false);
 			}
 
 			// Cordova is loaded and it is now safe to make calls Cordova methods
 			//
 			function onDeviceReady() {
 				// Now safe to use the Cordova API
+				console.log('index.html:56 Device Ready');
+				$(".reloading").hide();
 				StatusBar.hide();
 
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+			}
+
+			function onAppResume() {
+				console.log('App has resumed from background');
+				window.location.reload();	
 			}
 
 			function checkProgress() {
@@ -84,6 +92,10 @@
 		<script type="text/javascript" src="cordova.js"></script>
 	</head>
 
-	<body onload="onLoad()" ></body>
+	<body onload="onLoad()" >
+		<div class='reloading' style="display:block; text-align: center">	
+			<i class="fa fa-spinner fa-spin" style="font-size:40px; vertical-align: middle"> </i> 
+		</div>
+	</body>
 
 </html>

@@ -201,10 +201,10 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				var alertShown = false;
 				window.setTimeout(function() {
 					if (stillRunning) {
-						alertShown = true;
-						u.showAlert(description + ": in progress");
+						stillRunning = false;
+						window.location.reload();
 					}
-				}, 4000);
+				}, 10000);
 				if (typeof args == "function") {
 					delay = failCallback;
 					failCallback = successCallback
@@ -226,15 +226,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 						return; // if current login session is over, cancel callbacks
 					if (successCallback)
 						successCallback(data);
-					if (!background) {
-						--u.numJSONCalls;
-						if (u.numJSONCalls < 0)
-							u.numJSONCalls = 0;
-						if (u.pendingJSONCalls.length > 0) {
-							var nextCall = u.pendingJSONCalls.shift();
-							nextCall();
-						}
-					}
+					u.nextJSONCall(background);
 				};
 				var wrapFailCallback = function(data, msg) {
 					stillRunning = false;
@@ -244,19 +236,19 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 						return; // if current login session is over, cancel callbacks
 					if (failCallback)
 						failCallback(data);
-					if (!background) {
-						--u.numJSONCalls;
-						if (u.numJSONCalls < 0)
-							u.numJSONCalls = 0;
-						if (u.pendingJSONCalls.length > 0) {
-							var nextCall = u.pendingJSONCalls.shift();
-							nextCall();
-						}
-					}
+
+					u.nextJSONCall(background);
 					if (msg == "timeout") {
+						if (delay * 2 > 1000000) { // stop retrying after delay too large
 							u.showAlert("Server down... giving up");
-							failCallback();
 							return;
+						}
+						if (!(delay > 0))
+							u.showAlert("Server not responding... retrying " + description);
+						delay = (delay > 0 ? delay * 2 : 5000);
+						window.setTimeout(function() {
+							u.queueJSON(description, url, args, successCallback, failCallback, delay, background);
+						}, delay);
 					}
 				};
 				if ((!background) && (u.numJSONCalls > 0)) { // json call in progress
@@ -288,6 +280,17 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				}
 			}
 
+			Utils.nextJSONCall = function (background) {
+				if (!background) {
+					--u.numJSONCalls;
+					if (u.numJSONCalls < 0)
+						u.numJSONCalls = 0;
+					if (u.pendingJSONCalls.length > 0) {
+						var nextCall = u.pendingJSONCalls.shift();
+						nextCall();
+					}
+				}
+			}
 			Utils.backgroundJSON = function(description, url, args, successCallback, failCallback, delay, post) {
 				u.queueJSON(description, url, args, successCallback, failCallback, delay, post, true);
 			}

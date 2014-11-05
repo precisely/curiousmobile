@@ -65,6 +65,10 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 
 		EntryCollection.getFromCache = function(key){
 			var collectionCache = window.App.collectionCache;
+			if (!key) {
+				key = new Date();
+			}
+			var key = Entry.getCacheKey(key);
 			return collectionCache.getItem(key);
 		}
 

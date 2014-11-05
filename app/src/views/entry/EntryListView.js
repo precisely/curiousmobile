@@ -83,11 +83,19 @@ define(function(require, exports, module) {
 			console.log('EntryListView: Deleting an entry');
 			if (entry.fail) {
 				console.log('EntryListView:85 failed to delete entry. Reloading cache');
-				EntryCollection.clearCache(this.entries.key);
+				EntryCollection.clearCache();
 				this._eventOutput.emit('delete-failed');
 			} else {
+				var key = Entry.getCacheKey(entry.get('date'));
+				var collectionCache = window.App.collectionCache;
+				if (entry.isContinuous()) {
+					EntryCollection.clearCache();
+				} else {
+					collectionCache.removeItem(key);
+				}
 				this.entries.remove(entry);
-				Entry.cacheEntries(this.entries.key, this.entries);
+				this.entries.key = key;
+				Entry.cacheEntries(key, this.entries);
 				this.refreshEntries();
 			}
 		}.bind(this));

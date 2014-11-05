@@ -15,7 +15,9 @@ define(function(require, exports, module) {
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var AutoCompleteView = require("views/AutoCompleteView");
 	var u = require('util/Utils');
+	var store = require('store');
 	var Entry = require('models/Entry');
+	var EntryCollection = require('models/EntryCollection');
 	var EventHandler = require('famous/core/EventHandler');
 	var inputSurfaceTemplate = require('text!templates/input-surface.html');
 
@@ -44,8 +46,19 @@ define(function(require, exports, module) {
 		this.autoCompleteSurface.on('updateInputSurface', function(){
 			console.log('update the Input Surface');
 		}.bind(this));
-		this._eventInput.on('on-show', function() {
+		this._eventInput.on('on-show', function(entry) {
+			console.log('FormView: on-show ' + entry);
 			var inputElement = document.getElementById("entry-description");
+			if (entry && typeof entry == 'number') {
+				var currentDayEntries = new EntryCollection(EntryCollection.getFromCache(window.App.appView.getSelectedDate()));
+				entry = currentDayEntries.get(entry);
+			} else {
+				entry = new Entry();	
+			}
+			if (!entry instanceof Entry) {
+				entry = new Entry(entry);
+			}
+			this.setEntry(entry);
 			inputElement.focus();
 			this.focus();
 		}.bind(this));
@@ -290,9 +303,14 @@ define(function(require, exports, module) {
 			this.entry = newEntry;
 			this.entry.setText(newText);
 			this.entry.create(function(resp) {
-				this.blur();
 				if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1) {
 					window.App.collectionCache.clear();	
+				}
+				store.set('lastPage', 'track');
+				if (this.entry.isContinuous()) {
+					this.blur();
+				} else {
+					this.unsetEntry();
 				}
 				this._eventOutput.emit('new-entry', resp);
 			}.bind(this));

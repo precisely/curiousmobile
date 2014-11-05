@@ -62,6 +62,7 @@ define(function(require, exports, module) {
 
 		this.launchView.on('registered', function(e) {
 			_createTrackPage.call(this);
+			this.changePage('track');
 		}.bind(this));
 
 		_createEntryFormView.call(this);
@@ -76,6 +77,14 @@ define(function(require, exports, module) {
 			this.changePage('launch');
 		} else {
 			_createTrackPage.call(this);
+			var lastPage = this.getLastPage();
+			if (lastPage) {
+				var lastPageData = store.get('lastPageData');	
+				if (lastPageData) {
+					lastPageData = lastPageData;
+				}
+				this.changePage(lastPage, lastPageData);
+			} 	
 		}
 	}
 
@@ -89,16 +98,15 @@ define(function(require, exports, module) {
 				this.entryFormView.submit(entry);
 				return;
 			}
-			this.entryFormView.setEntry(entry);
-			this.changePage('form-view');
+			store.set('lastPageData', entry.id);
+			this.changePage('form-view', entry.id);
 		}.bind(this));
 
 		this.trackView.on('create-entry', function(e) {
 			console.log('EventHandler: this.trackView.on event: create-entry');
+			this.entryFormView.unsetEntry();
 			this.changePage('form-view')
 		}.bind(this));
-
-		this.changePage('track');
 	}
 
 	function _menuHandlers() {
@@ -124,7 +132,6 @@ define(function(require, exports, module) {
 		this.entryFormView = new EntryFormView();
 		this.pageMap['form-view'] = this.entryFormView;
 		this.entryFormView.pipe(this._eventOutput);
-
 		this.entryFormView.on('new-entry', function(data) {
 			console.log("New Entry - TrackView event");
 			var currentListView = this.trackView.currentListView;
@@ -141,6 +148,7 @@ define(function(require, exports, module) {
 
 		this.entryFormView.on('go-back', function(e) {
 			console.log('EventHandler: this.entryFormView event: go-back');
+			store.set('lastPage', 'track');
 			this.entryFormView.blur();
 			this.changePage('track');
 		}.bind(this));
@@ -164,9 +172,8 @@ define(function(require, exports, module) {
 	* Get the last page visited by the user
 	* @param {string} page - name of the page
 	*/
-	PageView.prototype.getLastPage = function(page) {
-		var view = this.pageMap[store.get('lastPage')];
-		return view;
+	PageView.prototype.getLastPage = function() {
+		return store.get('lastPage');
 	}
 
 	/**
@@ -174,8 +181,7 @@ define(function(require, exports, module) {
 	* @params {string} pageName - name of the page to go to
 	*
 	*/
-	PageView.prototype.changePage = function(pageName) {
-		var lastPageName = store.get('lastPage');
+	PageView.prototype.changePage = function(pageName, pageData) {
 		this.renderController.hide({duration: 200}); //hides the last page
 		var view = this.getPage(pageName);
 		this.renderController.show(view, {
@@ -183,9 +189,10 @@ define(function(require, exports, module) {
 		},function(){
 			console.log("PageView: show complete");	
 			Timer.setTimeout(function(){
-				this._eventInput.trigger('on-show');
+				this._eventInput.trigger('on-show', pageData);
 			}.bind(this), 300);
 		}.bind(view));
+		this.setLastPage(pageName);
 		this._eventOutput.emit('page-change-complete');
 	}
 

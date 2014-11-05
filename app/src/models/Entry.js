@@ -192,9 +192,9 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					} else {
 						u.showAlert("Error adding entry");
 					}
-				}, function () {
-					callback({fail: true});
-				}, 0, false, false);
+				}, function (data) {
+					console.log('Entry creation failed: ' + this.toString());
+				}.bind(this), 0, false, false);
 
 			},
 			save: function(allFuture, callback) {
@@ -237,9 +237,10 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					} else {
 						u.showAlert("Error updating entry");
 					}
-				}.bind(this), function (argument) {
-					callback({fail: true});
-				}, 0, false, false);
+				}.bind(this), function (data) {
+					//callback({fail: true});
+					console.log('Entry update failed for entry: ' + this.toString());		
+				}.bind(this), 0, false, false);
 
 			},
 			delete: function(callback) {
@@ -273,17 +274,17 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						});
 
 						u.queueJSON("deleting entry", u.makeGetUrl("deleteEntrySData"), u.makeGetArgs(argsToSend),
-							function(entries) {
-								if (u.checkData(entries)) {
-									Entry.cacheEntries(baseDate, entries[0]);
-									callback(entries[0]);
-								} else {
-									u.showAlert("Error deleting entry");
-								}
-							},
-							function () {
-								callback({fail:true});
-							}, 0, false, false
+						function(entries) {
+							if (u.checkData(entries)) {
+								Entry.cacheEntries(baseDate, entries[0]);
+								callback(entries[0]);
+							} else {
+								u.showAlert("Error deleting entry");
+							}
+						},
+						function (data) {
+							callback({fail:true});
+						}, 0, false, false
 						);
 
 				}
@@ -307,7 +308,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 							return;
 						}
 
-					}.bind(this), function () {
+					}.bind(this), function (data) {
 						callback({fail: true});
 					}, 0, false, false);
 
@@ -331,6 +332,8 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				var month = ("0" + (date.getMonth() + 1)).slice(-2);
 				var day = ("0" + date.getDate()).slice(-2);
 				dateStr = month + '/' + day + '/' + (date.getYear() + 1900);
+			} else if (typeof date == 'string' && date.indexOf('/') < 0) {
+				dateStr = Entry.getCacheKey(new Date(date));	
 			} else {
 				dateStr = date;
 			}
@@ -340,11 +343,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 		Entry.cacheEntries = function cacheEntries(date, entries) {
 			var collectionCache = window.App.collectionCache;
 			var key;
-			if (date instanceof Date) {
-				key = Entry.getCacheKey(date);
-			} else {
-				key = date;
-			}
+			key = Entry.getCacheKey(date);
 			collectionCache.setItem(key, entries);
 		}
 
