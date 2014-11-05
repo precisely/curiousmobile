@@ -28,110 +28,107 @@ define(function(require, exports, module) {
 		//this.renderController = new RenderController();
 		//this.renderController.inTransformFrom(function(progress){
 			//return Transform.translate(0, 0, window.App.zIndex.readView + 5);	
-		//});
-		//this.add(this.renderController);
-		var repeatTypeAsClass = this.entry.repeatTypeAsClass();
-		var entryTextColor = '#b0366b';
-		if (_.contains(repeatTypeAsClass, 'ghost')) {
-			entryTextColor = 'white';	
-		}
-
-		var properties = {
-			padding: '15px',
-			fontSize: this.options.lineHeight + 'px',
-			lineHeight: (this.options.lineHeight + 2) + 'px',
-			textOverflow: 'ellipsis'
-		};
-
-		var size = [window.innerWidth, this.options.entryHeight];
-		if (this.entry.isContinuous()) {
-			properties.margin = '5px'	
-			size[0] = size[0] - 10;
-			size[1] = size[1] - 10;
-		}
-		this.entrySurface = new Surface({
-			size: size,
-			content: this.getDisplayText(),
-			classes: this.entry.repeatTypeAsClass(),
-			properties: properties
-		});
-		this.entrySurface.pipe(this._eventOutput);
-		this.glowSurface = new Surface({
-			size: [undefined, 44],
-			content: this.entry.toString(),
-			classes: this.entry.repeatTypeAsClass(),
-			properties: {
-				padding: '12px',
-				color: '#ffffff',
-				backgroundColor: '#c0c0c0'
+//});
+			//this.add(this.renderController);
+			var repeatTypeAsClass = this.entry.repeatTypeAsClass();
+			var entryTextColor = '#b0366b';
+			if (_.contains(repeatTypeAsClass, 'ghost')) {
+				entryTextColor = 'white';	
 			}
-		});
 
-		
-		this.entrySurface.on('click', function(e) {
-			console.log("entrySurface event");
-			if (e instanceof CustomEvent) {
-				this._eventOutput.emit('select-entry', this.entry);
+			var properties = {
+				padding: '15px',
+				fontSize: this.options.lineHeight + 'px',
+				lineHeight: (this.options.lineHeight + 2) + 'px',
+				textOverflow: 'ellipsis'
+			};
+
+			var size = [window.innerWidth, this.options.entryHeight];
+			if (this.entry.isContinuous()) {
+				properties.margin = '5px'	
+				size[0] = size[0] - 10;
+				size[1] = size[1] - 10;
 			}
+			this.entrySurface = new Surface({
+				size: size,
+				content: this.getDisplayText(),
+				classes: this.entry.repeatTypeAsClass(),
+				properties: properties
+			});
+			this.entrySurface.pipe(this._eventOutput);
+			this.glowSurface = new Surface({
+				size: [undefined, 44],
+				content: this.entry.toString(),
+				classes: this.entry.repeatTypeAsClass(),
+				properties: {
+					padding: '12px',
+					color: '#ffffff',
+					backgroundColor: '#c0c0c0'
+				}
+			});
+
+
+			this.entrySurface.on('click', function(e) {
+				console.log("entrySurface event");
+				if (e instanceof CustomEvent) {
+					this._eventOutput.emit('select-entry', this.entry);
+				}
+			}.bind(this));
+
+			var showMoreColor = 'white';
+			if (_.contains(repeatTypeAsClass, 'continuous')) {
+				showMoreColor = '#ec2d35';	
+			}
+			this.showMoreSurface = new Surface({
+				content: '<i class="fa fa-chevron-circle-down"></i>',
+				size: [24, 24],
+				properties: {
+					color: showMoreColor,
+					fontSize: '26px'
+				}
+			});
+			var showMoreModifier = new StateModifier({
+				transform: Transform.translate(window.innerWidth - 40, this.options.lineHeight, window.App.zIndex.readView + 1)
+			});
+			this.showMoreSurface.pipe(this._eventOutput);
+			this.showMoreSurface.on('click', function(e) {
+				console.log("showMoreSurface event");
+				if (e instanceof CustomEvent) {
+					this._eventOutput.emit('select-entry', this.entry);
+				} 
+			}.bind(this));
+			this.add(showMoreModifier).add(this.showMoreSurface);
+
+			this.deleteSurface = new Surface({
+				size: [100, this.options.entryHeight],
+				content: 'Delete',
+				properties: {
+					padding: '20px 15px',
+					backgroundColor: '#dc6059',
+					fontSize: '24px',
+					lineHeight: '45px',
+					color: 'white',
+				}
+			});
+
+			deleteModifier = new StateModifier({
+				transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView + 2)
+			});
+			this.add(deleteModifier).add(this.deleteSurface);
+			var entryModifier = new StateModifier({
+				transform: Transform.translate(0, 0, window.App.zIndex.readView)
+			});
+			this.add(entryModifier).add(this.entrySurface);
+	}
+
+	EntryReadView.prototype.delete = function () {
+		this.entry.delete(function(data){
+			if (data && data.fail) {
+				this._eventOutput.emit('delete-entry',data);
+				return;	
+			}
+			this._eventOutput.emit('delete-entry',this.entry);
 		}.bind(this));
-
-		var showMoreColor = 'white';
-		if (_.contains(repeatTypeAsClass, 'continuous')) {
-			showMoreColor = '#ec2d35';	
-		}
-		this.showMoreSurface = new Surface({
-			content: '<i class="fa fa-chevron-circle-down"></i>',
-			size: [24, 24],
-			properties: {
-				color: showMoreColor,
-				fontSize: '26px'
-			}
-		});
-		var showMoreModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth - 40, this.options.lineHeight, window.App.zIndex.readView + 1)
-		});
-		this.showMoreSurface.pipe(this._eventOutput);
-		this.showMoreSurface.on('click', function(e) {
-			console.log("showMoreSurface event");
-			if (e instanceof CustomEvent) {
-				this._eventOutput.emit('select-entry', this.entry);
-			} 
-		}.bind(this));
-		this.add(showMoreModifier).add(this.showMoreSurface);
-
-		this.deleteSurface = new Surface({
-			size: [100, this.options.entryHeight],
-			content: 'Delete',
-			properties: {
-				padding: '20px 15px',
-				backgroundColor: '#dc6059',
-				fontSize: '24px',
-				lineHeight: '45px',
-				color: 'white',
-			}
-		});
-
-		this.deleteSurface.on('click', function(e) {
-			console.log('EventHandler: this.deleteSurface event: click');
-			if (e instanceof CustomEvent) {
-				this.entry.delete(function(data){
-					if (data && data.fail) {
-						this._eventOutput.emit('delete-entry',data);
-						return;	
-					}
-					this._eventOutput.emit('delete-entry',this.entry);
-				}.bind(this));
-
-			}
-		}.bind(this));
-		deleteModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView + 2)
-		});
-		this.add(deleteModifier).add(this.deleteSurface);
-		var entryModifier = new StateModifier({
-			transform: Transform.translate(0, 0, window.App.zIndex.readView)
-		});
-		this.add(entryModifier).add(this.entrySurface);
 	}
 
 	EntryReadView.prototype.setEntry = function(entry) {

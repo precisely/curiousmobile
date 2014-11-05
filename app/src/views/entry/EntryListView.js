@@ -79,6 +79,23 @@ define(function(require, exports, module) {
 		this.entryReadViews.push(entryReadView);
 		this.draggableList.push(draggableNode);
 		//entryReadView.pipe(this.scrollView);
+
+		var snapTransition = {
+			method: 'snap',
+			period: 300,
+			dampingRatio: 0.3,
+			velocity: 0
+		};
+		entryReadView.on('touchend', function(e) {
+			console.log('EventHandler: entryReadView event: mouseup');
+			var distance = Math.abs(draggable.getPosition()[0]);
+			if (distance > 95) {
+				this.delete();	
+			} else {
+			draggable.setPosition([0,0,0], snapTransition);
+			}
+		}.bind(entryReadView));
+
 		entryReadView.on('delete-entry', function(entry) {
 			console.log('EntryListView: Deleting an entry');
 			if (entry.fail) {
