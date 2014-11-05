@@ -30,6 +30,11 @@ define(function(require, exports, module) {
 		this.add(this.renderController);
 	};
 
+
+	AutoCompleteView.prototype.hide = function(callback) {
+		this.renderController.hide({duration:0});
+	}
+
 	AutoCompleteView.prototype.onSelect = function(callback) {
 		onSelectCallback = callback;
 	};

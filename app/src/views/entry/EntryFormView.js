@@ -42,8 +42,8 @@ define(function(require, exports, module) {
 	}
 
 	function _setListeners() {
-		this.autoCompleteSurface = new AutoCompleteView();
-		this.autoCompleteSurface.on('updateInputSurface', function(){
+		this.autoCompleteView = new AutoCompleteView();
+		this.autoCompleteView.on('updateInputSurface', function(){
 			console.log('update the Input Surface');
 		}.bind(this));
 		this._eventInput.on('on-show', function(entry) {
@@ -99,8 +99,8 @@ define(function(require, exports, module) {
 				this.blur(e);
 			}else {
 				enteredKey = e.srcElement.value;
-				this.autoCompleteSurface.getAutoCompletes(enteredKey);
-				formContainerSurface.add(this.autoCompleteSurface);
+				this.autoCompleteView.getAutoCompletes(enteredKey);
+				formContainerSurface.add(this.autoCompleteView);
 			}
 		}.bind(this));
 
@@ -112,7 +112,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		//update input field
-		this.autoCompleteSurface.onSelect(function(inputLabel) {
+		this.autoCompleteView.onSelect(function(inputLabel) {
 			console.log(inputLabel);
 			Timer.setTimeout(function(){
 				var inputElement = document.getElementById("entry-description");
@@ -266,12 +266,9 @@ define(function(require, exports, module) {
 	}
 
 	EntryFormView.prototype.blur = function(e) {
-		this._eventOutput.emit('hiding-form-view');
-		this.autoCompleteSurface.renderController.hide({duration:0});
+		this.autoCompleteView.hide();
 		this.unsetEntry();
-		//if (cordova) {
-			//cordova.plugins.Keyboard.close();	
-			//}
+		this._eventOutput.emit('hiding-form-view');
 	}
 
 	EntryFormView.prototype.setEntry = function(entry) {
