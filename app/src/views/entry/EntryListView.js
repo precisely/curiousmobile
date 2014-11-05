@@ -105,7 +105,7 @@ define(function(require, exports, module) {
 			} else {
 				var key = Entry.getCacheKey(entry.get('date'));
 				var collectionCache = window.App.collectionCache;
-				if (entry.isContinuous()) {
+				if (entry.isContinuous() || entry.isRemind() || entry.isRepeat()) {
 					EntryCollection.clearCache();
 				} else {
 					collectionCache.removeItem(key);

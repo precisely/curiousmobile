@@ -57,8 +57,8 @@ define(function(require, exports, module) {
 			if (!entry instanceof Entry) {
 				entry = new Entry(entry);
 			}
+
 			this.setEntry(entry);
-			debugger;
 			this.focus();
 			
 		}.bind(this));
