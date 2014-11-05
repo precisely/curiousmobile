@@ -48,7 +48,6 @@ define(function(require, exports, module) {
 		}.bind(this));
 		this._eventInput.on('on-show', function(entry) {
 			console.log('FormView: on-show ' + entry);
-			var inputElement = document.getElementById("entry-description");
 			if (entry && typeof entry == 'number') {
 				var currentDayEntries = new EntryCollection(EntryCollection.getFromCache(window.App.appView.getSelectedDate()));
 				entry = currentDayEntries.get(entry);
@@ -59,8 +58,9 @@ define(function(require, exports, module) {
 				entry = new Entry(entry);
 			}
 			this.setEntry(entry);
-			inputElement.focus();
+			debugger;
 			this.focus();
+			
 		}.bind(this));
 	}
 
@@ -242,13 +242,25 @@ define(function(require, exports, module) {
 			return;
 		}
 		var inputElement = document.getElementById("entry-description");
-		var entryText = inputElement.value;
+		var typedValue = inputElement.value;
+		var entryText = this.entry.toString();
+		if (typedValue != '') {
+			entryText = typedValue;	
+		}
+
+		if (this.entry && this.entry.isContinuous()) {
+			entryText = this.removeSuffix(text);
+		}
+
 		var selectionRange = this.entry.getSelectionRange();
 		if (selectionRange != undefined) {
 			if (selectionRange[2]) { // insert space at selectionRange[0]
 				entryText = entryText.substr(0, selectionRange[0] - 1) + " " + entryText.substr(selectionRange[0] - 1);
 			}
-			inputElement.value = entryText;
+		}
+		inputElement.value = entryText;
+
+		if (selectionRange != undefined) {
 			inputElement.setSelectionRange(selectionRange[0], selectionRange[1]);
 		}
 	}
@@ -264,7 +276,6 @@ define(function(require, exports, module) {
 
 	EntryFormView.prototype.setEntry = function(entry) {
 		this.entry = entry;
-		this.setEntryText(entry.toString());
 	}
 
 	EntryFormView.prototype.unsetEntry = function() {
@@ -277,10 +288,6 @@ define(function(require, exports, module) {
 	}
 
 	EntryFormView.prototype.setEntryText = function(text){
-		if (this.entry && this.entry.isContinuous()) {
-			text = this.removeSuffix(text);
-		}
-		this.inputSurface.setContent(_.template(inputSurfaceTemplate, {tag:text}, templateSettings))
 	}
 
 	EntryFormView.prototype.submit = function(e) {
