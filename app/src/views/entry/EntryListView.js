@@ -89,10 +89,8 @@ define(function(require, exports, module) {
 		entryReadView.on('touchend', function(e) {
 			console.log('EventHandler: entryReadView event: mouseup');
 			var distance = Math.abs(draggable.getPosition()[0]);
-			if (distance > 95) {
-				this.delete();	
-			} else {
-			draggable.setPosition([0,0,0], snapTransition);
+			if (distance < 85) {
+				draggable.setPosition([0,0,0], snapTransition);
 			}
 		}.bind(entryReadView));
 

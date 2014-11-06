@@ -28,7 +28,7 @@ define(function(require, exports, module) {
 		//this.renderController = new RenderController();
 		//this.renderController.inTransformFrom(function(progress){
 			//return Transform.translate(0, 0, window.App.zIndex.readView + 5);	
-//});
+			//});
 			//this.add(this.renderController);
 			var repeatTypeAsClass = this.entry.repeatTypeAsClass();
 			var entryTextColor = '#b0366b';
@@ -111,6 +111,12 @@ define(function(require, exports, module) {
 				}
 			});
 
+			this.deleteSurface.on('click', function(e) {
+				console.log('EventHandler: this.deleteSurface event: click');
+				if (e instanceof CustomEvent) {
+					this.delete();
+				}
+			}.bind(this));
 			deleteModifier = new StateModifier({
 				transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView + 2)
 			});
@@ -140,7 +146,7 @@ define(function(require, exports, module) {
 		//var rc = this.renderController;
 		//rc.show(this.glowSurface, {
 			//duration: 1000
-			//});
+//});
 			//rc.hide();
 			//rc.show(this.entrySurface);
 	}

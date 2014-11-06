@@ -6,6 +6,7 @@ define(function(require, exports, module) {
 	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var Modifier = require('famous/core/Modifier');
 	var PageView = require('views/PageView');
 	var MenuView = require('views/MenuView');
 	var	MenuData = require('data/MenuData');
@@ -29,9 +30,8 @@ define(function(require, exports, module) {
 
 	function _createPageView() {
 		this.pageView = new PageView();
-		this.pageModifier = new StateModifier({
-			size: [window.innerWidth, window.innerHeight]
-
+		this.pageModifier = new Modifier({
+			size: [window.App.width, window.App.height]
 		});
 
 		this.add(this.pageModifier).add(this.pageView);

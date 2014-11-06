@@ -48,6 +48,12 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
+		registerSurface.on('keyup', function(e) {
+			if (e.keyCode == 13) {
+				this.submit();
+			}
+		}.bind(this));
+
 		this.on('on-show', function() {
 			var inputElement = document.getElementById("email");
 			inputElement.focus();

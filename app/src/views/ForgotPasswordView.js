@@ -45,6 +45,12 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
+		forgotSurface.on('keyup', function(e) {
+			if (e.keyCode == 13) {
+				this.submit();
+			}
+		}.bind(this));
+
 		this.on('on-show', function() {
 			var inputElement = document.getElementById("email");
 			inputElement.focus();
@@ -65,9 +71,11 @@ define(function(require, exports, module) {
 			function(data) {
 				if (data.success) {
 					u.showAlert('Look for instructions on recovering your account information in your email.');
-					this._eventOutput.emit('password-reset');
+					setTimeout(function() {
+						this._eventOutput.emit('password-reset');
+					}, 3000);
 				} else {
-					u.showAlert(data.message + ' Please try again or hit Cancel to return to the login screen.');
+					u.showAlert(data.message + ' Please try again or hit the back button to return to the login screen.');
 				}
 			}.bind(this));
 	};

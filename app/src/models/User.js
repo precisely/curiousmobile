@@ -51,7 +51,7 @@ define(function(require, exports, module) {
 					} else {
 						this.u.showAlert(data.message + ' Please try again or hit Cancel to return to the login screen.');
 					}
-				}
+				}.bind(this)
 			);
 
 		},

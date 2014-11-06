@@ -38,8 +38,8 @@ define(function(require, exports, module) {
 			headerSize: this.options.headerSize
 		});
 
-		var layoutModifier = new StateModifier({
-			transform: Transform.translate(0, 0, 0.1)
+		var layoutModifier = new Modifier({
+			size: [window.App.width, window.App.height],
 		});
 
 		this.add(layoutModifier).add(this.layout);

@@ -6,6 +6,7 @@ define(function(require, exports, module) {
 	var Timer = require('famous/utilities/Timer');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var Modifier = require('famous/core/Modifier');
 	var RenderController = require("famous/views/RenderController");
 	var TrackView = require('views/TrackView');
 	var QuickHelpView = require('views/QuickHelpView');
@@ -38,8 +39,9 @@ define(function(require, exports, module) {
 			}
 		});
 		this.add(backgroundSurface);
-		this.hiddenModifier = new StateModifier({
-			align: [0, 0]
+		this.hiddenModifier = new Modifier({
+			align: [0, 0],
+			size: [window.App.width, window.App.height],
 		});
 		this.add(this.hiddenModifier).add(this.renderController);
 		this.launchView = new LaunchView();
