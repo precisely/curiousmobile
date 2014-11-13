@@ -11,11 +11,10 @@ define(function(require, exports, module) {
 	EntryReadView = require('views/entry/EntryReadView'),
 	PinnedView = require('views/entry/PinnedView');
 	var Scrollview = require("famous/views/Scrollview");
-	var SequentialLayout = require("famous/views/SequentialLayout");
+    var SequentialLayout = require("famous/views/SequentialLayout");
 	var RenderNode = require('famous/core/RenderNode');
 	var Draggable = require('famous/modifiers/Draggable');
 	var FixedRenderNode = require('util/FixedRenderNode');
-	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var Utility = require('famous/utilities/Utility');
 	var Timer = require('famous/utilities/Timer');
 	//var Scrollview = require('famous/views/Scrollview');
@@ -104,18 +103,9 @@ define(function(require, exports, module) {
 		return entryReadView;
 	}
 
-	EntryListView.prototype.addPinnedEntries = function (pinnedEntries) {
-		_.forEach(pinnedEntries, function (entry, index) {
-			var pinnedEntryView = new PinnedView(entry);
-			var size = pinnedEntryView.getSize();
-			this.pinnedViews.push(pinnedEntryView);
-			var xOffset = this.lastXOffset + size[0] + 10;
-			pinnedModifier = new Modifier({
-				transform: Transform.translate(xOffset, 0, 0)
-			});
-			this.lastXOffset = xOffset;
-			this.pinnedEntryContainer.add(pinnedModifier).add(pinnedEntryView);
-		}.bind(this));
+	EntryListView.prototype.addPinnedEntry = function (entry) {
+		var pinnedEntryView = new PinnedView(entry);
+		this.pinnedViews.push(pinnedEntryView);
 	}
 
 	EntryListView.prototype.entryEventListeners = function (entryView) {
@@ -150,7 +140,6 @@ define(function(require, exports, module) {
 		this.entryReadViews = [];
 		this.pinnedViews = [];
 		this.draggableList = [];
-		this.lastXOffset = 0;
 
 		if (!entries && this.entries) {
 			entries = EntryCollection.getFromCache(this.entries.key);
@@ -166,110 +155,115 @@ define(function(require, exports, module) {
 			this.renderController.hide({duration:0});
 		}
 
+		if (this.pinnedScrollView) {
+			this.pinnedScrollView.hide({duration:0});
+		}
+
 		// TODO fix the item sizes to be true sizes
-		//this.pinnedSequenctialLayout = new SequentialLayout({
-			//direction: 0,
-			//});
+		this.pinnedSequenctialLayout = new SequentialLayout({
+			direction: 0,
+		});
 
-			//this.pinnedSequenctialLayout.setOutputFunction(function(input, offset, index) {
-				////Bumping the offset to add additional padding on the left
-				//var lastView = this._items._.getValue(index-1);	
-				//if (index == 0) {
-					//this.lastXOffset = 0;
-					//}
-					//var size = [0,0];
-					//if (lastView) {
-						//size = lastView.getSize();
-						//}
+		this.pinnedSequenctialLayout.setOutputFunction(function(input, offset, index) {
+			//Bumping the offset to add additional padding on the left
+			var lastView = this._items._.getValue(index-1);	
+			var size = [0,0];
+			if (lastView) {
+				size = lastView.getSize();
+			}
 
-						//if (!size || !size[0]) {
-							//size = [0, 0];	
-							//}
+			if (!size || !size[0]) {
+				size = [0, 0];	
+			}
 
-							//var xOffset = size[0] + 10;
-							//if (this.lastXOffset) {
-								//xOffset += this.lastXOffset;	
-								//}
-								//var transform = Transform.translate(xOffset, 0, 0);
-								//this.lastXOffset = xOffset;
-								//return {
-									//transform: transform,
-									//target: input.render()
-									//};
-									//}.bind(this.pinnedSequenctialLayout));
-									var scrollModifier = new Modifier();
-									scrollModifier.sizeFrom(function(){
-										return [320,window.App.height - 210]
-									});
-									var scrollNode = new RenderNode(scrollModifier);
-									this.scrollView = new Scrollview({
-										direction: 1,
-										defaultitemsize: [320, 90],
-										itemspacing: 0,
-									});
+			var xOffset;
+			if (index == 0) {
+				this.lastXOffset = 0;
+				xOffset = size[0];
+			} else {
+				xOffset = size[0] + 10;
+			}
 
-									this.scrollView.trans = new Transitionable(0);
+			if (this.lastXOffset) {
+				xOffset += this.lastXOffset;	
+			}
+			var transform = Transform.translate(xOffset, 0, 0);
+			this.lastXOffset = xOffset;
+			return {
+				transform: transform,
+				target: input.render()
+			};
+		}.bind(this.pinnedSequenctialLayout));
+		var scrollModifier = new Modifier();
+		scrollModifier.sizeFrom(function(){
+			return [320,window.App.height - 210]
+		});
+		var scrollNode = new RenderNode(scrollModifier);
+		this.scrollView = new Scrollview({
+			direction: 1,
+			defaultitemsize: [320, 90],
+			itemspacing: 0,
+		});
 
-									// Vertical offset this.scrollView will start load at
-									this.scrollView.refreshOffset = 40;
+		this.scrollView.trans = new Transitionable(0);
 
-									// Reset scroller to default behavior
-									this.scrollView.reset = function(){
-										this.scrollView._scroller.positionFrom(this.scrollView.getPosition.bind(this.scrollView));
-									}.bind(this);
+		// Vertical offset this.scrollView will start load at
+		this.scrollView.refreshOffset = 40;
 
-									this.scrollView.sync.on('start',function(){
+		// Reset scroller to default behavior
+		this.scrollView.reset = function(){
+			this.scrollView._scroller.positionFrom(this.scrollView.getPosition.bind(this.scrollView));
+		}.bind(this);
 
-										this.scrollView.trans.halt();
+		this.scrollView.sync.on('start',function(){
 
-										var pos = this.scrollView.trans.get()
+			this.scrollView.trans.halt();
 
-										if (pos != 0) this.scrollView.setPosition(pos);
+			var pos = this.scrollView.trans.get()
 
-										this.scrollView.reset()
+			if (pos != 0) this.scrollView.setPosition(pos);
 
-									}.bind(this));
+			this.scrollView.reset()
 
-									this.scrollView.sync.on('end',function(){
+		}.bind(this));
 
-										var pos = this.scrollView.getPosition();
+		this.scrollView.sync.on('end',function(){
 
-										if (pos < (-this.scrollView.refreshOffset)) {
+			var pos = this.scrollView.getPosition();
 
-											this.scrollView.trans.halt();
-											this.scrollView.trans.set(pos);
+			if (pos < (-this.scrollView.refreshOffset)) {
 
-											this.scrollView._scroller.positionFrom(function(){
-												return this.scrollView.trans.get();
-											}.bind(this));
-											this.renderController.hide({duration:0});
-											this.renderController.show(this.spinnerSurface, {duration: 0});
-											Timer.setTimeout(function() {
-												this._eventOutput.emit('refresh-entries');
-											}.bind(this), 1000);
-											console.log('EntryListView: Need to refresh on pull');
-										} else {
-											this.scrollView.trans.halt();
-											this.scrollView.trans.set(0);
-										}
-									}.bind(this));
+				this.scrollView.trans.halt();
+				this.scrollView.trans.set(pos);
 
-									scrollNode.add(this.scrollView);
-									this.pinnedEntryContainer = new ContainerSurface();
+				this.scrollView._scroller.positionFrom(function(){
+					return this.scrollView.trans.get();
+				}.bind(this));
+				this.renderController.hide({duration:0});
+				this.renderController.show(this.spinnerSurface, {duration: 0});
+				Timer.setTimeout(function() {
+					this._eventOutput.emit('refresh-entries');
+				}.bind(this), 1000);
+				console.log('EntryListView: Need to refresh on pull');
+			} else {
+				this.scrollView.trans.halt();
+				this.scrollView.trans.set(0);
+			}
+		}.bind(this));
 
-									var pinnedEntries = entries.filter(function(entry) {
-										return entry.isContinuous();	
-									});
-									this.addPinnedEntries(pinnedEntries);
-									entries.forEach(function(entry, index) {
-										if (!entry.isContinuous()) {
-											this.addEntry(entry);
-										}
-									}.bind(this));
+		scrollNode.add(this.scrollView);
+		entries.forEach(function(entry) {
+			if (entry.isContinuous()) {
+				this.addPinnedEntry(entry);
+			} else {
+				this.addEntry(entry);
+			}
+		}.bind(this));
 
-									this.scrollView.sequenceFrom(this.draggableList);
-									this.pinnedEntriesController.show(this.pinnedEntryContainer, {duration: 0});
-									this.renderController.show(scrollNode, {duration:0});
+		this.scrollView.sequenceFrom(this.draggableList);
+		this.pinnedSequenctialLayout.sequenceFrom(this.pinnedViews);
+		this.pinnedEntriesController.show(this.pinnedSequenctialLayout, {duration: 0});
+		//this.renderController.show(scrollNode, {duration:0});
 	}
 
 	EntryListView.prototype.blur = function() {
