@@ -20,8 +20,8 @@ define(function(require, exports, module) {
 	EntryReadView.prototype.constructor = EntryReadView;
 
 	EntryReadView.DEFAULT_OPTIONS = {
-		entryHeight: 90,
-		lineHeight: 24,
+		entryHeight: 56,
+		lineHeight: 16,
 	};
 
 	function _addSurface() {
@@ -88,7 +88,7 @@ define(function(require, exports, module) {
 				}
 			});
 			var showMoreModifier = new StateModifier({
-				transform: Transform.translate(window.innerWidth - 40, this.options.lineHeight, window.App.zIndex.readView + 1)
+				transform: Transform.translate(window.innerWidth - 40, 10, window.App.zIndex.readView + 1)
 			});
 			this.showMoreSurface.pipe(this._eventOutput);
 			this.showMoreSurface.on('click', function(e) {

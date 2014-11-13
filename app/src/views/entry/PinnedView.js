@@ -21,9 +21,8 @@ define(function(require, exports, module) {
 		this.entrySurface = new Surface({
 			classes: ['pinned'],
 			size: [true, true],
-			content: '<i class="fa fa-thumb-tack"></i> &nbsp;' + this.entry.toString(),
+			content: '<i class="fa fa-thumb-tack"></i> &nbsp;' + this.getDisplayText(),
 			properties: {
-				backgroundColor: '#ebebeb',
 				border: '1px solid #868686',
 				color: '#868686',
 				minHeight: '34px',
@@ -46,5 +45,9 @@ define(function(require, exports, module) {
 		return this.entrySurface.getSize();
 	}
 
+	PinnedView.prototype.getDisplayText = function() {
+		var displayText = this.entry.removeSuffix();
+		return displayText;
+	}
 	module.exports = PinnedView;
 });

@@ -12,6 +12,7 @@ define(function(require, exports, module) {
 	PinnedView = require('views/entry/PinnedView');
 	var Scrollview = require("famous/views/Scrollview");
 	var SequentialLayout = require("famous/views/SequentialLayout");
+	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var RenderNode = require('famous/core/RenderNode');
 	var Draggable = require('famous/modifiers/Draggable');
 	var FixedRenderNode = require('util/FixedRenderNode');
@@ -178,22 +179,28 @@ define(function(require, exports, module) {
 			}
 
 			var xOffset;
+			// per row 2 pinned entry
+				// TODO for larger phones
+			//
+			var rowNumber = Math.ceil(index / 3);
 			if (index == 0) {
 				this.lastXOffset = 0;
+				this.nextYOffset = 8;
 			} 
 			xOffset = size[0] + 8;
 			if (this.lastXOffset) {
-				console.log(this.lastXOffset + ':' + App.width);
-				if (this.lastXOffset >= App.width) {
+				var currentSize = input.getSize();
+				console.log(this.lastXOffset + ':' + currentSize);
+				if (currentSize && currentSize[0] && (this.lastXOffset + currentSize[0] + ((index + 1) * 8 + 90) >= App.width)) {
 					//wrapping pinned entries
 					this.lastXOffset = 0;
-					xOffset = 0;
-					this.nextYOffset += 32;
+					xOffset = 8;
+					this.nextYOffset = 60 * rowNumber;
 				} else {
 					xOffset += this.lastXOffset;	
 				}
 			}
-			var transform = Transform.translate(xOffset, this.nextYOffset, 0);
+			var transform = Transform.translate(xOffset, this.nextYOffset, 999);
 			this.lastXOffset = xOffset;
 			return {
 				transform: transform,
@@ -268,8 +275,47 @@ define(function(require, exports, module) {
 
 		this.scrollView.sequenceFrom(this.draggableList);
 		this.pinnedSequenctialLayout.sequenceFrom(this.pinnedViews);
-		this.pinnedEntriesController.show(this.pinnedSequenctialLayout, {duration: 0});
-		//this.renderController.show(scrollNode, {duration:0});
+
+		var pinnedContainerSurface = new ContainerSurface({
+			properties: {
+				backgroundColor: '#ebebeb',
+			}	
+		});
+
+
+		var pinnedHelp = new Surface({
+			content: 'PINNED TAGS: (tap to add tag to your list below)',	
+			size: [undefined, 11],
+			properties: {
+				color: '#aeaeae',
+				fontSize: '11px'
+			}
+		});
+		var pinnedHelpModifier = new Modifier({
+			transform: Transform.translate(14, 0, 0)
+		});
+		pinnedContainerSurface.add(pinnedHelpModifier).add(pinnedHelp);
+
+		pinnedContainerSurface.on('deploy', function() {
+			Timer.every(function() {
+				var numberOfRows = Math.ceil(this.pinnedViews.length / 3);	
+				var height = numberOfRows * (60 + 8);
+				pinnedContainerSurface.setSize([undefined, height]);
+			}.bind(this), 2);
+		}.bind(this));
+
+		scrollModifier.transformFrom(function() {
+			var numberOfRows = Math.ceil(this.pinnedViews.length / 3);	
+			var height = numberOfRows * (60 + 8);
+			return Transform.translate(0, height, 0); 	
+		}.bind(this));
+		var pinnedEntriesModifier = new Modifier({
+			transform: Transform.translate(0, 22, 0)
+		});
+		pinnedContainerSurface.add(pinnedEntriesModifier).add(this.pinnedSequenctialLayout);
+
+		this.pinnedEntriesController.show(pinnedContainerSurface, {duration: 0});
+		this.renderController.show(scrollNode, {duration:0});
 	}
 
 	EntryListView.prototype.blur = function() {
