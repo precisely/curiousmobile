@@ -7,16 +7,16 @@ define(function(require, exports, module) {
 	var RenderController = require("famous/views/RenderController");
 	var FastClick = require('famous/inputs/FastClick');
 	var EventHandler = require('famous/core/EventHandler');
+	var EntryView = require('views/entry/EntryView');
 	var u = require('util/Utils');
 	var Entry = require('models/Entry');
 
 	function EntryReadView(entry) {
-		View.apply(this, arguments);
-		this.entry = entry;
+		EntryView.apply(this, arguments);
 		_addSurface.call(this);
 	}
 
-	EntryReadView.prototype = Object.create(View.prototype);
+	EntryReadView.prototype = Object.create(EntryView.prototype);
 	EntryReadView.prototype.constructor = EntryReadView;
 
 	EntryReadView.DEFAULT_OPTIONS = {
