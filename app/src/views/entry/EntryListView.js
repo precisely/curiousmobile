@@ -11,7 +11,7 @@ define(function(require, exports, module) {
 	EntryReadView = require('views/entry/EntryReadView'),
 	PinnedView = require('views/entry/PinnedView');
 	var Scrollview = require("famous/views/Scrollview");
-    var SequentialLayout = require("famous/views/SequentialLayout");
+	var SequentialLayout = require("famous/views/SequentialLayout");
 	var RenderNode = require('famous/core/RenderNode');
 	var Draggable = require('famous/modifiers/Draggable');
 	var FixedRenderNode = require('util/FixedRenderNode');
@@ -164,6 +164,7 @@ define(function(require, exports, module) {
 			direction: 0,
 		});
 
+		this.pinnedSequenctialLayout.nextYOffset = 0;
 		this.pinnedSequenctialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
 			var lastView = this._items._.getValue(index-1);	
@@ -179,15 +180,20 @@ define(function(require, exports, module) {
 			var xOffset;
 			if (index == 0) {
 				this.lastXOffset = 0;
-				xOffset = size[0];
-			} else {
-				xOffset = size[0] + 10;
-			}
-
+			} 
+			xOffset = size[0] + 8;
 			if (this.lastXOffset) {
-				xOffset += this.lastXOffset;	
+				console.log(this.lastXOffset + ':' + App.width);
+				if (this.lastXOffset >= App.width) {
+					//wrapping pinned entries
+					this.lastXOffset = 0;
+					xOffset = 0;
+					this.nextYOffset += 32;
+				} else {
+					xOffset += this.lastXOffset;	
+				}
 			}
-			var transform = Transform.translate(xOffset, 0, 0);
+			var transform = Transform.translate(xOffset, this.nextYOffset, 0);
 			this.lastXOffset = xOffset;
 			return {
 				transform: transform,
