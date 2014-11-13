@@ -4,6 +4,7 @@ define(function(require, exports, module) {
 	var TrueSurface = require('surfaces/TrueSurface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var Modifier = require('famous/core/Modifier');
 	var RenderController = require("famous/views/RenderController");
 	var FastClick = require('famous/inputs/FastClick');
 	var EventHandler = require('famous/core/EventHandler');
@@ -25,11 +26,6 @@ define(function(require, exports, module) {
 	};
 
 	function _addSurface() {
-		//this.renderController = new RenderController();
-		//this.renderController.inTransformFrom(function(progress){
-			//return Transform.translate(0, 0, window.App.zIndex.readView + 5);	
-			//});
-			//this.add(this.renderController);
 			var repeatTypeAsClass = this.entry.repeatTypeAsClass();
 			var entryTextColor = '#b0366b';
 			if (_.contains(repeatTypeAsClass, 'ghost')) {
@@ -103,9 +99,9 @@ define(function(require, exports, module) {
 				size: [100, this.options.entryHeight],
 				content: 'Delete',
 				properties: {
-					padding: '20px 15px',
+					padding: '8px 26px',
 					backgroundColor: '#dc6059',
-					fontSize: '24px',
+					fontSize: '16px',
 					lineHeight: '45px',
 					color: 'white',
 				}
@@ -121,7 +117,7 @@ define(function(require, exports, module) {
 				transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView + 2)
 			});
 			this.add(deleteModifier).add(this.deleteSurface);
-			var entryModifier = new StateModifier({
+			var entryModifier = new Modifier({
 				transform: Transform.translate(0, 0, window.App.zIndex.readView)
 			});
 			this.add(entryModifier).add(this.entrySurface);

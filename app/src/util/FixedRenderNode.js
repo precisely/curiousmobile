@@ -16,7 +16,7 @@ define(function(require, exports, module) {
 	};
 
 	FixedRenderNode.prototype.getSize = function(target) {
-		return [320, 90];
+		return [320, 56];
 	}
 
 	module.exports = FixedRenderNode;

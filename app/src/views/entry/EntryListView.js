@@ -50,7 +50,7 @@ define(function(require, exports, module) {
 	EntryListView.prototype.constructor = EntryListView;
 
 	EntryListView.DEFAULT_OPTIONS = {
-		entryHeight: 90,
+		entryHeight: 56, //Entry heigh needs to changed in FixedRenderNode as well
 		selectionPadding: 24,
 	};
 
@@ -107,6 +107,7 @@ define(function(require, exports, module) {
 	EntryListView.prototype.addPinnedEntry = function (entry) {
 		var pinnedEntryView = new PinnedView(entry);
 		this.pinnedViews.push(pinnedEntryView);
+		this.entryEventListeners(pinnedEntryView);
 	}
 
 	EntryListView.prototype.entryEventListeners = function (entryView) {
@@ -148,6 +149,8 @@ define(function(require, exports, module) {
 
 		if (entries instanceof EntryCollection) {
 			this.entries = entries;	
+		} else if (entries instanceof Array){
+			this.entries = new EntryCollection(entries);
 		} else {
 			this.entries.set(entries);
 		}
@@ -156,8 +159,8 @@ define(function(require, exports, module) {
 			this.renderController.hide({duration:0});
 		}
 
-		if (this.pinnedScrollView) {
-			this.pinnedScrollView.hide({duration:0});
+		if (this.pinnedSequenctialLayout) {
+			this.pinnedEntriesController.hide({duration:0});
 		}
 
 		// TODO fix the item sizes to be true sizes
@@ -190,17 +193,17 @@ define(function(require, exports, module) {
 			xOffset = size[0] + 8;
 			if (this.lastXOffset) {
 				var currentSize = input.getSize();
-				console.log(this.lastXOffset + ':' + currentSize);
+				//console.log(this.lastXOffset + ':' + currentSize);
 				if (currentSize && currentSize[0] && (this.lastXOffset + currentSize[0] + ((index + 1) * 8 + 90) >= App.width)) {
 					//wrapping pinned entries
 					this.lastXOffset = 0;
 					xOffset = 8;
-					this.nextYOffset = 60 * rowNumber;
+					this.nextYOffset = 50 * rowNumber;
 				} else {
 					xOffset += this.lastXOffset;	
 				}
 			}
-			var transform = Transform.translate(xOffset, this.nextYOffset, 999);
+			var transform = Transform.translate(xOffset, this.nextYOffset, 0);
 			this.lastXOffset = xOffset;
 			return {
 				transform: transform,
@@ -209,12 +212,19 @@ define(function(require, exports, module) {
 		}.bind(this.pinnedSequenctialLayout));
 		var scrollModifier = new Modifier();
 		scrollModifier.sizeFrom(function(){
-			return [320,window.App.height - 210]
-		});
+			if (this.pinnedViews) {
+				var numberOfRows = Math.ceil(this.pinnedViews.length / 3);	
+				var height = numberOfRows * (50 + 8);
+				return [320,window.App.height - 210 - height]
+			} else {
+
+				return [320,window.App.height - 210]
+			}
+		}.bind(this));
 		var scrollNode = new RenderNode(scrollModifier);
 		this.scrollView = new Scrollview({
 			direction: 1,
-			defaultitemsize: [320, 90],
+			defaultitemsize: [320, 56],
 			itemspacing: 0,
 		});
 
@@ -299,14 +309,15 @@ define(function(require, exports, module) {
 		pinnedContainerSurface.on('deploy', function() {
 			Timer.every(function() {
 				var numberOfRows = Math.ceil(this.pinnedViews.length / 3);	
-				var height = numberOfRows * (60 + 8);
+				var height = numberOfRows * (50 + 8);
 				pinnedContainerSurface.setSize([undefined, height]);
+				this.pinnedHeight = height;
 			}.bind(this), 2);
 		}.bind(this));
 
 		scrollModifier.transformFrom(function() {
 			var numberOfRows = Math.ceil(this.pinnedViews.length / 3);	
-			var height = numberOfRows * (60 + 8);
+			var height = numberOfRows * (50 + 8);
 			return Transform.translate(0, height, 0); 	
 		}.bind(this));
 		var pinnedEntriesModifier = new Modifier({

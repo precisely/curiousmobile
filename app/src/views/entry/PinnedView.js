@@ -25,8 +25,8 @@ define(function(require, exports, module) {
 			properties: {
 				border: '1px solid #868686',
 				color: '#868686',
-				minHeight: '34px',
-				padding: '11px',
+				minHeight: '24px',
+				padding: '5px 11px',
 				borderRadius: '3px'
 			}
 		});
@@ -38,6 +38,14 @@ define(function(require, exports, module) {
 				this.setSize([width, height]);
 			}.bind(this), 2);
 		});
+
+		this.entrySurface.on('click', function(e) {
+			console.log("entrySurface event");
+			if (e instanceof CustomEvent) {
+				this._eventOutput.emit('select-entry', this.entry);
+			}
+		}.bind(this));
+
 		this.add(this.entrySurface);
 	};
 
