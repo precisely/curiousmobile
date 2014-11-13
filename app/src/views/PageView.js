@@ -41,7 +41,7 @@ define(function(require, exports, module) {
 		this.add(backgroundSurface);
 		this.hiddenModifier = new Modifier({
 			align: [0, 0],
-			size: [window.App.width, window.App.height],
+			size: [App.width, App.height],
 		});
 		this.add(this.hiddenModifier).add(this.renderController);
 		this.launchView = new LaunchView();

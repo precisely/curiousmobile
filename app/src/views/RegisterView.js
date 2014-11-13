@@ -5,6 +5,7 @@ define(function(require, exports, module) {
 	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var Modifier = require('famous/core/Modifier');
 	var FormContainerSurface = require('famous/surfaces/FormContainerSurface');
 	var InputSurface = require('famous/surfaces/InputSurface');
 	var SequentialLayout = require('famous/views/SequentialLayout');
@@ -30,13 +31,17 @@ define(function(require, exports, module) {
 	RegisterView.prototype.createView = function() {
 		var template = RegisterTemplate;
 		var registerSurface = new Surface({
-			size: [undefined, 270],
 			content: _.template(template, this.options, templateSettings),
 			properties: {
 				backgroundColor: 'white'
 			}
 		});
-
+		var registerModifier = new Modifier({
+			transform: Transform.translate(0, 74, 0),	
+		});
+		registerModifier.sizeFrom(function() {
+			return [App.width, App.height - 70];	
+		});
 		registerSurface.on('click', function(e) {
 			var classList;
 			if (e instanceof CustomEvent) {
@@ -59,7 +64,7 @@ define(function(require, exports, module) {
 			inputElement.focus();
 		}.bind(this));
 		this.setHeaderLabel('GET STARTED');
-		this.setBody(registerSurface);
+		this.addContent(registerModifier, registerSurface);
 	};
 
 	RegisterView.prototype.submit = function() {
