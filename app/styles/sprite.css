@@ -59,6 +59,19 @@
 	background-position: 183px -13px;
 }
 
+.icon-search {
+	width: 50px;
+	height: 57px;
+	background-position: 86px -117px;
+}
+
+.icon-search.active {
+	width: 50px;
+	height: 57px;
+	background-position: 86px -13px;
+}
+
+
 .icon-comment {
 	width: 33px;
 	height: 26px;

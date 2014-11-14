@@ -26,8 +26,9 @@ define(function(require, exports, module) {
 
 	App.collectionCache = collectionCache;
 	//App.serverUrl = "http://192.168.0.31:8080";
+	App.serverUrl = "http://192.168.0.107:8080";
 	//App.serverUrl = "http://192.168.0.104:8080";
-	App.serverUrl = "http://dev.wearecurio.us";
+	//App.serverUrl = "http://dev.wearecurio.us";
 	//App.serverUrl = "http://127.0.0.1:8080";
 
 	var mainContext = Engine.createContext();

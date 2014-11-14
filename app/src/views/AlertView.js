@@ -55,9 +55,7 @@ define(function(require, exports, module) {
 			var classList;
 			if (e instanceof CustomEvent) {
 				classList = e.srcElement.classList;
-				if (_.contains(classList, 'close')) {
-					u.closeAlerts();
-				} else if (_.contains(classList, 'a') && this.options.onA) {
+				if (_.contains(classList, 'a') && this.options.onA) {
 					console.log('Event A');
 					this.options.onA.call();
 					u.closeAlerts();
@@ -65,7 +63,9 @@ define(function(require, exports, module) {
 					console.log('Event B');
 					this.options.onB.call();
 					u.closeAlerts();
-				}
+				}else {
+					u.closeAlerts();
+				} 
 			}
 		}.bind(this));
 

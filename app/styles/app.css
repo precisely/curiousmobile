@@ -22,6 +22,10 @@ a {
 	display: block;
 }
 
+.footer-item {
+	margin-left: 10px;
+}
+
 .panel {
 	margin: 5px;
 	border-radius: 0px;
