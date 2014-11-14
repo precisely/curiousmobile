@@ -25,9 +25,11 @@ define(function(require, exports, module) {
 			properties: {
 				border: '1px solid #868686',
 				color: '#868686',
-				minHeight: '24px',
 				padding: '5px 11px',
-				borderRadius: '3px'
+				borderRadius: '2px',
+				fontWeight: 'lighter',
+				lineHeight: '13px',
+				fontSize: '13px',
 			}
 		});
 		this.entrySurface.on('deploy', function() {

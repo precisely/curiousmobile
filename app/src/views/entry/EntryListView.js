@@ -50,12 +50,11 @@ define(function(require, exports, module) {
 	EntryListView.prototype.constructor = EntryListView;
 
 	EntryListView.DEFAULT_OPTIONS = {
-		entryHeight: 56, //Entry heigh needs to changed in FixedRenderNode as well
+		entryHeight: 55, //Entry heigh needs to changed in FixedRenderNode as well
 		selectionPadding: 24,
 	};
 
 	function _createList(entries) {
-
 		var backgroundSurface = new Surface({
 			size: [320, 543],
 			properties: {
@@ -198,7 +197,7 @@ define(function(require, exports, module) {
 					//wrapping pinned entries
 					this.lastXOffset = 0;
 					xOffset = 8;
-					this.nextYOffset = 50 * rowNumber;
+					this.nextYOffset = 40 * rowNumber;
 				} else {
 					xOffset += this.lastXOffset;	
 				}
@@ -213,9 +212,7 @@ define(function(require, exports, module) {
 		var scrollModifier = new Modifier();
 		scrollModifier.sizeFrom(function(){
 			if (this.pinnedViews) {
-				var numberOfRows = Math.ceil(this.pinnedViews.length / 3);	
-				var height = numberOfRows * (50 + 8);
-				return [320,window.App.height - 210 - height]
+				return [320,window.App.height - 210 - this.heightOfPins()]
 			} else {
 
 				return [320,window.App.height - 210]
@@ -224,7 +221,7 @@ define(function(require, exports, module) {
 		var scrollNode = new RenderNode(scrollModifier);
 		this.scrollView = new Scrollview({
 			direction: 1,
-			defaultitemsize: [320, 56],
+			defaultitemsize: [320, 55],
 			itemspacing: 0,
 		});
 
@@ -308,17 +305,12 @@ define(function(require, exports, module) {
 
 		pinnedContainerSurface.on('deploy', function() {
 			Timer.every(function() {
-				var numberOfRows = Math.ceil(this.pinnedViews.length / 3);	
-				var height = numberOfRows * (50 + 8);
-				pinnedContainerSurface.setSize([undefined, height]);
-				this.pinnedHeight = height;
+				pinnedContainerSurface.setSize([undefined, this.heightOfPins()]);
 			}.bind(this), 2);
 		}.bind(this));
 
 		scrollModifier.transformFrom(function() {
-			var numberOfRows = Math.ceil(this.pinnedViews.length / 3);	
-			var height = numberOfRows * (50 + 8);
-			return Transform.translate(0, height, 0); 	
+			return Transform.translate(0, this.heightOfPins(), 0); 	
 		}.bind(this));
 		var pinnedEntriesModifier = new Modifier({
 			transform: Transform.translate(0, 22, 0)
@@ -327,6 +319,11 @@ define(function(require, exports, module) {
 
 		this.pinnedEntriesController.show(pinnedContainerSurface, {duration: 0});
 		this.renderController.show(scrollNode, {duration:0});
+	}
+
+	EntryListView.prototype.heightOfPins = function () {
+		var numberOfRows = Math.ceil(this.pinnedViews.length / 3);	
+		return numberOfRows * (40 + 8);
 	}
 
 	EntryListView.prototype.blur = function() {

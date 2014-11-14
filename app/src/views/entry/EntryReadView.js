@@ -21,7 +21,7 @@ define(function(require, exports, module) {
 	EntryReadView.prototype.constructor = EntryReadView;
 
 	EntryReadView.DEFAULT_OPTIONS = {
-		entryHeight: 56,
+		entryHeight: 55,
 		lineHeight: 16,
 	};
 
@@ -35,7 +35,8 @@ define(function(require, exports, module) {
 			var properties = {
 				padding: '15px',
 				fontSize: this.options.lineHeight + 'px',
-				lineHeight: (this.options.lineHeight + 2) + 'px',
+				fontWeight: 'lighter',
+				lineHeight: this.options.lineHeight + 'px',
 				textOverflow: 'ellipsis'
 			};
 
@@ -156,7 +157,7 @@ define(function(require, exports, module) {
 		} else if (this.entry.isRepeat()) {
 			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every day</div>' + displayText;	
 		}
-		return '<div style="height: 9px"></div>' + displayText;
+		return  displayText;
 	}
 
 	module.exports = EntryReadView;
