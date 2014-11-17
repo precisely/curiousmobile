@@ -114,11 +114,11 @@ define(function(require, exports, module) {
 
 		var footerSurface = new Surface({
 			content: FooterTemplate,
-			size: [undefined, 70],
+			size: [undefined, 50],
 			properties: {
 				borderTop: '1px solid #c0c0c0',
 				backgroundColor: 'white',
-				padding: '5px 0'
+				paddingTop: '5px'
 			}
 		});
 
@@ -126,7 +126,7 @@ define(function(require, exports, module) {
 			if (e instanceof CustomEvent) {
 				console.log('footerSurface event');
 				var classList = e.srcElement.classList;				
-				e.data = classList[0];
+				e.data = classList[2];
 				if (e.data == 'track' || e.data == 'community') {
 					this._eventOutput.emit('change-page', e);
 				}

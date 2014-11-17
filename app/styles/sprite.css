@@ -1,11 +1,6 @@
 .icon {
-	background-image: url('../content/images/m-icons.png');
-	background-size: 450px auto;
 	display: inline-block;
-	zoom: 0.8;
-	-moz-transform:scale(0.8);
-	-moz-transform-origin: 0 0;
-	margin-top: 8px;
+	background-size: auto 44px;
 }
 
 .icon-xs {
@@ -15,64 +10,44 @@
 }
 
 .icon-track {
-	width: 37px;
-	height: 58px;
-	background-position: 441px -114px;
+	background-image: url('../content/images/icon-track.png');
 }
 
 .icon-track.active {
-	width: 37px;
-	height: 58px;
-	background-position: 441px -11px;
+	background-image: url('../content/images/icon-track-active.png');
 }
 
 .icon-signals {
-	width: 47px;
-	height: 63px;
-	background-position: 357px -111px;
+	background-image: url('../content/images/icon-signal.png');
 }
 
 
 .icon-signals.active {
-	width: 47px;
-	height: 63px;
-	background-position: 357px -10px;
+	background-image: url('../content/images/icon-signal-active.png');
 }
 
 .icon-chart {
-	width: 47px;
-	height: 58px;
-	background-position: 266px -117px;
+	background-image: url('../content/images/icon-chart.png');
 }
 
 .icon-chart.active {
-	width: 47px;
-	height: 58px;
-	background-position: 266px -13px;
+	background-image: url('../content/images/icon-chart-active.png');
 }
 
 .icon-feed {
-	width: 50px;
-	height: 57px;
-	background-position: 183px -117px;
+	background-image: url('../content/images/icon-feed.png');
 }
 
 .icon-feed.active {
-	width: 50px;
-	height: 57px;
-	background-position: 183px -13px;
+	background-image: url('../content/images/icon-feed-active.png');
 }
 
 .icon-search {
-	width: 50px;
-	height: 57px;
-	background-position: 86px -117px;
+	background-image: url('../content/images/icon-search.png');
 }
 
 .icon-search.active {
-	width: 50px;
-	height: 57px;
-	background-position: 86px -13px;
+	background-image: url('../content/images/icon-search-active.png');
 }
 
 
