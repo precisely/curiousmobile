@@ -208,33 +208,33 @@ a {
 }
 
 .df-gutter {
-	padding: 15px
+	padding: 15px;
 }
 
 .df-gutter-left {
-	padding-left: 15px
+	padding-left: 15px;
 }
 
 .df-gutter-right {
-	padding-right: 15px
+	padding-right: 15px;
 }
 
 .df-gutter-top {
-	padding-top: 15px
+	padding-top: 15px;
 }
 
 .df-gutter-bottom {
-	padding-bottom: 15px
+	padding-bottom: 15px;
 }
 
 .df-gutter-vertical {
-	padding-top: 15px
-	padding-bottom: 15px
+	padding-top: 15px;
+	padding-bottom: 15px;
 }
 
 .df-gutter-horizontal {
-	padding-left: 15px
-	padding-right: 15px
+	padding-left: 15px;
+	padding-right: 15px;
 }
 
 .gutter-hr {
@@ -378,4 +378,29 @@ button.close {
 	-ms-transform: rotate(-45deg); /* IE 9 */
 	-webkit-transform: rotate(-45deg); /* Chrome, Safari, Opera */
 	transform: rotate(-45deg);
+}
+
+/*Context Menu*/
+.context-menu {
+	list-style: none;
+	margin: 120px auto !important;
+	min-width: 150px;
+	max-width: 290px;
+	-webkit-margin-before: 0;
+	-webkit-padding-start: 0;
+	background: white;
+	text-align: center;
+	color: rgb(232, 56, 56);
+}
+
+.context-menu li {
+	display: block;
+	min-width: 150px;
+	font-size: 17px;
+	padding: 17px;
+}
+
+* {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none; /* Disable selection/copy in UIWebView */
 }

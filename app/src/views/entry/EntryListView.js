@@ -158,19 +158,19 @@ define(function(require, exports, module) {
 			this.renderController.hide({duration:0});
 		}
 
-		if (this.pinnedSequenctialLayout) {
+		if (this.pinnedSequentialLayout) {
 			this.pinnedEntriesController.hide({duration:0});
 		}
 
 		// TODO fix the item sizes to be true sizes
-		this.pinnedSequenctialLayout = new SequentialLayout({
+		this.pinnedSequentialLayout = new SequentialLayout({
 			direction: 0,
 		});
 
-		this.pinnedSequenctialLayout.nextYOffset = 0;
-		this.pinnedSequenctialLayout.setOutputFunction(function(input, offset, index) {
+		this.pinnedSequentialLayout.nextYOffset = 47;
+		this.pinnedSequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
-			var lastView = this._items._.getValue(index-1);	
+			var lastView = this.pinnedSequentialLayout._items._.getValue(index-1);	
 			var size = [0,0];
 			if (lastView) {
 				size = lastView.getSize();
@@ -181,38 +181,34 @@ define(function(require, exports, module) {
 			}
 
 			var xOffset;
-			// per row 2 pinned entry
-				// TODO for larger phones
-			//
-			var rowNumber = Math.ceil(index / 3);
+			// TODO for larger phones
 			if (index == 0) {
-				this.lastXOffset = 0;
-				this.nextYOffset = 8;
+				this.pinnedSequentialLayout.lastXOffset = 0;
+				this.pinnedSequentialLayout.nextYOffset = 8;
 			} 
 			xOffset = size[0] + 8;
-			if (this.lastXOffset) {
-				var currentSize = input.getSize();
-				//console.log(this.lastXOffset + ':' + currentSize);
-				if (currentSize && currentSize[0] && (this.lastXOffset + currentSize[0] + ((index + 1) * 8 + 90) >= App.width)) {
-					//wrapping pinned entries
-					this.lastXOffset = 0;
-					xOffset = 8;
-					this.nextYOffset = 40 * rowNumber;
-				} else {
-					xOffset += this.lastXOffset;	
-				}
+			//console.log(this.pinnedSequentialLayout.lastXOffset + ':' + currentSize);
+			if (_.contains(this.pinnedEdgeIndex, index)) {
+				this.pinnedSequentialLayout.lastXOffset = 0;
+				xOffset = 8;
+				//console.log('EntryListView: heightOfPins: ' + this.heightOfPins());
+				//console.log('EntryListView this.pinnedSequentialLayout index: ' + index);
+				this.pinnedSequentialLayout.nextYOffset += 36;
+				console.log('EntryListView: Adding a pinned row: ' + this.pinnedSequentialLayout.nextYOffset);
+			} else {
+				xOffset += this.pinnedSequentialLayout.lastXOffset;	
 			}
-			var transform = Transform.translate(xOffset, this.nextYOffset, 0);
-			this.lastXOffset = xOffset;
+			var transform = Transform.translate(xOffset, this.pinnedSequentialLayout.nextYOffset, 0);
+			this.pinnedSequentialLayout.lastXOffset = xOffset;
 			return {
 				transform: transform,
 				target: input.render()
 			};
-		}.bind(this.pinnedSequenctialLayout));
+		}.bind(this));
 		var scrollModifier = new Modifier();
 		scrollModifier.sizeFrom(function(){
 			if (this.pinnedViews) {
-				return [320,window.App.height - 210 - this.heightOfPins()]
+				return [320,window.App.height - 210 - this.heightOfPins() - 11]
 			} else {
 
 				return [320,window.App.height - 210]
@@ -281,9 +277,10 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.scrollView.sequenceFrom(this.draggableList);
-		this.pinnedSequenctialLayout.sequenceFrom(this.pinnedViews);
+		this.pinnedSequentialLayout.sequenceFrom(this.pinnedViews);
 
 		var pinnedContainerSurface = new ContainerSurface({
+			classes: ['pin-container'],
 			properties: {
 				backgroundColor: '#ebebeb',
 			}	
@@ -305,38 +302,49 @@ define(function(require, exports, module) {
 
 		pinnedContainerSurface.on('deploy', function() {
 			Timer.every(function() {
-				pinnedContainerSurface.setSize([undefined, this.heightOfPins()]);
+				pinnedContainerSurface.setSize([undefined, this.heightOfPins() + 11]);
 			}.bind(this), 2);
 		}.bind(this));
 
 		scrollModifier.transformFrom(function() {
-			return Transform.translate(0, this.heightOfPins(), 0); 	
+			return Transform.translate(0, this.heightOfPins() + 11, 0); 	
 		}.bind(this));
 		var pinnedEntriesModifier = new Modifier({
 			transform: Transform.translate(0, 22, 0)
 		});
-		pinnedContainerSurface.add(pinnedEntriesModifier).add(this.pinnedSequenctialLayout);
+		pinnedContainerSurface.add(pinnedEntriesModifier).add(this.pinnedSequentialLayout);
 
 		this.pinnedEntriesController.show(pinnedContainerSurface, {duration: 0});
 		this.renderController.show(scrollNode, {duration:0});
 	}
 
 	EntryListView.prototype.heightOfPins = function () {
-		var numberOfRows = Math.ceil(this.pinnedViews.length / 3);	
-		return numberOfRows * (40 + 8);
+		return this.numberOfPinRows() * 47;
+	}
+
+	EntryListView.prototype.numberOfPinRows = function () {
+		var numberOfRows = 1;	
+		var rowWidthSoFar = 16;
+		this.pinnedEdgeIndex = [];
+		_.each(this.pinnedViews, function (pinnedView, index) {
+			rowWidthSoFar = rowWidthSoFar + pinnedView.getSize()[0] + 8; //adding padding after the tags
+			//console.log('rowWidthSoFar: ' + rowWidthSoFar);
+			if (rowWidthSoFar > 312) {
+				numberOfRows ++;
+				rowWidthSoFar = 16;
+				//console.log('Edge Index: ' + index);
+				this.pinnedEdgeIndex.push(index);
+			}
+		}.bind(this));
+		//console.log('EntryListView: number of pin rows' + numberOfRows);
+		return numberOfRows;
 	}
 
 	EntryListView.prototype.blur = function() {
-		_.each(this.entryReadViews, function(readView, index) {
-			readView.entrySurface.addClass('blur');
-		});
 	}
 
 
 	EntryListView.prototype.unBlur = function() {
-		_.each(this.entryReadViews, function(readView, index) {
-			readView.entrySurface.removeClass('blur');
-		});
 	}
 
 	module.exports = EntryListView;

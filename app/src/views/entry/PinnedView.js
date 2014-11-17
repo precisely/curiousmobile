@@ -18,14 +18,14 @@ define(function(require, exports, module) {
 	PinnedView.DEFAULT_OPTIONS = {};
 
 	PinnedView.prototype.createView = function() {
-		this.entrySurface = new Surface({
+		this.entrySurface.setOptions({
 			classes: ['pinned'],
 			size: [true, true],
-			content: '<i class="fa fa-thumb-tack"></i> &nbsp;' + this.getDisplayText(),
+			content: '<i class="fa fa-thumb-tack"></i> ' + this.getDisplayText(),
 			properties: {
 				border: '1px solid #868686',
 				color: '#868686',
-				padding: '5px 11px',
+				padding: '5px',
 				borderRadius: '2px',
 				fontWeight: 'lighter',
 				lineHeight: '13px',
@@ -37,18 +37,13 @@ define(function(require, exports, module) {
 				var size = this.getSize();
 				var width = (size[0] == true) ? this._currTarget.offsetWidth : size[0];
 				var height = (size[1] == true) ? this._currTarget.offsetHeight : size[1];
+				if (width < 62) {
+					width = 62;
+				}
 				this.setSize([width, height]);
 			}.bind(this), 2);
 		});
 
-		this.entrySurface.on('click', function(e) {
-			console.log("entrySurface event");
-			if (e instanceof CustomEvent) {
-				this._eventOutput.emit('select-entry', this.entry);
-			}
-		}.bind(this));
-
-		this.add(this.entrySurface);
 	};
 
 	PinnedView.prototype.getSize = function () {

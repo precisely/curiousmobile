@@ -144,7 +144,7 @@ define(function(require, exports, module) {
 		EntryCollection.fetchEntries(_getDefaultDates(date), function(entries) {
 			//5 days before and 5 days after today
 			this.currentListView = new EntryListView(entries);
-
+			this.currentListView.pipe(this._eventOutput);
 			//Handle entry selection handler
 			this.currentListView.on('select-entry', function(entry) {
 				console.log('TrackView: Selecting an entry');

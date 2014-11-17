@@ -46,13 +46,14 @@ define(function(require, exports, module) {
 				size[0] = size[0] - 10;
 				size[1] = size[1] - 10;
 			}
-			this.entrySurface = new Surface({
+			this.entrySurface.setOptions({
 				size: size,
 				content: this.getDisplayText(),
 				classes: this.entry.repeatTypeAsClass(),
 				properties: properties
 			});
 			this.entrySurface.pipe(this._eventOutput);
+			//this.entrySurface.pipe(this.touchSync);
 			this.glowSurface = new Surface({
 				size: [undefined, 44],
 				content: this.entry.toString(),
@@ -63,14 +64,6 @@ define(function(require, exports, module) {
 					backgroundColor: '#c0c0c0'
 				}
 			});
-
-
-			this.entrySurface.on('click', function(e) {
-				console.log("entrySurface event");
-				if (e instanceof CustomEvent) {
-					this._eventOutput.emit('select-entry', this.entry);
-				}
-			}.bind(this));
 
 			var showMoreColor = 'white';
 			if (_.contains(repeatTypeAsClass, 'continuous')) {

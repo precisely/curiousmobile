@@ -33,7 +33,7 @@ define(function(require, exports, module) {
 		this.add(logoModifier).add(logoSurface);
 		this.homeSurface = new Surface({
 			classes: ['home'],
-			size: [265, window.innerHeight - 160],
+			size: [265, App.height - 160],
 			content: _.template(HomeTemplate, {}, templateSettings),
 			properties: {
 			}
@@ -70,7 +70,7 @@ define(function(require, exports, module) {
 		});
 
 		this.triangleModifier = new Modifier({
-			transform: Transform.translate(0, window.innerHeight - 248, 0)
+			transform: Transform.translate(0, App.height - 248, 0)
 		});
 		this.add(this.triangleModifier).add(this.bottomTriangle);
 

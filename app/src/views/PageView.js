@@ -12,6 +12,7 @@ define(function(require, exports, module) {
 	var QuickHelpView = require('views/QuickHelpView');
 	var LaunchView = require('views/LaunchView');
 	var CommunityView = require('views/community/CommunityView');
+	var ContextMenuView = require('views/ContextMenuView');
 	var EntryFormView = require('views/entry/EntryFormView');
 	var Utils = require('util/Utils');
 	var store = require('store');
@@ -20,9 +21,11 @@ define(function(require, exports, module) {
 	function PageView() {
 		View.apply(this, arguments);
 		this.renderController = new RenderController();
+		App.pageView = this;
 		this.pageMap = {};
 		_addPages.call(this);
 		_menuHandlers.call(this);
+		_createContextMenu.call(this);
 	}
 
 	PageView.prototype = Object.create(View.prototype);
@@ -88,6 +91,15 @@ define(function(require, exports, module) {
 				this.changePage(lastPage, lastPageData);
 			} 	
 		}
+	}
+
+	function _createContextMenu() {
+		var contextMenuView = new ContextMenuView();	
+		this.add(contextMenuView.renderController);
+		this.on('show-context-menu', function (e) {
+			console.log('PageView: calling contextMenuView.show');
+			contextMenuView.show(e);	
+		});
 	}
 
 	function _createTrackPage() {
