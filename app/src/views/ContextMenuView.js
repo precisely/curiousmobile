@@ -8,9 +8,11 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var RenderController = require('famous/views/RenderController');
 	var ContextMenuTemplate = require('text!templates/context-menu.html');
+	var self = null;
 
 	function ContextMenuView() {
 		View.apply(this, arguments);
+		self = this;
 		this.createView();
 	}
 
@@ -20,7 +22,10 @@ define(function(require, exports, module) {
 	ContextMenuView.DEFAULT_OPTIONS = {
 		entry: [
 			{ class: 'select-entry', label: 'Edit Tag' },  
-			{ class: 'delete-entry', label: 'Delete Tag' },
+			{ class: 'trigger-delete-entry', label: 'Delete Tag' },
+		],
+		pinnedEntry: [
+			{ class: 'trigger-delete-entry', label: 'Delete Tag' },
 		],
 		chart: {},
 		discussion: {},
@@ -45,13 +50,6 @@ define(function(require, exports, module) {
 			opacity: 0.5,
 		});
 
-		backdropSurface.on('click', function(e) {
-			console.log('EventHandler: backdropSurface event: click');
-			if (e instanceof CustomEvent) {
-				self.hide();	
-			}
-		});
-
 		this.contextMenu = new Surface({
 		});
 
@@ -60,7 +58,9 @@ define(function(require, exports, module) {
 			if (e instanceof CustomEvent) {
 				var classList = e.srcElement.classList;
 				if (_.contains(classList, 'menu-item')) {
-					this.target._eventOutput.emit(classList[1], this.eventArg);	
+					var arg = this.eventArg;
+					var target = this.target;
+					target._eventOutput.emit(classList[1], arg);	
 				}
 				this.hide();	
 			}

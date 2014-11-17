@@ -153,6 +153,8 @@ define(function(require, exports, module) {
 		} else {
 			this.entries.set(entries);
 		}
+		
+		entries = this.entries;
 
 		if (this.scrollView) {
 			this.renderController.hide({duration:0});
@@ -194,7 +196,7 @@ define(function(require, exports, module) {
 				//console.log('EntryListView: heightOfPins: ' + this.heightOfPins());
 				//console.log('EntryListView this.pinnedSequentialLayout index: ' + index);
 				this.pinnedSequentialLayout.nextYOffset += 36;
-				console.log('EntryListView: Adding a pinned row: ' + this.pinnedSequentialLayout.nextYOffset);
+				//console.log('EntryListView: Adding a pinned row: ' + this.pinnedSequentialLayout.nextYOffset);
 			} else {
 				xOffset += this.pinnedSequentialLayout.lastXOffset;	
 			}

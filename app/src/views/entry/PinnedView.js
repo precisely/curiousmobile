@@ -9,6 +9,7 @@ define(function(require, exports, module) {
 	function PinnedView(entry) {
 		EntryView.apply(this, arguments);
 		this.entry = entry;
+		this.menu = 'pinnedEntry';
 		this.createView();
 	}
 
