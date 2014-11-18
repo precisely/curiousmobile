@@ -36,15 +36,6 @@ define(function(require, exports, module) {
 			}
 		});
 
-		this.entrySurface.on('deploy', function() {
-			Timer.every(function() {
-				var size = this.getSize();
-				var width = (size[0] == true) ? this._currTarget.offsetWidth: size[0];
-				var height = (size[1] == true) ? this._currTarget.offsetHeight : size[1];
-				this.setSize([width, height]);
-			}.bind(this), 2);
-		});
-
 		var pinIcon = new Surface({
 			size: [9, 14],
 			content: '<i class="fa fa-thumb-tack"></i>',

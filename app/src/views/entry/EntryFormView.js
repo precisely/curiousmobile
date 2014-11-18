@@ -312,11 +312,7 @@ define(function(require, exports, module) {
 					window.App.collectionCache.clear();	
 				}
 				store.set('lastPage', 'track');
-				if (entry.isContinuous()) {
-					this.blur();
-				} else {
-					this.unsetEntry();
-				}
+				this.blur();
 				this._eventOutput.emit('new-entry', resp);
 			}.bind(this));
 			return;

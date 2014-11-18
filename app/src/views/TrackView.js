@@ -112,7 +112,7 @@ define(function(require, exports, module) {
 		entryListModifier.sizeFrom(function() {
 			var mainContext = window.mainContext;
 			var size = mainContext.getSize();
-			return [undefined, size[1] - 210];
+			return [undefined, size[1] - 190];
 		});
 
 		entryListContainer.add(this.renderController);

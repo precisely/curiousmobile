@@ -22,6 +22,13 @@ a {
 	display: block;
 }
 
+.footer-item {
+	margin: 0px 5px;
+	height: 45px;
+	background-repeat: no-repeat;
+	background-position-x: center;
+}
+
 .panel {
 	margin: 5px;
 	border-radius: 0px;
