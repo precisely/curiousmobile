@@ -82,7 +82,7 @@ define(function(require, exports, module) {
 
 			this.hamburgerSurface = new ImageSurface({
 				size: [44, 44],
-				content: 'content/images/menu-icon.png',
+				content: 'content/images/hamburg-menu.png',
 				properties: {
 					marginTop: '15px',
 					marginLeft: '5px',
@@ -158,12 +158,16 @@ define(function(require, exports, module) {
 		this.layout.header.add(labelModifier).add(labelSurface);
 	}
 
-	BaseView.prototype.setHeaderSurface = function(headerSurface) {
-		var labelModifier = new Modifier({
-			transform: Transform.translate(0, 0, 3)
-		});
-
-		this.layout.header.add(labelModifier).add(headerSurface);
+	BaseView.prototype.setHeaderSurface = function(headerSurface, surfaceModifier) {
+		if (surfaceModifier == null) {
+			var labelModifier = new Modifier({
+				transform: Transform.translate(0, 0, 3)
+			});
+			
+			this.layout.header.add(labelModifier).add(headerSurface);
+		} else {
+			this.layout.header.add(surfaceModifier).add(headerSurface);
+		}
 	}
 	BaseView.prototype.setBody = function(body) {
 		var bodyModifier = new StateModifier({
