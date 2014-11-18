@@ -7,9 +7,11 @@ define(function(require, exports, module) {
 	var Cache = require('jscache');
 	var AppView = require('views/AppView');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var Modifier = require('famous/core/Modifier');
 	//var AppView = require('views/AppView');
 
 	var collectionCache = new Cache(1000, true, new Cache.LocalStorageCacheStorage('ec'));
+	var pinnedCache = new Cache(1000, true, new Cache.LocalStorageCacheStorage('ec-pinned'));
 
 	var App = {};
 	App.CSRF = {};
@@ -18,23 +20,30 @@ define(function(require, exports, module) {
 	App.zIndex = {
 		menu: 12,
 		readView: 20,
+		pinned: 22,
 		formView: 14, 
 		header: 18,
 		datePicker: 13,
-		alertView: 20,
+		alertView: 24,
+		contextMenu: 30,
 	};
 
 	App.collectionCache = collectionCache;
+	App.pinnedCache = pinnedCache;
 	//App.serverUrl = "http://192.168.0.31:8080";
-	//App.serverUrl = "http://192.168.0.104:8080";
+	//App.serverUrl = "http://192.168.0.105:8080";
 	App.serverUrl = "http://dev.wearecurio.us";
 	//App.serverUrl = "http://127.0.0.1:8080";
 
 	var mainContext = Engine.createContext();
 	window.mainContext = mainContext;
 	window.App = App;
+	window.App.width = window.innerWidth;
+	window.App.height = window.innerHeight;
 	var appView = new AppView();
-	var mod = new StateModifier({
+	window.App.appView = appView;
+	var mod = new Modifier({
+		size: [window.App.width, window.App.height],
 		origin: [0, 0],
 		align: [0, 0]
 	});
