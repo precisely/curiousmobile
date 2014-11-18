@@ -410,6 +410,14 @@ button.close {
 	-webkit-user-select: none; /* Disable selection/copy in UIWebView */
 }
 
+.entry, .pinned {
+	-webkit-user-select: none !important;
+	user-select: none !important;
+	-webkit-user-callout: none !important;
+	-webkit-user-callback: none !important;
+	-webkit-touch-callout: none !important;
+}
+
 input {
 	-webkit-user-select: auto !important;
 }

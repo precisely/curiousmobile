@@ -43,7 +43,7 @@ define(function(require, exports, module) {
 			console.log('Sart: ' + this.start + ' End: ' + this.end);
 			console.log('touch-end for entry id: ' + this.entry.id);
 			console.log('timeDelta: ' + timeDelta);
-			if (timeDelta > 1100 && movementX < 8 && movementY < 8) {
+			if (timeDelta > 600 && movementX < 8 && movementY < 8) {
 				console.log('EntryView: Firing show-context-menu event');
 				App.pageView._eventOutput.emit('show-context-menu', { menu: this.menu, target: this, eventArg: this.entry});	
 			}
