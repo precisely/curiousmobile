@@ -4,6 +4,7 @@ define(function(require, exports, module) {
 	var TrueSurface = require('surfaces/TrueSurface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var ImageSurface = require('famous/surfaces/ImageSurface');
 	var Modifier = require('famous/core/Modifier');
 	var RenderController = require("famous/views/RenderController");
 	var FastClick = require('famous/inputs/FastClick');
@@ -66,20 +67,12 @@ define(function(require, exports, module) {
 			}
 		});
 
-		var showMoreColor = 'white';
-		if (_.contains(repeatTypeAsClass, 'continuous')) {
-			showMoreColor = '#ec2d35';	
-		}
-		this.showMoreSurface = new Surface({
-			content: '<i class="fa fa-chevron-circle-down"></i>',
+		this.showMoreSurface = new ImageSurface({
+			content: 'content/images/show-more.png',
 			size: [24, 24],
-			properties: {
-				color: showMoreColor,
-				fontSize: '26px'
-			}
 		});
 		var showMoreModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth - 40, 10, window.App.zIndex.readView + 1)
+			transform: Transform.translate(window.innerWidth - 40, 15, window.App.zIndex.readView + 1)
 		});
 		this.showMoreSurface.pipe(this._eventOutput);
 		this.showMoreSurface.on('click', function(e) {
