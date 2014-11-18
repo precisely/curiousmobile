@@ -170,6 +170,7 @@ define(function(require, exports, module) {
 		});
 
 		this.pinnedSequentialLayout.nextYOffset = 47;
+		
 		this.pinnedSequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
 			var lastView = this.pinnedSequentialLayout._items._.getValue(index-1);	
@@ -327,13 +328,21 @@ define(function(require, exports, module) {
 			return Transform.translate(0, 0, App.zIndex.pinned);	
 		});
 
+		this.renderController.inTransformFrom(function() {
+			return Transform.translate(0, 0, App.zIndex.readView);	
+		});
+
 		this.pinnedEntriesController.show(pinnedContainerSurface, {duration: 0});
 
 		this.renderController.show(scrollWrapperSurface, {duration:0});
 	}
 
 	EntryListView.prototype.heightOfPins = function () {
-		return this.numberOfPinRows() * 47;
+		var numberOfRows = this.numberOfPinRows();
+		if (numberOfRows == 1) {
+			return 55;
+		}
+		return numberOfRows * 47;
 	}
 
 	EntryListView.prototype.numberOfPinRows = function () {
