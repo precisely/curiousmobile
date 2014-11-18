@@ -200,7 +200,7 @@ define(function(require, exports, module) {
 			} else {
 				xOffset += this.pinnedSequentialLayout.lastXOffset;	
 			}
-			var transform = Transform.translate(xOffset, this.pinnedSequentialLayout.nextYOffset, 0);
+			var transform = Transform.translate(xOffset, this.pinnedSequentialLayout.nextYOffset, App.zIndex.readView);
 			this.pinnedSequentialLayout.lastXOffset = xOffset;
 			return {
 				transform: transform,
@@ -210,12 +210,18 @@ define(function(require, exports, module) {
 		var scrollModifier = new Modifier();
 		scrollModifier.sizeFrom(function(){
 			if (this.pinnedViews) {
-				return [320,window.App.height - 210 - this.heightOfPins() - 11]
+				return [320,window.App.height - 210 - this.heightOfPins() - 22]
 			} else {
 
 				return [320,window.App.height - 210]
 			}
 		}.bind(this));
+		var scrollWrapperSurface = new ContainerSurface({
+			properties: {
+				overflow: 'hidden',	
+			}	
+		});
+		
 		var scrollNode = new RenderNode(scrollModifier);
 		this.scrollView = new Scrollview({
 			direction: 1,
@@ -270,6 +276,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		scrollNode.add(this.scrollView);
+		scrollWrapperSurface.add(scrollNode);
 		entries.forEach(function(entry) {
 			if (entry.isContinuous()) {
 				this.addPinnedEntry(entry);
@@ -309,15 +316,20 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		scrollModifier.transformFrom(function() {
-			return Transform.translate(0, this.heightOfPins() + 11, 0); 	
+			return Transform.translate(0, this.heightOfPins() + 11, App.zIndex.readView); 	
 		}.bind(this));
 		var pinnedEntriesModifier = new Modifier({
-			transform: Transform.translate(0, 22, 0)
+			transform: Transform.translate(0, 22, App.zIndex.pinned)
 		});
 		pinnedContainerSurface.add(pinnedEntriesModifier).add(this.pinnedSequentialLayout);
 
+		this.pinnedEntriesController.inTransformFrom(function() {
+			return Transform.translate(0, 0, App.zIndex.pinned);	
+		});
+
 		this.pinnedEntriesController.show(pinnedContainerSurface, {duration: 0});
-		this.renderController.show(scrollNode, {duration:0});
+
+		this.renderController.show(scrollWrapperSurface, {duration:0});
 	}
 
 	EntryListView.prototype.heightOfPins = function () {

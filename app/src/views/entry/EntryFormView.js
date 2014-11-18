@@ -285,16 +285,18 @@ define(function(require, exports, module) {
 	}
 
 	EntryFormView.prototype.setEntryText = function(text){
+		document.getElementsByName("entry-description")[0].value = '';
 	}
 
 	EntryFormView.prototype.submit = function(e) {
-		var entry = this.entry;
+		var entry = null;
 		var newText = document.getElementsByName("entry-description")[0].value;
 
-		if (e instanceof Entry) {
-			this.setEntry(e);
-			entry = this.entry;
+		if (e instanceof Entry && e.isContinuous()) {
+			entry = e;
 			newText = this.removeSuffix(entry.toString());
+		} else {
+			entry = this.entry;	
 		}
 
 		if (!u.isOnline()) {
@@ -304,14 +306,13 @@ define(function(require, exports, module) {
 		if (!entry || !entry.get('id') || entry.isContinuous()) {
 			var newEntry = new Entry();
 			newEntry.set('date', window.App.selectedDate);
-			this.entry = newEntry;
-			this.entry.setText(newText);
-			this.entry.create(function(resp) {
+			newEntry.setText(newText);
+			newEntry.create(function(resp) {
 				if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1) {
 					window.App.collectionCache.clear();	
 				}
 				store.set('lastPage', 'track');
-				if (this.entry.isContinuous()) {
+				if (entry.isContinuous()) {
 					this.blur();
 				} else {
 					this.unsetEntry();

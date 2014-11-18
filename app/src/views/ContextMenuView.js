@@ -8,12 +8,10 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var RenderController = require('famous/views/RenderController');
 	var ContextMenuTemplate = require('text!templates/context-menu.html');
-	var self = null;
 
 	function ContextMenuView() {
 		View.apply(this, arguments);
-		self = this;
-		this.createView();
+		_createView.call(this);
 	}
 
 	ContextMenuView.prototype = Object.create(View.prototype);
@@ -31,7 +29,7 @@ define(function(require, exports, module) {
 		discussion: {},
 	};
 
-	ContextMenuView.prototype.createView = function() {
+	function _createView () {
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(function() {
 			return Transform.translate(0, 0, App.zIndex.contextMenu);

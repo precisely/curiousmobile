@@ -6,14 +6,13 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var RenderController = require('famous/views/RenderController');
 	var TouchSync = require("famous/inputs/TouchSync");
+	var FastClick = require('famous/inputs/FastClick');
 	var Entry = require('models/Entry');
 
 	var entrySurface = null;
-	var self = null;
 	function EntryView(entry) {
 		View.apply(this, arguments);
-		self = this;
-		self.entry = entry;
+		this.entry = entry;
 		_createView.call(this);
 	}
 
@@ -32,30 +31,29 @@ define(function(require, exports, module) {
 			return position;
 		});
 
-		this.touchSync.on('start', function() {
+		this.touchSync.on('start', function(data) {
 			this.start = Date.now();	
 		}.bind(this));
 
-		this.touchSync.on('end', function() {
+		this.touchSync.on('end', function(data) {
 			this.end = Date.now();	
+			var movementX = Math.abs(data.position[0]);
+			var movementY = Math.abs(data.position[1]);
 			var timeDelta = this.end - this.start;
 			console.log('Sart: ' + this.start + ' End: ' + this.end);
 			console.log('touch-end for entry id: ' + this.entry.id);
 			console.log('timeDelta: ' + timeDelta);
-			if (timeDelta > 1200) {
+			if (timeDelta > 1100 && movementX < 8 && movementY < 8) {
 				console.log('EntryView: Firing show-context-menu event');
 				App.pageView._eventOutput.emit('show-context-menu', { menu: this.menu, target: this, eventArg: this.entry});	
+			}
+
+			if (timeDelta < 500 && movementX < 8 && movementY < 8) {
+				this._eventOutput.emit('select-entry', this.entry);
 			}
 		}.bind(this));
 
 		this.entrySurface = new Surface();
-
-		this.entrySurface.on('click', function(e) {
-			console.log("entrySurface event");
-			if (e instanceof CustomEvent) {
-				this._eventOutput.emit('select-entry', this.entry);
-			}
-		}.bind(this));
 
 		this.entrySurface.pipe(this.touchSync);
 		this.on('trigger-delete-entry', this.delete.bind(this));

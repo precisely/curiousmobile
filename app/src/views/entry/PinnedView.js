@@ -5,12 +5,12 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var EntryView = require('views/entry/EntryView');
 	var Timer = require('famous/utilities/Timer');
+	var FastClick = require('famous/inputs/FastClick');
 
 	function PinnedView(entry) {
 		EntryView.apply(this, arguments);
-		this.entry = entry;
 		this.menu = 'pinnedEntry';
-		this.createView();
+		_createView.call(this);
 	}
 
 	PinnedView.prototype = Object.create(EntryView.prototype);
@@ -18,11 +18,11 @@ define(function(require, exports, module) {
 
 	PinnedView.DEFAULT_OPTIONS = {};
 
-	PinnedView.prototype.createView = function() {
+	function _createView() {
 		this.entrySurface.setOptions({
-			classes: ['pinned'],
+			classes: ['pinned', this.entry.id],
 			size: [true, true],
-			content: '<i class="fa fa-thumb-tack"></i> ' + this.getDisplayText(),
+			content: this.getDisplayText(),
 			properties: {
 				border: '1px solid #868686',
 				color: '#868686',
@@ -36,11 +36,8 @@ define(function(require, exports, module) {
 		this.entrySurface.on('deploy', function() {
 			Timer.every(function() {
 				var size = this.getSize();
-				var width = (size[0] == true) ? this._currTarget.offsetWidth : size[0];
+				var width = (size[0] == true) ? this._currTarget.offsetWidth: size[0];
 				var height = (size[1] == true) ? this._currTarget.offsetHeight : size[1];
-				if (width < 62) {
-					width = 62;
-				}
 				this.setSize([width, height]);
 			}.bind(this), 2);
 		});
