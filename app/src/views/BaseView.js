@@ -53,7 +53,7 @@ define(function(require, exports, module) {
 		var backgroundSurface = new Surface({
 			origin: [0,0],
 			align: [0,0],
-			size: [window.innerWidth, 74],
+			size: [window.innerWidth, 64],
 			properties: {
 				backgroundColor: 'white'
 			}
@@ -63,7 +63,7 @@ define(function(require, exports, module) {
 		if (this.options.backButton) {
 			var leftSurface = new Surface({
 				content: '<img src="content/images/left.png" />',	
-				size: [61, 74],
+				size: [61, 64],
 				properties: {
 					padding: '20px'
 				}
@@ -81,12 +81,8 @@ define(function(require, exports, module) {
 		} else {
 
 			this.hamburgerSurface = new ImageSurface({
-				size: [44, 44],
+				size: [49, 64],
 				content: 'content/images/hamburg-menu.png',
-				properties: {
-					marginTop: '15px',
-					marginLeft: '5px',
-				}
 			});
 
 			this.hamburgerSurface.on('click', function(e) {
@@ -100,7 +96,7 @@ define(function(require, exports, module) {
 				align: [0, 0],
 				transform: Transform.translate(0, 0, window.App.zIndex.header)	
 			});
-			this.layout.header.add(hamburgerModifier).add(this.hamburgerSurface);
+			this.addLayoutContent(hamburgerModifier, this.hamburgerSurface, this.layout.header);
 		}
 	}
 
@@ -133,7 +129,7 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.layout.footer.add(footerModifier).add(footerSurface);
+		this.addLayoutContent(footerModifier, footerSurface, this.layout.footer);
 	}
 
 	function _setListeners() {
@@ -144,18 +140,18 @@ define(function(require, exports, module) {
 			transform: Transform.translate(0, 0, 3)
 		});
 		var labelSurface = new Surface({
-			size: [window.innerWidth, 74],
+			size: [window.innerWidth, 64],
 			content: title,
 			properties: {
-				fontSize: '22px',
-				fontWeight: 'lighter',
-				color: '#e83838',	
+				fontSize: '15px',
+				fontWeight: 'normal',
+				color: '#F14A42',	
 				textAlign: 'center',
-				padding: '18px 0'
+				padding: '21px 0'
 			}
 		});
 
-		this.layout.header.add(labelModifier).add(labelSurface);
+		this.addLayoutContent(labelModifier, labelSurface, this.layout.header);
 	}
 
 	BaseView.prototype.setHeaderSurface = function(headerSurface, surfaceModifier) {
@@ -163,25 +159,32 @@ define(function(require, exports, module) {
 			var labelModifier = new Modifier({
 				transform: Transform.translate(0, 0, 3)
 			});
-			
-			this.layout.header.add(labelModifier).add(headerSurface);
+			this.addLayoutContent(labelModifier, headerSurface, this.layout.header);
 		} else {
-			this.layout.header.add(surfaceModifier).add(headerSurface);
+			this.addLayoutContent(surfaceModifier, headerSurface, this.layout.header);
 		}
 	}
 	BaseView.prototype.setBody = function(body) {
 		var bodyModifier = new StateModifier({
 			origin: [0,0],
-			transform: Transform.translate(0, 74, 2)
+			transform: Transform.translate(0, 64, 2)
 		});
 		this.addContent(bodyModifier, body);
 	}
 
 	BaseView.prototype.addContent = function (modifier, renderable) {
 		if (modifier && renderable) {
-			this.layout.content.add(modifier).add(renderable);
+			this.addLayoutContent(modifier, renderable, this.layout.content);
 		} else if (renderable) {
-			this.layout.content.add(renderable);
+			this.addLayoutContent(renderable, null, this.layout.content);
+		}
+	}
+
+	BaseView.prototype.addLayoutContent = function (modifier, renderable, section) {
+		if (modifier && renderable && section) {
+			section.add(modifier).add(renderable);
+		} else if (renderable && section) {
+			section.add(renderable);
 		}
 	}
 

@@ -11,6 +11,7 @@ define(function(require, exports, module) {
 	var ImageSurface = require('famous/surfaces/ImageSurface');
 	var DiscussionDetailView = require("views/community/DiscussionDetailView");
 	var CreatePostView = require('views/CreatePostView');
+	var PageView = require('views/PageView');
 
 	function CommunityView(options) {
 		BaseView.apply(this, arguments);
@@ -29,23 +30,27 @@ define(function(require, exports, module) {
 		this.add(this.renderController);
 
 		this.headerSurface = new ImageSurface({
-			size: [44, 44],
+			size: [44, 64],
 			content: 'content/images/edit-pencil.png',
-			properties: {
-				marginTop: '35px',
-			}
 		});
 
 		this.pencilIconModifier = new StateModifier({
-			origin: [1, 0.5],
-			align : [1, 0.5]
+			origin: [1, 0],
+			align : [1, 0],
+			transform: Transform.translate(0, 0, 3)
 		});
 
 		this.setHeaderSurface(this.headerSurface, this.pencilIconModifier);
 		this.setHeaderLabel('FEED');
 
-		this._eventInput.on('on-show', function() {
+		this.backgroundSurface = new Surface({
+			size: [undefined, undefined],
+			properties: {
+				backgroundColor: '#efefef'
+			}
+		});
 
+		this._eventInput.on('on-show', function() {
 			if (!this.discussionListView) {
 				console.log('Creating Discussion List View');
 				this.discussionListView = new DiscussionListView('');

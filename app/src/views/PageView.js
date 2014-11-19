@@ -35,7 +35,7 @@ define(function(require, exports, module) {
 		var backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
-				backgroundColor: 'white'
+				backgroundColor: '#efefef'
 			}
 		});
 		this.add(backgroundSurface);
