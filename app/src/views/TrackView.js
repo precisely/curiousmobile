@@ -126,6 +126,12 @@ define(function(require, exports, module) {
 			this.changeDate(new Date());
 		}
 
+
+		this._eventInput.on('on-show', function(e) {
+			if (e && e.pushNotification) {
+				this.changeDate(e.entryDate);	
+			}
+		});
 	}
 
 	function _createCalendar() {
