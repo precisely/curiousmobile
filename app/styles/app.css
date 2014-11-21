@@ -40,6 +40,18 @@ a {
 	padding: 0 15px 10px 15px;
 }
 
+.discussion .owner {
+	color: #c04f7f;
+}
+
+.discussion .posting-time {
+	color: #a8a8a8;
+}
+
+.discussion .group {
+	color: #5d5d5d;
+}
+
 .discussion .share {
 	top: -3px;
 	display: inline-block;

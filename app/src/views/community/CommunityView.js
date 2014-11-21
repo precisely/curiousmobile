@@ -6,8 +6,12 @@ define(function(require, exports, module) {
 	var Modifier = require('famous/core/Modifier');
 	var Transform = require('famous/core/Transform');
 	var Surface = require('famous/core/Surface');
+	var Modifier = require('famous/core/Modifier');
+	var StateModifier = require('famous/modifiers/StateModifier');
+	var ImageSurface = require('famous/surfaces/ImageSurface');
 	var DiscussionDetailView = require("views/community/DiscussionDetailView");
 	var CreatePostView = require('views/CreatePostView');
+	var PageView = require('views/PageView');
 
 	function CommunityView(options) {
 		BaseView.apply(this, arguments);
@@ -24,20 +28,29 @@ define(function(require, exports, module) {
 	CommunityView.prototype.init = function() {
 		this.renderController = new RenderController();
 		this.add(this.renderController);
-		this.headerSurface = new Surface({
-			size: [window.innerWidth, 74],
-			content: 'FEED <i class="post fa fa-pencil"></i>',
+
+		this.headerSurface = new ImageSurface({
+			size: [44, 64],
+			content: 'content/images/edit-pencil.png',
+		});
+
+		this.pencilIconModifier = new StateModifier({
+			origin: [1, 0],
+			align : [1, 0],
+			transform: Transform.translate(0, 0, 3)
+		});
+
+		this.setHeaderSurface(this.headerSurface, this.pencilIconModifier);
+		this.setHeaderLabel('FEED');
+
+		this.backgroundSurface = new Surface({
+			size: [undefined, undefined],
 			properties: {
-				fontSize: '22px',
-				fontWeight: 'bold',
-				color: '#e83838',	
-				textAlign: 'center',
-				padding: '18px 0'
+				backgroundColor: '#efefef'
 			}
 		});
-		this.setHeaderSurface(this.headerSurface);
-		this._eventInput.on('on-show', function() {
 
+		this._eventInput.on('on-show', function() {
 			if (!this.discussionListView) {
 				console.log('Creating Discussion List View');
 				this.discussionListView = new DiscussionListView('');
