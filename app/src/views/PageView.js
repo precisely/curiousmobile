@@ -62,6 +62,7 @@ define(function(require, exports, module) {
 			view.add(backgroundSurface);
 			this.renderController.show(view);
 			this.changePage('track');
+			push.registerNotification();
 			console.log('PageView: login-success');
 		}.bind(this));
 
