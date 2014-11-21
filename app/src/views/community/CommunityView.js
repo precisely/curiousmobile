@@ -37,11 +37,24 @@ define(function(require, exports, module) {
 		this.pencilIconModifier = new StateModifier({
 			origin: [1, 0],
 			align : [1, 0],
-			transform: Transform.translate(0, 0, 3)
+			transform: Transform.translate(0, 0, App.zIndex.header)
 		});
 
 		this.setHeaderSurface(this.headerSurface, this.pencilIconModifier);
 		this.setHeaderLabel('FEED');
+
+		this.headerSurface.on('click', function(e) {
+			var createPostSurface = new CreatePostView();
+			this.renderController.show(createPostSurface);
+			createPostSurface.on('cancel-post-discussion', function(e) {
+				this.renderController.show(this.discussionListView);
+			}.bind(this));
+
+			createPostSurface.on('post-success', function(e) {
+				this.discussionListView.refresh();
+				this.renderController.show(this.discussionListView);
+			}.bind(this));
+		}.bind(this));
 
 		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
@@ -54,7 +67,7 @@ define(function(require, exports, module) {
 			if (!this.discussionListView) {
 				console.log('Creating Discussion List View');
 				this.discussionListView = new DiscussionListView('');
-				
+
 				this.discussionListView.on('show-detailed-view', function(discussion) {
 					console.log('Creating Discussion Detail View');
 					var discussionDetailSurface = new DiscussionDetailView(discussion.id);
@@ -65,18 +78,6 @@ define(function(require, exports, module) {
 
 				}.bind(this));
 
-				this.headerSurface.on('click', function(e) {
-					var createPostSurface = new CreatePostView();
-					this.renderController.show(createPostSurface);
-					createPostSurface.on('cancel-post-discussion', function(e) {
-						this.renderController.show(this.discussionListView);
-					}.bind(this));
-
-					createPostSurface.on('post-success', function(e) {
-						this.discussionListView.refresh();
-						this.renderController.show(this.discussionListView);
-					}.bind(this));
-				}.bind(this));
 			}
 			console.log('CommunityView: on show');
 			this.renderController.show(this.discussionListView);

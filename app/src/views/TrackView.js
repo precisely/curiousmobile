@@ -108,13 +108,13 @@ define(function(require, exports, module) {
 		});
 
 		var entryListModifier = new Modifier({
-			transform: Transform.translate(0, 144, 1),
+			transform: Transform.translate(0, 134, 1),
 		});
 
 		entryListModifier.sizeFrom(function() {
 			var mainContext = window.mainContext;
 			var size = mainContext.getSize();
-			return [undefined, size[1] - 190];
+			return [undefined, size[1] - 185];
 		});
 
 		entryListContainer.add(this.renderController);

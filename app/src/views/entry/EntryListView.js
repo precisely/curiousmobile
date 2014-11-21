@@ -211,10 +211,10 @@ define(function(require, exports, module) {
 		var scrollModifier = new Modifier();
 		scrollModifier.sizeFrom(function(){
 			if (this.pinnedViews) {
-				return [320,window.App.height - 190 - this.heightOfPins()]
+				return [320,window.App.height - 185 - this.heightOfPins()]
 			} else {
 
-				return [320,window.App.height - 190]
+				return [320,window.App.height - 185]
 			}
 		}.bind(this));
 		var scrollWrapperSurface = new ContainerSurface({
