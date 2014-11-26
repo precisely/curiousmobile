@@ -26,12 +26,6 @@ define(function(require, exports, module) {
 		footer: true,
 	};
 	CommunityView.prototype.init = function() {
-		this.renderController = new RenderController();
-		this.renderController.inTransformFrom(function() {
-			return Transform.translate(0, 0, 3);	
-		});
-		this.add(this.renderController);
-
 		this.headerSurface = new ImageSurface({
 			size: [44, 64],
 			content: 'content/images/edit-pencil.png',
@@ -71,6 +65,13 @@ define(function(require, exports, module) {
 		});
 
 		this.add(backgroundModifier).add(this.backgroundSurface);
+
+		this.renderController = new RenderController();
+
+		var discussionListModifier = new Modifier({
+			transform: Transform.translate(0, 0, 5)
+		});
+		this.add(discussionListModifier).add(this.renderController);
 
 		this._eventInput.on('on-show', function() {
 			if (!this.discussionListView) {

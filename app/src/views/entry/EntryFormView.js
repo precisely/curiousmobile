@@ -49,7 +49,7 @@ define(function(require, exports, module) {
 		this._eventInput.on('on-show', function(entry) {
 			console.log('FormView: on-show ' + entry);
 			if (entry && typeof entry == 'number') {
-				var currentDayEntries = new EntryCollection(EntryCollection.getFromCache(window.App.appView.getSelectedDate()));
+				var currentDayEntries = new EntryCollection(EntryCollection.getFromCache(App.appView.pageView.trackView.getSelectedDate()));
 				entry = currentDayEntries.get(entry);
 			} else {
 				entry = new Entry();	
