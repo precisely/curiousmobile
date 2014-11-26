@@ -73,21 +73,23 @@ define(function(require, exports, module) {
 
 		discussionPostSurface.on('click', function(e) {
 			var	classList = e.srcElement.classList;
-			if (_.contains(classList, 'delete-discussion')) {
-				this.alert = u.showAlert({
-					message: 'Are you sure to delete discussion ?',
-					a: 'Yes',
-					b: 'No',
-					onA: function() {
-						Discussion.deleteDiscussion({id: this.discussionId}, function(success){
-							this.init();
-						}.bind(this));
-					}.bind(this),
-					onB: function() {
-					}.bind(this),
-				});
-			} else if (_.contains(classList, 'submit-comment')) {
-				this.postComment();
+			if (e instanceof CustomEvent) {
+				if (_.contains(classList, 'delete-discussion')) {
+					this.alert = u.showAlert({
+						message: 'Are you sure to delete discussion ?',
+						a: 'Yes',
+						b: 'No',
+						onA: function() {
+							Discussion.deleteDiscussion({id: this.discussionId}, function(success){
+								this.init();
+							}.bind(this));
+						}.bind(this),
+						onB: function() {
+						}.bind(this),
+					});
+				} else if (_.contains(classList, 'submit-comment')) {
+					this.postComment();
+				}
 			}
 		}.bind(this));
 
@@ -99,7 +101,6 @@ define(function(require, exports, module) {
 					content: _.template(commentTemplate, post, templateSettings),
 				});
 
-
 				commentSurface.on('deploy', function() {
 					Timer.every(function() {
 						var size = this.getSize();
@@ -109,22 +110,24 @@ define(function(require, exports, module) {
 					}.bind(this), 2);
 				});
 				commentSurface.on('click', function(e) {
-					var classList;
-					classList = e.srcElement.parentElement.classList;
-					if (_.contains(classList, 'delete-comment')) {
-						u.showAlert({
-							message: 'Are you sure to delete this comment ?',
-							a: 'Yes',
-							b: 'No',
-							onA: function() {
-								DiscussionPost.deleteComment( { discussionId : post.discussionId,
-									clearPostId : post.id }, function(sucess){
-										this.init();
-									}.bind(this));
-							}.bind(this),
-							onB: function() {
-							}.bind(this),
-						});
+					if (e instanceof CustomEvent) {
+						var classList;
+						classList = e.srcElement.parentElement.classList;
+						if (_.contains(classList, 'delete-comment')) {
+							u.showAlert({
+								message: 'Are you sure to delete this comment ?',
+								a: 'Yes',
+								b: 'No',
+								onA: function() {
+									DiscussionPost.deleteComment( { discussionId : post.discussionId,
+										clearPostId : post.id }, function(sucess){
+											this.init();
+										}.bind(this));
+								}.bind(this),
+								onB: function() {
+								}.bind(this),
+							});
+						}
 					}
 				}.bind(this));
 

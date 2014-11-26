@@ -84,6 +84,7 @@ define(function(require, exports, module) {
 			// event.entryDate, glow using entry.entryid
 			//
 			event.pushNotification = true;
+			event.entryDate = new Date(event.entryDate);
 			App.pageView.changePage('track', event);
 
 			if ( event.alert ) {

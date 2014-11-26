@@ -27,6 +27,9 @@ define(function(require, exports, module) {
 	};
 	CommunityView.prototype.init = function() {
 		this.renderController = new RenderController();
+		this.renderController.inTransformFrom(function() {
+			return Transform.translate(0, 0, 3);	
+		});
 		this.add(this.renderController);
 
 		this.headerSurface = new ImageSurface({
@@ -57,11 +60,17 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.backgroundSurface = new Surface({
-			size: [undefined, undefined],
+			size: [undefined, App.height - 65],
 			properties: {
 				backgroundColor: '#efefef'
 			}
 		});
+
+		var backgroundModifier = new Modifier({
+			transform: Transform.translate(0, 65, 0)
+		});
+
+		this.add(backgroundModifier).add(this.backgroundSurface);
 
 		this._eventInput.on('on-show', function() {
 			if (!this.discussionListView) {

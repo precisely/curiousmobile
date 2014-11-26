@@ -8,7 +8,8 @@ define( function(require, exports, module) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			Id: User.getCurrentUserId(),
 			discussionId: discussionId,
-			timeZoneName: window.jstz.determine().name()
+			timeZoneName: window.jstz.determine().name(),
+			max: 100
 		});
 		console.log('Fetching discussions from the server: ');
 		u.backgroundJSON("loading discussion list", u.makeGetUrl("listCommentData"),

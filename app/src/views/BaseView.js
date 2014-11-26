@@ -28,6 +28,7 @@ define(function(require, exports, module) {
 
 	BaseView.DEFAULT_OPTIONS = {
 		headerSize: 44,
+        footerSize: 55,
 		header: true,
 		backButton: false,
 		footer: false,
@@ -35,7 +36,8 @@ define(function(require, exports, module) {
 
 	function _createLayout() {
 		this.layout = new HeaderFooter({
-			headerSize: this.options.headerSize
+			headerSize: this.options.headerSize,
+			footerSize: this.options.footerSize
 		});
 
 		var layoutModifier = new Modifier({
@@ -59,7 +61,11 @@ define(function(require, exports, module) {
 			}
 		});
 
-		this.layout.header.add(backgroundSurface);
+		var headerModifier = new Modifier({
+			transform: Transform.translate(0, 0, App.zIndex.header - 1)
+		});
+
+		this.layout.header.add(headerModifier).add(backgroundSurface);
 		if (this.options.backButton) {
 			var leftSurface = new Surface({
 				content: '<img src="content/images/left.png" />',	
@@ -136,7 +142,7 @@ define(function(require, exports, module) {
 
 	BaseView.prototype.setHeaderLabel = function(title) {
 		var labelModifier = new Modifier({
-			transform: Transform.translate(0, 0, 3)
+			transform: Transform.translate(0, 0, App.zIndex.header)
 		});
 		var labelSurface = new Surface({
 			size: [window.innerWidth, 64],
@@ -156,7 +162,7 @@ define(function(require, exports, module) {
 	BaseView.prototype.setHeaderSurface = function(headerSurface, surfaceModifier) {
 		if (surfaceModifier == null) {
 			var labelModifier = new Modifier({
-				transform: Transform.translate(0, 0, 3)
+				transform: Transform.translate(0, 0, App.zIndex.header)
 			});
 			this.addLayoutContent(labelModifier, headerSurface, this.layout.header);
 		} else {
