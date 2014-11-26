@@ -107,8 +107,6 @@ define(function(require, exports, module) {
 	}
 
 	User.logout = function(callback) {
-		store.set('mobileSessionId', undefined);
-		store.set('user', undefined);
 		window.App.collectionCache.clear();
 		u.callLogoutCallbacks();
 		if (typeof callback != 'undefined') {

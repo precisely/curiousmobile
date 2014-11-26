@@ -15,8 +15,10 @@ define(function(require, exports, module) {
 	var ContextMenuView = require('views/ContextMenuView');
 	var EntryFormView = require('views/entry/EntryFormView');
 	var Utils = require('util/Utils');
+	var push = require('util/Push');
 	var store = require('store');
 	var User = require('models/User');
+
 
 	function PageView() {
 		View.apply(this, arguments);
@@ -38,7 +40,7 @@ define(function(require, exports, module) {
 		var backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
-				backgroundColor: '#efefef'
+				backgroundColor: '#ffffff'
 			}
 		});
 		this.add(backgroundSurface);
@@ -130,9 +132,10 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.on('logout', function(e) {
-			User.logout(function(){
+			User.logout(function(user){
 				this.changePage('launch');	
 				this.launchView.showHome();
+				push.unregisterNotification();
 			}.bind(this));
 			console.log('PageView: logout');
 		}.bind(this));

@@ -327,8 +327,9 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			*/
 			Utils.getCSRFPreventionObject = function(key, data) {
 				var CSRFPreventionObject = new Object();
-				if (localStorage['mobileSessionId']) {
-					CSRFPreventionObject['mobileSessionId'] = localStorage['mobileSessionId'];
+				var mobileSessionId = store.get('mobileSessionId');
+				if (mobileSessionId) {
+					CSRFPreventionObject['mobileSessionId'] = mobileSessionId;
 				} else {
 					console.error("Missing mobileSessionId for CSRF protection");
 				}
