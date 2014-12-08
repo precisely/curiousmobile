@@ -350,6 +350,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				if (data == 'login') {
 					if (status != 'cached') {
 						u.showAlert("Session timed out.");
+						App.pageView.changePage('launch');
 						User.logout();
 					}
 					return false;
