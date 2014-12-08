@@ -64,11 +64,7 @@ define(function(require, exports, module) {
 		console.log('EntryView: Deleting entry - ' + this.entry.id);
 		if (e instanceof CustomEvent || e instanceof Entry) {
 			this.entry.delete(function(data){
-				if (data && data.fail) {
-					this._eventOutput.emit('delete-entry',data);
-					return;	
-				}
-				this._eventOutput.emit('delete-entry',this.entry);
+				this._eventOutput.emit('delete-entry',data);
 			}.bind(this));
 		}
 	}

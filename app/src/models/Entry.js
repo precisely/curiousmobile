@@ -276,6 +276,8 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						u.queueJSON("deleting entry", u.makeGetUrl("deleteEntrySData"), u.makeGetArgs(argsToSend),
 						function(entries) {
 							if (u.checkData(entries)) {
+								var collectionCache = window.App.collectionCache;
+								collectionCache.clear();
 								Entry.cacheEntries(baseDate, entries[0]);
 								callback(entries[0]);
 							} else {

@@ -110,24 +110,13 @@ define(function(require, exports, module) {
 	}
 
 	EntryListView.prototype.entryEventListeners = function (entryView) {
-		entryView.on('delete-entry', function(entry) {
+		entryView.on('delete-entry', function(entries) {
 			console.log('EntryListView: Deleting an entry');
-			if (entry.fail) {
+			if (entries.fail) {
 				console.log('EntryListView:85 failed to delete entry. Reloading cache');
-				EntryCollection.clearCache();
 				this._eventOutput.emit('delete-failed');
 			} else {
-				var key = Entry.getCacheKey(entry.get('date'));
-				var collectionCache = window.App.collectionCache;
-				if (entry.isContinuous() || entry.isRemind() || entry.isRepeat()) {
-					EntryCollection.clearCache();
-				} else {
-					collectionCache.removeItem(key);
-				}
-				this.entries.remove(entry);
-				this.entries.key = key;
-				Entry.cacheEntries(key, this.entries);
-				this.refreshEntries();
+				this.refreshEntries(entries);
 			}
 		}.bind(this));
 
@@ -153,7 +142,7 @@ define(function(require, exports, module) {
 		} else {
 			this.entries.set(entries);
 		}
-		
+
 		entries = this.entries;
 
 		if (this.scrollView) {
@@ -170,7 +159,7 @@ define(function(require, exports, module) {
 		});
 
 		this.pinnedSequentialLayout.nextYOffset = 36;
-		
+
 		this.pinnedSequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
 			var lastView = this.pinnedSequentialLayout._items._.getValue(index-1);	
@@ -222,7 +211,7 @@ define(function(require, exports, module) {
 				overflow: 'hidden',	
 			}	
 		});
-		
+
 		var scrollNode = new RenderNode(scrollModifier);
 		this.scrollView = new Scrollview({
 			direction: 1,
