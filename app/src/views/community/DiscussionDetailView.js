@@ -73,7 +73,7 @@ define(function(require, exports, module) {
 
 		discussionPostSurface.on('click', function(e) {
 			var	classList = e.srcElement.classList;
-			if (e instanceof CustomEvent) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				if (_.contains(classList, 'delete-discussion')) {
 					this.alert = u.showAlert({
 						message: 'Are you sure to delete discussion ?',
@@ -110,7 +110,7 @@ define(function(require, exports, module) {
 					}.bind(this), 2);
 				});
 				commentSurface.on('click', function(e) {
-					if (e instanceof CustomEvent) {
+					if (u.isAndroid() || (e instanceof CustomEvent)) {
 						var classList;
 						classList = e.srcElement.parentElement.classList;
 						if (_.contains(classList, 'delete-comment')) {

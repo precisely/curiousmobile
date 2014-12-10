@@ -4,6 +4,7 @@ define(function(require, exports, module) {
 	var Transform     = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var FastClick = require('famous/inputs/FastClick');
+	var u = require('util/Utils');
 
 	function SelectDateView(date) {
 		View.apply(this, arguments);
@@ -33,7 +34,7 @@ define(function(require, exports, module) {
 		this.add(leftModifier).add(leftSurface);	
 
 		leftSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				this._eventOutput.emit('date-minus');	
 			}
 		}.bind(this));
@@ -52,7 +53,7 @@ define(function(require, exports, module) {
 
 		this.dateSurface.on('click', function(e) {
 			console.log("dateSurface event");
-			if (e instanceof CustomEvent) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				this._eventOutput.emit('toggle-date-grid');
 			}
 		}.bind(this));
@@ -77,7 +78,7 @@ define(function(require, exports, module) {
 		});
 		this.add(rightModifier).add(rightSurface);
 		rightSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				this._eventOutput.emit('date-add');	
 			}
 		}.bind(this));

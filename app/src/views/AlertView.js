@@ -10,6 +10,7 @@ define(function(require, exports, module) {
 	var AlertTemplate = require('text!templates/alert.html');
 	var AlertABTemplate = require('text!templates/alert-ab.html');
 	var RenderController = require("famous/views/RenderController");
+	var u = require('util/Utils');
 
 	function AlertView() {
 		View.apply(this, arguments);
@@ -53,7 +54,7 @@ define(function(require, exports, module) {
 		messageSurface.on('click', function(e) {
 			var u = require('util/Utils');
 			var classList;
-			if (e instanceof CustomEvent) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				classList = e.srcElement.classList;
 				if (_.contains(classList, 'a') && this.options.onA) {
 					console.log('Event A');

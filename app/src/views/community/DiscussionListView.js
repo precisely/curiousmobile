@@ -96,7 +96,7 @@ define(function(require, exports, module) {
 
 				discussionSurface.on('click', function(e) {
 					var classList;
-					if (e instanceof CustomEvent) {
+					if (u.isAndroid() || (e instanceof CustomEvent)) {
 						classList = e.srcElement.parentElement.classList;
 						if (_.contains(classList, 'close-discussion')) {
 							this.alert = u.showAlert({

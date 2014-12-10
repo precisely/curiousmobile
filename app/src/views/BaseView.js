@@ -13,7 +13,8 @@ define(function(require, exports, module) {
 	var FooterTemplate = require('text!templates/footer.html');
 	var SequentialLayout = require('famous/views/SequentialLayout');
 	var FastClick = require('famous/inputs/FastClick');
-
+	var u = require('util/Utils');
+	
 	function BaseView(options) {
 		this._header = options? options.header : true;	
 		View.apply(this, arguments);
@@ -76,7 +77,7 @@ define(function(require, exports, module) {
 			});
 			leftSurface.on('click', function(e) {
 				console.log("Clicked on menu icon image");
-				if (e instanceof CustomEvent) {
+				if (u.isAndroid() || (e instanceof CustomEvent)) {
 					this._eventOutput.emit('go-back');
 				}
 			}.bind(this));
@@ -92,7 +93,7 @@ define(function(require, exports, module) {
 			});
 
 			this.hamburgerSurface.on('click', function(e) {
-				if (e instanceof CustomEvent) {
+				if (u.isAndroid() || (e instanceof CustomEvent)) {
 					console.log("Clicked on menu icon image");
 					this._eventOutput.emit('show-menu');
 				}
@@ -124,7 +125,7 @@ define(function(require, exports, module) {
 		});
 
 		footerSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				console.log('footerSurface event');
 				var classList = e.srcElement.classList;				
 				e.data = classList[2];

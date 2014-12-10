@@ -10,7 +10,7 @@ define(function(require, exports, module) {
 			console.log("Registering Notification for "+device.platform);
 			var pushNotification = window.plugins.pushNotification;
 			console.log("Checking device type");
-			if (push.isAndroid()) {
+			if (u.isAndroid()) {
 				console.log("Device type = "+device.platform);
 				pushNotification.register(push.successHandler, 
 				push.errorHandler, {"senderID":"852521907580","ecb":"window.push.onNotificationGCM"});
@@ -147,11 +147,7 @@ define(function(require, exports, module) {
 		},
 
 		deviceType: function() {
-			return push.isAndroid()?ANDROID_DEVICE:IOS_DEVICE;
-		},
-		isAndroid: function() {
-			console.log('Device Type: ' + device.platform);
-			return device.platform == 'android' || device.platform == 'Android';
+			return u.isAndroid()?ANDROID_DEVICE:IOS_DEVICE;
 		},
 		isIOS: function() {
 			return device.platform == 'ios' || device.platform == 'iOS';

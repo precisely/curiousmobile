@@ -240,6 +240,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 					u.nextJSONCall(background);
 					if (msg == "timeout") {
 						if (delay * 2 > 1000000) { // stop retrying after delay too large
+							console.log('server down...');
 							u.showAlert("Server down... giving up");
 							return;
 						}
@@ -467,6 +468,17 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				minutes = minutes < 10 ? '0'+minutes : minutes;
 				var strTime = hours + ':' + minutes + ' ' + ampm;
 				return strTime;
+			}
+
+			Utils.isAndroid = function() {
+				console.log('checking if android....' + device.platform);
+				return device.platform == 'android' || device.platform == 'Android';
+			}
+			var device = {};
+			if (/iPhone|iPod|iPad/i.test(navigator.userAgent)) {
+			    device.platform = "ios"
+			} else if (/Android/i.test(navigator.userAgent)) {
+			    device.platform = "android"
 			}
 
 			module.exports = Utils;
