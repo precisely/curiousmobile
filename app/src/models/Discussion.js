@@ -32,7 +32,8 @@ define(function(require, exports, module) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			//			q : "searchQuery",
 			userId: User.getCurrentUserId(),
-			max : 20,
+			max : 5,
+			offset: args.offset?args.offset:0,
 			timeZoneName: window.jstz.determine().name()
 		});
 		u.backgroundJSON("loading discussion list", u.makeGetUrl("listDiscussionData"), 

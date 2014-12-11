@@ -18,7 +18,6 @@ define(function(require, exports, module) {
 	var FixedRenderNode = require('util/FixedRenderNode');
 	var Utility = require('famous/utilities/Utility');
 	var Timer = require('famous/utilities/Timer');
-	//var Scrollview = require('famous/views/Scrollview');
 	var Transitionable  = require('famous/transitions/Transitionable');
 	var SnapTransition  = require('famous/transitions/SnapTransition');
 

@@ -19,11 +19,18 @@ define(function(require, exports, module) {
 	var InputSurface = require("famous/surfaces/InputSurface");
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var DiscussionDetailView = require("views/community/DiscussionDetailView");
+	var GenericSync = require('famous/inputs/GenericSync');
 
 	function DiscussionListView(group) {
 		View.apply(this, arguments);
 		this.group = group;
 		this.init();
+		this.surfaceList = [];
+		this.loadMoreItems = true;
+		this.itemsAvailable = true;
+		this.scrollView = new Scrollview({
+			direction: Utility.Direction.Y,
+		});
 	}
 
 	DiscussionListView.prototype = Object.create(View.prototype);
@@ -53,15 +60,15 @@ define(function(require, exports, module) {
 		this.changeGroup(this.group);	
 	};
 
-	DiscussionListView.prototype.changeGroup = function(group) {
+	DiscussionListView.prototype.changeGroup = function(group, callback) {
 		Discussion.fetch(group, function(discussions) {
-			var surfaceList = [];
 			var $this = this;
-			var scrollView = new Scrollview({
-				direction: Utility.Direction.Y,
-			});
 
-
+			if (discussions.dataList.length === 0) {
+				this.itemsAvailable = false;
+				console.log('no more items');
+				return;
+			}
 			discussions.dataList.forEach(function(discussion) {
 				var prettyDate = u.prettyDate(new Date(discussion.updated));
 				discussion.prettyDate =  prettyDate;
@@ -118,12 +125,47 @@ define(function(require, exports, module) {
 						}
 					}
 				}.bind(this));
-				surfaceList.push(discussionSurface);
-				discussionSurface.pipe(scrollView);
+				this.surfaceList.push(discussionSurface);
+				discussionSurface.pipe(this.scrollView);
+			}.bind(this));
+			
+			this.scrollView.trans = new Transitionable(0);
+
+			// Reset scroller to default behavior
+			this.scrollView.reset = function(){
+				this.scrollView._scroller.positionFrom(this.scrollView.getPosition.bind(this.scrollView));
+			}.bind(this);
+
+			this.scrollView.sync.on('start',function(){
+				if (this.itemsAvailable) {
+					this.loadMoreItems = true;
+				}
+				this.scrollView.trans.halt();
+				var pos = this.scrollView.trans.get()
+				if (pos != 0) this.scrollView.setPosition(pos);
+				this.scrollView.reset();
 			}.bind(this));
 
-			scrollView.sequenceFrom(surfaceList);
-			this.renderController.show(scrollView);
+			this.scrollView._eventOutput.on('onEdge',function(){
+				var currentIndex = this.scrollView.getCurrentIndex();
+				if ((this.scrollView._scroller._onEdge != -1) && this.loadMoreItems && this.itemsAvailable) {
+					this.loadMoreItems = false;
+					var args = {
+							offset: this.surfaceList.length
+					}
+					this.changeGroup(args, function() {
+						console.log('call back: ',currentIndex);
+						this.scrollView.goToPage(currentIndex);
+					}.bind(this));
+				}
+			}.bind(this));
+
+			this.scrollView.sequenceFrom(this.surfaceList);
+			this.renderController.show(this.scrollView);
+			if (callback && typeof(callback) === "function") {
+				callback();
+			}
+
 		}.bind(this));
 	}
 
