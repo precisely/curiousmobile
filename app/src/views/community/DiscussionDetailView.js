@@ -10,6 +10,7 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 	var Utility = require('famous/utilities/Utility');
 	var Scrollview = require('famous/views/Scrollview');
+	var RenderNode = require("famous/core/RenderNode");
 	var RenderController = require('famous/views/RenderController');
 	var Discussion = require('models/Discussion');
 	var DiscussionPost = require('models/DiscussionPost');
@@ -21,7 +22,14 @@ define(function(require, exports, module) {
 		var transition = new Transitionable(Transform.translate(0, 75, 0));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
-		this.add(this.renderController);
+		
+		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
+		var mod = new StateModifier({
+			size: [undefined, App.height - 130],
+		});
+		var node = new RenderNode(mod);
+		node.add(this.renderController);
+		this.add(node);
 		this.discussionId = discussionId;
 		this.surfaceList = [];
 		this.loadMoreItems = true;
@@ -29,6 +37,7 @@ define(function(require, exports, module) {
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.Y,
 		});
+		this.offset = 0;
 		this.init();
 	}
 
@@ -39,6 +48,7 @@ define(function(require, exports, module) {
 
 	DiscussionDetailView.prototype.init = function() {
 		this.surfaceList = [];
+		console.log('init called...');
 		DiscussionPost.fetch({discussionId: this.discussionId}, function(discussionPost) {
 			this.discussionPost = discussionPost;
 			this.refresh();
@@ -110,9 +120,11 @@ define(function(require, exports, module) {
 			// Check if end of the page is reached
 			if ((this.scrollView._scroller._onEdge != -1) && this.loadMoreItems && this.itemsAvailable) {
 				this.loadMoreItems = false;
+				this.offset += DiscussionPost.max;
+
 				var params = {
 					discussionId: this.discussionId,
-					offset: this.surfaceList.length - 1
+					offset: this.offset
 				}
 				DiscussionPost.fetch(params, function(discussionPost) {
 					this.discussionPost = discussionPost;
@@ -130,6 +142,7 @@ define(function(require, exports, module) {
 			this.itemsAvailable = false;
 			return;
 		}
+		console.log('Comments: ', discussionPost);
 		discussionPost.posts.forEach(function(post) {
 			
 			post.prettyDate = u.prettyDate(new Date(post.updated));
@@ -159,6 +172,7 @@ define(function(require, exports, module) {
 								onA: function() {
 									DiscussionPost.deleteComment( { discussionId : post.discussionId,
 										clearPostId : post.id }, function(sucess){
+											console.log('delete success...');
 											this.init();
 										}.bind(this));
 								}.bind(this),
