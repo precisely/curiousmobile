@@ -32,7 +32,7 @@ define(function(require, exports, module) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			//			q : "searchQuery",
 			userId: User.getCurrentUserId(),
-			max : 5,
+			max : 20,
 			offset: args.offset?args.offset:0,
 			timeZoneName: window.jstz.determine().name()
 		});

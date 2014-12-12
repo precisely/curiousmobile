@@ -4,12 +4,13 @@ define( function(require, exports, module) {
 
 	function DiscussionPost(){
 	}
-	DiscussionPost.fetch = function(discussionId, callback) {
+	DiscussionPost.fetch = function(params, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			Id: User.getCurrentUserId(),
-			discussionId: discussionId,
+			discussionId: params.discussionId,
 			timeZoneName: window.jstz.determine().name(),
-			max: 100
+			max: 20,
+			offset: params.offset?params.offset:0
 		});
 		console.log('Fetching discussions from the server: ');
 		u.backgroundJSON("loading discussion list", u.makeGetUrl("listCommentData"),
