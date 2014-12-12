@@ -30,7 +30,7 @@ define(function(require, exports, module) {
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.Y,
 		});
-		this.init();
+		init.call(this);
 	}
 
 	DiscussionListView.prototype = Object.create(View.prototype);
@@ -38,7 +38,7 @@ define(function(require, exports, module) {
 
 	DiscussionListView.DEFAULT_OPTIONS = {};
 
-	DiscussionListView.prototype.init = function() {
+	function init() {
 		var transition = new Transitionable(Transform.translate(0, 70, 0));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
@@ -62,11 +62,11 @@ define(function(require, exports, module) {
 	};
 
 	DiscussionListView.prototype.changeGroup = function(group) {
-		fetchDiscussionData.call(this, group);
-		initScrollView.call(this);
+		this.fetchDiscussionData(group);
+		this.initScrollView();
 	};
 	
-	function fetchDiscussionData(urlParameters) {
+	DiscussionListView.prototype.fetchDiscussionData = function(urlParameters) {
 		Discussion.fetch(urlParameters, function(discussions) {
 			var $this = this;
 
@@ -137,7 +137,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 	
-	function initScrollView() {
+	DiscussionListView.prototype.initScrollView = function() {
 
 		this.scrollView.sync.on('start',function(){
 			if (this.itemsAvailable) {
@@ -154,7 +154,7 @@ define(function(require, exports, module) {
 				var args = {
 						offset: this.surfaceList.length
 				}
-				fetchDiscussionData.call(this, args);
+				this.fetchDiscussionData(args);
 			}
 		}.bind(this));
 
