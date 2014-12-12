@@ -106,7 +106,7 @@ define(function(require, exports, module) {
 
 
 		this.inputSurface.on('click', function(e) {
-			if (e instanceof CustomEvent && this.entry) {
+			if ((u.isAndroid() || (e instanceof CustomEvent)) && this.entry) {
 				this.focus(e);
 			}
 		}.bind(this));
@@ -147,7 +147,7 @@ define(function(require, exports, module) {
 
 		this.repeatSurface.on('click', function(e) {
 			console.log("repeatSurface event");
-			if (e instanceof CustomEvent) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				this.removeSuffix();
 				this.toggleSuffix('repeat');
 				this.submit();
@@ -160,7 +160,7 @@ define(function(require, exports, module) {
 		});
 
 		this.remindSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				this.removeSuffix();
 				this.toggleSuffix('remind');
 				this.submit();
@@ -173,7 +173,7 @@ define(function(require, exports, module) {
 		});
 
 		this.pinSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				this.removeSuffix();
 				this.toggleSuffix('pinned');
 				this.submit();

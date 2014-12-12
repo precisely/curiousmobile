@@ -3,6 +3,7 @@ define(function(require, exports, module) {
 	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var u = require('util/Utils')
 
 	function MenuItemView() {
 		View.apply(this, arguments);
@@ -39,7 +40,7 @@ define(function(require, exports, module) {
 
 		backgroundSurface.on('click', function(e) {
 			console.log('backgroundSurface event');
-			if (e instanceof CustomEvent) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				e.data = this.options.trigger.data;
 				this._eventOutput.emit(this.options.trigger.name, e);				
 			}

@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var RenderController = require('famous/views/RenderController');
 	var ContextMenuTemplate = require('text!templates/context-menu.html');
+	var u = require('util/Utils');
 
 	function ContextMenuView() {
 		View.apply(this, arguments);
@@ -53,7 +54,7 @@ define(function(require, exports, module) {
 
 		this.contextMenu.on('click', function(e) {
 			console.log('EventHandler: this.contextMenu event: click');
-			if (e instanceof CustomEvent) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				var classList = e.srcElement.classList;
 				if (_.contains(classList, 'menu-item')) {
 					var arg = this.eventArg;

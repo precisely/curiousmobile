@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 	var HomeTemplate = require('text!templates/home.html');
 	var ImageSurface = require('famous/surfaces/ImageSurface');
 	var FastClick = require('famous/inputs/FastClick');
+	var u = require('util/Utils');
 
 	function HomeView() {
 		View.apply(this, arguments);
@@ -49,7 +50,7 @@ define(function(require, exports, module) {
 
 		this.buttonSurface.on('click', function(e) {
 			console.log('EventHandler: this.homeSurface.on event: click');
-			if (!e instanceof CustomEvent) {
+			if (!u.isAndroid() && (!e instanceof CustomEvent)) {
 				return;	
 			}
 

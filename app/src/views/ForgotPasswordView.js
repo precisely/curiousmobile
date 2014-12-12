@@ -37,7 +37,7 @@ define(function(require, exports, module) {
 
 		forgotSurface.on('click', function(e) {
 			var classList;
-			if (e instanceof CustomEvent) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				classList = e.srcElement.classList;
 				if (_.contains(classList, 'btn')) {
 					this.submit();

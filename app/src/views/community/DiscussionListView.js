@@ -19,10 +19,17 @@ define(function(require, exports, module) {
 	var InputSurface = require("famous/surfaces/InputSurface");
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var DiscussionDetailView = require("views/community/DiscussionDetailView");
+	var GenericSync = require('famous/inputs/GenericSync');
 
 	function DiscussionListView(group) {
 		View.apply(this, arguments);
 		this.group = group;
+		this.surfaceList = [];
+		this.loadMoreItems = true;
+		this.itemsAvailable = true;
+		this.scrollView = new Scrollview({
+			direction: Utility.Direction.Y,
+		});
 		this.init();
 	}
 
@@ -50,18 +57,24 @@ define(function(require, exports, module) {
 
 
 	DiscussionListView.prototype.refresh = function() {
+		this.surfaceList = [];
 		this.changeGroup(this.group);	
 	};
 
 	DiscussionListView.prototype.changeGroup = function(group) {
-		Discussion.fetch(group, function(discussions) {
-			var surfaceList = [];
+		fetchDiscussionData.call(this, group);
+		initScrollView.call(this);
+	};
+	
+	function fetchDiscussionData(urlParameters) {
+		Discussion.fetch(urlParameters, function(discussions) {
 			var $this = this;
-			var scrollView = new Scrollview({
-				direction: Utility.Direction.Y,
-			});
 
-
+			if (discussions.dataList.length === 0) {
+				this.itemsAvailable = false;
+				console.log('no more items');
+				return;
+			}
 			discussions.dataList.forEach(function(discussion) {
 				var prettyDate = u.prettyDate(new Date(discussion.updated));
 				discussion.prettyDate =  prettyDate;
@@ -96,7 +109,7 @@ define(function(require, exports, module) {
 
 				discussionSurface.on('click', function(e) {
 					var classList;
-					if (e instanceof CustomEvent) {
+					if (u.isAndroid() || (e instanceof CustomEvent)) {
 						classList = e.srcElement.parentElement.classList;
 						if (_.contains(classList, 'close-discussion')) {
 							this.alert = u.showAlert({
@@ -118,14 +131,36 @@ define(function(require, exports, module) {
 						}
 					}
 				}.bind(this));
-				surfaceList.push(discussionSurface);
-				discussionSurface.pipe(scrollView);
+				this.surfaceList.push(discussionSurface);
+				discussionSurface.pipe(this.scrollView);
 			}.bind(this));
-
-			scrollView.sequenceFrom(surfaceList);
-			this.renderController.show(scrollView);
 		}.bind(this));
-	}
+	};
+	
+	function initScrollView() {
+
+		this.scrollView.sync.on('start',function(){
+			if (this.itemsAvailable) {
+				this.loadMoreItems = true;
+			}
+		}.bind(this));
+
+		this.scrollView._eventOutput.on('onEdge',function(){
+			var currentIndex = this.scrollView.getCurrentIndex();
+
+			// Check if end of the page is reached
+			if ((this.scrollView._scroller._onEdge != -1) && this.loadMoreItems && this.itemsAvailable) {
+				this.loadMoreItems = false;
+				var args = {
+						offset: this.surfaceList.length
+				}
+				fetchDiscussionData.call(this, args);
+			}
+		}.bind(this));
+
+		this.scrollView.sequenceFrom(this.surfaceList);
+		this.renderController.show(this.scrollView);
+	};
 
 	module.exports = DiscussionListView;
 });

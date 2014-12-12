@@ -27,6 +27,7 @@ define(function(require, exports, module) {
 					if (data['success']) {
 						callback(this.getUserData(data));
 					} else {
+						console.log('username or password not correct....')
 						this.u.showAlert('Username or password not correct, please try again');
 					}
 				}.bind(this));

@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 	var TouchSync = require("famous/inputs/TouchSync");
 	var FastClick = require('famous/inputs/FastClick');
 	var Entry = require('models/Entry');
+	var u = require('util/Utils');
 
 	var entrySurface = null;
 	function EntryView(entry) {
@@ -62,7 +63,7 @@ define(function(require, exports, module) {
 
 	EntryView.prototype.delete = function (e) {
 		console.log('EntryView: Deleting entry - ' + this.entry.id);
-		if (e instanceof CustomEvent || e instanceof Entry) {
+		if ((u.isAndroid() || (e instanceof CustomEvent)) || e instanceof Entry) {
 			this.entry.delete(function(data){
 				this._eventOutput.emit('delete-entry',data);
 			}.bind(this));

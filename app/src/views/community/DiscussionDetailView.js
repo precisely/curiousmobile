@@ -23,6 +23,12 @@ define(function(require, exports, module) {
 		this.renderController.inTransformFrom(transition);
 		this.add(this.renderController);
 		this.discussionId = discussionId;
+		this.surfaceList = [];
+		this.loadMoreItems = true;
+		this.itemsAvailable = true;
+		this.scrollView = new Scrollview({
+			direction: Utility.Direction.Y,
+		});
 		this.init();
 	}
 
@@ -32,18 +38,15 @@ define(function(require, exports, module) {
 	DiscussionDetailView.DEFAULT_OPTIONS = {};
 
 	DiscussionDetailView.prototype.init = function() {
-		DiscussionPost.fetch(this.discussionId, function(discussionPost) {
+		this.surfaceList = [];
+		DiscussionPost.fetch({discussionId: this.discussionId}, function(discussionPost) {
 			this.discussionPost = discussionPost;
 			this.refresh();
 		}.bind(this));
 	}
 
 	DiscussionDetailView.prototype.refresh = function(discussionPost) {
-		var surfaceList = [];
-		var scrollView = new Scrollview({
-			direction: Utility.Direction.Y,
-		});
-
+		
 		if (!discussionPost && this.discussionPost) {
 			discussionPost = this.discussionPost;
 		}
@@ -63,7 +66,7 @@ define(function(require, exports, module) {
 				this.setSize([width, height]);
 			}.bind(this), 2);
 		});
-		surfaceList.push(discussionPostSurface)
+		this.surfaceList.push(discussionPostSurface)
 
 		discussionPostSurface.on('keyup', function (e) {
 			if (e.keyCode == 13) {
@@ -73,7 +76,7 @@ define(function(require, exports, module) {
 
 		discussionPostSurface.on('click', function(e) {
 			var	classList = e.srcElement.classList;
-			if (e instanceof CustomEvent) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				if (_.contains(classList, 'delete-discussion')) {
 					this.alert = u.showAlert({
 						message: 'Are you sure to delete discussion ?',
@@ -93,8 +96,43 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		discussionPost.prettyDate =  prettyDate;
+		this.showComments(discussionPost);
+
+		this.scrollView.sync.on('start',function(){
+			if (this.itemsAvailable) {
+				this.loadMoreItems = true;
+			}
+		}.bind(this));
+
+		this.scrollView._eventOutput.on('onEdge',function(){
+			var currentIndex = this.scrollView.getCurrentIndex();
+
+			// Check if end of the page is reached
+			if ((this.scrollView._scroller._onEdge != -1) && this.loadMoreItems && this.itemsAvailable) {
+				this.loadMoreItems = false;
+				var params = {
+					discussionId: this.discussionId,
+					offset: this.surfaceList.length - 1
+				}
+				DiscussionPost.fetch(params, function(discussionPost) {
+					this.discussionPost = discussionPost;
+					this.showComments(discussionPost);
+				}.bind(this));
+			}
+		}.bind(this));
+
+		this.scrollView.sequenceFrom(this.surfaceList);
+		this.renderController.show(this.scrollView);
+	};
+
+	DiscussionDetailView.prototype.showComments = function(discussionPost) {
+		if(discussionPost.posts.length === 0) {
+			this.itemsAvailable = false;
+			return;
+		}
 		discussionPost.posts.forEach(function(post) {
+			
+			post.prettyDate = u.prettyDate(new Date(post.updated));
 			if (post.message) {
 				var commentSurface = new Surface({
 					size: [undefined, true],
@@ -110,7 +148,7 @@ define(function(require, exports, module) {
 					}.bind(this), 2);
 				});
 				commentSurface.on('click', function(e) {
-					if (e instanceof CustomEvent) {
+					if (u.isAndroid() || (e instanceof CustomEvent)) {
 						var classList;
 						classList = e.srcElement.parentElement.classList;
 						if (_.contains(classList, 'delete-comment')) {
@@ -131,13 +169,11 @@ define(function(require, exports, module) {
 					}
 				}.bind(this));
 
-				surfaceList.push(commentSurface);
-				commentSurface.pipe(scrollView);
+				this.surfaceList.push(commentSurface);
+				commentSurface.pipe(this.scrollView);
 			}
 		}.bind(this));
-		scrollView.sequenceFrom(surfaceList);
-		this.renderController.show(scrollView);
-	};
+	}
 
 	DiscussionDetailView.prototype.postComment = function() {
 		var message = document.getElementById('message').value;
