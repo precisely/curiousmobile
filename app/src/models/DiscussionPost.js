@@ -4,19 +4,21 @@ define( function(require, exports, module) {
 
 	function DiscussionPost(){
 	}
+
+	DiscussionPost.max = 20;
+
 	DiscussionPost.fetch = function(params, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			Id: User.getCurrentUserId(),
 			discussionId: params.discussionId,
 			timeZoneName: window.jstz.determine().name(),
-			max: 20,
+			max: DiscussionPost.max,
 			offset: params.offset?params.offset:0
 		});
 		console.log('Fetching discussions from the server: ');
 		u.backgroundJSON("loading discussion list", u.makeGetUrl("listCommentData"),
 		  u.makeGetArgs(argsToSend), function(comments) {
 			if (u.checkData(comments)) {
-				console.log('comments from the server: ', comments);
 				callback(comments);
 			}
 		});

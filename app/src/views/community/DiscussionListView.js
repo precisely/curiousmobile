@@ -9,6 +9,7 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var FastClick = require('famous/inputs/FastClick');
 	var RenderController = require('famous/views/RenderController');
+	var RenderNode = require("famous/core/RenderNode");
 	var Scrollview = require('famous/views/Scrollview');
 	var Discussion = require('models/Discussion');
 	var DiscussionTemplate = require('text!templates/discussion.html');
@@ -27,6 +28,7 @@ define(function(require, exports, module) {
 		this.surfaceList = [];
 		this.loadMoreItems = true;
 		this.itemsAvailable = true;
+		this.offset = 0;
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.Y,
 		});
@@ -39,10 +41,17 @@ define(function(require, exports, module) {
 	DiscussionListView.DEFAULT_OPTIONS = {};
 
 	function init() {
-		var transition = new Transitionable(Transform.translate(0, 70, 0));
+		var transition = new Transitionable(Transform.translate(0, 75, 0));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
-		this.add(this.renderController);
+		
+		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
+		var mod = new StateModifier({
+			size: [undefined, App.height - 130],
+		});
+		var node = new RenderNode(mod);
+		node.add(this.renderController);
+		this.add(node);
 		this.changeGroup(this.group);
 	};
 
@@ -118,6 +127,7 @@ define(function(require, exports, module) {
 								b: 'No',
 								onA: function() {
 									Discussion.deleteDiscussion({id: discussion.id}, function(success){
+										console.log('deleted successfully...');
 										this.refresh();
 									}.bind(this));
 								}.bind(this),
@@ -151,8 +161,9 @@ define(function(require, exports, module) {
 			// Check if end of the page is reached
 			if ((this.scrollView._scroller._onEdge != -1) && this.loadMoreItems && this.itemsAvailable) {
 				this.loadMoreItems = false;
+				this.offset += Discussion.max;
 				var args = {
-						offset: this.surfaceList.length
+						offset: this.offset
 				}
 				this.fetchDiscussionData(args);
 			}

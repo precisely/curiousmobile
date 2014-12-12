@@ -14,6 +14,7 @@ define(function(require, exports, module) {
 		},
 	});
 
+	Discussion.max = 20;
 
 	Discussion.post = function(name, discussionPost, callback) {
 		u.queueJSON("posting in",
@@ -32,7 +33,7 @@ define(function(require, exports, module) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			//			q : "searchQuery",
 			userId: User.getCurrentUserId(),
-			max : 20,
+			max : Discussion.max,
 			offset: args.offset?args.offset:0,
 			timeZoneName: window.jstz.determine().name()
 		});
