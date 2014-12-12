@@ -13,7 +13,7 @@ define(function(require, exports, module) {
 	var Easing = require("famous/transitions/Easing");
 	var RenderController = require("famous/views/RenderController");
 	var SequentialLayout = require("famous/views/SequentialLayout");
-	var AutoCompleteView = require("views/AutoCompleteView");
+	var AutocompleteView = require("views/AutocompleteView");
 	var u = require('util/Utils');
 	var store = require('store');
 	var Entry = require('models/Entry');
@@ -42,7 +42,7 @@ define(function(require, exports, module) {
 	}
 
 	function _setListeners() {
-		this.autoCompleteView = new AutoCompleteView();
+		this.autoCompleteView = new AutocompleteView();
 		this.autoCompleteView.on('updateInputSurface', function(){
 			console.log('update the Input Surface');
 		}.bind(this));

@@ -12,33 +12,33 @@ define(function(require, exports, module) {
 	var AutoComplete = require('models/AutoComplete');
 	var AutoCompleteObj;
 
-	function AutoCompleteView() {
+	function AutocompleteView() {
 		View.apply(this, arguments);
 		this.init();
 		AutoCompleteObj = new AutoComplete();
 		window.autoCompleteCache = AutoCompleteObj;
 	}
 
-	AutoCompleteView.prototype = Object.create(View.prototype);
-	AutoCompleteView.prototype.constructor = AutoCompleteView;
-	AutoCompleteView.DEFAULT_OPTIONS = {};
+	AutocompleteView.prototype = Object.create(View.prototype);
+	AutocompleteView.prototype.constructor = AutocompleteView;
+	AutocompleteView.DEFAULT_OPTIONS = {};
 
 	var onSelectCallback;
 
-	AutoCompleteView.prototype.init = function() {
+	AutocompleteView.prototype.init = function() {
 		this.renderController = new RenderController();
 		this.add(this.renderController);
 	};
 
 
-	AutoCompleteView.prototype.hide = function(callback) {
+	AutocompleteView.prototype.hide = function(callback) {
 		this.renderController.hide({duration:0});
 	}
 
-	AutoCompleteView.prototype.onSelect = function(callback) {
+	AutocompleteView.prototype.onSelect = function(callback) {
 		onSelectCallback = callback;
 	};
-	AutoCompleteView.prototype.getAutoCompletes = function(enteredKey) {
+	AutocompleteView.prototype.getAutoCompletes = function(enteredKey) {
 		this.surfaceList = [];
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.Y,
@@ -55,7 +55,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 	}
 
-	AutoCompleteView.prototype.processAutocompletes = function(autocompletes, enteredKey) {
+	AutocompleteView.prototype.processAutocompletes = function(autocompletes, enteredKey) {
 		if (autocompletes) {
 			autocompletes.forEach(function(autocomplete, index) {
 				var isLastItem = false;
@@ -72,7 +72,7 @@ define(function(require, exports, module) {
 		this.renderController.show(this.scrollView);
 	};
 
-	AutoCompleteView.prototype.addItem = function(autocomplete, i, isLastItem) {
+	AutocompleteView.prototype.addItem = function(autocomplete, i, isLastItem) {
 		var myView = new View();
 		var backgroundColor = 'white';
 		var borderProperty = '0px solid #aaaaaa';
@@ -109,5 +109,5 @@ define(function(require, exports, module) {
 		this.surfaceList.push(myView);
 		myView.pipe(this.scrollView);
 	};
-	module.exports = AutoCompleteView;
+	module.exports = AutocompleteView;
 });

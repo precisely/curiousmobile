@@ -54,6 +54,7 @@ define(function(require, exports, module) {
 
 		this.launchView.on('login-success', function(data) {
 			_createTrackPage.call(this);
+			_createEntryFormView.call(this);
 			var view = new View();
 			var backgroundSurface = new Surface({
 				size: [undefined, undefined],
@@ -73,7 +74,6 @@ define(function(require, exports, module) {
 			this.changePage('track');
 		}.bind(this));
 
-		_createEntryFormView.call(this);
 		this.communityView = new CommunityView('');
 		this.pageMap['community'] = this.communityView;
 		this.communityView.pipe(this._eventOutput);
@@ -85,6 +85,7 @@ define(function(require, exports, module) {
 			this.changePage('launch');
 		} else {
 			_createTrackPage.call(this);
+			_createEntryFormView.call(this);
 			var lastPage = this.getLastPage();
 			if (lastPage) {
 				var lastPageData = store.get('lastPageData');	
