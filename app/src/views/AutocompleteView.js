@@ -9,14 +9,14 @@ define(function(require, exports, module) {
 	var Scrollview = require('famous/views/Scrollview');
 	var FastClick = require('famous/inputs/FastClick');
 	var u = require('util/Utils');
-	var AutoComplete = require('models/AutoComplete');
-	var AutoCompleteObj;
+	var Autocomplete = require('models/Autocomplete');
+	var AutocompleteObj;
 
 	function AutocompleteView() {
 		View.apply(this, arguments);
 		this.init();
-		AutoCompleteObj = new AutoComplete();
-		window.autoCompleteCache = AutoCompleteObj;
+		AutocompleteObj = new Autocomplete();
+		window.autoCompleteCache = AutocompleteObj;
 	}
 
 	AutocompleteView.prototype = Object.create(View.prototype);
@@ -38,7 +38,7 @@ define(function(require, exports, module) {
 	AutocompleteView.prototype.onSelect = function(callback) {
 		onSelectCallback = callback;
 	};
-	AutocompleteView.prototype.getAutoCompletes = function(enteredKey) {
+	AutocompleteView.prototype.getAutocompletes = function(enteredKey) {
 		this.surfaceList = [];
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.Y,
@@ -50,7 +50,7 @@ define(function(require, exports, module) {
 		}
 		enteredKey = enteredKey.toLowerCase().trim();
 		this.addItem({label:enteredKey}, 0, false)
-		AutoCompleteObj.fetch(enteredKey, function(autocompletes) {
+		AutocompleteObj.fetch(enteredKey, function(autocompletes) {
 			this.processAutocompletes(autocompletes, enteredKey);
 		}.bind(this));
 	}

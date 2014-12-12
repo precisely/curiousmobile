@@ -99,7 +99,7 @@ define(function(require, exports, module) {
 				this.blur(e);
 			}else {
 				enteredKey = e.srcElement.value;
-				this.autoCompleteView.getAutoCompletes(enteredKey);
+				this.autoCompleteView.getAutocompletes(enteredKey);
 				formContainerSurface.add(this.autoCompleteView);
 			}
 		}.bind(this));
