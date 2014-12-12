@@ -101,7 +101,7 @@ define(function(require, exports, module) {
 			var hamburgerModifier = new StateModifier({
 				origin: [0, 0],
 				align: [0, 0],
-				transform: Transform.translate(0, 0, window.App.zIndex.header)	
+				transform: Transform.translate(0, 0, window.App.zIndex.header + 1)	
 			});
 			this.addLayoutContent(hamburgerModifier, this.hamburgerSurface, this.layout.header);
 		}

@@ -306,6 +306,8 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						console.log('deleteGhost: Response received' + u.checkData(ret, 'success', "Error deleting entry"));
 						if (u.checkData(ret, 'success', "Error deleting entry")) {
 							console.log('deleteGhost: Removing entry from cache as well');
+							var collectionCache = window.App.collectionCache;
+							collectionCache.clear();
 							callback();
 							return;
 						}

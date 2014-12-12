@@ -111,7 +111,7 @@ define(function(require, exports, module) {
 	EntryListView.prototype.entryEventListeners = function (entryView) {
 		entryView.on('delete-entry', function(entries) {
 			console.log('EntryListView: Deleting an entry');
-			if (entries.fail) {
+			if (entries && entries.fail) {
 				console.log('EntryListView:85 failed to delete entry. Reloading cache');
 				this._eventOutput.emit('delete-failed');
 			} else {

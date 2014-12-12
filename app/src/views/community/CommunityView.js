@@ -12,6 +12,7 @@ define(function(require, exports, module) {
 	var DiscussionDetailView = require("views/community/DiscussionDetailView");
 	var CreatePostView = require('views/CreatePostView');
 	var PageView = require('views/PageView');
+	var u = require('util/Utils');
 
 	function CommunityView(options) {
 		BaseView.apply(this, arguments);
@@ -34,23 +35,25 @@ define(function(require, exports, module) {
 		this.pencilIconModifier = new StateModifier({
 			origin: [1, 0],
 			align : [1, 0],
-			transform: Transform.translate(0, 0, App.zIndex.header)
+			transform: Transform.translate(0, 0, App.zIndex.header + 1)
 		});
 
 		this.setHeaderSurface(this.headerSurface, this.pencilIconModifier);
 		this.setHeaderLabel('FEED');
 
 		this.headerSurface.on('click', function(e) {
-			var createPostSurface = new CreatePostView();
-			this.renderController.show(createPostSurface);
-			createPostSurface.on('cancel-post-discussion', function(e) {
-				this.renderController.show(this.discussionListView);
-			}.bind(this));
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				var createPostSurface = new CreatePostView();
+				this.renderController.show(createPostSurface);
+				createPostSurface.on('cancel-post-discussion', function(e) {
+					this.renderController.show(this.discussionListView);
+				}.bind(this));
 
-			createPostSurface.on('post-success', function(e) {
-				this.discussionListView.refresh();
-				this.renderController.show(this.discussionListView);
-			}.bind(this));
+				createPostSurface.on('post-success', function(e) {
+					this.discussionListView.refresh();
+					this.renderController.show(this.discussionListView);
+				}.bind(this));
+			}
 		}.bind(this));
 
 		this.backgroundSurface = new Surface({
@@ -68,10 +71,7 @@ define(function(require, exports, module) {
 
 		this.renderController = new RenderController();
 
-		var discussionListModifier = new Modifier({
-			transform: Transform.translate(0, 0, 5)
-		});
-		this.add(discussionListModifier).add(this.renderController);
+		this.add(this.renderController);
 
 		this._eventInput.on('on-show', function() {
 			if (!this.discussionListView) {
