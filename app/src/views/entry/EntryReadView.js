@@ -35,11 +35,13 @@ define(function(require, exports, module) {
 		}
 
 		var properties = {
-			padding: '15px',
+			padding: '15px 39px 15px 15px',
 			fontSize: this.options.lineHeight + 'px',
 			fontWeight: 'lighter',
 			lineHeight: this.options.lineHeight + 'px',
-			textOverflow: 'ellipsis'
+			textOverflow: 'ellipsis',
+			whiteSpace: 'nowrap',
+			overflow: 'hidden',
 		};
 
 		var size = [window.innerWidth, this.options.entryHeight];
