@@ -35,7 +35,7 @@ define(function(require, exports, module) {
 		}
 
 		var properties = {
-			padding: '15px 39px 15px 15px',
+			padding: '15px 45px 15px 15px',
 			fontSize: this.options.lineHeight + 'px',
 			fontWeight: 'lighter',
 			lineHeight: this.options.lineHeight + 'px',
