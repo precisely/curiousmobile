@@ -15,6 +15,12 @@ a {
 	color: blue;
 }
 
+input {
+	-webkit-user-select: auto !important;
+	-webkit-appearance: caret;
+	-moz-appearance: caret; /* mobile firefox too! */
+}
+
 .footer a {
 	font-weight: bold;
 	color: rgb(83, 83, 83);
@@ -306,8 +312,6 @@ button.close {
 	border-color: #ffffff;
 	line-height: 25px;
 	font-size: 13px;
-	-webkit-appearance: caret;
-	-moz-appearance: caret; /* mobile firefox too! */
 }
 
 ::-webkit-input-placeholder { /* WebKit browsers */
@@ -440,6 +444,3 @@ button.close {
 	-webkit-touch-callout: none !important;
 }
 
-input {
-	-webkit-user-select: auto !important;
-}
