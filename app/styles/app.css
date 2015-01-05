@@ -15,7 +15,7 @@ a {
 	color: blue;
 }
 
-input {
+input, textarea {
 	-webkit-user-select: auto !important;
 	-webkit-appearance: caret;
 	-moz-appearance: caret; /* mobile firefox too! */
