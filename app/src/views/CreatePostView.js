@@ -32,6 +32,7 @@ define(function(require, exports, module) {
 	function _createView(argument) {
 		var template = PostTemplate;
 		this.postSurface = new Surface({
+			size: [App.width, App.height - 120],
 			content: _.template(template, this.options, templateSettings),
 			properties: {
 				backgroundColor: 'white'
