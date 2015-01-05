@@ -16,7 +16,7 @@ define(function(require, exports, module) {
 		View.apply(this, arguments);
 		this.init();
 		AutocompleteObj = new Autocomplete();
-		window.autoCompleteCache = AutocompleteObj;
+		window.autocompleteCache = AutocompleteObj;
 	}
 
 	AutocompleteView.prototype = Object.create(View.prototype);

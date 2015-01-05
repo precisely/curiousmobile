@@ -249,7 +249,7 @@ define(function(require, exports, module) {
 		}
 
 		if (this.entry && this.entry.isContinuous()) {
-			entryText = this.removeSuffix(text);
+			entryText = this.removeSuffix(entryText);
 		}
 
 		var selectionRange = this.entry.getSelectionRange();

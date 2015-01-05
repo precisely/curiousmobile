@@ -116,8 +116,13 @@ define(function(require, exports, module) {
 		this.trackView.on('select-entry', function(entry) {
 			console.log('entry selected with id: ' + entry.id);
 			if (entry.isContinuous()) {
-				this.entryFormView.submit(entry);
-				return;
+				var tag = entry.get('description');
+				var tagStatsMap = autocompleteCache.tagStatsMap.get(tag);
+				if ((tagStatsMap && tagStatsMap.typicallyNoAmount) || tag.indexOf('start') > -1 || 
+					tag.indexOf('stop') > -1) {
+						this.entryFormView.submit(entry);
+						return;
+				}
 			}
 			store.set('lastPageData', entry.id);
 			this.changePage('form-view', entry.id);
