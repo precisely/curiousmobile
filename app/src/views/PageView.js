@@ -28,6 +28,9 @@ define(function(require, exports, module) {
 		_addPages.call(this);
 		_menuHandlers.call(this);
 		_createContextMenu.call(this);
+		window.onclick = function() {
+			Utils.closeAlerts();	
+		};
 	}
 
 	PageView.prototype = Object.create(View.prototype);

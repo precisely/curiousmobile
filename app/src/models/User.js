@@ -91,6 +91,8 @@ define(function(require, exports, module) {
 		return true;
 	}
 
+
+
 	User.getCurrentUserId = function() {
 		var user = store.get('user');
 		if (typeof user == 'undefined') {
@@ -113,6 +115,7 @@ define(function(require, exports, module) {
 		if (typeof callback != 'undefined') {
 			callback();	
 		}
+		store.set('mobileSessionId', false);
 	}
 
 	module.exports = User;

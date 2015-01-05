@@ -64,7 +64,7 @@ define(function(require, exports, module) {
 					console.log('Event B');
 					this.options.onB.call();
 					u.closeAlerts();
-				}else {
+				} else {
 					u.closeAlerts();
 				} 
 			}

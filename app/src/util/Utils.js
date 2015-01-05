@@ -29,6 +29,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			_.each(u.alertViewsOpen, function(view) {
 				view.controller.hide();
 			});
+			u.alertViewsOpen = [];
 		};
 
 		Utils.isOnline = function() {
