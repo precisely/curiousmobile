@@ -27,7 +27,7 @@ define(function(require, exports, module) {
 			}
 
 		},
-		unregisterNotification: function(user) {
+		unregisterNotification: function(callback) {
 			console.log("Unregistering push notification");
 			var pushNotification = window.plugins.pushNotification;
 			pushNotification.unregister(function() { 
@@ -48,11 +48,12 @@ define(function(require, exports, module) {
 						store.set('user', undefined);
 						if (u.checkData(data)) {
 							console.log("Notification token removed from the server");
+							callback();
 						}
 					});    	
 
 			}, 
-			function() { console.log("Error trying to unregister: "+error); });
+			function() { console.log("Error trying to unregister: " + error); });
 		},
 		errorHandler: function(error) {
 			console.log("Error trying to register: "+error);

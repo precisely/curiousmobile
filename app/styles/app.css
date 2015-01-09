@@ -21,6 +21,19 @@ input, textarea {
 	-moz-appearance: caret; /* mobile firefox too! */
 }
 
+.app-container {
+	position: relative;
+	top: 0px;
+	left: 0px;
+	bottom: 0px;
+	right: 0px;
+	-webkit-transform-style: preserve-3d;
+	transform-style: preserve-3d;
+	-webkit-backface-visibility: visible;
+	backface-visibility: visible;
+	pointer-events: none;
+}
+
 .footer a {
 	font-weight: bold;
 	color: rgb(83, 83, 83);

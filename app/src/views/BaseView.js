@@ -4,6 +4,7 @@ define(function(require, exports, module) {
 	'use strict';
 	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
+	var OptionsManager = require('famous/core/OptionsManager');
 	var Transform = require('famous/core/Transform');
 	var Modifier = require('famous/core/Modifier');
 	var StateModifier = require('famous/modifiers/StateModifier');
@@ -14,8 +15,13 @@ define(function(require, exports, module) {
 	var SequentialLayout = require('famous/views/SequentialLayout');
 	var FastClick = require('famous/inputs/FastClick');
 	var u = require('util/Utils');
-	
+
 	function BaseView(options) {
+		this.options = Object.create(BaseView.DEFAULT_OPTIONS);
+		this._optionsManager = new OptionsManager(this.options);
+		if (options) {
+			this._optionsManager.setOptions(options);
+		}
 		this._header = options? options.header : true;	
 		View.apply(this, arguments);
 		_createLayout.call(this);
@@ -29,7 +35,7 @@ define(function(require, exports, module) {
 
 	BaseView.DEFAULT_OPTIONS = {
 		headerSize: 44,
-        footerSize: 55,
+		footerSize: 55,
 		header: true,
 		backButton: false,
 		footer: false,
@@ -37,8 +43,8 @@ define(function(require, exports, module) {
 
 	function _createLayout() {
 		this.layout = new HeaderFooter({
-			headerSize: this.options.headerSize,
-			footerSize: this.options.footerSize
+			headerSize: 64,
+			footerSize: 50
 		});
 
 		var layoutModifier = new Modifier({
@@ -112,11 +118,12 @@ define(function(require, exports, module) {
 			return;
 		}
 		var footerModifier = new StateModifier({
-			transform: Transform.translate(0, 0, window.App.zIndex.header)	
+			transform: Transform.translate(0, 0, window.App.zIndex.footer)	
 		});
 
 		var footerSurface = new Surface({
 			content: FooterTemplate,
+			classes: ['footer-surface'],
 			size: [undefined, 50],
 			properties: {
 				borderTop: '1px solid #c0c0c0',
@@ -173,7 +180,7 @@ define(function(require, exports, module) {
 	BaseView.prototype.setBody = function(body) {
 		var bodyModifier = new StateModifier({
 			origin: [0,0],
-			transform: Transform.translate(0, 64, 2)
+			transform: Transform.translate(0, 0, 2)
 		});
 		this.addContent(bodyModifier, body);
 	}

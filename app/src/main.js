@@ -19,12 +19,14 @@ define(function(require, exports, module) {
 	App.CSRF.SyncTokenUriName = "SYNCHRONIZER_URI"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_URI
 	App.zIndex = {
 		menu: 12,
-		readView: 20,
+		readView: 16,
+		feedItem: 16,
 		pinned: 22,
 		formView: 14, 
-		header: 18,
-		datePicker: 19,
-		alertView: 24,
+		header: 21,
+		footer: 21,
+		datePicker: 22,
+		alertView: 999,
 		contextMenu: 30,
 	};
 
@@ -35,7 +37,7 @@ define(function(require, exports, module) {
 	App.serverUrl = "http://dev.wearecurio.us";
 	//App.serverUrl = "http://127.0.0.1:8080";
 	//App.serverUrl = "http://192.168.0.107:8080";
-
+	Engine.setOptions({containerClass: 'app-container'});
 	var mainContext = Engine.createContext();
 	window.mainContext = mainContext;
 	window.App = App;

@@ -108,12 +108,11 @@ define(function(require, exports, module) {
 		});
 
 		var entryListModifier = new Modifier({
-			transform: Transform.translate(0, 134, 1),
+			transform: Transform.translate(0, 70, 1),
 		});
 
 		entryListModifier.sizeFrom(function() {
-			var mainContext = window.mainContext;
-			var size = mainContext.getSize();
+			var size = [App.width, App.height];
 			return [undefined, size[1] - 185];
 		});
 

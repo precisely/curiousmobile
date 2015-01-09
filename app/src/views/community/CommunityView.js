@@ -64,7 +64,7 @@ define(function(require, exports, module) {
 		});
 
 		var backgroundModifier = new Modifier({
-			transform: Transform.translate(0, 65, 0)
+			transform: Transform.translate(0, 65, -1)
 		});
 
 		this.add(backgroundModifier).add(this.backgroundSurface);

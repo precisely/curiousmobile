@@ -118,10 +118,10 @@ define(function(require, exports, module) {
 			if (entry.isContinuous()) {
 				var tag = entry.get('description');
 				var tagStatsMap = autocompleteCache.tagStatsMap.get(tag);
-				if ((tagStatsMap && tagStatsMap.typicallyNoAmount) || tag.indexOf('start') > -1 || 
-					tag.indexOf('stop') > -1) {
-						this.entryFormView.submit(entry);
-						return;
+				if ((tagStatsMap && tagStatsMap.typicallyNoAmount) || (tag.indexOf('start') == -1 && 
+				tag.indexOf('stop') == -1)) {
+					this.entryFormView.submit(entry);
+					return;
 				}
 			}
 			store.set('lastPageData', entry.id);
@@ -141,10 +141,11 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.on('logout', function(e) {
-			User.logout(function(user){
-				this.changePage('launch');	
-				this.launchView.showHome();
-				push.unregisterNotification();
+			push.unregisterNotification(function(){
+				User.logout(function(user){
+					this.changePage('launch');	
+					this.launchView.showHome();
+				}.bind(this));
 			}.bind(this));
 			console.log('PageView: logout');
 		}.bind(this));
