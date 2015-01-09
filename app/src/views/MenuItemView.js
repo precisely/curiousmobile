@@ -34,7 +34,7 @@ define(function(require, exports, module) {
 			size: [this.options.width, this.options.height],
 			properties: {
 				backgroundColor: '#b1336a',
-				boxShadow: '0 0 1px black'
+				boxShadow: 'none'
 			}
 		});
 
