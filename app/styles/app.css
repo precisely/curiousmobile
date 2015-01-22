@@ -21,6 +21,10 @@ input, textarea {
 	-moz-appearance: caret; /* mobile firefox too! */
 }
 
+.entry-form hr {
+	margin: 35px -10px;
+}
+
 .app-container {
 	position: relative;
 	top: 0px;

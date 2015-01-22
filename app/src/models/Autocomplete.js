@@ -156,8 +156,8 @@ define( function(require, exports, module) {
 					}
 				}
 				if (match) {
+					if (num++ >= limit) break;
 					result.push(this.tagStatsMap.get(tag));
-					if (++num >= limit) break;
 				}
 			}
 
@@ -199,16 +199,17 @@ define( function(require, exports, module) {
 			autocompleteWidget.addStatsTermToSet(matches, skipSet);
 			autocompleteWidget.appendStatsTextToList(result, matches);
 
-			var remaining = 6 - matches.length;
+			var remaining = 3 - matches.length;
 
 			if (term.length == 1) {
-				var nextRemaining = remaining > 3 ? 3 : remaining;
+				var nextRemaining = remaining >= 2 ? 2 : remaining;
 				matches = autocompleteWidget.findAutoMatches(autocompleteWidget.algTagList, term, nextRemaining, skipSet, 0);
 				autocompleteWidget.addStatsTermToSet(matches, skipSet);
 				autocompleteWidget.appendStatsTextToList(result, matches);
 				remaining -= nextRemaining;
 			}
 
+			console.log('remaining: ', remaining);
 			if (remaining > 0) {
 				matches = autocompleteWidget.findAutoMatches(autocompleteWidget.freqTagList, term, remaining, skipSet, 0);
 				autocompleteWidget.appendStatsTextToList(result, matches);

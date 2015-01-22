@@ -97,7 +97,7 @@ define(function(require, exports, module) {
 				this._eventOutput.emit('refresh-list-view');
 			} else if (e.keyCode == 27) {
 				this.blur(e);
-			}else {
+			} else {
 				enteredKey = e.srcElement.value;
 				this.autoCompleteView.getAutocompletes(enteredKey);
 				formContainerSurface.add(this.autoCompleteView);
@@ -130,10 +130,11 @@ define(function(require, exports, module) {
 			defaultItemSize: [100, 24],
 		});
 
+		var offsetToCenter = window.App.width/2 -135;
 		sequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
-			offset += 30;
-			var transform = Transform.translate(offset, 90, _zIndex() + 1);
+			//off += 30;
+			var transform = Transform.translate(offsetToCenter + offset, 230, _zIndex() + 1);
 			return {
 				transform: transform,
 				target: input.render()
@@ -191,18 +192,18 @@ define(function(require, exports, module) {
 		this.buttonsAndHelp.add(sequentialLayout);
 		var helpSurface = new Surface({
 			size: [window.innerWidth - 40, undefined],
-			content: 'You can repeat the tag, make a button out of it (for instant access), or remind yourself later.',
+			content: 'You can repeat the tag, make a button out of it (for instant access), or remind yourself later.<hr>',
 			properties: {
 				fontStyle: 'italic',
 				color: 'white',
 				margin: '30px 20px',
 				padding: '12px 10px',
-				borderTop: '1px solid white',
+				textAlign: 'justify',
 			}
 		});
 
 		var helpModifier = new Modifier({
-			transform: Transform.translate(0, 120, 0)
+			transform: Transform.translate(0, 50, 0)
 		});
 		this.buttonsAndHelp.add(helpModifier).add(helpSurface);
 
