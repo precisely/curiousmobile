@@ -295,20 +295,23 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			deleteGhost: function(allFuture, callback) {
 				var collectionCache = window.App.collectionCache;
 				var selectedDate = window.App.selectedDate;
+				var baseDate = window.App.selectedDate.toUTCString();
 				u.queueJSON("deleting entry", u.makeGetUrl("deleteGhostEntryData"),
 				u.makeGetArgs(u.getCSRFPreventionObject(
 					"deleteGhostEntryDataCSRF", {
 						entryId: this.id,
 						all: allFuture,
-						date: selectedDate.toUTCString()
+						baseDate: baseDate,
+						timeZoneName: u.getTimezone(),
+						date: selectedDate.toUTCString(),
+						displayDate: baseDate
 					})),
-					function(ret) {
-						console.log('deleteGhost: Response received' + u.checkData(ret, 'success', "Error deleting entry"));
-						if (u.checkData(ret, 'success', "Error deleting entry")) {
-							console.log('deleteGhost: Removing entry from cache as well');
+					function(entries) {
+						if (u.checkData(entries)) {
 							var collectionCache = window.App.collectionCache;
 							collectionCache.clear();
-							callback();
+							Entry.cacheEntries(baseDate, entries[0]);
+							callback(entries[0]);
 							return;
 						}
 
