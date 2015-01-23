@@ -33,7 +33,19 @@ define(function(require, exports, module) {
 		});
 
 		this.touchSync.on('start', function(data) {
-			this.start = Date.now();	
+			this.start = Date.now();
+			this.touchTimeout = setTimeout(function(){
+				App.pageView._eventOutput.emit('show-context-menu', { menu: this.menu, target: this, eventArg: this.entry});
+			}.bind(this),600)
+		}.bind(this));
+
+		this.touchSync.on('update', function(data) {
+			var movementX = Math.abs(data.position[0]);
+			var movementY = Math.abs(data.position[1]);
+			console.log('movementx: ', movementX, ' movementy: ', movementY);
+			if (movementX < 8 || movementY < 8) {
+				clearTimeout(this.touchTimeout);
+			}
 		}.bind(this));
 
 		this.touchSync.on('end', function(data) {
@@ -41,15 +53,8 @@ define(function(require, exports, module) {
 			var movementX = Math.abs(data.position[0]);
 			var movementY = Math.abs(data.position[1]);
 			var timeDelta = this.end - this.start;
-			console.log('Sart: ' + this.start + ' End: ' + this.end);
-			console.log('touch-end for entry id: ' + this.entry.id);
-			console.log('timeDelta: ' + timeDelta);
-			if (timeDelta > 600 && movementX < 8 && movementY < 8) {
-				console.log('EntryView: Firing show-context-menu event');
-				App.pageView._eventOutput.emit('show-context-menu', { menu: this.menu, target: this, eventArg: this.entry});	
-			}
-
 			if (timeDelta < 500 && movementX < 8 && movementY < 8) {
+				clearTimeout(this.touchTimeout);
 				this._eventOutput.emit('select-entry', this.entry);
 			}
 		}.bind(this));
