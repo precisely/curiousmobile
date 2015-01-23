@@ -15,6 +15,7 @@ define(function(require, exports, module) {
 		this.currentMonth = new Date(date.getFullYear(), date.getMonth(), 1);
 		_createMonthHeader.call(this, this.currentMonth);
 		_createMonthGrid.call(this);
+		_createTodayButtom.call(this);
 	}
 
 	DateGridView.prototype = Object.create(View.prototype);
@@ -26,6 +27,47 @@ define(function(require, exports, module) {
 		return window.App.zIndex.datePicker;	
 	}
 
+	function _createTodayButtom() {
+		this.buttonBackgroundSurface = new Surface({
+			//size: [285, 275],
+			size: [285, 90],
+			properties: {
+				backgroundColor: 'white',
+				border : '1px solid #c0c0c0',
+				borderTop: 'none',
+				borderBottomLeftRadius: '10px',
+				borderBottomRightRadius: '10px'
+			}
+		});
+		this.buttonBackgroundSurface.state = new Modifier({
+			transform: Transform.translate(0, 250, _zIndex() + 20)
+		});
+		this.add(this.buttonBackgroundSurface.state).add(this.buttonBackgroundSurface);
+
+		var todayButton = new Surface({
+			content: 'Today',
+			size: [65, 35],
+			properties: {
+				fontSize: '20px',
+				backgroundColor: '#333',
+				color: 'white',
+				textAlign: 'center',
+				borderRadius: '5px',
+				padding : '3px',
+				cursor: 'pointer'
+				
+			}
+		});
+
+		var todayButtonModifier = new StateModifier({
+			transform: Transform.translate(10, 295, _zIndex() + 25),
+		});
+		todayButton.on('click', function() {
+			console.log("today botton clicked!");
+			this._eventOutput.emit('select-date', new Date());
+		}.bind(this));
+		this.add(todayButtonModifier).add(todayButton);
+	}
 	/**
 	 * Creates the header to change month
 	 */
@@ -79,7 +121,7 @@ define(function(require, exports, module) {
 		});
 
 		var monthModifier = new StateModifier({
-			transform: Transform.translate(70, 10, _zIndex() + 1)
+			transform: Transform.translate(75, 10, _zIndex() + 1)
 		});
 
 		this.add(monthModifier).add(monthSurface);
@@ -257,11 +299,13 @@ define(function(require, exports, module) {
 		}
 		this.monthSurface.setContent(DateUtil.getMonth(this.currentMonth) + ' ' + this.currentMonth.getFullYear());
 		this.renderDates(this.currentMonth);
+		_createTodayButtom.call(this);
 	}
 
 	DateGridView.prototype.setSelectedDate = function (date) {
 		this.selectedDate = date;
 		this.renderDates(date);
+		_createTodayButtom.call(this);
 	}
 
 	module.exports = DateGridView;
