@@ -130,11 +130,12 @@ define(function(require, exports, module) {
 			defaultItemSize: [100, 24],
 		});
 
-		var offsetToCenter = window.App.width/2 -135;
+		var firstOffset = 18;
 		sequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
 			//off += 30;
-			var transform = Transform.translate(offsetToCenter + offset, 230, _zIndex() + 1);
+			offset = offset + firstOffset + 30;
+			var transform = Transform.translate(offset, 230, _zIndex() + 1);
 			return {
 				transform: transform,
 				target: input.render()
@@ -143,7 +144,7 @@ define(function(require, exports, module) {
 
 		this.repeatSurface = new Surface({
 			content: '<i class="fa fa-repeat"></i> <br/> Repeat',
-			size: [24, 24],
+			size: [34, 24],
 		});
 
 		this.repeatSurface.on('click', function(e) {
@@ -157,7 +158,7 @@ define(function(require, exports, module) {
 
 		this.remindSurface = new Surface({
 			content: '<i class="fa fa-bell"></i> <br/> Remind',
-			size: [24, 24],
+			size: [34, 24],
 		});
 
 		this.remindSurface.on('click', function(e) {
