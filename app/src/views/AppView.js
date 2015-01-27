@@ -35,6 +35,7 @@ define(function(require, exports, module) {
 		});
 
 		this.add(this.pageModifier).add(this.pageView);
+
 		_setListeners.call(this);
 	}
 

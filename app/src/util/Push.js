@@ -29,6 +29,13 @@ define(function(require, exports, module) {
 		},
 		unregisterNotification: function(callback) {
 			console.log("Unregistering push notification");
+			if (!window.plugins) {
+				// for development purposes
+				store.set('mobileSessionId', undefined);
+				store.set('user', undefined);
+				callback();
+				return;
+			}
 			var pushNotification = window.plugins.pushNotification;
 			pushNotification.unregister(function() { 
 				console.log("Unregistered Notification");

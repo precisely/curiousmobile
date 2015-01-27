@@ -254,10 +254,6 @@ define(function(require, exports, module) {
 				}.bind(this));
 				this.renderController.hide({duration:0});
 				this.renderController.show(this.spinnerSurface, {duration: 0});
-				Timer.setTimeout(function() {
-					this._eventOutput.emit('refresh-entries');
-				}.bind(this), 1000);
-				console.log('EntryListView: Need to refresh on pull');
 			} else {
 				this.scrollView.trans.halt();
 				this.scrollView.trans.set(0);

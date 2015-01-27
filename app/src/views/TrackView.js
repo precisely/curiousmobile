@@ -158,7 +158,7 @@ define(function(require, exports, module) {
 			}.bind(this));
 
 			//Handle cache refresh
-			this.currentListView.on('refresh-entries', function(){
+			App.coreEventHandler.on('refresh-entries', function(){
 				EntryCollection.clearCache();
 				this.changeDate(this.calendarView.selectedDate, function () {
 					console.log('TrackView: Entries refreshed');

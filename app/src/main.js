@@ -5,13 +5,21 @@
 define(function(require, exports, module) {
 	var Engine = require('famous/core/Engine');
 	var Cache = require('jscache');
+	var TouchSync = require("famous/inputs/TouchSync");
+	var FastClick = require('famous/inputs/FastClick');
 	var AppView = require('views/AppView');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
+	var EventHandler = require('famous/core/EventHandler');
 	//var AppView = require('views/AppView');
 
 	var collectionCache = new Cache(1000, true, new Cache.LocalStorageCacheStorage('ec'));
 	var pinnedCache = new Cache(1000, true, new Cache.LocalStorageCacheStorage('ec-pinned'));
+	var start = 0;
+	var update = 0;
+	var end = 0;
+	var delta = [0,0];
+	var position = [0, 0];
 
 	var App = {};
 	App.CSRF = {};
@@ -30,6 +38,7 @@ define(function(require, exports, module) {
 		contextMenu: 30,
 	};
 
+	App.coreEventHandler = new EventHandler();
 	App.collectionCache = collectionCache;
 	App.pinnedCache = pinnedCache;
 	//App.serverUrl = "http://192.168.0.31:8080";
@@ -51,6 +60,26 @@ define(function(require, exports, module) {
 		align: [0, 0]
 	});
 	mainContext.add(mod).add(appView);
+
+	var touchSync = new TouchSync(function() {
+		return position;
+	});
+
+	touchSync.on('start', function(data) {
+		start = Date.now();
+		console.log('main.js: touch start');
+	});
+
+	touchSync.on('end', function(data) {
+		var movementY = Math.abs(data.position[1]);
+		console.log('main.js: ', ' movementy: ', movementY);
+		// Don't show context menu if there is intent to move something
+		if (movementY > 100) {
+			App.coreEventHandler.emit('refresh-entries');
+		}
+	});
+
+	Engine.pipe(touchSync);
 	module.exports = App;
 });
 

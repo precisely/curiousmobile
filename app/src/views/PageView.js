@@ -115,11 +115,11 @@ define(function(require, exports, module) {
 		this.trackView.pipe(this._eventOutput);
 		this.trackView.on('select-entry', function(entry) {
 			console.log('entry selected with id: ' + entry.id);
-			if (entry.isContinuous()) {
+			if (entry.isContinuous() || (entry.isRemind() && entry.isGhost())) {
 				var tag = entry.get('description');
 				var tagStatsMap = autocompleteCache.tagStatsMap.get(tag);
-				if ((tagStatsMap && tagStatsMap.typicallyNoAmount) || (tag.indexOf('start') == -1 && 
-				tag.indexOf('stop') == -1)) {
+				if ((tagStatsMap && tagStatsMap.typicallyNoAmount) || tag.indexOf('start') > -1 
+					|| tag.indexOf('begin') > -1 || tag.indexOf('stop') > -1 || tag.indexOf('end') > -1) {
 					this.entryFormView.submit(entry);
 					return;
 				}
