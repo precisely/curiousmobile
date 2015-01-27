@@ -74,7 +74,7 @@ define(function(require, exports, module) {
 		var movementY = Math.abs(data.position[1]);
 		console.log('main.js: ', ' movementy: ', movementY);
 		// Don't show context menu if there is intent to move something
-		if (movementY > 100) {
+		if (movementY > 80) {
 			App.coreEventHandler.emit('refresh-entries');
 		}
 	});

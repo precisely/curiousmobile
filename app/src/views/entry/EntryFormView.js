@@ -326,7 +326,8 @@ define(function(require, exports, module) {
 			entry.setText(newText);
 		}
 
-		if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1) {
+		if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1 ||
+			newText.indexOf('pinned') > -1) {
 			window.App.collectionCache.clear();	
 		}
 

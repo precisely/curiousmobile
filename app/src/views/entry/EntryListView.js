@@ -221,7 +221,7 @@ define(function(require, exports, module) {
 		this.scrollView.trans = new Transitionable(0);
 
 		// Vertical offset this.scrollView will start load at
-		this.scrollView.refreshOffset = 40;
+		this.scrollView.refreshOffset = 80;
 
 		// Reset scroller to default behavior
 		this.scrollView.reset = function(){
