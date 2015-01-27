@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 	var Cache = require('jscache');
 	var TouchSync = require("famous/inputs/TouchSync");
 	var FastClick = require('famous/inputs/FastClick');
+	var u = require('util/Utils');
 	var AppView = require('views/AppView');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
@@ -67,7 +68,6 @@ define(function(require, exports, module) {
 
 	touchSync.on('start', function(data) {
 		start = Date.now();
-		console.log('main.js: touch start');
 	});
 
 	touchSync.on('end', function(data) {

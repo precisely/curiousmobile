@@ -131,6 +131,13 @@ define(function(require, exports, module) {
 				this.changeDate(e.entryDate);	
 			}
 		});
+
+		App.coreEventHandler.on('refresh-entries', function(){
+			EntryCollection.clearCache();
+			this.changeDate(this.calendarView.selectedDate, function () {
+				console.log('TrackView: Entries refreshed');
+			}.bind(this));
+		}.bind(this));
 	}
 
 	function _createCalendar() {
@@ -158,12 +165,6 @@ define(function(require, exports, module) {
 			}.bind(this));
 
 			//Handle cache refresh
-			App.coreEventHandler.on('refresh-entries', function(){
-				EntryCollection.clearCache();
-				this.changeDate(this.calendarView.selectedDate, function () {
-					console.log('TrackView: Entries refreshed');
-				}.bind(this));
-			}.bind(this));
 
 			this.currentListView.on('delete-failed', function () {
 				this.changeDate(this.calendarView.selectedDate, function () {

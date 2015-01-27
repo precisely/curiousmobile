@@ -130,12 +130,15 @@ define(function(require, exports, module) {
 			defaultItemSize: [100, 24],
 		});
 
-		var firstOffset = 18;
+		var firstOffset = 20;
 		sequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
-			//off += 30;
-			offset = offset + firstOffset + 30;
-			var transform = Transform.translate(offset, 230, _zIndex() + 1);
+			if (index == 0) {
+				offset = firstOffset;
+			} else {
+				offset += firstOffset;
+			}
+			var transform = Transform.translate(offset, 200, _zIndex() + 1);
 			return {
 				transform: transform,
 				target: input.render()
@@ -290,12 +293,13 @@ define(function(require, exports, module) {
 		document.getElementsByName("entry-description")[0].value = '';
 	}
 
-	EntryFormView.prototype.submit = function(e) {
+	EntryFormView.prototype.submit = function(e, directlyCreateEntry) {
 		var entry = null;
 		var newText = document.getElementsByName("entry-description")[0].value;
 
-		if (e instanceof Entry && e.isContinuous()) {
+		if (e instanceof Entry && directlyCreateEntry) {
 			entry = e;
+			this.entry = entry;
 			newText = this.removeSuffix(entry.toString());
 		} else {
 			entry = this.entry;	
@@ -364,7 +368,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 	}
 
-	EntryFormView.prototype.hasFuture = function(options) {
+	EntryFormView.prototype.hasFuture = function() {
 		var entry = this.entry;
 		return ((entry.isRepeat() && !entry.isRemind()) || entry.isGhost()) && entry.isTodayOrLater();
 	}
