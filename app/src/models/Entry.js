@@ -313,8 +313,9 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 							Entry.cacheEntries(baseDate, entries[0]);
 							callback(entries[0]);
 							return;
+						} else {
+							u.showAlert("Error deleting entry");
 						}
-
 					}.bind(this), function (data) {
 						callback({fail: true});
 					}, 0, false, false);

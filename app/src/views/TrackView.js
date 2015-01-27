@@ -168,6 +168,7 @@ define(function(require, exports, module) {
 
 			this.currentListView.on('delete-failed', function () {
 				this.changeDate(this.calendarView.selectedDate, function () {
+					u.showAlert("Error deleting entry");
 					console.log('TrackView: Entries refreshed after a failed delete');
 				}.bind(this));
 			});
