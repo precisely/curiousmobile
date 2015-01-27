@@ -60,7 +60,7 @@ define(function(require, exports, module) {
 
 			this.setEntry(entry);
 			this.focus();
-			
+
 		}.bind(this));
 	}
 
@@ -314,8 +314,9 @@ define(function(require, exports, module) {
 			newEntry.set('date', window.App.selectedDate);
 			newEntry.setText(newText);
 			newEntry.create(function(resp) {
-				if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1) {
-					window.App.collectionCache.clear();	
+				if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1 ||
+					newText.indexOf('pinned') > -1) {
+						window.App.collectionCache.clear();	
 				}
 				store.set('lastPage', 'track');
 				this.blur();
@@ -331,7 +332,7 @@ define(function(require, exports, module) {
 		}
 
 		if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1 ||
-			newText.indexOf('pinned') > -1) {
+		newText.indexOf('pinned') > -1) {
 			window.App.collectionCache.clear();	
 		}
 
