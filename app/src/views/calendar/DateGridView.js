@@ -222,7 +222,9 @@ define(function(require, exports, module) {
 
 		this.todayButton.on('click', function() {
 			console.log("today botton clicked!");
-			this._eventOutput.emit('select-date', new Date());
+			var today = new Date();
+			this.changeMonth(today)
+			this._eventOutput.emit('select-date', today);
 		}.bind(this));
 		weekRowLayout.sequenceFrom(this.weekRenderControllers);
 
