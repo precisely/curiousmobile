@@ -264,7 +264,7 @@ define(function(require, exports, module) {
 			}
 		}
 		inputElement.value = entryText;
-
+		this.originalText = entryText;
 		if (selectionRange != undefined) {
 			inputElement.setSelectionRange(selectionRange[0], selectionRange[1]);
 		}
@@ -323,8 +323,13 @@ define(function(require, exports, module) {
 				this._eventOutput.emit('new-entry', resp);
 			}.bind(this));
 			return;
-		} else if (!entry.isRemind() && entry.toString() == newText) {
+		} else if (this.originalText == newText) {
 			console.log("EntryFormView: No changes made");
+			if (entry.isRemind()) {
+				entry.setText(newText);
+				this.saveEntry(false);
+				return;
+			}
 			this.blur();
 			return;
 		} else {
@@ -332,8 +337,8 @@ define(function(require, exports, module) {
 		}
 
 		if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1 ||
-		newText.indexOf('pinned') > -1) {
-			window.App.collectionCache.clear();	
+			newText.indexOf('pinned') > -1) {
+				window.App.collectionCache.clear();	
 		}
 
 		if (this.hasFuture()) {
@@ -345,7 +350,7 @@ define(function(require, exports, module) {
 					this.saveEntry(false);
 				}.bind(this),
 				onB: function() {
-					this.saveEntry(false);
+					this.saveEntry(true);
 				}.bind(this),
 			});
 			return;

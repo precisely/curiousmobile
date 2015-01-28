@@ -116,7 +116,7 @@ define(function(require, exports, module) {
 		this.trackView.on('select-entry', function(entry) {
 			console.log('entry selected with id: ' + entry.id);
 			var directlyCreateEntry = false;
-			if (entry.isContinuous()) {
+			if (entry.isContinuous() || (entry.isRemind() && entry.isGhost())) {
 				var tag = entry.get('description');
 				var tagStatsMap = autocompleteCache.tagStatsMap.get(tag);
 				if ((tagStatsMap && tagStatsMap.typicallyNoAmount) || tag.indexOf('start') > -1 
@@ -125,13 +125,9 @@ define(function(require, exports, module) {
 				}
 			}
 			
-			if (entry.isRemind() && entry.isGhost()) {
-				directlyCreateEntry = true;
-			}
-
 			if (directlyCreateEntry) {
-					this.entryFormView.submit(entry, directlyCreateEntry);
-					return;
+				this.entryFormView.submit(entry, directlyCreateEntry);
+				return;
 			}
 
 			store.set('lastPageData', entry.id);
