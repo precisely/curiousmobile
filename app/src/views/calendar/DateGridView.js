@@ -273,7 +273,7 @@ define(function(require, exports, module) {
 
 	DateGridView.prototype.getLeadDays = function(date) {
 		var firstDate = DateUtil.getFirstDayOfMonth(date);
-		return 6 - firstDate.getDay();
+		return firstDate.getDay();
 	}
 
 	DateGridView.prototype.changeMonth = function(num) {
