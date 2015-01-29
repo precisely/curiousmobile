@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 	var RenderController = require("famous/views/RenderController");
 	var Transitionable = require('famous/transitions/Transitionable');
 	var SequentialLayout = require("famous/views/SequentialLayout");
+	var u = require('util/Utils');
 	var DateUtil = require('util/DateUtil');
 	function DateGridView(date) {
 		View.apply(this, arguments);
@@ -52,7 +53,7 @@ define(function(require, exports, module) {
 		});
 
 		this.backgroundSurface.state.sizeFrom(function() {
-			return [285, this.backgroundSurface.transitionable.get()]	
+			return [285, this.backgroundSurface.transitionable.get()];	
 		}.bind(this));
 		this.add(this.backgroundSurface.state).add(backgroundSurface);
 		var leftSurface = new Surface({
@@ -68,9 +69,11 @@ define(function(require, exports, module) {
 		});
 		this.add(leftModifier).add(leftSurface);
 
-		leftSurface.on('click', function() {
-			console.log("leftSurface event");
-			this.changeMonth(-1);
+		leftSurface.on('click', function(e) {
+			if ((u.isAndroid() || (e instanceof CustomEvent))) {
+				console.log("leftSurface event");
+				this.changeMonth(-1);
+			}
 		}.bind(this));
 
 		var monthSurface = new Surface({
@@ -99,9 +102,11 @@ define(function(require, exports, module) {
 			}
 		});
 		this.add(rightModifier).add(rightSurface);
-		rightSurface.on('click', function() {
-			console.log("rightSurface event");
-			this.changeMonth(1);
+		rightSurface.on('click', function(e) {
+			if ((u.isAndroid() || (e instanceof CustomEvent))) {
+				console.log("rightSurface event");
+				this.changeMonth(1);
+			}
 		}.bind(this));
 	}
 
@@ -199,11 +204,10 @@ define(function(require, exports, module) {
 				transform: transform,
 				target: input.render()
 			};
-		});
+		}.bind(this));
 
 		// TODO add the today button
 		// Last render controller for the today button	
-		this.weekRenderControllers.push(new RenderController());
 		this.todayButton = new Surface({
 			content: 'Today',
 			size: [65, 35],
@@ -226,6 +230,13 @@ define(function(require, exports, module) {
 			this.changeMonth(today)
 			this._eventOutput.emit('select-date', today);
 		}.bind(this));
+		this.todayController = new RenderController();
+
+		this.todayController.inTransformFrom(function() {
+			return Transform.translate(0, 75 + (this.rowsToShow * 37), 999);
+		}.bind(this));
+		this.add(this.todayController);
+		this.todayController.show(this.todayButton);
 		weekRowLayout.sequenceFrom(this.weekRenderControllers);
 
 		this.add(weekRowLayout);
@@ -236,6 +247,7 @@ define(function(require, exports, module) {
 	DateGridView.prototype.renderDates = function(date) {
 		var leadDays = this.getLeadDays(date);
 		var rowsToShow = this.numberOfRowsToShow(date);
+		this.rowsToShow = rowsToShow;
 		var printDate = DateUtil.daylightSavingAdjust(new Date(date.getFullYear(), date.getMonth(), 1 - leadDays));
 		var numOfDays = leadDays + DateUtil.daysInMonth(date);
 
@@ -253,24 +265,31 @@ define(function(require, exports, module) {
 			}
 			printDate = new Date(printDate.getFullYear(), printDate.getMonth(), printDate.getDate() + 1);
 		}
-		console.log('DateGridView: changing background height');
+		console.log('DateGridView: changing background height ' + rowsToShow);
 		// Adding 1 to the number of rows to show to accomodate the today button
 		this.backgroundSurface.transitionable.set(80 + (37 * (rowsToShow + 1)));
 		for (var i = 0, len = this.weekRows.length; i < len; i++) {
 			if (i < rowsToShow) {
 				this.weekRenderControllers[i].show(this.weekRows[i]);
-			} else if (i == len - 1) {
-				this.weekRenderControllers[i].show(this.todayButton);
 			} else {
 				this.weekRenderControllers[i].hide();	
 			}
 		}
+
 	}
 
 	DateGridView.prototype.numberOfRowsToShow = function(date) {
 		var leadDays = this.getLeadDays(date);
-		var curRows = Math.ceil((leadDays + DateUtil.daysInMonth(date)) / 7); // calculate the number of rows to generate		
-		return curRows;
+		var totalDaysInTheGrid = leadDays + DateUtil.daysInMonth(date);
+		if (totalDaysInTheGrid > 28 && totalDaysInTheGrid < 36) {
+			return 5;	
+		} else if (totalDaysInTheGrid > 35) {
+			return 6;	
+		} else {
+			return 4;	
+		}
+		//var curRows = Math.round(() / 7); // calculate the number of rows to generate		
+		//return curRows;
 	}
 
 	DateGridView.prototype.getLeadDays = function(date) {
