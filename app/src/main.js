@@ -16,6 +16,7 @@ define(function(require, exports, module) {
 
 	var collectionCache = new Cache(1000, true, new Cache.LocalStorageCacheStorage('ec'));
 	var pinnedCache = new Cache(1000, true, new Cache.LocalStorageCacheStorage('ec-pinned'));
+	var stateCache = new Cache(1000, true, new Cache.LocalStorageCacheStorage('state'));
 	var start = 0;
 	var update = 0;
 	var end = 0;
@@ -42,6 +43,7 @@ define(function(require, exports, module) {
 	App.coreEventHandler = new EventHandler();
 	App.collectionCache = collectionCache;
 	App.pinnedCache = pinnedCache;
+	App.stateCache = stateCache;
 	//App.serverUrl = "http://192.168.0.31:8080";
 	//App.serverUrl = "http://192.168.0.111:8080";
 	App.serverUrl = "http://dev.wearecurio.us";

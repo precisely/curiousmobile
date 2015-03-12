@@ -65,6 +65,7 @@ define(function(require, exports, module) {
 	}
 
 	function _createForm() {
+		this.clazz = 'EntryFormView';
 		this.setHeaderLabel('ENTER TAG');
 		var formContainerSurface = new ContainerSurface({
 			classes: ['entry-form'],
@@ -133,7 +134,7 @@ define(function(require, exports, module) {
 		var firstOffset = 20;
 		sequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
-			if (index == 0) {
+			if (index === 0) {
 				offset = firstOffset;
 			} else {
 				offset += firstOffset;
@@ -227,19 +228,19 @@ define(function(require, exports, module) {
 		document.getElementsByName("entry-description")[0].value = text ;
 
 		return text.length > 0;
-	}
+	};
 
 	EntryFormView.prototype.removeSuffix = function(text) {
 		text = text ? text : document.getElementsByName("entry-description")[0].value;
-		if (text.endsWith(' repeat') || text.endsWith(' pinned')
-			|| text.endsWith(' button')) {
+		if (text.endsWith(' repeat') || text.endsWith(' pinned') || 
+			text.endsWith(' button')) {
 				text = text.substr(0, text.length - 7);
-			}
-			if (text.endsWith(' favorite')) {
-				text = text.substr(0, text.length - 8);
-			}
-			return text;
-	}
+		}
+		if (text.endsWith(' favorite')) {
+			text = text.substr(0, text.length - 8);
+		}
+		return text;
+	};
 
 
 	EntryFormView.prototype.focus = function(e) {
@@ -249,7 +250,7 @@ define(function(require, exports, module) {
 		var inputElement = document.getElementById("entry-description");
 		var typedValue = inputElement.value;
 		var entryText = this.entry.toString();
-		if (typedValue != '') {
+		if (typedValue !== '') {
 			entryText = typedValue;	
 		}
 
@@ -258,27 +259,55 @@ define(function(require, exports, module) {
 		}
 
 		var selectionRange = this.entry.getSelectionRange();
-		if (selectionRange != undefined) {
+		if (selectionRange !== undefined) {
 			if (selectionRange[2]) { // insert space at selectionRange[0]
 				entryText = entryText.substr(0, selectionRange[0] - 1) + " " + entryText.substr(selectionRange[0] - 1);
 			}
 		}
 		inputElement.value = entryText;
 		this.originalText = entryText;
-		if (selectionRange != undefined) {
+		if (selectionRange !== undefined) {
 			inputElement.setSelectionRange(selectionRange[0], selectionRange[1]);
 		}
-	}
+	};
 
 	EntryFormView.prototype.blur = function(e) {
 		this.autoCompleteView.hide();
 		this.unsetEntry();
 		this._eventOutput.emit('hiding-form-view');
+	};
+
+	EntryFormView.prototype.getCurrentState = function () {
+		var state = BaseView.prototype.getCurrentState.call(this);
+		var inputElement = document.getElementById("entry-description");
+		return {
+			entry: this.entry,
+			focus: {
+				elementID: 'entry-description',
+			},
+			form: [
+				{ 
+					id: 'entry-description',
+					value: inputElement.value,
+					selectionRange: [inputElement.selectionStart, inputElement.selectionEnd],
+				}	
+			]
+		};	
+	};
+
+	EntryFormView.prototype.setCurrentState = function (state) {
+		var result = BaseView.prototype.setCurrentState.call(this, state);
+		if (state && result) {
+			var inputElement = document.getElementById("entry-description");
+			this.entry = new Entry(state.entry);
+		} else {
+			return false;	
+		}
 	}
 
 	EntryFormView.prototype.setEntry = function(entry) {
 		this.entry = entry;
-	}
+	};
 
 	EntryFormView.prototype.unsetEntry = function() {
 		var inputElement = document.getElementById("entry-description");
@@ -287,11 +316,11 @@ define(function(require, exports, module) {
 		}
 		this.entry = null;
 		this.setEntryText('');
-	}
+	};
 
 	EntryFormView.prototype.setEntryText = function(text){
 		document.getElementsByName("entry-description")[0].value = '';
-	}
+	};
 
 	EntryFormView.prototype.submit = function(e, directlyCreateEntry) {
 		var entry = null;
@@ -315,8 +344,8 @@ define(function(require, exports, module) {
 			newEntry.setText(newText);
 			newEntry.create(function(resp) {
 				if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1 ||
-					newText.indexOf('pinned') > -1) {
-						window.App.collectionCache.clear();	
+				newText.indexOf('pinned') > -1) {
+					window.App.collectionCache.clear();	
 				}
 				store.set('lastPage', 'track');
 				this.blur();
@@ -337,8 +366,8 @@ define(function(require, exports, module) {
 		}
 
 		if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1 ||
-			newText.indexOf('pinned') > -1) {
-				window.App.collectionCache.clear();	
+		newText.indexOf('pinned') > -1) {
+			window.App.collectionCache.clear();	
 		}
 
 		if (this.hasFuture()) {
@@ -356,7 +385,7 @@ define(function(require, exports, module) {
 			return;
 		}
 		this.saveEntry(false);
-	}
+	};
 
 	EntryFormView.prototype.saveEntry = function(allFuture) {
 		var entry = this.entry;
@@ -364,7 +393,7 @@ define(function(require, exports, module) {
 			this._eventOutput.emit('update-entry', resp);
 			this.blur();
 		}.bind(this));
-	}
+	};
 
 	EntryFormView.prototype.createEntry = function(){
 		var entry = this.entry;
@@ -372,12 +401,12 @@ define(function(require, exports, module) {
 			this.entry = new Entry(entry);
 			this._eventOutput.emit('new-entry', resp);
 		}.bind(this));
-	}
+	};
 
 	EntryFormView.prototype.hasFuture = function() {
 		var entry = this.entry;
 		return ((entry.isRepeat() && !entry.isRemind()) || entry.isGhost()) && entry.isTodayOrLater();
-	}
+	};
 
 	module.exports = EntryFormView;
 });

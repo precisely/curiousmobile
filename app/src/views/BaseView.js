@@ -2,7 +2,6 @@
 
 define(function(require, exports, module) {
 	'use strict';
-	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
 	var OptionsManager = require('famous/core/OptionsManager');
 	var Transform = require('famous/core/Transform');
@@ -14,6 +13,7 @@ define(function(require, exports, module) {
 	var FooterTemplate = require('text!templates/footer.html');
 	var SequentialLayout = require('famous/views/SequentialLayout');
 	var FastClick = require('famous/inputs/FastClick');
+	var StateView = require('views/StateView');
 	var u = require('util/Utils');
 
 	function BaseView(options) {
@@ -23,14 +23,14 @@ define(function(require, exports, module) {
 			this._optionsManager.setOptions(options);
 		}
 		this._header = options? options.header : true;	
-		View.apply(this, arguments);
+		StateView.apply(this, arguments);
 		_createLayout.call(this);
 		_createHeader.call(this);
 		_createFooter.call(this);
 		_setListeners.call(this);
 	}
 
-	BaseView.prototype = Object.create(View.prototype);
+	BaseView.prototype = Object.create(StateView.prototype);
 	BaseView.prototype.constructor = BaseView;
 
 	BaseView.DEFAULT_OPTIONS = {
