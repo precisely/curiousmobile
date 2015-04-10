@@ -98,7 +98,6 @@ define(function(require, exports, module) {
 		}.bind(entryReadView));
 
 		this.entryEventListeners(entryReadView);
-
 		return entryReadView;
 	}
 
@@ -129,6 +128,7 @@ define(function(require, exports, module) {
 		this.entryReadViews = [];
 		this.pinnedViews = [];
 		this.draggableList = [];
+		this.glowEntry = glowEntry;
 
 		if (!entries && this.entries) {
 			entries = EntryCollection.getFromCache(this.entries.key);
@@ -263,10 +263,15 @@ define(function(require, exports, module) {
 		scrollNode.add(this.scrollView);
 		scrollWrapperSurface.add(scrollNode);
 		entries.forEach(function(entry) {
+			var addedView = null;
 			if (entry.isContinuous()) {
-				this.addPinnedEntry(entry);
+				addedView = this.addPinnedEntry(entry);
 			} else {
-				this.addEntry(entry);
+				addedView = this.addEntry(entry);
+			}
+
+			if (this.glowEntry && entry.id == this.glowEntry.id) {
+				this.glowView = addedView;	
 			}
 		}.bind(this));
 
@@ -319,6 +324,9 @@ define(function(require, exports, module) {
 		this.pinnedEntriesController.show(pinnedContainerSurface, {duration: 0});
 
 		this.renderController.show(scrollWrapperSurface, {duration:0});
+		if (this.glowView) {
+			this.glowView.glow();
+		}
 	}
 
 	EntryListView.prototype.heightOfPins = function () {

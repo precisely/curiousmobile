@@ -50,25 +50,18 @@ define(function(require, exports, module) {
 			size[0] = size[0] - 10;
 			size[1] = size[1] - 10;
 		}
-		this.entrySurface.setOptions({
+
+		var readSurfaceOptions = {
 			size: size,
 			content: this.getDisplayText(),
 			classes: this.entry.repeatTypeAsClass(),
 			properties: properties
-		});
-		this.entrySurface.pipe(this._eventOutput);
-		//this.entrySurface.pipe(this.touchSync);
-		this.glowSurface = new Surface({
-			size: [undefined, 44],
-			content: this.entry.toString(),
-			classes: this.entry.repeatTypeAsClass(),
-			properties: {
-				padding: '12px',
-				color: '#ffffff',
-				backgroundColor: '#c0c0c0'
-			}
-		});
+		};
 
+		this.entrySurface.setOptions(readSurfaceOptions);
+		this.glowInit(readSurfaceOptions);
+
+		this.entrySurface.pipe(this._eventOutput);
 		this.showMoreSurface = new ImageSurface({
 			content: 'content/images/show-more.png',
 			size: [24, 24],
@@ -113,14 +106,6 @@ define(function(require, exports, module) {
 		this.entrySurface.setContent(this.entry.toString());
 	}
 
-	EntryReadView.prototype.glow = function() {
-		//var rc = this.renderController;
-		//rc.show(this.glowSurface, {
-			//duration: 1000
-			//});
-			//rc.hide();
-			//rc.show(this.entrySurface);
-	}
 
 	EntryReadView.prototype.getDisplayText = function() {
 		var date = new Date(this.entry.date);
