@@ -112,6 +112,10 @@ input, textarea {
 	line-height: 25px;
 }
 
+.glow {
+	color: #FF935F;
+}
+
 .continuous {
 	background: #ffffff;
 	color: #ec2d35;
@@ -119,14 +123,26 @@ input, textarea {
 	border-radius: 4px;
 }
 
+.pinned.glow {
+	background-color: #868686;
+}
+
 .repeat {
 	background: #FC3F28;
 	color: #ffffff;
 }
 
+.repeat.glow {
+	color: #FC3F28;
+}
+
 .remind {
 	background: #C83A6E;
 	color: #ffffff;
+}
+
+.glow.remind {
+	color: #C83A6E;
 }
 
 .entry .help {

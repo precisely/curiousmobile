@@ -20,7 +20,8 @@ define(function(require, exports, module) {
 	PinnedView.DEFAULT_OPTIONS = {};
 
 	function _createView() {
-		this.entrySurface.setOptions({
+
+		var options = {
 			classes: ['pinned'],
 			size: [true, true],
 			content: this.getDisplayText(),
@@ -34,8 +35,10 @@ define(function(require, exports, module) {
 				lineHeight: '13px',
 				fontSize: '13px',
 			}
-		});
+		};
 
+		this.entrySurface.setOptions(options);
+		this.glowInit(options);
 		var pinIcon = new Surface({
 			size: [9, 14],
 			content: '<i class="fa fa-thumb-tack"></i>',
