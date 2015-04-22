@@ -91,11 +91,7 @@ define(function(require, exports, module) {
 			_createEntryFormView.call(this);
 			var lastPage = this.getLastPage();
 			if (lastPage) {
-				var lastPageData = store.get('lastPageData');	
-				if (lastPageData) {
-					lastPageData = lastPageData;
-				}
-				this.changePage(lastPage, lastPageData);
+				this.changePage(lastPage);
 			} 	
 		}
 	}
@@ -119,8 +115,8 @@ define(function(require, exports, module) {
 			if (entry.isContinuous() || (entry.isRemind() && entry.isGhost())) {
 				var tag = entry.get('description');
 				var tagStatsMap = autocompleteCache.tagStatsMap.get(tag);
-				if ((tagStatsMap && tagStatsMap.typicallyNoAmount) || tag.indexOf('start') > -1 
-					|| tag.indexOf('begin') > -1 || tag.indexOf('stop') > -1 || tag.indexOf('end') > -1) {
+				if ((tagStatsMap && tagStatsMap.typicallyNoAmount) || tag.indexOf('start') > -1 || 
+					tag.indexOf('begin') > -1 || tag.indexOf('stop') > -1 || tag.indexOf('end') > -1) {
 					directlyCreateEntry = true;
 				}
 			}
@@ -130,14 +126,13 @@ define(function(require, exports, module) {
 				return;
 			}
 
-			store.set('lastPageData', entry.id);
 			this.changePage('form-view', entry.id);
 		}.bind(this));
 
 		this.trackView.on('create-entry', function(e) {
 			console.log('EventHandler: this.trackView.on event: create-entry');
 			this.entryFormView.unsetEntry();
-			this.changePage('form-view')
+			this.changePage('form-view');
 		}.bind(this));
 	}
 
@@ -198,8 +193,8 @@ define(function(require, exports, module) {
 	* @param {string} page - name of the page
 	*/
 	PageView.prototype.setLastPage = function(page) {
-		store.set('lastPage', page)
-	}
+		store.set('lastPage', page);
+	};
 
 
 	/**
@@ -208,7 +203,7 @@ define(function(require, exports, module) {
 	*/
 	PageView.prototype.getLastPage = function() {
 		return store.get('lastPage');
-	}
+	};
 
 	/**
 	* Changing the page
@@ -228,7 +223,7 @@ define(function(require, exports, module) {
 		}.bind(view));
 		this.setLastPage(pageName);
 		this._eventOutput.emit('page-change-complete');
-	}
+	};
 
 	/**
 	* Getting the view instance from the page map
@@ -238,11 +233,11 @@ define(function(require, exports, module) {
 	PageView.prototype.getPage = function(pageName) {
 		var view = this.pageMap[pageName];
 		return view;
-	}
+	};
 
 	PageView.prototype.getSelectedDate = function() {
 		return this.trackView.getSelectedDate();
-	}
+	};
 
 	module.exports = PageView;
 });

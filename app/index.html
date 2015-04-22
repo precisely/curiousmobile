@@ -47,6 +47,9 @@
 			function onLoad() {
 				document.addEventListener("deviceready", onDeviceReady, false);
 				document.addEventListener("resume", onAppResume, false);
+				document.addEventListener("pause", function() {
+					App.coreEventHandler.emit('app-paused');	
+				}, false);
 			}
 
 			// Cordova is loaded and it is now safe to make calls Cordova methods
