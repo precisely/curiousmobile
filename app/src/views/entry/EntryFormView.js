@@ -31,7 +31,7 @@ define(function(require, exports, module) {
 	EntryFormView.prototype.constructor = EntryFormView;
 
 	EntryFormView.DEFAULT_OPTIONS = {
-		header: true,	
+		header: true,
 		backButton: true,
 	};
 	EntryFormView.prototype.eventHandler = new EventHandler();
@@ -43,7 +43,7 @@ define(function(require, exports, module) {
 
 	function _setListeners() {
 		this.autoCompleteView = new AutocompleteView();
-		this.autoCompleteView.on('updateInputSurface', function(){
+		this.autoCompleteView.on('updateInputSurface', function() {
 			console.log('update the Input Surface');
 		}.bind(this));
 		this._eventInput.on('on-show', function(entry) {
@@ -52,7 +52,7 @@ define(function(require, exports, module) {
 				var currentDayEntries = new EntryCollection(EntryCollection.getFromCache(App.appView.pageView.trackView.getSelectedDate()));
 				entry = currentDayEntries.get(entry);
 			} else {
-				entry = new Entry();	
+				entry = new Entry();
 			}
 			if (!entry instanceof Entry) {
 				entry = new Entry(entry);
@@ -87,7 +87,9 @@ define(function(require, exports, module) {
 
 		this.inputSurface = new Surface({
 			classes: ['input-surface'],
-			content: _.template(inputSurfaceTemplate, {tag:''}, templateSettings),
+			content: _.template(inputSurfaceTemplate, {
+				tag: ''
+			}, templateSettings),
 		});
 
 		this.inputSurface.on('keyup', function(e) {
@@ -115,7 +117,7 @@ define(function(require, exports, module) {
 		//update input field
 		this.autoCompleteView.onSelect(function(inputLabel) {
 			console.log(inputLabel);
-			Timer.setTimeout(function(){
+			Timer.setTimeout(function() {
 				var inputElement = document.getElementById("entry-description");
 				inputElement.value = inputLabel;
 				inputElement.focus();
@@ -225,16 +227,16 @@ define(function(require, exports, module) {
 		if (typeof suffix != 'undefined') {
 			text += ' ' + suffix;
 		}
-		document.getElementsByName("entry-description")[0].value = text ;
+		document.getElementsByName("entry-description")[0].value = text;
 
 		return text.length > 0;
 	};
 
 	EntryFormView.prototype.removeSuffix = function(text) {
 		text = text ? text : document.getElementsByName("entry-description")[0].value;
-		if (text.endsWith(' repeat') || text.endsWith(' pinned') || 
+		if (text.endsWith(' repeat') || text.endsWith(' pinned') ||
 			text.endsWith(' button')) {
-				text = text.substr(0, text.length - 7);
+			text = text.substr(0, text.length - 7);
 		}
 		if (text.endsWith(' favorite')) {
 			text = text.substr(0, text.length - 8);
@@ -251,7 +253,7 @@ define(function(require, exports, module) {
 		var typedValue = inputElement.value;
 		var entryText = this.entry.toString();
 		if (typedValue !== '') {
-			entryText = typedValue;	
+			entryText = typedValue;
 		}
 
 		if (this.entry && this.entry.isContinuous()) {
@@ -277,31 +279,30 @@ define(function(require, exports, module) {
 		this._eventOutput.emit('hiding-form-view');
 	};
 
-	EntryFormView.prototype.getCurrentState = function () {
+	EntryFormView.prototype.getCurrentState = function() {
 		var state = BaseView.prototype.getCurrentState.call(this);
 		var inputElement = document.getElementById("entry-description");
 		return {
-			entry: this.entry,
-			focus: {
-				elementID: 'entry-description',
+			viewProperties: {
+				entry: this.entry,
 			},
-			form: [
-				{ 
-					id: 'entry-description',
-					value: inputElement.value,
-					selectionRange: [inputElement.selectionStart, inputElement.selectionEnd],
-				}	
-			]
-		};	
+			form: [{
+				id: 'entry-description',
+				value: inputElement.value,
+				selectionRange: [inputElement.selectionStart, inputElement.selectionEnd],
+				elementType: ElementType.domElement,
+				focus: true,
+			}]
+		};
 	};
 
-	EntryFormView.prototype.setCurrentState = function (state) {
+	EntryFormView.prototype.setCurrentState = function(state) {
 		var result = BaseView.prototype.setCurrentState.call(this, state);
 		if (state && result) {
 			var inputElement = document.getElementById("entry-description");
 			this.entry = new Entry(state.entry);
 		} else {
-			return false;	
+			return false;
 		}
 	}
 
@@ -318,7 +319,7 @@ define(function(require, exports, module) {
 		this.setEntryText('');
 	};
 
-	EntryFormView.prototype.setEntryText = function(text){
+	EntryFormView.prototype.setEntryText = function(text) {
 		document.getElementsByName("entry-description")[0].value = '';
 	};
 
@@ -331,7 +332,7 @@ define(function(require, exports, module) {
 			this.entry = entry;
 			newText = this.removeSuffix(entry.toString());
 		} else {
-			entry = this.entry;	
+			entry = this.entry;
 		}
 
 		if (!u.isOnline()) {
@@ -344,8 +345,8 @@ define(function(require, exports, module) {
 			newEntry.setText(newText);
 			newEntry.create(function(resp) {
 				if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1 ||
-				newText.indexOf('pinned') > -1) {
-					window.App.collectionCache.clear();	
+					newText.indexOf('pinned') > -1) {
+					window.App.collectionCache.clear();
 				}
 				store.set('lastPage', 'track');
 				this.blur();
@@ -366,8 +367,8 @@ define(function(require, exports, module) {
 		}
 
 		if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1 ||
-		newText.indexOf('pinned') > -1) {
-			window.App.collectionCache.clear();	
+			newText.indexOf('pinned') > -1) {
+			window.App.collectionCache.clear();
 		}
 
 		if (this.hasFuture()) {
@@ -395,7 +396,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	EntryFormView.prototype.createEntry = function(){
+	EntryFormView.prototype.createEntry = function() {
 		var entry = this.entry;
 		entry.save(function(resp) {
 			this.entry = new Entry(entry);

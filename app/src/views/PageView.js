@@ -54,6 +54,7 @@ define(function(require, exports, module) {
 		});
 		this.add(this.hiddenModifier).add(this.renderController);
 		this.launchView = new LaunchView();
+		this.subViews.push(this.launchView);
 		this.pageMap['launch'] = this.launchView;
 
 		if (!User.isLoggedIn()) {
@@ -72,15 +73,21 @@ define(function(require, exports, module) {
 		this.launchView.on('registered', function(e) {
 			this.addPages();
 		}.bind(this));
+
+		App.coreEventHandler.on('app-paused', function (e) {
+			this.saveState();
+		}.bind(this));
 	}
 
-	PageView.prototype.addPages = function() {
+	PageView.prototype.addPages = function(loadLastState) {
 		_createTrackPage.call(this);
 		_createEntryFormView.call(this);
 		this.communityView = new CommunityView('');
+		this.subViews.push(this.communityView);
 		this.pageMap['community'] = this.communityView;
 		this.communityView.pipe(this._eventOutput);
 		this.quickHelpView = new QuickHelpView();
+		this.subViews.push(this.quickHelpView);
 		this.pageMap['help'] = this.quickHelpView;
 		this.quickHelpView.pipe(this._eventOutput);
 
@@ -99,11 +106,16 @@ define(function(require, exports, module) {
 			console.log('Could not register the push notification: ' + err);	
 		}
 		console.log('PageView: login-success');
+
 		var lastPage = this.getLastPage();
 		if (lastPage) {
 			this.changePage(lastPage);
 		} else {
 			this.changePage('track');
+		}
+
+		if (loadLastState) {
+			this.getStateFromCache();
 		}
 	}
 
@@ -119,6 +131,7 @@ define(function(require, exports, module) {
 	function _createTrackPage() {
 		this.trackView = new TrackView();
 		this.pageMap['track'] = this.trackView;
+		this.subViews.push(this.trackView);
 		this.trackView.pipe(this._eventOutput);
 		this.trackView.on('select-entry', function(entry) {
 			console.log('entry selected with id: ' + entry.id);
@@ -171,6 +184,7 @@ define(function(require, exports, module) {
 	function _createEntryFormView() {
 		this.entryFormView = new EntryFormView();
 		this.pageMap['form-view'] = this.entryFormView;
+		this.subViews.push(this.entryFormView);
 		this.entryFormView.pipe(this._eventOutput);
 		this.entryFormView.on('new-entry', function(data) {
 			console.log("New Entry - TrackView event");

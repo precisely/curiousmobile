@@ -90,3 +90,8 @@ define(function(require, exports, module) {
 window.templateSettings = {
 	interpolate: /\{\{(.+?)\}\}/g
 };
+
+window.ElementType = {
+	surface: 1,
+	domElement: 2
+}

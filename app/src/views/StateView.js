@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 
 	function StateView() {
 		View.apply(this, arguments);
-		this.subStates = [];
+		this.subViews = [];
 	}
 
 	StateView.prototype = Object.create(View.prototype);
@@ -15,19 +15,23 @@ define(function(require, exports, module) {
 
 	StateView.DEFAULT_OPTIONS = {};
 
-	StateView.prototype.getStateFromCache = function () {
-		var oldState = App.stateCache.getItem(this.constructor.name);	
+	StateView.prototype.getStateFromCache = function() {
+		var oldState = App.stateCache.getItem(this.constructor.name);
 		this.loadState(oldState);
+		_.each(this.subViews, function(subView) {
+			subView.getStateFromCache();
+		});
 	};
 
-	StateView.prototype.resetState = function () {
-		var oldState = App.stateCache.getItem(this.constructor.name);	
+	StateView.prototype.resetState = function() {
+		var oldState = App.stateCache.getItem(this.constructor.name);
 		if (oldState) {
-			App.stateCache.removeItem(this.constructor.name);	
+			App.stateCache.removeItem(this.constructor.name);
 		}
 	};
 
-	StateView.prototype.loadState = function (state) {
+	StateView.prototype.loadState = function(state) {
+		var focusElement = null;
 		if (state && state.form) {
 			for (var i = 0, len = state.form.length; i < len; i++) {
 				var element = state.form[i];
@@ -37,6 +41,10 @@ define(function(require, exports, module) {
 				if (element.selectionRange) {
 					elementDOM.setSelectionRange(element.selectionRange[0], elementSelectionRange[1]);
 				}
+
+				if (element.focus) {
+					elementDOM.focus();	
+				}
 			}
 			return true;
 		}
@@ -44,7 +52,11 @@ define(function(require, exports, module) {
 	};
 
 	StateView.prototype.saveState = function() {
-	
+
+	};
+
+	StateView.prototype.getCurrentState = function() {
+
 	};
 
 	module.exports = StateView;
