@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 
 	function StateView() {
 		View.apply(this, arguments);
+		this.subStates = [];
 	}
 
 	StateView.prototype = Object.create(View.prototype);
@@ -14,27 +15,19 @@ define(function(require, exports, module) {
 
 	StateView.DEFAULT_OPTIONS = {};
 
-	StateView.prototype.loadLastState = function () {
-		var oldState = App.stateCache.get(this.clazz);	
-		if (!oldState) {
-			if (this.getCurrentState) {
-				App.stateCache.set(this.clazz, this.getCurrentState());	
-			} else {
-				console.log(this.clazz + ': Cannot get current state as it is not supported');	
-			}
-		} else {
-			this.setCurrentState(oldState);	
-		}
+	StateView.prototype.getStateFromCache = function () {
+		var oldState = App.stateCache.getItem(this.constructor.name);	
+		this.loadState(oldState);
 	};
 
 	StateView.prototype.resetState = function () {
-		var oldState = App.stateCache.get(this.clazz);	
+		var oldState = App.stateCache.getItem(this.constructor.name);	
 		if (oldState) {
-			App.stateCache.remove(this.clazz);	
+			App.stateCache.removeItem(this.constructor.name);	
 		}
 	};
 
-	StateView.prototype.setCurrentState = function (state) {
+	StateView.prototype.loadState = function (state) {
 		if (state && state.form) {
 			for (var i = 0, len = state.form.length; i < len; i++) {
 				var element = state.form[i];
@@ -50,8 +43,8 @@ define(function(require, exports, module) {
 		return false;
 	};
 
-	StateView.prototype.getCurrentState = function () {
-		return {};
+	StateView.prototype.saveState = function() {
+	
 	};
 
 	module.exports = StateView;

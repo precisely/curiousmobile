@@ -10,15 +10,16 @@ define(function(require, exports, module) {
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var HomeView = require('views/HomeView');
 	var LoginView = require('views/LoginView');
+	var StateView = require('views/StateView');
 	var RegisterView = require('views/RegisterView');
 	var ForgotPasswordView = require('views/ForgotPasswordView');
 
 	function LaunchView() {
-		View.apply(this, arguments);
+		StateView.apply(this, arguments);
 		_createView.call(this);
 	}
 
-	LaunchView.prototype = Object.create(View.prototype);
+	LaunchView.prototype = Object.create(StateView.prototype);
 	LaunchView.prototype.constructor = LaunchView;
 
 	LaunchView.DEFAULT_OPTIONS = {};
