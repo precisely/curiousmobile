@@ -46,21 +46,13 @@ define(function(require, exports, module) {
 		this.autoCompleteView.on('updateInputSurface', function() {
 			console.log('update the Input Surface');
 		}.bind(this));
-		this._eventInput.on('on-show', function(entry) {
-			console.log('FormView: on-show ' + entry);
-			if (entry && typeof entry == 'number') {
-				var currentDayEntries = new EntryCollection(EntryCollection.getFromCache(App.appView.pageView.trackView.getSelectedDate()));
-				entry = currentDayEntries.get(entry);
-			} else {
-				entry = new Entry();
+		this._eventInput.on('on-show', function(state) {
+			console.log('FormView: on-show ' + state);
+			if (!state) {
+				//TODO if no state
 			}
-			if (!entry instanceof Entry) {
-				entry = new Entry(entry);
-			}
-
-			this.setEntry(entry);
-			this.focus();
-
+			this.setState(state);
+			this.loadState(state);
 		}.bind(this));
 	}
 
@@ -244,33 +236,55 @@ define(function(require, exports, module) {
 		return text;
 	};
 
-
-	EntryFormView.prototype.focus = function(e) {
-		if (!this.entry) {
-			return;
+	EntryFormView.prototype.buildStateFromEntry = function(entry) {
+		console.log('entry selected with id: ' + entry.id);
+		var currentDayEntries =
+			new EntryCollection(EntryCollection.getFromCache(
+				App.appView.pageView.trackView.getSelectedDate()));
+		entry = currentDayEntries.get(entry);
+		var directlyCreateEntry = false;
+		if (entry.isContinuous() || (entry.isRemind() && entry.isGhost())) {
+			var tag = entry.get('description');
+			var tagStatsMap = autocompleteCache.tagStatsMap.get(tag);
+			if ((tagStatsMap && tagStatsMap.typicallyNoAmount) || tag.indexOf('start') > -1 ||
+				tag.indexOf('begin') > -1 || tag.indexOf('stop') > -1 || tag.indexOf('end') > -1) {
+				directlyCreateEntry = true;
+			}
 		}
-		var inputElement = document.getElementById("entry-description");
-		var typedValue = inputElement.value;
-		var entryText = this.entry.toString();
-		if (typedValue !== '') {
-			entryText = typedValue;
-		}
+		var entryText = entry.toString();
 
-		if (this.entry && this.entry.isContinuous()) {
+		if (entry && entry.isContinuous()) {
 			entryText = this.removeSuffix(entryText);
 		}
 
-		var selectionRange = this.entry.getSelectionRange();
+		var selectionRange = entry.getSelectionRange();
 		if (selectionRange !== undefined) {
 			if (selectionRange[2]) { // insert space at selectionRange[0]
 				entryText = entryText.substr(0, selectionRange[0] - 1) + " " + entryText.substr(selectionRange[0] - 1);
 			}
 		}
-		inputElement.value = entryText;
-		this.originalText = entryText;
-		if (selectionRange !== undefined) {
-			inputElement.setSelectionRange(selectionRange[0], selectionRange[1]);
+
+		var state = {
+			viewProperties: {
+				entry: entry,
+			},
+			form: [{
+				id: 'entry-description',
+				value: entryText,
+				selectionRange: selectionRange,
+				elementType: ElementType.domElement,
+				focus: true,
+			}]
+		};
+
+		if (directlyCreateEntry) {
+			state.postLoadAction = {
+				name: 'submit',
+				args: [entry, true],
+			}
 		}
+
+		return state;
 	};
 
 	EntryFormView.prototype.blur = function(e) {

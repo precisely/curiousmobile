@@ -14,6 +14,8 @@ define(function(require, exports, module) {
 	var LaunchView = require('views/LaunchView');
 	var CommunityView = require('views/community/CommunityView');
 	var ContextMenuView = require('views/ContextMenuView');
+	var Entry = require('models/Entry');
+	var EntryCollection = require('models/EntryCollection');
 	var EntryFormView = require('views/entry/EntryFormView');
 	var Utils = require('util/Utils');
 	var push = require('util/Push');
@@ -65,7 +67,7 @@ define(function(require, exports, module) {
 
 		this.launchView.on('login-success', function(data) {
 			if (this.getLastPage() === 'launch') {
-				this.setLastPage('track');	
+				this.setLastPage('track');
 			}
 			this.addPages();
 		}.bind(this));
@@ -74,7 +76,7 @@ define(function(require, exports, module) {
 			this.addPages();
 		}.bind(this));
 
-		App.coreEventHandler.on('app-paused', function (e) {
+		App.coreEventHandler.on('app-paused', function(e) {
 			this.saveState();
 		}.bind(this));
 	}
@@ -103,7 +105,7 @@ define(function(require, exports, module) {
 		try {
 			push.registerNotification();
 		} catch (err) {
-			console.log('Could not register the push notification: ' + err);	
+			console.log('Could not register the push notification: ' + err);
 		}
 		console.log('PageView: login-success');
 
@@ -135,28 +137,18 @@ define(function(require, exports, module) {
 		this.trackView.pipe(this._eventOutput);
 		this.trackView.on('select-entry', function(entry) {
 			console.log('entry selected with id: ' + entry.id);
-			var directlyCreateEntry = false;
-			if (entry.isContinuous() || (entry.isRemind() && entry.isGhost())) {
-				var tag = entry.get('description');
-				var tagStatsMap = autocompleteCache.tagStatsMap.get(tag);
-				if ((tagStatsMap && tagStatsMap.typicallyNoAmount) || tag.indexOf('start') > -1 ||
-					tag.indexOf('begin') > -1 || tag.indexOf('stop') > -1 || tag.indexOf('end') > -1) {
-					directlyCreateEntry = true;
-				}
-			}
-
-			if (directlyCreateEntry) {
-				this.entryFormView.submit(entry, directlyCreateEntry);
-				return;
-			}
-
-			this.changePage('form-view', entry.id);
+			var formViewState = this.entryFormView.buildStateFromEntry(entry);
+			this.changePage('form-view', formViewState);
 		}.bind(this));
 
 		this.trackView.on('create-entry', function(e) {
 			console.log('EventHandler: this.trackView.on event: create-entry');
 			this.entryFormView.unsetEntry();
-			this.changePage('form-view');
+			this.changePage('form-view', {
+				viewProperties: {
+					entry: new Entry(),
+				},
+			});
 		}.bind(this));
 	}
 
@@ -235,7 +227,7 @@ define(function(require, exports, module) {
 	 * @params {string} pageName - name of the page to go to
 	 *
 	 */
-	PageView.prototype.changePage = function(pageName, pageData) {
+	PageView.prototype.changePage = function(pageName, state) {
 		this.renderController.hide({
 			duration: 200
 		}); //hides the last page
@@ -246,7 +238,7 @@ define(function(require, exports, module) {
 			console.log("PageView: show complete");
 			Timer.setTimeout(function() {
 				this.resetState();
-				this._eventInput.trigger('on-show', pageData);
+				this._eventInput.trigger('on-show', state);
 			}.bind(this), 300);
 		}.bind(view));
 		this.setLastPage(pageName);

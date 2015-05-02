@@ -33,26 +33,30 @@ define(function(require, exports, module) {
 	StateView.prototype.loadState = function(state) {
 		var focusElement = null;
 		if (state && state.form) {
+			console.log(this.constructor.name + ': Loading elements/form from state');
 			for (var i = 0, len = state.form.length; i < len; i++) {
 				var element = state.form[i];
-				console.log('Setting value for ' + element.id);
+				console.log(this.constructor.name + ': Setting value for ' + element.id);
 				var elementDOM = document.getElementById(element.id);
 				elementDOM.value = element.value;
 				if (element.selectionRange) {
-					elementDOM.setSelectionRange(element.selectionRange[0], elementSelectionRange[1]);
+					elementDOM.setSelectionRange(element.selectionRange[0], element.selectionRange[1]);
 				}
 
 				if (element.focus) {
 					elementDOM.focus();	
 				}
 			}
-			return true;
+		}
+
+		if (state.postLoadAction) {
+			this[state.postLoadAction.name].apply(this, state.postLoadAction.args);	
 		}
 		return false;
 	};
 
-	StateView.prototype.saveState = function() {
-
+	StateView.prototype.setState = function(state) {
+		App.stateCache.setItem(this.constructor.name, state);
 	};
 
 	StateView.prototype.getCurrentState = function() {
