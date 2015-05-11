@@ -54,6 +54,31 @@ define(function(require, exports, module) {
 			this.setState(state);
 			this.loadState(state);
 		}.bind(this));
+
+		this.on('new-entry', function(data) {
+			console.log("New Entry - TrackView event");
+			var currentListView = this.getPage('TrackView').currentListView;
+			currentListView.refreshEntries(data.entries, data.glowEntry);
+			this.changePage('TrackView');
+		}.bind(App.pageView));
+
+		this.on('update-entry', function(resp) {
+			console.log('EntryListView: Updating an entry');
+			var currentListView = this.getPage('TrackView').currentListView;
+			currentListView.refreshEntries(resp.entries, resp.glowEntry);
+			this.changePage('TrackView');
+		}.bind(App.pageView));
+
+		this.on('go-back', function(e) {
+			console.log('EventHandler: this.entryFormView event: go-back');
+			store.set('lastPage', 'TrackView');
+			this.getPage('EntryFormView').blur();
+		}.bind(App.pageView));
+
+		this.on('hiding-form-view', function(e) {
+			console.log('EventHandler: this.entryFormView event: hiding-form-view');
+			this.changePage('TrackView');
+		}.bind(App.pageView));
 	}
 
 	function _createForm() {
@@ -96,13 +121,6 @@ define(function(require, exports, module) {
 				enteredKey = e.srcElement.value;
 				this.autoCompleteView.getAutocompletes(enteredKey);
 				formContainerSurface.add(this.autoCompleteView);
-			}
-		}.bind(this));
-
-
-		this.inputSurface.on('click', function(e) {
-			if ((u.isAndroid() || (e instanceof CustomEvent)) && this.entry) {
-				this.focus(e);
 			}
 		}.bind(this));
 
@@ -240,8 +258,9 @@ define(function(require, exports, module) {
 		console.log('entry selected with id: ' + entry.id);
 		var currentDayEntries =
 			new EntryCollection(EntryCollection.getFromCache(
-				App.appView.pageView.trackView.getSelectedDate()));
+				App.pageView.getPage('TrackView').getSelectedDate()));
 		entry = currentDayEntries.get(entry);
+		this.entry = entry;
 		var directlyCreateEntry = false;
 		if (entry.isContinuous() || (entry.isRemind() && entry.isGhost())) {
 			var tag = entry.get('description');

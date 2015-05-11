@@ -1,22 +1,19 @@
 /*** PageView.js ***/
 
 define(function(require, exports, module) {
-	var View = require('famous/core/View');
 	var StateView = require('views/StateView');
 	var Surface = require('famous/core/Surface');
 	var Timer = require('famous/utilities/Timer');
-	var Transform = require('famous/core/Transform');
-	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
 	var RenderController = require("famous/views/RenderController");
 	var TrackView = require('views/TrackView');
 	var QuickHelpView = require('views/QuickHelpView');
-	var LaunchView = require('views/LaunchView');
+	var HomeView = require('views/HomeView');
+	var LoginView = require('views/LoginView');
+	var RegisterView = require('views/RegisterView');
 	var CommunityView = require('views/community/CommunityView');
-	var ContextMenuView = require('views/ContextMenuView');
-	var Entry = require('models/Entry');
-	var EntryCollection = require('models/EntryCollection');
 	var EntryFormView = require('views/entry/EntryFormView');
+	var ContextMenuView = require('views/ContextMenuView');
 	var Utils = require('util/Utils');
 	var push = require('util/Push');
 	var store = require('store');
@@ -55,70 +52,12 @@ define(function(require, exports, module) {
 			size: [App.width, App.height],
 		});
 		this.add(this.hiddenModifier).add(this.renderController);
-		this.launchView = new LaunchView();
-		this.subViews.push(this.launchView);
-		this.pageMap['launch'] = this.launchView;
 
-		if (!User.isLoggedIn()) {
-			this.changePage('launch');
-		} else {
-			this.addPages();
-		}
-
-		this.launchView.on('login-success', function(data) {
-			if (this.getLastPage() === 'launch') {
-				this.setLastPage('track');
-			}
-			this.addPages();
-		}.bind(this));
-
-		this.launchView.on('registered', function(e) {
-			this.addPages();
-		}.bind(this));
+		this.changePage('HomeView');
 
 		App.coreEventHandler.on('app-paused', function(e) {
 			this.saveState();
 		}.bind(this));
-	}
-
-	PageView.prototype.addPages = function(loadLastState) {
-		_createTrackPage.call(this);
-		_createEntryFormView.call(this);
-		this.communityView = new CommunityView('');
-		this.subViews.push(this.communityView);
-		this.pageMap['community'] = this.communityView;
-		this.communityView.pipe(this._eventOutput);
-		this.quickHelpView = new QuickHelpView();
-		this.subViews.push(this.quickHelpView);
-		this.pageMap['help'] = this.quickHelpView;
-		this.quickHelpView.pipe(this._eventOutput);
-
-		var view = new View();
-		var backgroundSurface = new Surface({
-			size: [undefined, undefined],
-			properties: {
-				backgroundColor: 'white'
-			}
-		});
-		view.add(backgroundSurface);
-		this.renderController.show(view);
-		try {
-			push.registerNotification();
-		} catch (err) {
-			console.log('Could not register the push notification: ' + err);
-		}
-		console.log('PageView: login-success');
-
-		var lastPage = this.getLastPage();
-		if (lastPage) {
-			this.changePage(lastPage);
-		} else {
-			this.changePage('track');
-		}
-
-		if (loadLastState) {
-			this.getStateFromCache();
-		}
 	}
 
 	function _createContextMenu() {
@@ -130,28 +69,6 @@ define(function(require, exports, module) {
 		});
 	}
 
-	function _createTrackPage() {
-		this.trackView = new TrackView();
-		this.pageMap['track'] = this.trackView;
-		this.subViews.push(this.trackView);
-		this.trackView.pipe(this._eventOutput);
-		this.trackView.on('select-entry', function(entry) {
-			console.log('entry selected with id: ' + entry.id);
-			var formViewState = this.entryFormView.buildStateFromEntry(entry);
-			this.changePage('form-view', formViewState);
-		}.bind(this));
-
-		this.trackView.on('create-entry', function(e) {
-			console.log('EventHandler: this.trackView.on event: create-entry');
-			this.entryFormView.unsetEntry();
-			this.changePage('form-view', {
-				viewProperties: {
-					entry: new Entry(),
-				},
-			});
-		}.bind(this));
-	}
-
 	function _menuHandlers() {
 		this.on('noevent', function(e) {
 			console.log('PageView: noevent');
@@ -160,7 +77,7 @@ define(function(require, exports, module) {
 		this.on('logout', function(e) {
 			push.unregisterNotification(function() {
 				User.logout(function(user) {
-					this.changePage('launch');
+					this.changePage('LaunchView');
 					this.launchView.showHome();
 				}.bind(this));
 			}.bind(this));
@@ -170,38 +87,6 @@ define(function(require, exports, module) {
 		this.on('change-page', function(e) {
 			console.log('Changing page to ' + e.data);
 			this.changePage(e.data);
-		}.bind(this));
-	}
-
-	function _createEntryFormView() {
-		this.entryFormView = new EntryFormView();
-		this.pageMap['form-view'] = this.entryFormView;
-		this.subViews.push(this.entryFormView);
-		this.entryFormView.pipe(this._eventOutput);
-		this.entryFormView.on('new-entry', function(data) {
-			console.log("New Entry - TrackView event");
-			var currentListView = this.trackView.currentListView;
-			currentListView.refreshEntries(data.entries, data.glowEntry);
-			this.changePage('track');
-		}.bind(this));
-
-		this.entryFormView.on('update-entry', function(resp) {
-			console.log('EntryListView: Updating an entry');
-			var currentListView = this.trackView.currentListView;
-			currentListView.refreshEntries(resp.entries, resp.glowEntry);
-			this.changePage('track');
-		}.bind(this));
-
-		this.entryFormView.on('go-back', function(e) {
-			console.log('EventHandler: this.entryFormView event: go-back');
-			store.set('lastPage', 'track');
-			this.entryFormView.blur();
-			this.changePage('track');
-		}.bind(this));
-
-		this.entryFormView.on('hiding-form-view', function(e) {
-			console.log('EventHandler: this.entryFormView event: hiding-form-view');
-			this.changePage('track');
 		}.bind(this));
 	}
 
@@ -228,16 +113,20 @@ define(function(require, exports, module) {
 	 *
 	 */
 	PageView.prototype.changePage = function(pageName, state) {
+		var view = this.getPage(pageName);
+		if (!User.isLoggedIn() && pageName !== 'HomeView') {
+			this.changePage('HomeView');
+		}
 		this.renderController.hide({
 			duration: 200
 		}); //hides the last page
-		var view = this.getPage(pageName);
+
+
 		this.renderController.show(view, {
 			duration: 200
 		}, function() {
 			console.log("PageView: show complete");
 			Timer.setTimeout(function() {
-				this.resetState();
 				this._eventInput.trigger('on-show', state);
 			}.bind(this), 300);
 		}.bind(view));
@@ -252,6 +141,15 @@ define(function(require, exports, module) {
 	 */
 	PageView.prototype.getPage = function(pageName) {
 		var view = this.pageMap[pageName];
+		if (!view) {
+			var ViewClass = App.pages[pageName];
+			if (ViewClass) {
+				view = new ViewClass();
+				this.pageMap[pageName] = view;
+				view.pipe(this._eventOutput);
+				this.subViews.push(view);
+			}
+		}
 		return view;
 	};
 

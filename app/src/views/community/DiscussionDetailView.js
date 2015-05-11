@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
 	'use strict';
-	var View = require('famous/core/View');
+	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
 	var Timer = require('famous/utilities/Timer');
@@ -18,7 +18,7 @@ define(function(require, exports, module) {
 	var commentTemplate = require('text!templates/comments.html');
 
 	function DiscussionDetailView(discussionId) {
-		View.apply(this, arguments);
+		BaseView.apply(this, arguments);
 		var transition = new Transitionable(Transform.translate(0, 75, 0));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
@@ -41,10 +41,13 @@ define(function(require, exports, module) {
 		this.init();
 	}
 
-	DiscussionDetailView.prototype = Object.create(View.prototype);
+	DiscussionDetailView.prototype = Object.create(BaseView.prototype);
 	DiscussionDetailView.prototype.constructor = DiscussionDetailView;
 
-	DiscussionDetailView.DEFAULT_OPTIONS = {};
+	DiscussionDetailView.DEFAULT_OPTIONS = {
+		header: true,
+		footer: true,
+	};
 
 	DiscussionDetailView.prototype.init = function() {
 		this.surfaceList = [];

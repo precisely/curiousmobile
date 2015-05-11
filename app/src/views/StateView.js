@@ -32,6 +32,10 @@ define(function(require, exports, module) {
 
 	StateView.prototype.loadState = function(state) {
 		var focusElement = null;
+		if (!state) {
+			return;
+		}
+
 		if (state && state.form) {
 			console.log(this.constructor.name + ': Loading elements/form from state');
 			for (var i = 0, len = state.form.length; i < len; i++) {

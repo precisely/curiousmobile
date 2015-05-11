@@ -2,7 +2,26 @@
 
 //main.js
 
+var App = {};
+App.pages = {};
+App.CSRF = {};
 define(function(require, exports, module) {
+	var App = window.App;
+	App.CSRF.SyncTokenKeyName = "SYNCHRONIZER_TOKEN"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_KEY
+	App.CSRF.SyncTokenUriName = "SYNCHRONIZER_URI"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_URI
+	App.zIndex = {
+		menu: 12,
+		readView: 16,
+		feedItem: 16,
+		pinned: 22,
+		formView: 14,
+		header: 21,
+		footer: 21,
+		datePicker: 22,
+		autocomplete: 99,
+		alertView: 999,
+		contextMenu: 30,
+	};
 	var Engine = require('famous/core/Engine');
 	var Cache = require('jscache');
 	var TouchSync = require("famous/inputs/TouchSync");
@@ -20,25 +39,9 @@ define(function(require, exports, module) {
 	var start = 0;
 	var update = 0;
 	var end = 0;
-	var delta = [0,0];
+	var delta = [0, 0];
 	var position = [0, 0];
 
-	var App = {};
-	App.CSRF = {};
-	App.CSRF.SyncTokenKeyName = "SYNCHRONIZER_TOKEN"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_KEY
-	App.CSRF.SyncTokenUriName = "SYNCHRONIZER_URI"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_URI
-	App.zIndex = {
-		menu: 12,
-		readView: 16,
-		feedItem: 16,
-		pinned: 22,
-		formView: 14, 
-		header: 21,
-		footer: 21,
-		datePicker: 22,
-		alertView: 999,
-		contextMenu: 30,
-	};
 
 	App.coreEventHandler = new EventHandler();
 	App.collectionCache = collectionCache;
@@ -49,10 +52,11 @@ define(function(require, exports, module) {
 	App.serverUrl = "http://dev.wearecurio.us";
 	//App.serverUrl = "http://127.0.0.1:8080";
 	//App.serverUrl = "http://192.168.0.108:8080";
-	Engine.setOptions({containerClass: 'app-container'});
+	Engine.setOptions({
+		containerClass: 'app-container'
+	});
 	var mainContext = Engine.createContext();
 	window.mainContext = mainContext;
-	window.App = App;
 	window.App.width = window.innerWidth;
 	window.App.height = window.innerHeight;
 	var appView = new AppView();

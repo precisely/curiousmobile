@@ -55,9 +55,9 @@ define(function(require, exports, module) {
 			}
 
 			if (e.srcElement.classList.contains('login')) {
-				this._eventOutput.emit('login');	
+				App.pageView.changePage('LoginView');
 			} else if (e.srcElement.classList.contains('create-account')) {
-				this._eventOutput.emit('create-account');	
+				App.pageView.changePage('RegisterView');
 			}
 		}.bind(this));
 
@@ -90,5 +90,6 @@ define(function(require, exports, module) {
 		this.add(this.buttonsModifier).add(this.buttonSurface);
 	};
 
+	App.pages[HomeView.name] = HomeView;
 	module.exports = HomeView;
 });

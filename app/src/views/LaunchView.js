@@ -16,7 +16,6 @@ define(function(require, exports, module) {
 
 	function LaunchView() {
 		StateView.apply(this, arguments);
-		_createView.call(this);
 	}
 
 	LaunchView.prototype = Object.create(StateView.prototype);
@@ -24,6 +23,15 @@ define(function(require, exports, module) {
 
 	LaunchView.DEFAULT_OPTIONS = {};
 
+	function _setListeners() {
+		this.on('login-success', function(data) {
+			App.pageView.changeToLastPage();
+		}.bind(this));
+
+		this.on('registered', function(e) {
+			App.pageView.changeToLastPage();
+		}.bind(this));
+	}
 	function _createView() {
 		this.renderController = new RenderController();
 		this.add(this.renderController);
@@ -104,6 +112,6 @@ define(function(require, exports, module) {
 			this._eventOutput.emit('on-show');
 		}.bind(view), 300);
 	}
-
+	App.pages[LaunchView.name] = LaunchView;
 	module.exports = LaunchView;
 });

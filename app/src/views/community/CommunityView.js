@@ -10,7 +10,6 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var ImageSurface = require('famous/surfaces/ImageSurface');
 	var DiscussionDetailView = require("views/community/DiscussionDetailView");
-	var CreatePostView = require('views/CreatePostView');
 	var PageView = require('views/PageView');
 	var u = require('util/Utils');
 
@@ -27,34 +26,6 @@ define(function(require, exports, module) {
 		footer: true,
 	};
 	CommunityView.prototype.init = function() {
-		this.headerSurface = new ImageSurface({
-			size: [44, 64],
-			content: 'content/images/edit-pencil.png',
-		});
-
-		this.pencilIconModifier = new StateModifier({
-			origin: [1, 0],
-			align : [1, 0],
-			transform: Transform.translate(0, 0, App.zIndex.header + 1)
-		});
-
-		this.setHeaderSurface(this.headerSurface, this.pencilIconModifier);
-		this.setHeaderLabel('FEED');
-
-		this.headerSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				var createPostSurface = new CreatePostView();
-				this.renderController.show(createPostSurface);
-				createPostSurface.on('cancel-post-discussion', function(e) {
-					this.renderController.show(this.discussionListView);
-				}.bind(this));
-
-				createPostSurface.on('post-success', function(e) {
-					this.discussionListView.refresh();
-					this.renderController.show(this.discussionListView);
-				}.bind(this));
-			}
-		}.bind(this));
 
 		this.backgroundSurface = new Surface({
 			size: [undefined, App.height - 65],

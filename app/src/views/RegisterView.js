@@ -93,5 +93,6 @@ define(function(require, exports, module) {
 		}
 	};
 
+	App.pages[RegisterView.name] = RegisterView;
 	module.exports = RegisterView;
 });

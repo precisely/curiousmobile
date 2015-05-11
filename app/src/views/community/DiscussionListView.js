@@ -2,7 +2,9 @@ define(function(require, exports, module) {
 	'use strict';
 	var Utility = require('famous/utilities/Utility');
 	var View = require('famous/core/View');
+	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
+	var ImageSurface = require('famous/surfaces/ImageSurface');
 	var Timer = require('famous/utilities/Timer');
 	var Transform = require('famous/core/Transform');
 	var Transitionable = require('famous/transitions/Transitionable');
@@ -20,11 +22,12 @@ define(function(require, exports, module) {
 	var InputSurface = require("famous/surfaces/InputSurface");
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var DiscussionDetailView = require("views/community/DiscussionDetailView");
+	var CreatePostView = require('views/community/CreatePostView');
 	var GenericSync = require('famous/inputs/GenericSync');
 
 	function DiscussionListView(group) {
-		View.apply(this, arguments);
-		this.group = group;
+		BaseView.apply(this, arguments);
+		this.group = group? group: '';
 		this.surfaceList = [];
 		this.loadMoreItems = true;
 		this.itemsAvailable = true;
@@ -35,12 +38,33 @@ define(function(require, exports, module) {
 		init.call(this);
 	}
 
-	DiscussionListView.prototype = Object.create(View.prototype);
+	DiscussionListView.prototype = Object.create(BaseView.prototype);
 	DiscussionListView.prototype.constructor = DiscussionListView;
 
-	DiscussionListView.DEFAULT_OPTIONS = {};
+	DiscussionListView.DEFAULT_OPTIONS = {
+		header: true,	
+		footer: true,
+	};
 
 	function init() {
+		this.headerSurface = new ImageSurface({
+			size: [44, 64],
+			content: 'content/images/edit-pencil.png',
+		});
+
+		this.pencilIconModifier = new StateModifier({
+			origin: [1, 0],
+			align : [1, 0],
+			transform: Transform.translate(0, 0, App.zIndex.header + 1)
+		});
+
+		this.setHeaderSurface(this.headerSurface, this.pencilIconModifier);
+		this.setHeaderLabel('FEED');
+
+		this.headerSurface.on('click', function(e) {
+			window.App.pageView.changePage(CreatePostView.constructor.name);
+		}.bind(this));
+
 		var transition = new Transitionable(Transform.translate(0, 75, App.zIndex.feedItem));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
@@ -136,8 +160,8 @@ define(function(require, exports, module) {
 								}.bind(this),
 							});
 						} else {
-							this._eventOutput.emit('show-detailed-view',
-							{id: discussion.id});
+							var state = {};
+							App.pageView.changePage('DiscussionDetailView', state);
 						}
 					}
 				}.bind(this));

@@ -49,5 +49,6 @@ define(function(require, exports, module) {
 		this.setHeaderLabel('Quick Help');
 	}
 
+	App.pages[QuickHelpView.name] = QuickHelpView;
 	module.exports = QuickHelpView;
 });

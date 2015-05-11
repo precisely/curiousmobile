@@ -83,5 +83,6 @@ define(function(require, exports, module) {
 	ForgotPasswordView.prototype.reset = function(){
 		this.usernameSurface.setValue('');
 	};
+	App.pages[ForgotPasswordView.name] = ForgotPasswordView;
 	module.exports = ForgotPasswordView;
 });

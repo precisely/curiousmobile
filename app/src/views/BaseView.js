@@ -23,6 +23,7 @@ define(function(require, exports, module) {
 			this._optionsManager.setOptions(options);
 		}
 		this._header = options? options.header : true;	
+		this.topLevelPage = true;
 		StateView.apply(this, arguments);
 		_createLayout.call(this);
 		_createHeader.call(this);
@@ -134,9 +135,9 @@ define(function(require, exports, module) {
 		footerSurface.on('click', function(e) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				console.log('footerSurface event');
-				var classList = e.srcElement.classList;				
-				e.data = classList[2];
-				if (e.data == 'track' || e.data == 'community') {
+				var pageName = e.srcElement.getAttribute('data');				
+				e.data = pageName;
+				if (e.data == 'TrackView' || e.data == 'CommunityView') {
 					this._eventOutput.emit('change-page', e);
 				}
 			}
