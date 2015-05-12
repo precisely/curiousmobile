@@ -46,14 +46,6 @@ define(function(require, exports, module) {
 		this.autoCompleteView.on('updateInputSurface', function() {
 			console.log('update the Input Surface');
 		}.bind(this));
-		this._eventInput.on('on-show', function(state) {
-			console.log('FormView: on-show ' + state);
-			if (!state) {
-				//TODO if no state
-			}
-			this.setState(state);
-			this.loadState(state);
-		}.bind(this));
 
 		this.on('new-entry', function(data) {
 			console.log("New Entry - TrackView event");
@@ -227,6 +219,16 @@ define(function(require, exports, module) {
 		formContainerSurface.add(this.buttonsAndHelp);
 		this.setBody(formContainerSurface);
 	}
+
+	EntryFormView.prototype.onShow = function(state) {
+		BaseView.prototype.onShow.call(this);
+		console.log('FormView: on-show ' + state);
+		if (!state) {
+			//TODO if no state
+		}
+		this.setState(state);
+		this.loadState(state);
+	};
 
 	EntryFormView.prototype.toggleSuffix = function(suffix) {
 		var text = document.getElementsByName("entry-description")[0].value;
@@ -442,5 +444,6 @@ define(function(require, exports, module) {
 		return ((entry.isRepeat() && !entry.isRemind()) || entry.isGhost()) && entry.isTodayOrLater();
 	};
 
+	App.pages[EntryFormView.name] = EntryFormView;
 	module.exports = EntryFormView;
 });

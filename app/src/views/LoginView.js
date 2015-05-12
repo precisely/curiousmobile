@@ -1,15 +1,7 @@
 define(function(require, exports, module) {
 	'use strict';
-	var View = require('famous/core/View');
 	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
-	var Transform = require('famous/core/Transform');
-	var Timer = require('famous/utilities/Timer');
-	var StateModifier = require('famous/modifiers/StateModifier');
-	var Modifier = require('famous/core/Modifier');
-	var FormContainerSurface = require("famous/surfaces/FormContainerSurface");
-	var InputSurface = require("famous/surfaces/InputSurface");
-	var SequentialLayout = require("famous/views/SequentialLayout");
 	var FastClick = require('famous/inputs/FastClick');
 	var LoginTemplate = require('text!templates/login.html');
 	var User = require('models/User');
@@ -62,14 +54,15 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.on('on-show', function() {
-			var inputElement = document.getElementById("username");
-			inputElement.focus();
-		}.bind(this));
-
 		this.setBody(this.loginSurface);
 		this.setHeaderLabel('LOGIN');
 	}
+
+	LoginView.prototype.onShow = function(state) {
+		BaseView.prototype.onShow.call(this);
+		var inputElement = document.getElementById("username");
+		inputElement.focus();
+	};
 
 	LoginView.prototype.submit = function() {
 		var currentUser = new User();

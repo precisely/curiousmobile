@@ -7,7 +7,6 @@ define(function(require, exports, module) {
 	var ImageSurface = require('famous/surfaces/ImageSurface');
 	var Modifier = require('famous/core/Modifier');
 	var RenderController = require("famous/views/RenderController");
-	var FastClick = require('famous/inputs/FastClick');
 	var EventHandler = require('famous/core/EventHandler');
 	var EntryView = require('views/entry/EntryView');
 	var u = require('util/Utils');
@@ -31,7 +30,7 @@ define(function(require, exports, module) {
 		var repeatTypeAsClass = this.entry.repeatTypeAsClass();
 		var entryTextColor = '#b0366b';
 		if (_.contains(repeatTypeAsClass, 'ghost')) {
-			entryTextColor = 'white';	
+			entryTextColor = 'white';
 		}
 
 		var properties = {
@@ -46,7 +45,7 @@ define(function(require, exports, module) {
 
 		var size = [window.innerWidth, this.options.entryHeight];
 		if (this.entry.isContinuous()) {
-			properties.margin = '5px'	
+			properties.margin = '5px'
 			size[0] = size[0] - 10;
 			size[1] = size[1] - 10;
 		}
@@ -80,8 +79,8 @@ define(function(require, exports, module) {
 		this.showMoreSurface.on('click', function(e) {
 			console.log("showMoreSurface event");
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				this._eventOutput.emit('select-entry', this.entry);
-			} 
+				this.select();
+			}
 		}.bind(this));
 		this.add(showMoreModifier).add(this.showMoreSurface);
 
@@ -116,10 +115,10 @@ define(function(require, exports, module) {
 	EntryReadView.prototype.glow = function() {
 		//var rc = this.renderController;
 		//rc.show(this.glowSurface, {
-			//duration: 1000
-			//});
-			//rc.hide();
-			//rc.show(this.entrySurface);
+		//duration: 1000
+		//});
+		//rc.hide();
+		//rc.show(this.entrySurface);
 	}
 
 	EntryReadView.prototype.getDisplayText = function() {
@@ -127,11 +126,11 @@ define(function(require, exports, module) {
 		var time = u.formatAMPM(date);
 		var displayText = this.entry.removeSuffix();
 		if (this.entry.isRemind()) {
-			return '<div class="help"><i class="fa fa-bell"></i> Reminder set </div>' + displayText;	
+			return '<div class="help"><i class="fa fa-bell"></i> Reminder set </div>' + displayText;
 		} else if (this.entry.isRepeat()) {
-			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every day</div>' + displayText;	
+			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every day</div>' + displayText;
 		}
-		return  displayText;
+		return displayText;
 	}
 
 	module.exports = EntryReadView;

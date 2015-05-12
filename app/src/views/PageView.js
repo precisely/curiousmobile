@@ -11,7 +11,7 @@ define(function(require, exports, module) {
 	var HomeView = require('views/HomeView');
 	var LoginView = require('views/LoginView');
 	var RegisterView = require('views/RegisterView');
-	var CommunityView = require('views/community/CommunityView');
+	var DiscussionListView = require('views/community/DiscussionListView');
 	var EntryFormView = require('views/entry/EntryFormView');
 	var ContextMenuView = require('views/ContextMenuView');
 	var Utils = require('util/Utils');
@@ -25,6 +25,7 @@ define(function(require, exports, module) {
 		this.renderController = new RenderController();
 		App.pageView = this;
 		this.pageMap = {};
+		this.history = [];
 		_onLoad.call(this);
 		_menuHandlers.call(this);
 		_createContextMenu.call(this);
@@ -53,7 +54,7 @@ define(function(require, exports, module) {
 		});
 		this.add(this.hiddenModifier).add(this.renderController);
 
-		this.changePage('HomeView');
+		this.changePage(this.getCurrentPage());
 
 		App.coreEventHandler.on('app-paused', function(e) {
 			this.saveState();
@@ -77,8 +78,7 @@ define(function(require, exports, module) {
 		this.on('logout', function(e) {
 			push.unregisterNotification(function() {
 				User.logout(function(user) {
-					this.changePage('LaunchView');
-					this.launchView.showHome();
+					this.changePage('HomeView');
 				}.bind(this));
 			}.bind(this));
 			console.log('PageView: logout');
@@ -86,6 +86,9 @@ define(function(require, exports, module) {
 
 		this.on('change-page', function(e) {
 			console.log('Changing page to ' + e.data);
+			if (e.clearHistory) {
+				this.history = [];
+			}
 			this.changePage(e.data);
 		}.bind(this));
 	}
@@ -94,8 +97,8 @@ define(function(require, exports, module) {
 	 * Track the last page visited by the user
 	 * @param {string} page - name of the page
 	 */
-	PageView.prototype.setLastPage = function(page) {
-		store.set('lastPage', page);
+	PageView.prototype.setCurrentPage = function(page) {
+		store.set('currentPage', page);
 	};
 
 
@@ -103,8 +106,8 @@ define(function(require, exports, module) {
 	 * Get the last page visited by the user
 	 * @param {string} page - name of the page
 	 */
-	PageView.prototype.getLastPage = function() {
-		return store.get('lastPage');
+	PageView.prototype.getCurrentPage = function() {
+		return store.get('currentPage');
 	};
 
 	/**
@@ -114,9 +117,17 @@ define(function(require, exports, module) {
 	 */
 	PageView.prototype.changePage = function(pageName, state) {
 		var view = this.getPage(pageName);
-		if (!User.isLoggedIn() && pageName !== 'HomeView') {
-			this.changePage('HomeView');
+		var comingFromPage = this.getCurrentPage();
+
+		if (view.options.noBackButton) {
+			this.clearHistory();
+		} else {
+			if (comingFromPage) {
+				this.history.push(comingFromPage.constructor.name);
+			}
 		}
+		this.setCurrentPage(pageName);
+
 		this.renderController.hide({
 			duration: 200
 		}); //hides the last page
@@ -127,10 +138,9 @@ define(function(require, exports, module) {
 		}, function() {
 			console.log("PageView: show complete");
 			Timer.setTimeout(function() {
-				this._eventInput.trigger('on-show', state);
+				this.onShow(state);
 			}.bind(this), 300);
 		}.bind(view));
-		this.setLastPage(pageName);
 		this._eventOutput.emit('page-change-complete');
 	};
 
@@ -143,14 +153,33 @@ define(function(require, exports, module) {
 		var view = this.pageMap[pageName];
 		if (!view) {
 			var ViewClass = App.pages[pageName];
-			if (ViewClass) {
-				view = new ViewClass();
-				this.pageMap[pageName] = view;
-				view.pipe(this._eventOutput);
-				this.subViews.push(view);
+			if (!ViewClass) {
+				if (!User.isLoggedIn()) {
+					pageName = 'HomeView';
+				} else {
+					pageName = 'TrackView';
+				}
+				ViewClass = App.pages[pageName];
 			}
+			view = new ViewClass();
+			this.pageMap[pageName] = view;
+			view.pipe(this._eventOutput);
+			this.subViews.push(view);
 		}
 		return view;
+	};
+
+	PageView.prototype.goBack = function() {
+		var backTo = this.history.pop();
+		this.changePage(backTo);
+	};
+
+	PageView.prototype.hasHistory = function() {
+		return this.history.length > 0;
+	};
+
+	PageView.prototype.clearHistory = function() {
+		this.history = [];
 	};
 
 	PageView.prototype.getSelectedDate = function() {

@@ -73,5 +73,6 @@ define(function(require, exports, module) {
 		}
 	};
 
+	App.pages[CreatePostView.name] = CreatePostView;
 	module.exports = CreatePostView;
 });

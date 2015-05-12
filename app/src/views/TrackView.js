@@ -38,6 +38,7 @@ define(function(require, exports, module) {
 	TrackView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
+		noBackButton: true,
 	};
 
 	function _getDefaultDates(date) {
@@ -127,26 +128,12 @@ define(function(require, exports, module) {
 			this.changeDate(new Date());
 		}
 
-
-		this._eventInput.on('on-show', function(e) {
-			if (e && e.pushNotification) {
-				this.changeDate(e.entryDate);
-			}
-		});
-
 		App.coreEventHandler.on('refresh-entries', function() {
 			EntryCollection.clearCache();
 			this.changeDate(this.calendarView.selectedDate, function() {
 				console.log('TrackView: Entries refreshed');
 			}.bind(this));
 		}.bind(this));
-
-
-		this.on('select-entry', function(entry) {
-			console.log('entry selected with id: ' + entry.id);
-			var formViewState = this.getPage('EntryFormView').buildStateFromEntry(entry);
-			this.changePage('EntryFormView', formViewState);
-		}.bind(App.pageView));
 
 		this.on('create-entry', function(e) {
 			console.log('EventHandler: this.trackView.on event: create-entry');
@@ -170,6 +157,14 @@ define(function(require, exports, module) {
 		this.layout.header.add(calendarModifier).add(this.calendarView);
 
 	}
+
+	TrackView.prototype.onShow = function(state) {
+		BaseView.prototype.onShow.call(this);
+		if (state && state.pushNotification) {
+			this.changeDate(state.entryDate);
+		}
+
+	};
 
 	TrackView.prototype.changeDate = function(date, callback) {
 		date = u.getMidnightDate(date);

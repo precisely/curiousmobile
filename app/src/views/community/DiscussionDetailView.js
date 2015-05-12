@@ -198,5 +198,6 @@ define(function(require, exports, module) {
 			this.init();
 		}.bind(this));
 	};
+	App.pages[DiscussionDetailView.name] = DiscussionDetailView;
 	module.exports = DiscussionDetailView;
 });

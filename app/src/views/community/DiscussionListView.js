@@ -1,7 +1,6 @@
 define(function(require, exports, module) {
 	'use strict';
 	var Utility = require('famous/utilities/Utility');
-	var View = require('famous/core/View');
 	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
 	var ImageSurface = require('famous/surfaces/ImageSurface');
@@ -18,7 +17,6 @@ define(function(require, exports, module) {
 	var discussionHeaderTemplate = require('text!templates/discussion-header.html');
 	var TrueSurface = require('surfaces/TrueSurface');
 	var u = require('util/Utils');
-	var FormContainerSurface = require("famous/surfaces/FormContainerSurface");
 	var InputSurface = require("famous/surfaces/InputSurface");
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var DiscussionDetailView = require("views/community/DiscussionDetailView");
@@ -197,5 +195,6 @@ define(function(require, exports, module) {
 		this.renderController.show(this.scrollView);
 	};
 
+	App.pages[DiscussionListView.name] = DiscussionListView;
 	module.exports = DiscussionListView;
 });

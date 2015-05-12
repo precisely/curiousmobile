@@ -3,11 +3,6 @@ define(function(require, exports, module) {
 	var View = require('famous/core/View');
 	var BaseView = require('views/BaseView');
 	var Surface = require("famous/core/Surface");
-	var InputSurface = require('famous/surfaces/InputSurface');
-	var FormContainerSurface = require('famous/surfaces/FormContainerSurface');
-	var SequentialLayout = require("famous/views/SequentialLayout");
-	var Transform = require('famous/core/Transform');
-	var StateModifier = require('famous/modifiers/StateModifier');
 	var FastClick = require('famous/inputs/FastClick');
 	var ForgotPasswordTemplate = require('text!templates/forgot-password.html');
 	var u = require('util/Utils');
@@ -21,7 +16,7 @@ define(function(require, exports, module) {
 	ForgotPasswordView.prototype.constructor = ForgotPasswordView;
 
 	ForgotPasswordView.DEFAULT_OPTIONS = {
-		header: true,	
+		header: true,
 		footer: false,
 		backButton: true,
 	};
@@ -51,15 +46,16 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.on('on-show', function() {
-			var inputElement = document.getElementById("email");
-			inputElement.focus();
-		}.bind(this));
-
 		this.setHeaderLabel('FORGOT PASSWORD');
 		this.setBody(forgotSurface);
 
 	}
+
+	ForgotPasswordView.prototype.onShow = function(state) {
+		BaseView.prototype.onShow.call(this);
+		var inputElement = document.getElementById("email");
+		inputElement.focus();
+	};
 
 	ForgotPasswordView.prototype.submit = function() {
 		var email = document.forms["forgotPasswordForm"]["email"].value;
@@ -80,7 +76,7 @@ define(function(require, exports, module) {
 			}.bind(this));
 	};
 
-	ForgotPasswordView.prototype.reset = function(){
+	ForgotPasswordView.prototype.reset = function() {
 		this.usernameSurface.setValue('');
 	};
 	App.pages[ForgotPasswordView.name] = ForgotPasswordView;
