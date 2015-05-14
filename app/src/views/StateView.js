@@ -5,6 +5,10 @@ define(function(require, exports, module) {
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
 
+	/**
+	 * All stateful views need to extend this class. On app-pause this will save the state of all stateful views in
+	 * memory. On app-resume it the app loads the last view and if stateful its state gets loaded as well.
+	 */
 	function StateView() {
 		View.apply(this, arguments);
 		this.subViews = [];
@@ -15,6 +19,9 @@ define(function(require, exports, module) {
 
 	StateView.DEFAULT_OPTIONS = {};
 
+	/**
+	 * Fetches the last cached state for the current view
+	 */
 	StateView.prototype.getStateFromCache = function() {
 		var oldState = App.stateCache.getItem(this.constructor.name);
 		this.loadState(oldState);
@@ -23,6 +30,10 @@ define(function(require, exports, module) {
 		});
 	};
 
+
+	/**
+	 * Resets the last cached state for the current view
+	 */
 	StateView.prototype.resetState = function() {
 		var oldState = App.stateCache.getItem(this.constructor.name);
 		if (oldState) {
@@ -30,6 +41,10 @@ define(function(require, exports, module) {
 		}
 	};
 
+	/**
+	 * @param {Object} state - State to be loaded 
+	 * Loads the given state onto the view.
+	 */
 	StateView.prototype.loadState = function(state) {
 		var focusElement = null;
 		if (!state) {
@@ -59,10 +74,18 @@ define(function(require, exports, module) {
 		return false;
 	};
 
+	/**
+	 * Cache the given state for this view.
+	 * @param {Object} state - State object
 	StateView.prototype.setState = function(state) {
 		App.stateCache.setItem(this.constructor.name, state);
 	};
 
+	/**
+	 * Gets the current in memory state of a view. Dummy method should be implemented by all state views else the state
+	 * won't be persisted.
+	 * @return {Object} - State object
+	 */
 	StateView.prototype.getCurrentState = function() {
 
 	};

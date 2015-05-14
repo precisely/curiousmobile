@@ -29,9 +29,9 @@ define(function(require, exports, module) {
 		_onLoad.call(this);
 		_menuHandlers.call(this);
 		_createContextMenu.call(this);
-		window.onclick = function() {
-			Utils.closeAlerts();
-		};
+		//		window.onclick = function() {
+		//			Utils.closeAlerts();
+		//		};
 	}
 
 	PageView.prototype = Object.create(StateView.prototype);
@@ -94,7 +94,8 @@ define(function(require, exports, module) {
 	}
 
 	/**
-	 * Track the last page visited by the user
+	 * Track the current page visited by the user. This specially is useful to because we want to know which
+	 * page the user is coming from to determine if the back button needs to displayed
 	 * @param {string} page - name of the page
 	 */
 	PageView.prototype.setCurrentPage = function(page) {
@@ -103,7 +104,7 @@ define(function(require, exports, module) {
 
 
 	/**
-	 * Get the last page visited by the user
+	 * Get the current page the user is on, while changing the page this is important. See setCurrentPage.
 	 * @param {string} page - name of the page
 	 */
 	PageView.prototype.getCurrentPage = function() {
@@ -113,20 +114,37 @@ define(function(require, exports, module) {
 	/**
 	 * Changing the page
 	 * @params {string} pageName - name of the page to go to
+	 * @params {string} state - Initial state the page is to be loaded with.
+	 *
+	 * Every page is a subclass of BaseView. After each page is changed an onShow method
+	 * is being called to do that handles getting data if needed and the general view
+	 * setup needed to bring back the page to focus.
+	 *
+	 * state.new - This can be set to true if the page needs to be rendered as if it were loaded for the first time.
+	 * If you are coming back from a sub-section you might want to just return to the state the view was in rather than
+	 * reloading the entire view. ex: Returning from DiscussionDetailView back to DiscusssionListView
 	 *
 	 */
 	PageView.prototype.changePage = function(pageName, state) {
 		var view = this.getPage(pageName);
 		var comingFromPage = this.getCurrentPage();
 
+		if (comingFromPage) {
+			var comingFromView = this.getPage(comingFromPage);
+			if (comingFromView.options.noBackButton) {
+				state = state ? state : {};
+				state.new = true;
+			}
+		}
+
 		if (view.options.noBackButton) {
 			this.clearHistory();
 		} else {
 			if (comingFromPage) {
-				this.history.push(comingFromPage.constructor.name);
+				this.history.push(comingFromPage);
 			}
 		}
-		this.setCurrentPage(pageName);
+		this.setCurrentPage(view.constructor.name);
 
 		this.renderController.hide({
 			duration: 200
@@ -169,21 +187,34 @@ define(function(require, exports, module) {
 		return view;
 	};
 
+	/**
+	 * Goes back to the last page in the history
+	 */
 	PageView.prototype.goBack = function() {
 		var backTo = this.history.pop();
 		this.changePage(backTo);
 	};
 
+	/**
+	 * Determines if there is navigation history
+	 */
 	PageView.prototype.hasHistory = function() {
 		return this.history.length > 0;
 	};
 
+	/**
+	 * Clears navigation history. Useful when going to a top-level page from the footer or 
+	 * slide menu.
+	 */
 	PageView.prototype.clearHistory = function() {
 		this.history = [];
 	};
 
+	/**
+	 * Gets the selected date from the TrackView
+	 */
 	PageView.prototype.getSelectedDate = function() {
-		return this.trackView.getSelectedDate();
+		return this.getPage('TrackView').getSelectedDate();
 	};
 
 	module.exports = PageView;

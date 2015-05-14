@@ -48,7 +48,7 @@ define(function(require, exports, module) {
 
 	QuickHelpView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
-		this.add(scrollView);
+		this.setBody(scrollView);
 	};
 
 	App.pages[QuickHelpView.name] = QuickHelpView;

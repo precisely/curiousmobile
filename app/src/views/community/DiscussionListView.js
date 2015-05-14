@@ -23,13 +23,8 @@ define(function(require, exports, module) {
 	var CreatePostView = require('views/community/CreatePostView');
 	var GenericSync = require('famous/inputs/GenericSync');
 
-	function DiscussionListView(group) {
+	function DiscussionListView() {
 		BaseView.apply(this, arguments);
-		this.group = group? group: '';
-		this.surfaceList = [];
-		this.loadMoreItems = true;
-		this.itemsAvailable = true;
-		this.offset = 0;
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.Y,
 		});
@@ -40,8 +35,9 @@ define(function(require, exports, module) {
 	DiscussionListView.prototype.constructor = DiscussionListView;
 
 	DiscussionListView.DEFAULT_OPTIONS = {
-		header: true,	
+		header: true,
 		footer: true,
+		noBackButton: true,
 	};
 
 	function init() {
@@ -52,7 +48,7 @@ define(function(require, exports, module) {
 
 		this.pencilIconModifier = new StateModifier({
 			origin: [1, 0],
-			align : [1, 0],
+			align: [1, 0],
 			transform: Transform.translate(0, 0, App.zIndex.header + 1)
 		});
 
@@ -60,13 +56,13 @@ define(function(require, exports, module) {
 		this.setHeaderLabel('FEED');
 
 		this.headerSurface.on('click', function(e) {
-			window.App.pageView.changePage(CreatePostView.constructor.name);
+			App.pageView.changePage(CreatePostView.name);
 		}.bind(this));
 
 		var transition = new Transitionable(Transform.translate(0, 75, App.zIndex.feedItem));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
-		
+
 		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
 		var mod = new StateModifier({
 			size: [undefined, App.height - 130],
@@ -74,12 +70,23 @@ define(function(require, exports, module) {
 		var node = new RenderNode(mod);
 		node.add(this.renderController);
 		this.add(node);
-		this.changeGroup(this.group);
+	};
+
+	DiscussionListView.prototype.onShow = function(state) {
+		BaseView.prototype.onShow.call(this);
+		if (state && state.new) {
+			this.group = state && state.group ? state.group : '';
+			this.surfaceList = [];
+			this.loadMoreItems = true;
+			this.itemsAvailable = true;
+			this.offset = 0;
+			this.changeGroup(this.group);
+		}
 	};
 
 	DiscussionListView.prototype.submit = function() {
 		var searchDiscussion = document.forms["searchForm"]["searchDiscussion"].value;
-		if (!searchDiscussion){
+		if (!searchDiscussion) {
 			u.showAlert("No search data!");
 		} else {
 			console.log('Fetch result from server');
@@ -89,14 +96,14 @@ define(function(require, exports, module) {
 
 	DiscussionListView.prototype.refresh = function() {
 		this.surfaceList = [];
-		this.changeGroup(this.group);	
+		this.changeGroup(this.group);
 	};
 
 	DiscussionListView.prototype.changeGroup = function(group) {
 		this.fetchDiscussionData(group);
 		this.initScrollView();
 	};
-	
+
 	DiscussionListView.prototype.fetchDiscussionData = function(urlParameters) {
 		Discussion.fetch(urlParameters, function(discussions) {
 			var $this = this;
@@ -108,9 +115,9 @@ define(function(require, exports, module) {
 			}
 			discussions.dataList.forEach(function(discussion) {
 				var prettyDate = u.prettyDate(new Date(discussion.updated));
-				discussion.prettyDate =  prettyDate;
+				discussion.prettyDate = prettyDate;
 
-				var iconImage='<i class="fa fa-comment close pull-right"></i>';
+				var iconImage = '<i class="fa fa-comment close pull-right"></i>';
 				discussion.deleteIcon = '';
 				if (discussion.isAdmin) {
 					discussion.deleteIcon = '<div class="close-discussion">' +
@@ -119,10 +126,10 @@ define(function(require, exports, module) {
 				}
 
 				if (discussion.isPlot) {
-					iconImage= '<i class="fa fa-area-chart close pull-right"></i>';
+					iconImage = '<i class="fa fa-area-chart close pull-right"></i>';
 				}
 
-				discussion.iconImage =  iconImage;
+				discussion.iconImage = iconImage;
 
 				var discussionSurface = new Surface({
 					size: [undefined, true],
@@ -148,7 +155,9 @@ define(function(require, exports, module) {
 								a: 'Yes',
 								b: 'No',
 								onA: function() {
-									Discussion.deleteDiscussion({id: discussion.id}, function(success){
+									Discussion.deleteDiscussion({
+										id: discussion.id
+									}, function(success) {
 										console.log('deleted successfully...');
 										this.refresh();
 									}.bind(this));
@@ -158,7 +167,9 @@ define(function(require, exports, module) {
 								}.bind(this),
 							});
 						} else {
-							var state = {};
+							var state = {
+								discussionId: discussion.id
+							};
 							App.pageView.changePage('DiscussionDetailView', state);
 						}
 					}
@@ -168,16 +179,16 @@ define(function(require, exports, module) {
 			}.bind(this));
 		}.bind(this));
 	};
-	
+
 	DiscussionListView.prototype.initScrollView = function() {
 
-		this.scrollView.sync.on('start',function(){
+		this.scrollView.sync.on('start', function() {
 			if (this.itemsAvailable) {
 				this.loadMoreItems = true;
 			}
 		}.bind(this));
 
-		this.scrollView._eventOutput.on('onEdge',function(){
+		this.scrollView._eventOutput.on('onEdge', function() {
 			var currentIndex = this.scrollView.getCurrentIndex();
 
 			// Check if end of the page is reached
@@ -185,7 +196,7 @@ define(function(require, exports, module) {
 				this.loadMoreItems = false;
 				this.offset += Discussion.max;
 				var args = {
-						offset: this.offset
+					offset: this.offset
 				}
 				this.fetchDiscussionData(args);
 			}

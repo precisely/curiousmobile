@@ -9,7 +9,6 @@ define(function(require, exports, module) {
 	var Discussion = Backbone.Model.extend({
 		constructor: function(argument) {
 			this.eventInput = new EventHandler();
-			this.u = require('util/Utils');
 			Backbone.Model.apply(this, arguments);
 		},
 	});
@@ -55,7 +54,7 @@ define(function(require, exports, module) {
 			if (data == 'success') {
 				callback(data);
 			} else {
-				this.u.showAlert('Failed to delete discussion, please try again');
+				u.showAlert('Failed to delete discussion, please try again');
 			}
 		}.bind(this));
 	};

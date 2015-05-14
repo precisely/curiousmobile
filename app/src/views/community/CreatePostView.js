@@ -3,16 +3,7 @@ define(function(require, exports, module) {
 	var View = require('famous/core/View');
 	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
-	var Transform = require('famous/core/Transform');
-	var Transitionable = require('famous/transitions/Transitionable');
-	var StateModifier = require('famous/modifiers/StateModifier');
-	var Modifier = require('famous/core/Modifier');
-	var FormContainerSurface = require("famous/surfaces/FormContainerSurface");
-	var InputSurface = require("famous/surfaces/InputSurface");
-	var SequentialLayout = require("famous/views/SequentialLayout");
 	var PostTemplate = require('text!templates/create-post.html');
-	var DiscussionListView = require('views/community/DiscussionListView');
-	var CommunityView = require('views/community/CommunityView');
 	var Discussion = require('models/Discussion');
 	var u = require('util/Utils');
 
@@ -31,8 +22,8 @@ define(function(require, exports, module) {
 
 	function _createView(argument) {
 		var template = PostTemplate;
+		this.setHeaderLabel('CREATE DISCUSSION');
 		this.postSurface = new Surface({
-			size: [App.width, App.height - 120],
 			content: _.template(template, this.options, templateSettings),
 			properties: {
 				backgroundColor: 'white'
@@ -50,7 +41,7 @@ define(function(require, exports, module) {
 				}
 			}
 		}.bind(this));
-		this.add(this.postSurface);
+		this.setBody(this.postSurface);
 	}
 
 	CreatePostView.prototype.submit = function() {
@@ -67,7 +58,7 @@ define(function(require, exports, module) {
 				function(result) {
 					console.log('Posted a new discussion');
 					u.showAlert("Detail is a required field!");
-					App.pageView.changePage(CommunityView.constructor.name);
+					App.pageView.changePage('DiscussionListView');
 				}.bind(this)
 			);
 		}

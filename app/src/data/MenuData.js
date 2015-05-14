@@ -3,11 +3,11 @@ define(function(require, exports, module) {
 	module.exports = [{
 		title: 'Quick Help',
 		iconFont: '<i class="fa fa-question-circle"></i>',
-		trigger: {name:'change-page', data: 'help'}
+		trigger: {name:'change-page', data: 'QuickHelpView'}
 	}, {
 		title: 'Logout',
 		iconFont: '<i class="fa fa-cloud"></i>',
-		trigger: {name:'logout', data: 'track'}
+		trigger: {name:'logout', data: 'TrackView'}
 	}, {
 		title: '             ',
 	}, {

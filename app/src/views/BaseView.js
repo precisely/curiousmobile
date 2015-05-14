@@ -89,7 +89,7 @@ define(function(require, exports, module) {
 		this.leftSurface.on('click', function(e) {
 			console.log("Clicked on menu icon image");
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				this._eventOutput.emit('go-back');
+				this.goBack();
 			}
 		}.bind(this));
 
