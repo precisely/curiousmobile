@@ -60,6 +60,7 @@ define(function(require, exports, module) {
 
 	LoginView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
+		App.pageView.history = ['HomeView'];
 		var inputElement = document.getElementById("username");
 		inputElement.focus();
 	};

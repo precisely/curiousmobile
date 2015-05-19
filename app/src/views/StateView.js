@@ -25,16 +25,17 @@ define(function(require, exports, module) {
 	StateView.prototype.getStateFromCache = function() {
 		var oldState = App.stateCache.getItem(this.constructor.name);
 		this.loadState(oldState);
-		_.each(this.subViews, function(subView) {
-			subView.getStateFromCache();
-		});
+		// Sub-states not needed for now
+		//_.each(this.subViews, function(subView) {
+		//	subView.getStateFromCache();
+		//});
 	};
 
 
 	/**
-	 * Resets the last cached state for the current view
+	 * Clears the last cached state for the current view
 	 */
-	StateView.prototype.resetState = function() {
+	StateView.prototype.clearLastCachedState = function() {
 		var oldState = App.stateCache.getItem(this.constructor.name);
 		if (oldState) {
 			App.stateCache.removeItem(this.constructor.name);
@@ -50,6 +51,12 @@ define(function(require, exports, module) {
 		if (!state) {
 			return;
 		}
+		
+		if (state.reload) {
+			this.clearLastCachedState();
+			window.location.reload();
+			return;
+		}
 
 		if (state && state.form) {
 			console.log(this.constructor.name + ': Loading elements/form from state');
@@ -63,13 +70,13 @@ define(function(require, exports, module) {
 				}
 
 				if (element.focus) {
-					elementDOM.focus();	
+					elementDOM.focus();
 				}
 			}
 		}
 
 		if (state.postLoadAction) {
-			this[state.postLoadAction.name].apply(this, state.postLoadAction.args);	
+			this[state.postLoadAction.name].apply(this, state.postLoadAction.args);
 		}
 		return false;
 	};
@@ -77,6 +84,7 @@ define(function(require, exports, module) {
 	/**
 	 * Cache the given state for this view.
 	 * @param {Object} state - State object
+	 */
 	StateView.prototype.setState = function(state) {
 		App.stateCache.setItem(this.constructor.name, state);
 	};
@@ -87,7 +95,19 @@ define(function(require, exports, module) {
 	 * @return {Object} - State object
 	 */
 	StateView.prototype.getCurrentState = function() {
+		// For views that we simply will always get the latest data from the
+		// server and have no saved state
+		return {
+			new: true
+		};
+	};
 
+	/**
+	 * Save the current state
+	 */
+	StateView.prototype.saveState = function() {
+		var currentState = this.getCurrentState();
+		this.setState(currentState);
 	};
 
 	module.exports = StateView;

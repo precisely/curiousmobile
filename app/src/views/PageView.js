@@ -56,8 +56,11 @@ define(function(require, exports, module) {
 
 		this.changePage(this.getCurrentPage());
 
-		App.coreEventHandler.on('app-paused', function(e) {
+		App.coreEventHandler.on('app-paused', function () {
 			this.saveState();
+		}.bind(this));
+		App.coreEventHandler.on('app-resume', function () {
+			this.loadState();
 		}.bind(this));
 	}
 
@@ -112,6 +115,23 @@ define(function(require, exports, module) {
 	};
 
 	/**
+	 * Get the current View instance
+	 */
+	PageView.prototype.getCurrentView = function() {
+		var currentPageName = this.getCurrentPage();
+		if (!currentPageName) {
+			console.log('PageView: Cannot find the current page name');
+			return;
+		}
+		var currentView = this.getPage(currentPageName);
+		if (!currentView) {
+			console.log('PageView: Found the page name but could not get the view');
+			return;
+		}
+		return currentView;
+	};
+
+	/**
 	 * Changing the page
 	 * @params {string} pageName - name of the page to go to
 	 * @params {string} state - Initial state the page is to be loaded with.
@@ -129,19 +149,13 @@ define(function(require, exports, module) {
 		var view = this.getPage(pageName);
 		var comingFromPage = this.getCurrentPage();
 
-		if (comingFromPage) {
-			var comingFromView = this.getPage(comingFromPage);
-			if (comingFromView.options.noBackButton) {
-				state = state ? state : {};
-				state.new = true;
-			}
-		}
-
 		if (view.options.noBackButton) {
 			this.clearHistory();
 		} else {
-			if (comingFromPage) {
+			if (comingFromPage && comingFromPage !== pageName) {
 				this.history.push(comingFromPage);
+			} else if(view.parentPage) {
+				this.history.push(view.parentPage);
 			}
 		}
 		this.setCurrentPage(view.constructor.name);
@@ -149,7 +163,6 @@ define(function(require, exports, module) {
 		this.renderController.hide({
 			duration: 200
 		}); //hides the last page
-
 
 		this.renderController.show(view, {
 			duration: 200
@@ -215,6 +228,22 @@ define(function(require, exports, module) {
 	 */
 	PageView.prototype.getSelectedDate = function() {
 		return this.getPage('TrackView').getSelectedDate();
+	};
+
+	/**
+	 * Saves the current state of the current page so it can be restored later.
+	 */
+	PageView.prototype.saveState = function() {
+		return this.getCurrentView().saveState();
+	};
+
+	/**
+	 * Load state of the current page from the cache on app resume
+	 */
+	PageView.prototype.loadState = function() {
+		var view = this.getCurrentView();
+		view.getStateFromCache();
+		view.clearLastCachedState();	
 	};
 
 	module.exports = PageView;

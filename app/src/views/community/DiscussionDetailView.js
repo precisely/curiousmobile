@@ -19,6 +19,7 @@ define(function(require, exports, module) {
 
 	function DiscussionDetailView() {
 		BaseView.apply(this, arguments);
+		this.parentPage = 'DiscussionListView';
 		var transition = new Transitionable(Transform.translate(0, 75, 0));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
@@ -31,19 +32,6 @@ define(function(require, exports, module) {
 		node.add(this.renderController);
 		this.add(node);
 		this.setHeaderLabel('FEED');
-	}
-
-	DiscussionDetailView.prototype = Object.create(BaseView.prototype);
-	DiscussionDetailView.prototype.constructor = DiscussionDetailView;
-
-	DiscussionDetailView.DEFAULT_OPTIONS = {
-		header: true,
-		footer: true,
-	};
-
-	DiscussionDetailView.prototype.onShow = function(state) {
-		BaseView.prototype.onShow.call(this);
-		this.discussionId = state.discussionId;
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.Y,
 		});
@@ -72,19 +60,30 @@ define(function(require, exports, module) {
 				}.bind(this));
 			}
 		}.bind(this));
+	}
 
-		console.log('init called...');
+	DiscussionDetailView.prototype = Object.create(BaseView.prototype);
+	DiscussionDetailView.prototype.constructor = DiscussionDetailView;
+
+	DiscussionDetailView.DEFAULT_OPTIONS = {
+		header: true,
+		footer: true,
+	};
+
+	DiscussionDetailView.prototype.onShow = function(state) {
+		BaseView.prototype.onShow.call(this);
+		this.discussionId = state.discussionId;
+		this.refresh();
+	};
+
+	DiscussionDetailView.prototype.refresh = function() {
+		console.log('DiscussionListView: refresh called...');
 		DiscussionPost.fetch({
 			discussionId: this.discussionId
 		}, function(discussionPost) {
 			this.discussionPost = discussionPost;
 			this.refresh();
-			this.scrollView.sequenceFrom(this.surfaceList);
-			this.renderController.show(this.scrollView);
 		}.bind(this));
-	};
-
-	DiscussionDetailView.prototype.refresh = function() {
 		this.loadMoreItems = true;
 		this.itemsAvailable = true;
 		this.offset = 0;
@@ -137,6 +136,21 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.showComments(discussionPost);
+	};
+
+	DiscussionDetailView.prototype.getCurrentState = function() {
+		var inputElement = document.getElementById("message");
+		var state = {
+			viewProperties: {
+				discussionId: this.discussionId,
+			},
+			form: [{
+				id: 'message',
+				value: inputElement.value,
+				elementType: ElementType.domElement,
+			}]
+		};
+		return state;
 	};
 
 	DiscussionDetailView.prototype.showComments = function(discussionPost) {

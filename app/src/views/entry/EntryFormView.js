@@ -25,6 +25,7 @@ define(function(require, exports, module) {
 		BaseView.apply(this, arguments);
 		_setListeners.call(this);
 		_createForm.call(this);
+		this.parentPage = 'TrackView';
 	}
 
 	EntryFormView.prototype = Object.create(BaseView.prototype);
@@ -225,8 +226,8 @@ define(function(require, exports, module) {
 		console.log('FormView: on-show ' + state);
 		if (!state) {
 			//TODO if no state
+			return;
 		}
-		this.setState(state);
 		this.loadState(state);
 	};
 

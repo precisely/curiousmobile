@@ -10,13 +10,14 @@ define(function(require, exports, module) {
 	function CreatePostView() {
 		BaseView.apply(this, arguments);
 		_createView.call(this);
+		this.parentPage = 'DiscussionListView';
 	}
 
 	CreatePostView.prototype = Object.create(BaseView.prototype);
 	CreatePostView.prototype.constructor = CreatePostView;
 
 	CreatePostView.DEFAULT_OPTIONS = {
-		header: true,	
+		header: true,
 		footer: false,
 	};
 
@@ -35,7 +36,8 @@ define(function(require, exports, module) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				classList = e.srcElement.classList;
 				if (_.contains(classList, 'cancel-post')) {
-					this._eventOutput.emit('cancel-post-discussion');
+					this.clear();
+					App.pageView.changePage('DiscussionListView');
 				} else if (_.contains(classList, 'submit-post')) {
 					this.submit();
 				}
@@ -44,12 +46,17 @@ define(function(require, exports, module) {
 		this.setBody(this.postSurface);
 	}
 
+	CreatePostView.prototype.clear = function() {
+		document.forms["postForm"]["name"].value = '';
+		document.forms["postForm"]["discussionPost"].value = '';
+	};
+
 	CreatePostView.prototype.submit = function() {
 		var name = document.forms["postForm"]["name"].value;
 		var discussionPost = document.forms["postForm"]["discussionPost"].value;
-		if (!name){
+		if (!name) {
 			u.showAlert("Topic is a required field!");
-		} else if (!discussionPost){
+		} else if (!discussionPost) {
 			u.showAlert("Detail is a required field!");
 		} else {
 			Discussion.post(
@@ -58,10 +65,30 @@ define(function(require, exports, module) {
 				function(result) {
 					console.log('Posted a new discussion');
 					u.showAlert("Detail is a required field!");
-					App.pageView.changePage('DiscussionListView');
+					// Indicating this is a new like state so list gets reloaded
+					App.pageView.changePage('DiscussionListView', {
+						new: true
+					});
 				}.bind(this)
 			);
 		}
+	};
+
+	CreatePostView.prototype.getCurrentState = function() {
+		var name = document.forms["postForm"]["name"].value;
+		var discussionPost = document.forms["postForm"]["discussionPost"].value;
+		var state = {
+			form: [{
+				id: 'name',
+				value: name,
+				elementType: ElementType.domElement,
+			}, {
+				id: 'discussionPost',
+				value: discussionPost,
+				elementType: ElementType.domElement,
+			}]
+		};
+		return state;
 	};
 
 	App.pages[CreatePostView.name] = CreatePostView;

@@ -154,7 +154,7 @@ define(function(require, exports, module) {
 		this.headerLeftIconController.show(this.leftSurface);
 	};
 
-	BaseView.prototype.onShow = function() {
+	BaseView.prototype.onShow = function(state) {
 		if (this.options.header) {
 			if (!this.options.noBackButton && App.pageView.hasHistory()) {
 				return this.showBackButton();
@@ -163,6 +163,10 @@ define(function(require, exports, module) {
 			if (this.options.noBackButton) {
 				App.pageView.clearHistory();
 			}
+		}
+		
+		if (state) {
+			this.loadState(state);
 		}
 	};
 

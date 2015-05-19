@@ -70,18 +70,16 @@ define(function(require, exports, module) {
 		var node = new RenderNode(mod);
 		node.add(this.renderController);
 		this.add(node);
+		this.group = '';
+		this.surfaceList = [];
+		this.loadMoreItems = true;
+		this.itemsAvailable = true;
+		this.offset = 0;
+		this.changeGroup(this.group);
 	};
 
 	DiscussionListView.prototype.onShow = function(state) {
-		BaseView.prototype.onShow.call(this);
-		if (state && state.new) {
-			this.group = state && state.group ? state.group : '';
-			this.surfaceList = [];
-			this.loadMoreItems = true;
-			this.itemsAvailable = true;
-			this.offset = 0;
-			this.changeGroup(this.group);
-		}
+		BaseView.prototype.onShow.call(this, state);
 	};
 
 	DiscussionListView.prototype.submit = function() {
