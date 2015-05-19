@@ -59,20 +59,17 @@
 				console.log('index.html:56 Device Ready');
 				StatusBar.hide();
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-				setTimeout(function() {
-					document.getElementById('reloading').style.display = "none";
-				}, 3000);
+				document.getElementById('reloading').style.display = "none";
 			}
 
 			function onAppResume() {
 				console.log('App has resumed from background');
 				console.log(device.platform);
-				window.location.reload();	
+				App.coreEventHandler.emit('app-resume');
 			}
 
 		</script>
 		<script type="text/javascript" src="cordova.js"></script>
-		<script type="text/javascript" charset="utf-8" src="PushNotification.js"></script>
 	</head>
 
 	<body onload="onLoad()" >
