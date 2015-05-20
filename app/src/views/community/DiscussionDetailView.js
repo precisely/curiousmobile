@@ -82,8 +82,11 @@ define(function(require, exports, module) {
 			discussionId: this.discussionId
 		}, function(discussionPost) {
 			this.discussionPost = discussionPost;
-			this.refresh();
+			this.postRefresh();
 		}.bind(this));
+	};
+
+	DiscussionDetailView.prototype.postRefresh = function() {
 		this.loadMoreItems = true;
 		this.itemsAvailable = true;
 		this.offset = 0;
