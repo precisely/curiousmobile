@@ -319,9 +319,12 @@ define(function(require, exports, module) {
 		var state = BaseView.prototype.getCurrentState.call(this);
 		var inputElement = document.getElementById("entry-description");
 		return {
-			viewProperties: {
-				entry: this.entry,
-			},
+			viewProperties: [{
+					name: 'entry',
+					model: 'Entry',
+					value: this.entry,
+				},
+			],
 			form: [{
 				id: 'entry-description',
 				value: inputElement.value,

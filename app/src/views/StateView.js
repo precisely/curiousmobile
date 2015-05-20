@@ -58,6 +58,20 @@ define(function(require, exports, module) {
 			return;
 		}
 
+
+		if (state && state.viewProperties) {
+			
+			for (var i = 0, len = state.form.length; i < len; i++) {
+				var property = state.viewProperties[i];
+				var value = property.value;
+				if (property.model) {
+					// TODO get model class from model cache and instantiate
+					// value = new ModelClass(value);	
+				}
+				this[property.name] = value;
+			}
+		}
+
 		if (state && state.form) {
 			console.log(this.constructor.name + ': Loading elements/form from state');
 			for (var i = 0, len = state.form.length; i < len; i++) {
