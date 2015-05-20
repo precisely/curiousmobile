@@ -35,7 +35,7 @@ define(function(require, exports, module) {
 		content: 'content/images/help-community.png'
 	});
 
-	trackSurface.pipe(scrollView);  
+	trackSurface.pipe(scrollView);
 	commmunitySurface.pipe(scrollView);
 	surfaceList.push(trackSurface);
 	surfaceList.push(commmunitySurface);
@@ -43,11 +43,14 @@ define(function(require, exports, module) {
 	scrollView.sequenceFrom(surfaceList);
 
 	QuickHelpView.prototype.init = function() {
-		this._eventInput.on('on-show', function() {
-			this.add(scrollView);
-		}.bind(this));
 		this.setHeaderLabel('Quick Help');
 	}
 
+	QuickHelpView.prototype.onShow = function(state) {
+		BaseView.prototype.onShow.call(this);
+		this.setBody(scrollView);
+	};
+
+	App.pages[QuickHelpView.name] = QuickHelpView;
 	module.exports = QuickHelpView;
 });

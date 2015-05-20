@@ -4,7 +4,7 @@ define(function(require, exports, module) {
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Transform = require('famous/core/Transform');
-	var Transitionable      = require("famous/transitions/Transitionable");
+	var Transitionable = require("famous/transitions/Transitionable");
 	var SnapTransition = require("famous/transitions/SnapTransition");
 	Transitionable.registerMethod('snap', SnapTransition);
 	var Draggable = require('famous/modifiers/Draggable');
@@ -38,6 +38,7 @@ define(function(require, exports, module) {
 	TrackView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
+		noBackButton: true,
 	};
 
 	function _getDefaultDates(date) {
@@ -53,7 +54,7 @@ define(function(require, exports, module) {
 
 	function _createBody() {
 		var formContainerSurface = new ContainerSurface({
-			size:[undefined, 70],
+			size: [undefined, 70],
 			properties: {
 				backgroundColor: '#eaeaea',
 			}
@@ -71,7 +72,9 @@ define(function(require, exports, module) {
 		});
 
 		this.inputSurface = new Surface({
-			content: _.template(inputSurfaceTemplate, {tag: ''}, templateSettings),
+			content: _.template(inputSurfaceTemplate, {
+				tag: ''
+			}, templateSettings),
 		});
 
 		this.inputSurface.on('click', function(e) {
@@ -83,11 +86,11 @@ define(function(require, exports, module) {
 
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
 		this.renderController = new RenderController();
-		this.renderController.inTransformFrom(function(progress){
-			return Transform.translate(0, 0, window.App.zIndex.readView);	
+		this.renderController.inTransformFrom(function(progress) {
+			return Transform.translate(0, 0, window.App.zIndex.readView);
 		});
 
-		var draggableToRefresh = new Draggable( {
+		var draggableToRefresh = new Draggable({
 			xRange: [0, 0],
 			yRange: [0, 40],
 		});
@@ -125,32 +128,43 @@ define(function(require, exports, module) {
 			this.changeDate(new Date());
 		}
 
-
-		this._eventInput.on('on-show', function(e) {
-			if (e && e.pushNotification) {
-				this.changeDate(e.entryDate);	
-			}
-		});
-
-		App.coreEventHandler.on('refresh-entries', function(){
+		App.coreEventHandler.on('refresh-entries', function() {
 			EntryCollection.clearCache();
-			this.changeDate(this.calendarView.selectedDate, function () {
+			this.changeDate(this.calendarView.selectedDate, function() {
 				console.log('TrackView: Entries refreshed');
 			}.bind(this));
 		}.bind(this));
+
+		this.on('create-entry', function(e) {
+			console.log('EventHandler: this.trackView.on event: create-entry');
+			this.getPage('EntryFormView').unsetEntry();
+			this.changePage('EntryFormView', {
+				viewProperties: {
+					entry: new Entry(),
+				},
+			});
+		}.bind(App.pageView));
 	}
 
 	function _createCalendar() {
 		this.calendarView = new CalendarView();
 		var calendarModifier = new StateModifier({
 			transform: Transform.translate(50, 0, 0)
-		}); 
+		});
 		this.calendarView.on('manual-date-change', function(e) {
 			this.changeDate(e.date);
 		}.bind(this));
 		this.layout.header.add(calendarModifier).add(this.calendarView);
 
 	}
+
+	TrackView.prototype.onShow = function(state) {
+		BaseView.prototype.onShow.call(this);
+		if (state && state.pushNotification) {
+			this.changeDate(state.entryDate);
+		}
+
+	};
 
 	TrackView.prototype.changeDate = function(date, callback) {
 		date = u.getMidnightDate(date);
@@ -166,15 +180,17 @@ define(function(require, exports, module) {
 
 			//Handle cache refresh
 
-			this.currentListView.on('delete-failed', function () {
-				this.changeDate(this.calendarView.selectedDate, function () {
+			this.currentListView.on('delete-failed', function() {
+				this.changeDate(this.calendarView.selectedDate, function() {
 					u.showAlert("Error deleting entry");
 					console.log('TrackView: Entries refreshed after a failed delete');
 				}.bind(this));
 			});
 			//setting the scroll position to today
 			//this.scrollView.goToPage(5);
-			this.renderController.hide({duration:0});
+			this.renderController.hide({
+				duration: 0
+			});
 			this.renderController.show(this.currentListView, {
 				duration: 0
 			}, callback);
@@ -186,5 +202,6 @@ define(function(require, exports, module) {
 	}
 
 
+	App.pages[TrackView.name] = TrackView;
 	module.exports = TrackView;
 });

@@ -1,38 +1,30 @@
 define(function(require, exports, module) {
 	'use strict';
 	var View = require('famous/core/View');
+	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
-	var Transform = require('famous/core/Transform');
-	var Transitionable = require('famous/transitions/Transitionable');
-	var StateModifier = require('famous/modifiers/StateModifier');
-	var Modifier = require('famous/core/Modifier');
-	var RenderController = require('famous/views/RenderController');
-	var FormContainerSurface = require("famous/surfaces/FormContainerSurface");
-	var InputSurface = require("famous/surfaces/InputSurface");
-	var SequentialLayout = require("famous/views/SequentialLayout");
 	var PostTemplate = require('text!templates/create-post.html');
-	var DiscussionListView = require('views/community/DiscussionListView');
 	var Discussion = require('models/Discussion');
 	var u = require('util/Utils');
 
 	function CreatePostView() {
-		View.apply(this, arguments);
-		var transition = new Transitionable(Transform.translate(0, 65, 0));
-		this.renderController = new RenderController();
-		this.renderController.inTransformFrom(transition);
-		this.add(this.renderController);
+		BaseView.apply(this, arguments);
 		_createView.call(this);
+		this.parentPage = 'DiscussionListView';
 	}
 
-	CreatePostView.prototype = Object.create(View.prototype);
+	CreatePostView.prototype = Object.create(BaseView.prototype);
 	CreatePostView.prototype.constructor = CreatePostView;
 
-	CreatePostView.DEFAULT_OPTIONS = {};
+	CreatePostView.DEFAULT_OPTIONS = {
+		header: true,
+		footer: false,
+	};
 
 	function _createView(argument) {
 		var template = PostTemplate;
+		this.setHeaderLabel('CREATE DISCUSSION');
 		this.postSurface = new Surface({
-			size: [App.width, App.height - 120],
 			content: _.template(template, this.options, templateSettings),
 			properties: {
 				backgroundColor: 'white'
@@ -44,22 +36,27 @@ define(function(require, exports, module) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				classList = e.srcElement.classList;
 				if (_.contains(classList, 'cancel-post')) {
-					this._eventOutput.emit('cancel-post-discussion');
+					this.clear();
+					App.pageView.changePage('DiscussionListView');
 				} else if (_.contains(classList, 'submit-post')) {
 					this.submit();
 				}
 			}
 		}.bind(this));
-
-		this.renderController.show(this.postSurface);
+		this.setBody(this.postSurface);
 	}
+
+	CreatePostView.prototype.clear = function() {
+		document.forms["postForm"]["name"].value = '';
+		document.forms["postForm"]["discussionPost"].value = '';
+	};
 
 	CreatePostView.prototype.submit = function() {
 		var name = document.forms["postForm"]["name"].value;
 		var discussionPost = document.forms["postForm"]["discussionPost"].value;
-		if (!name){
+		if (!name) {
 			u.showAlert("Topic is a required field!");
-		} else if (!discussionPost){
+		} else if (!discussionPost) {
 			u.showAlert("Detail is a required field!");
 		} else {
 			Discussion.post(
@@ -67,11 +64,33 @@ define(function(require, exports, module) {
 				discussionPost,
 				function(result) {
 					console.log('Posted a new discussion');
-					this._eventOutput.emit('post-success');
+					u.showAlert("Detail is a required field!");
+					// Indicating this is a new like state so list gets reloaded
+					App.pageView.changePage('DiscussionListView', {
+						new: true
+					});
 				}.bind(this)
-			)
+			);
 		}
 	};
 
+	CreatePostView.prototype.getCurrentState = function() {
+		var name = document.forms["postForm"]["name"].value;
+		var discussionPost = document.forms["postForm"]["discussionPost"].value;
+		var state = {
+			form: [{
+				id: 'name',
+				value: name,
+				elementType: ElementType.domElement,
+			}, {
+				id: 'discussionPost',
+				value: discussionPost,
+				elementType: ElementType.domElement,
+			}]
+		};
+		return state;
+	};
+
+	App.pages[CreatePostView.name] = CreatePostView;
 	module.exports = CreatePostView;
 });

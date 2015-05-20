@@ -7,7 +7,6 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var RenderController = require('famous/views/RenderController');
 	var TouchSync = require("famous/inputs/TouchSync");
-	var FastClick = require('famous/inputs/FastClick');
 	var Entry = require('models/Entry');
 	var u = require('util/Utils');
 
@@ -30,11 +29,19 @@ define(function(require, exports, module) {
 		this.end = 0;
 		this.delta = [0, 0];
 		this.position = [0, 0];
+		this.entrySurface = new Surface();
+		this.entrySurface.on('click', function(argument) {
+			console.log('Entry was clicked');
+		});
+		this.on('trigger-delete-entry', this.delete.bind(this));
+		this.add(this.entrySurface);
 		this.touchSync = new TouchSync(function() {
 			return position;
 		});
 
+		this.entrySurface.pipe(this.touchSync);
 		this.touchSync.on('start', function(data) {
+			console.log('Entry touched: ' + this.entry.id);
 			this.start = Date.now();
 			// Show context menu after the timeout regardless of tap end
 			this.touchTimeout = setTimeout(function() {
@@ -64,14 +71,9 @@ define(function(require, exports, module) {
 			// If the intent is to just select don't show context menu
 			if (timeDelta < 500 && movementX < 8 && movementY < 8) {
 				clearTimeout(this.touchTimeout);
-				this._eventOutput.emit('select-entry', this.entry);
+				this.select();
 			}
 		}.bind(this));
-
-		this.entrySurface = new Surface();
-		this.entrySurface.pipe(this.touchSync);
-		this.on('trigger-delete-entry', this.delete.bind(this));
-		this.add(this.entrySurface);
 
 		//Glow surface
 		this.glowSurface = new Surface();
@@ -94,6 +96,12 @@ define(function(require, exports, module) {
 		var glowSurfaceOptions = Object.create(options);
 		this.glowSurface.setOptions(glowSurfaceOptions);
 		this.glowSurface.addClass('glow');
+	};
+
+	EntryView.prototype.select = function() {
+		console.log('entry selected with id: ' + this.entry.id);
+		var formViewState = App.pageView.getPage('EntryFormView').buildStateFromEntry(this.entry);
+		App.pageView.changePage('EntryFormView', formViewState);
 	};
 
 	EntryView.prototype.delete = function(e) {

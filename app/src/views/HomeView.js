@@ -1,6 +1,7 @@
 define(function(require, exports, module) {
 	'use strict';
 	var View = require('famous/core/View');
+	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
 	var Modifier = require('famous/core/Modifier');
 	var Transform = require('famous/core/Transform');
@@ -11,14 +12,17 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 
 	function HomeView() {
-		View.apply(this, arguments);
+		BaseView.apply(this, arguments);
 		this.createView();
 	}
 
-	HomeView.prototype = Object.create(View.prototype);
+	HomeView.prototype = Object.create(BaseView.prototype);
 	HomeView.prototype.constructor = HomeView;
 
-	HomeView.DEFAULT_OPTIONS = {};
+	HomeView.DEFAULT_OPTIONS = {
+		header: false,
+		footer: false,
+	};
 
 	HomeView.prototype.createView = function() {
 		var logoSurface = new ImageSurface({
@@ -55,9 +59,9 @@ define(function(require, exports, module) {
 			}
 
 			if (e.srcElement.classList.contains('login')) {
-				this._eventOutput.emit('login');	
+				App.pageView.changePage('LoginView');
 			} else if (e.srcElement.classList.contains('create-account')) {
-				this._eventOutput.emit('create-account');	
+				App.pageView.changePage('RegisterView');
 			}
 		}.bind(this));
 
@@ -90,5 +94,6 @@ define(function(require, exports, module) {
 		this.add(this.buttonsModifier).add(this.buttonSurface);
 	};
 
+	App.pages[HomeView.name] = HomeView;
 	module.exports = HomeView;
 });

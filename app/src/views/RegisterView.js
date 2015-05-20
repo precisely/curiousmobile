@@ -23,7 +23,7 @@ define(function(require, exports, module) {
 	RegisterView.prototype.constructor = RegisterView;
 
 	RegisterView.DEFAULT_OPTIONS = {
-		header: true,	
+		header: true,
 		footer: false,
 		backButton: true,
 	};
@@ -37,10 +37,10 @@ define(function(require, exports, module) {
 			}
 		});
 		var registerModifier = new Modifier({
-			transform: Transform.translate(0, 74, 0),	
+			transform: Transform.translate(0, 74, 0),
 		});
 		registerModifier.sizeFrom(function() {
-			return [App.width, App.height - 70];	
+			return [App.width, App.height - 70];
 		});
 		registerSurface.on('click', function(e) {
 			var classList;
@@ -59,12 +59,14 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.on('on-show', function() {
-			var inputElement = document.getElementById("email");
-			inputElement.focus();
-		}.bind(this));
 		this.setHeaderLabel('GET STARTED');
 		this.addContent(registerModifier, registerSurface);
+	};
+
+	RegisterView.prototype.onShow = function(state) {
+		BaseView.prototype.onShow.call(this);
+		var inputElement = document.getElementById("email");
+		inputElement.focus();
 	};
 
 	RegisterView.prototype.submit = function() {
@@ -73,25 +75,26 @@ define(function(require, exports, module) {
 		var email = document.forms["registerForm"]["email"].value;
 		var username = document.forms["registerForm"]["username"].value;
 		var password = document.forms["registerForm"]["password"].value;
-		if (!email){
+		if (!email) {
 			u.showAlert("Email is a required field!");
-		} else if (email.search(emailRegEx) == -1){
+		} else if (email.search(emailRegEx) == -1) {
 			u.showAlert("Please enter a valid email address!");
-		} else if (!username){
+		} else if (!username) {
 			u.showAlert("Username is a required field!");
-		} else if (!password){
+		} else if (!password) {
 			u.showAlert("Password is a required field!");
 		} else {
 			user.register(
 				email,
 				username,
 				password,
-				function (user) {
+				function(user) {
 					this._eventOutput.emit('registration-success');
 				}.bind(this)
 			)
 		}
 	};
 
+	App.pages[RegisterView.name] = RegisterView;
 	module.exports = RegisterView;
 });

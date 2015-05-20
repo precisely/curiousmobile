@@ -10,19 +10,28 @@ define(function(require, exports, module) {
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var HomeView = require('views/HomeView');
 	var LoginView = require('views/LoginView');
+	var StateView = require('views/StateView');
 	var RegisterView = require('views/RegisterView');
 	var ForgotPasswordView = require('views/ForgotPasswordView');
 
 	function LaunchView() {
-		View.apply(this, arguments);
-		_createView.call(this);
+		StateView.apply(this, arguments);
 	}
 
-	LaunchView.prototype = Object.create(View.prototype);
+	LaunchView.prototype = Object.create(StateView.prototype);
 	LaunchView.prototype.constructor = LaunchView;
 
 	LaunchView.DEFAULT_OPTIONS = {};
 
+	function _setListeners() {
+		this.on('login-success', function(data) {
+			App.pageView.changeToLastPage();
+		}.bind(this));
+
+		this.on('registered', function(e) {
+			App.pageView.changeToLastPage();
+		}.bind(this));
+	}
 	function _createView() {
 		this.renderController = new RenderController();
 		this.add(this.renderController);
@@ -103,6 +112,6 @@ define(function(require, exports, module) {
 			this._eventOutput.emit('on-show');
 		}.bind(view), 300);
 	}
-
+	App.pages[LaunchView.name] = LaunchView;
 	module.exports = LaunchView;
 });

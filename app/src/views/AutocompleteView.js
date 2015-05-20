@@ -95,7 +95,7 @@ define(function(require, exports, module) {
 		});
 
 		myView.autoCompleteModifier = new StateModifier({
-			transform:Transform.translate(15,55, 1000),
+			transform:Transform.translate(15,55, App.zIndex.autocomplete),
 			size: [window.innerWidth - 30, 40]
 		});
 
