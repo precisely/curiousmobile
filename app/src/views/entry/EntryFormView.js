@@ -226,6 +226,7 @@ define(function(require, exports, module) {
 		console.log('FormView: on-show ' + state);
 		if (!state) {
 			//TODO if no state
+			App.pageView.changePage(this.parentPage);
 			return;
 		}
 		this.loadState(state);
