@@ -5,7 +5,7 @@
 				<div class="row">
 					<div class="col-xs-9 discussion-header">
 						<a href="#">
-							<img class="avatar" src="../../content/images/avatar.png" alt="avatar">
+							<img class="avatar" src="content/images/avatar.png" alt="avatar">
 							<span class="user-name"> {{= userName }}</span>
 						</a>
 					</div>
@@ -27,17 +27,17 @@
 					</div>
 					<div class="col-xs-10 buttons">
 						<button>
-							<img src="../../content/images/follow.png" alt="follow">Follow
+							<img src="content/images/follow.png" alt="follow">Follow
 						</button>
 						{{ if (isAdmin) {  }}
 							<button class="share-button" data-toggle="popover" title="Share:" data-placement="top" 
 									data-content="<input class='share-link' type='text' value='{{ location.protocol+'//'+location.hostname+(location.port ? ':' + location.port : '') }}/discussion/show/{{= hash }}\'>">
-								<img src="../../content/images/share.png" alt="share">Share
+								<img src="content/images/share.png" alt="share">Share
 							</button>
 						{{ } }}
 						<button>
 							{{ if (!totalComments ||	totalComments < 1) {  }}
-								<img src="../../content/images/comment.png" alt="comment"> Comment</img>
+								<img src="content/images/comment.png" alt="comment"> Comment</img>
 							{{ } else { }}
 							<div class="dark-comment comment-button" data-total-comments="{{= totalComments }}">
 								{{= totalComments }}</div>
