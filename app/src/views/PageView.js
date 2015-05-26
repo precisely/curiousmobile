@@ -245,8 +245,14 @@ define(function(require, exports, module) {
 	 */
 	PageView.prototype.loadState = function() {
 		var view = this.getCurrentView();
-		view.getStateFromCache();
-		view.clearLastCachedState();
+		if (view.options.reloadOnResume) {
+			this.changePage(view.constructor.name, {
+				new: true
+			});
+		} else {
+			view.getStateFromCache();
+			view.clearLastCachedState();
+		}
 	};
 
 	module.exports = PageView;

@@ -5,12 +5,18 @@ define(function(require, exports, module) {
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Timer = require('famous/utilities/Timer');
+	var OptionsManager = require('famous/core/OptionsManager');
 
 	/**
 	 * All stateful views need to extend this class. On app-pause this will save the state of all stateful views in
 	 * memory. On app-resume it the app loads the last view and if stateful its state gets loaded as well.
 	 */
-	function StateView() {
+	function StateView(options) {
+		this.options = Object.create(StateView.DEFAULT_OPTIONS);
+		this._optionsManager = new OptionsManager(this.options);
+		if (options) {
+			this._optionsManager.setOptions(options);
+		}
 		View.apply(this, arguments);
 		this.subViews = [];
 	}
@@ -18,7 +24,9 @@ define(function(require, exports, module) {
 	StateView.prototype = Object.create(View.prototype);
 	StateView.prototype.constructor = StateView;
 
-	StateView.DEFAULT_OPTIONS = {};
+	StateView.DEFAULT_OPTIONS = {
+		reloadOnResume: false,	
+	};
 
 	/**
 	 * Fetches the last cached state for the current view

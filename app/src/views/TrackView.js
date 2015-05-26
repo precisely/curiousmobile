@@ -39,6 +39,7 @@ define(function(require, exports, module) {
 		header: true,
 		footer: true,
 		noBackButton: true,
+		reloadOnResume: true,
 	};
 
 	function _getDefaultDates(date) {
@@ -165,15 +166,14 @@ define(function(require, exports, module) {
 
 	TrackView.prototype.preShow = function(state) {
 		BaseView.prototype.preShow.call(this);
-		if (state && !state.new) {
-			return true;
-		}
-
-		if (state && (state.entryDate)) {
+		if (state && state.new) {
+			EntryCollection.clearCache();
+			this.changeDate(new Date());
+		} else if (state && (state.entryDate)) {
 			EntryCollection.clearCache();
 			this.changeDate(state.entryDate);
 		}
-		
+
 		return true;
 	};
 
