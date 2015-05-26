@@ -34,7 +34,6 @@ define(function(require, exports, module) {
 	};
 
 	function _createAlert() {
-
 		var messageModifier = new Modifier({
 			transform: Transform.translate(20, 74, 999),
 			origin: [0, 0],

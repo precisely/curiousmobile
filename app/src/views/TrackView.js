@@ -165,6 +165,10 @@ define(function(require, exports, module) {
 
 	TrackView.prototype.preShow = function(state) {
 		BaseView.prototype.preShow.call(this);
+		if (state && !state.new) {
+			return true;
+		}
+
 		EntryCollection.clearCache();
 		if (state && state.pushNotification) {
 			this.changeDate(state.entryDate);

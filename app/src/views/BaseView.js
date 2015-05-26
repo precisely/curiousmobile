@@ -174,8 +174,8 @@ define(function(require, exports, module) {
 		return true;
 	};
 
-	BaseView.prototype.goBack = function() {
-		App.pageView.goBack(this.parentPage);
+	BaseView.prototype.goBack = function(state) {
+		App.pageView.goBack(this.parentPage, state);
 		this._eventOutput.emit('go-back');
 	};
 

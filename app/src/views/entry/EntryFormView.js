@@ -51,26 +51,15 @@ define(function(require, exports, module) {
 			console.log("New Entry - TrackView event");
 			var currentListView = this.getPage('TrackView').currentListView;
 			currentListView.refreshEntries(data.entries, data.glowEntry);
-			this.changePage('TrackView');
+			this.changePage('TrackView', { new: false });
 		}.bind(App.pageView));
 
 		this.on('update-entry', function(resp) {
 			console.log('EntryListView: Updating an entry');
 			var currentListView = this.getPage('TrackView').currentListView;
 			currentListView.refreshEntries(resp.entries, resp.glowEntry);
-			this.changePage('TrackView');
+			this.changePage('TrackView',  { new: false });
 		}.bind(App.pageView));
-
-		this.on('hiding-form-view', function(e) {
-			console.log('EventHandler: this.entryFormView event: hiding-form-view');
-			this.changePage('TrackView');
-		}.bind(App.pageView));
-
-		this.on('go-back', function(e) {
-			console.log('EventHandler: this.entryFormView event: go-back');
-			this.blur();
-		}.bind(this));
-
 	}
 
 	function _createForm() {
@@ -106,9 +95,9 @@ define(function(require, exports, module) {
 			//on enter
 			if (e.keyCode == 13) {
 				this.submit(e);
-				this._eventOutput.emit('refresh-list-view');
 			} else if (e.keyCode == 27) {
 				this.blur(e);
+				this.goBack();
 			} else {
 				enteredKey = e.srcElement.value;
 				this.autoCompleteView.getAutocompletes(enteredKey);
@@ -314,7 +303,6 @@ define(function(require, exports, module) {
 	EntryFormView.prototype.blur = function(e) {
 		this.autoCompleteView.hide();
 		this.unsetEntry();
-		this._eventOutput.emit('hiding-form-view');
 	};
 
 	EntryFormView.prototype.getCurrentState = function() {
@@ -389,7 +377,6 @@ define(function(require, exports, module) {
 					newText.indexOf('pinned') > -1) {
 					window.App.collectionCache.clear();
 				}
-				store.set('lastPage', 'track');
 				this.blur();
 				this._eventOutput.emit('new-entry', resp);
 			}.bind(this));
@@ -402,6 +389,7 @@ define(function(require, exports, module) {
 				return;
 			}
 			this.blur();
+			this.goBack();
 			return;
 		} else {
 			entry.setText(newText);
