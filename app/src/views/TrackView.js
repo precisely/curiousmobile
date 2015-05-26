@@ -160,8 +160,11 @@ define(function(require, exports, module) {
 
 	TrackView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
+		EntryCollection.clearCache();	
 		if (state && state.pushNotification) {
 			this.changeDate(state.entryDate);
+		} else {
+			this.changeDate(new Date());
 		}
 
 	};
@@ -200,7 +203,6 @@ define(function(require, exports, module) {
 	TrackView.prototype.getSelectedDate = function() {
 		return this.calendarView.getSelectedDate();
 	}
-
 
 	App.pages[TrackView.name] = TrackView;
 	module.exports = TrackView;
