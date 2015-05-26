@@ -104,7 +104,6 @@ define(function(require, exports, module) {
 
 	DiscussionDetailView.prototype.refresh = function() {
 		console.log('DiscussionDetailView: refresh called...');
-		this.initRenderController();
 		DiscussionPost.fetch({
 			discussionId: this.discussionId
 		}, function(discussionPost) {
@@ -117,6 +116,7 @@ define(function(require, exports, module) {
 		this.loadMoreItems = true;
 		this.itemsAvailable = true;
 		this.offset = 0;
+		this.surfaceList = [];
 		var discussionPost = this.discussionPost;
 		var prettyDate = u.prettyDate(new Date(discussionPost.updated));
 		discussionPost.updated = prettyDate;
