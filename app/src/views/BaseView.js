@@ -170,6 +170,10 @@ define(function(require, exports, module) {
 		}
 	};
 
+	BaseView.prototype.preShow = function() {
+	
+	};
+
 	BaseView.prototype.goBack = function() {
 		App.pageView.goBack(this.parentPage);
 		this._eventOutput.emit('go-back');
