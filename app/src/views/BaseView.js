@@ -176,7 +176,6 @@ define(function(require, exports, module) {
 
 	BaseView.prototype.goBack = function(state) {
 		App.pageView.goBack(this.parentPage, state);
-		this._eventOutput.emit('go-back');
 	};
 
 	BaseView.prototype.setHeaderLabel = function(title) {

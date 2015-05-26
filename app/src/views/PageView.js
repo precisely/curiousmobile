@@ -203,12 +203,12 @@ define(function(require, exports, module) {
 	/**
 	 * Goes back to the last page in the history
 	 */
-	PageView.prototype.goBack = function(parent) {
+	PageView.prototype.goBack = function(parent, state) {
 		var backTo = this.history.pop();
 		if (parent) {
 			backTo = parent;
 		}
-		this.changePage(backTo);
+		this.changePage(backTo, state);
 	};
 
 	/**

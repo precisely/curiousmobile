@@ -169,12 +169,11 @@ define(function(require, exports, module) {
 			return true;
 		}
 
-		EntryCollection.clearCache();
-		if (state && state.pushNotification) {
+		if (state && (state.entryDate)) {
+			EntryCollection.clearCache();
 			this.changeDate(state.entryDate);
-		} else {
-			this.changeDate(new Date());
 		}
+		
 		return true;
 	};
 
