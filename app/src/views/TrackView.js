@@ -164,13 +164,14 @@ define(function(require, exports, module) {
 
 
 	TrackView.prototype.preShow = function(state) {
-		//BaseView.prototype.preShow.call(this);
-		EntryCollection.clearCache();	
+		BaseView.prototype.preShow.call(this);
+		EntryCollection.clearCache();
 		if (state && state.pushNotification) {
 			this.changeDate(state.entryDate);
 		} else {
 			this.changeDate(new Date());
 		}
+		return true;
 	};
 
 	TrackView.prototype.changeDate = function(date, callback) {
