@@ -60,7 +60,7 @@ define(function(require, exports, module) {
 								id: this.discussion.id
 							}, function(success) {
 								console.log('deleted successfully...');
-								this.refresh();
+								App.pageView.changePage('FeedView', {reload: true});
 							}.bind(this));
 						}.bind(this),
 						onB: function() {

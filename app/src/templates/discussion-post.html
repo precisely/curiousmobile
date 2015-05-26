@@ -4,25 +4,16 @@
 		<div class="discussion-topic">
 			<div class="contents">
 				<div class="row">
-					<div class="col-xs-9 discussion-header">
+					<div class="col-xs-9 discussion-header discussion-post">
 						<a href="#">
-							<img class="avatar" src="/content/images/avatar.png" alt="avatar">
+							<img class="avatar" src="content/images/avatar.png" alt="avatar">
 							<span class="user-name"> {{= discussionOwner }}</span>
 						</a>
+							<span class="posting-time">{{= updated }}</span>
 					</div>
-					<div class="col-xs-3 discussion-topic-span discussion-header">
-						<span class="posting-time" data-time="{{ discussionCreatedOn }}"></span>
+					<div class="col-xs-3 discussion-topic-span discussion-header" >
 						{{ if (isAdmin) { }}
-							<li class="dropdown">
-								<a href="#" data-toggle="dropdown"><b class="caret"></b></a>
-								<ul class="dropdown-menu" role="menu">
-									<li>
-										<a href="#" class="delete-discussion" data-discussion-hash-id=""> 
-											<img src="/content/images/x.png" width="auto" height="23">Delete
-										</a>
-									</li>
-								</ul>
-							</li>
+							<i class="fa fa-times-circle close-discussion""></i>
 						{{ } }}
 					</div>
 				</div>
@@ -33,21 +24,16 @@
 						<p>{{= firstPost.message }}</p>
 				</div>
 				<hr>
-				<div class="row">
-					<div class="col-xs-2 posting-time"">
-						{{= prettyDate }}
-					</div>
-					<div class="col-xs-10 buttons">
-						<button>
-							<img src="/content/images/follow.png" alt="follow">Follow
+				<div class="text-right buttons">
+					<button>
+						<img src="content/images/follow.png" alt="follow">Follow
+					</button>
+					{{ if (isAdmin) {  }}
+						<button class="share-button" data-toggle="popover" title="Share:" data-placement="top" 
+								data-content="<input class='share-link' type='text' value='{{ location.protocol+'//'+location.hostname+(location.port ? ':' + location.port : '') }}/discussion/show/\'>">
+							<img src="content/images/share.png" alt="share">Share
 						</button>
-						{{ if (isAdmin) {  }}
-							<button class="share-button" data-toggle="popover" title="Share:" data-placement="top" 
-									data-content="<input class='share-link' type='text' value='{{ location.protocol+'//'+location.hostname+(location.port ? ':' + location.port : '') }}/discussion/show/\'>">
-								<img src="/content/images/share.png" alt="share">Share
-							</button>
-						{{ } }}
-					</div>
+					{{ } }}
 				</div>
 			</div>
 		</div>

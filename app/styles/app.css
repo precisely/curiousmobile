@@ -491,7 +491,7 @@ button.close {
 	margin: 10px;
 }
 
-.feed-pill:active {
+.feed-pill:active, .feed-pill.active-pill {
 	background-color: #ff935f;
 	color: #fff;
 }
@@ -900,6 +900,10 @@ button.close {
 	font-size: 13px;
 }
 
+.feed-item .discussion-post .user-name, .discussion-comment .user-name{
+	vertical-align: super;
+}
+
 .post-comment {
 	margin: 10px 0px;
 }
@@ -982,8 +986,9 @@ button.close {
 .discussion-comment p {
 	font-style: normal;
 	text-align: justify;
-	margin-left: 32px;
+	margin-left: 35px;
 	margin-bottom: 20px;
+	margin-top: 15px;
 	font-size: 13px;
 	color: #5d5d5d;
 }
@@ -996,3 +1001,12 @@ button.close {
 	margin-bottom: 10px;
 }
 
+.discussion-header .posting-time, .discussion-comment .posting-time {
+	display: block;
+	margin-left: 40px;
+	margin-top: -13px;
+}
+
+.discussion-comment .posting-time {
+	margin-left: 35px;
+}

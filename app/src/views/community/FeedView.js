@@ -15,18 +15,14 @@ define(function(require, exports, module) {
 	var Discussion = require('models/Discussion');
 	var Sprint = require('models/Sprint');
 	var User = require('models/User');
-	var DiscussionTemplate = require('text!templates/discussion.html');
-	var discussionHeaderTemplate = require('text!templates/discussion-header.html');
 	var TrueSurface = require('surfaces/TrueSurface');
 	var u = require('util/Utils');
-	var InputSurface = require("famous/surfaces/InputSurface");
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var DiscussionDetailView = require("views/community/DiscussionDetailView");
 	var CreatePostView = require('views/community/CreatePostView');
 	var SprintCardView = require('views/community/card/SprintCardView')
 	var PeopleCardView = require('views/community/card/PeopleCardView')
 	var DiscussionCardView = require('views/community/card/DiscussionCardView')
-	var GenericSync = require('famous/inputs/GenericSync');
 
 	function FeedView() {
 		BaseView.apply(this, arguments);
@@ -88,7 +84,7 @@ define(function(require, exports, module) {
 		this.pillsScrollView.sequenceFrom(navPills);
 
 		// Adding navigation pills below header
-		navPills.push(this.createPillsSurface('ALL'));
+		navPills.push(this.createPillsSurface('ALL', true));
 		navPills.push(this.createPillsSurface('PEOPLE'));
 		navPills.push(this.createPillsSurface('DISCUSSIONS'));
 		navPills.push(this.createPillsSurface('SPRINT'));
@@ -121,9 +117,10 @@ define(function(require, exports, module) {
 		this.fetchFeedItems(this.currentPill || 'ALL');
 	};
 
-	FeedView.prototype.createPillsSurface = function(pillFor) {
+	FeedView.prototype.createPillsSurface = function(pillFor, active) {
+		var activePill = active ? ' active-pill' : '';
 		var pillSurface = new Surface({
-			content: '<button class="feed-pill btn">' + pillFor + '</button>',
+			content: '<button class="feed-pill btn' + activePill + '" id="' + pillFor + '-pill">' + pillFor + '</button>',
 			size: [true, 50],
 			properties: {
 				backgroundColor: '#efefef',
@@ -135,6 +132,10 @@ define(function(require, exports, module) {
 			this.deck = [];
 			this.initScrollView();
 			this.fetchFeedItems(pillFor);
+			var previousActivePill = document.getElementsByClassName('active-pill');
+			previousActivePill[0].classList.remove('active-pill');
+			var pillElement = document.getElementById(pillFor + '-pill');
+			pillElement.classList.add('active-pill');
 		}.bind(this));
 
 		pillSurface.pipe(this.pillsScrollView);
@@ -143,12 +144,9 @@ define(function(require, exports, module) {
 
 	FeedView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
-		/*if (!state) {
-			state = {
-			};
-		}*/
-		this.currentPill = state ?  state.viewProperties.currentPill : null;
-		this.fetchFeedItems(this.currentPill || 'ALL');
+		if (this.deck.length < 0  || (state && state.reload)) {
+			this.fetchFeedItems(this.currentPill || 'ALL');
+		}
 	};
 
 	FeedView.prototype.getCurrentState = function() {
@@ -226,87 +224,6 @@ define(function(require, exports, module) {
 
 	FeedView.prototype.refresh = function() {
 		this.fetchFeedItems(this.currentPill);
-	};
-
-	FeedView.prototype.changeGroup = function(group) {
-	//	this.fetchDiscussionData(group);
-		this.initScrollView();
-	};
-
-	FeedView.prototype.fetchDiscussionData = function(urlParameters) {
-		Discussion.fetch(urlParameters, function(discussions) {
-			var $this = this;
-
-			if (discussions.dataList.length === 0) {
-				this.itemsAvailable = false;
-				console.log('no more items');
-				return;
-			}
-			discussions.dataList.forEach(function(discussion) {
-				var prettyDate = u.prettyDate(new Date(discussion.updated));
-				discussion.prettyDate = prettyDate;
-
-				var iconImage = '<i class="fa fa-comment close pull-right"></i>';
-				discussion.deleteIcon = '';
-				if (discussion.isAdmin) {
-					discussion.deleteIcon = '<div class="close-discussion">' +
-						'<i class="fa fa-times-circle pull-right"></i>' +
-						'</div>';
-				}
-
-				if (discussion.isPlot) {
-					iconImage = '<i class="fa fa-area-chart close pull-right"></i>';
-				}
-
-				discussion.iconImage = iconImage;
-
-				var discussionSurface = new Surface({
-					size: [undefined, true],
-					content: _.template(DiscussionTemplate, discussion, templateSettings),
-				});
-
-				discussionSurface.on('deploy', function() {
-					Timer.every(function() {
-						var size = this.getSize();
-						var width = (size[0] == true) ? this._currTarget.offsetWidth : size[0];
-						var height = (size[1] == true) ? this._currTarget.offsetHeight : size[1];
-						this.setSize([width, height]);
-					}.bind(this), 2);
-				});
-
-				discussionSurface.on('click', function(e) {
-					var classList;
-					if (u.isAndroid() || (e instanceof CustomEvent)) {
-						classList = e.srcElement.parentElement.classList;
-						if (_.contains(classList, 'close-discussion')) {
-							this.alert = u.showAlert({
-								message: 'Are you sure to delete ' + discussion.name + ' ?',
-								a: 'Yes',
-								b: 'No',
-								onA: function() {
-									Discussion.deleteDiscussion({
-										id: discussion.id
-									}, function(success) {
-										console.log('deleted successfully...');
-										this.refresh();
-									}.bind(this));
-								}.bind(this),
-								onB: function() {
-									u.closeAlerts;
-								}.bind(this),
-							});
-						} else {
-							var state = {
-								discussionId: discussion.id
-							};
-							App.pageView.changePage('DiscussionDetailView', state);
-						}
-					}
-				}.bind(this));
-				this.surfaceList.push(discussionSurface);
-				discussionSurface.pipe(this.scrollView);
-			}.bind(this));
-		}.bind(this));
 	};
 
 	FeedView.prototype.initScrollView = function() {

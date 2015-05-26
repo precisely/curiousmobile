@@ -118,11 +118,10 @@ define(function(require, exports, module) {
 		this.offset = 0;
 		var discussionPost = this.discussionPost;
 		var prettyDate = u.prettyDate(new Date(discussionPost.updated));
-		discussionPost.prettyDate = prettyDate;
+		discussionPost.updated = prettyDate;
 		var discussionPostSurface = new Surface({
 			size: [undefined, true],
 			properties: {
-				zIndex: 1999,
 				padding: '5px 10px',
 				marginTop: '10px'
 			},
@@ -149,7 +148,7 @@ define(function(require, exports, module) {
 		discussionPostSurface.on('click', function(e) {
 			var classList = e.srcElement.classList;
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				if (_.contains(classList, 'delete-discussion')) {
+				if (_.contains(classList, 'close-discussion')) {
 					this.alert = u.showAlert({
 						message: 'Are you sure to delete discussion ?',
 						a: 'Yes',
@@ -158,7 +157,7 @@ define(function(require, exports, module) {
 							Discussion.deleteDiscussion({
 								id: this.discussionId
 							}, function(success) {
-								App.pageView.changePage('FeedView');
+								App.pageView.changePage('FeedView', {reload: true});
 							}.bind(this));
 						}.bind(this),
 						onB: function() {}.bind(this),
