@@ -63,7 +63,6 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.initRenderController();
 
 	}
 
@@ -75,7 +74,22 @@ define(function(require, exports, module) {
 		footer: true,
 	};
 
-	DiscussionDetailView.prototype.initRenderController = function() {
+	DiscussionDetailView.prototype.onShow = function(state) {
+		BaseView.prototype.onShow.call(this);
+	};
+
+	DiscussionDetailView.prototype.preShow = function(state) {
+		if (!state) {
+			//App.pageView.changePage('FeedView');
+			return false;
+		}
+		this.discussionId = state.discussionId;
+		this.refresh();
+		return true;
+	};
+
+	DiscussionDetailView.prototype.refresh = function() {
+		console.log('DiscussionDetailView: refresh called...');
 		this.surfaceList = [];
 		var transition = new Transitionable(Transform.translate(0, 75, App.zIndex.feedItem));
 		this.renderController = new RenderController();
@@ -90,24 +104,6 @@ define(function(require, exports, module) {
 		this.add(node);
 		this.scrollView.sequenceFrom(this.surfaceList);
 		this.renderController.show(this.scrollView);
-	};
-
-	DiscussionDetailView.prototype.onShow = function(state) {
-		BaseView.prototype.onShow.call(this);
-	};
-
-	DiscussionDetailView.prototype.preShow = function(state) {
-		if (!state) {
-			App.pageView.changePage('FeedView');
-			return false;
-		}
-		this.discussionId = state.discussionId;
-		this.refresh();
-		return true;
-	};
-
-	DiscussionDetailView.prototype.refresh = function() {
-		console.log('DiscussionDetailView: refresh called...');
 		DiscussionPost.fetch({
 			discussionId: this.discussionId
 		}, function(discussionPost) {
@@ -120,7 +116,6 @@ define(function(require, exports, module) {
 		this.loadMoreItems = true;
 		this.itemsAvailable = true;
 		this.offset = 0;
-		this.surfaceList = [];
 		var discussionPost = this.discussionPost;
 		var prettyDate = u.prettyDate(new Date(discussionPost.updated));
 		discussionPost.updated = prettyDate;

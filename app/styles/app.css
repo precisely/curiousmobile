@@ -96,10 +96,6 @@ input, textarea {
 	color: #FF935F;
 }
 
-.comment-form {
-	margin: 0 5px;
-}
-
 .backfaceVisibility {
 	-webkit-backface-visibility: visible;
 	backface-visibility: visible;

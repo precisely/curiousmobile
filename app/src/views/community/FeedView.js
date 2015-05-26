@@ -163,7 +163,7 @@ define(function(require, exports, module) {
 	}
 
 	FeedView.prototype.preShow = function(state) {
-		if (this.deck.length < 0  || (state && state.reload)) {
+		if (this.deck.length <= 0  || (state && state.reload)) {
 			this.fetchFeedItems(this.currentPill || 'ALL');
 		}
 		return true;
