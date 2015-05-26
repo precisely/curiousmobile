@@ -149,6 +149,10 @@ define(function(require, exports, module) {
 		var view = this.getPage(pageName);
 		var comingFromPage = this.getCurrentPage();
 
+		if (!view) {
+			console.log('Unable to find view with name: ' + pageName);
+		}
+
 		if (view.options.noBackButton) {
 			this.clearHistory();
 		} else {
@@ -157,7 +161,7 @@ define(function(require, exports, module) {
 			}
 		}
 		this.setCurrentPage(view.constructor.name);
-
+		view.preShow(state);
 		this.renderController.show(view, {
 			duration: 200
 		}, function() {

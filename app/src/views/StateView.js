@@ -59,7 +59,6 @@ define(function(require, exports, module) {
 			return;
 		}
 
-
 		if (state && state.viewProperties) {
 
 			for (var i = 0, len = state.viewProperties.length; i < len; i++) {
