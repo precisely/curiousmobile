@@ -352,21 +352,6 @@ button.close {
 	font-size: 13px;
 }
 
-::-webkit-input-placeholder { /* WebKit browsers */
-	color:    #FC3F28 !important;
-}
-:-moz-placeholder { /* Mozilla Firefox 4 to 18 */
-	color:     #FC3F28 !important;
-	opacity:  1;
-}
-::-moz-placeholder { /* Mozilla Firefox 19+ */
-	color:    #FC3F28 !important;
-	opacity:  1;
-}
-:-ms-input-placeholder { /* Internet Explorer 10+ */
-	color:    #FC3F28 !important;
-}
-
 /* individual: webkit */
 #entry-description::-webkit-input-placeholder { color:#C04F7F !important; }
 
@@ -561,7 +546,7 @@ button.close {
 }
 
 .feed-item .discussion .dark-comment {
-	background-image: url('content/images/comment-dark.png');
+	background-image: url('/content/images/comment-dark.png');
 	text-align: center;
 	vertical-align: middle;
 	background-repeat: no-repeat;
@@ -833,8 +818,8 @@ button.close {
 	margin: 0px 0px 38px 0px;
 }
 
-.discussion-comment .add-comment-to-discussion input {
-	width: 100%;
+.post-comment input {
+	width: 100% !important;
 	height: 52px;
 	padding: 10px;
 }
@@ -854,8 +839,8 @@ button.close {
 	color: #a4a4a4;
 }
 
-#post-comment::-webkit-input-placeholder, #post-comment::-moz-placeholder, #post-comment:-moz-placeholder, 
-#post-comment:-ms-input-placeholder {
+.post-comment input::-webkit-input-placeholder, .post-comment input::-moz-placeholder, .post-comment input:-moz-placeholder, 
+.post-comment input:-ms-input-placeholder {
 	color: #a4a4a4;
 }
 
@@ -964,13 +949,6 @@ button.close {
 	color: #a4a4a4;
 }
 
-#post-comment::-webkit-input-placeholder, #post-comment::-moz-placeholder, #post-comment:-moz-placeholder, 
-#post-comment:-ms-input-placeholder {
-	color: #a4a4a4;
-}
-
-
-
 .discussion-comment .avatar {
 	height: 25px;
 	width: 25px;
@@ -1009,4 +987,10 @@ button.close {
 
 .discussion-comment .posting-time {
 	margin-left: 35px;
+}
+
+@media screen and (max-width: 350px) {
+	.feed-item .footer-label {
+		display: none;
+	}
 }

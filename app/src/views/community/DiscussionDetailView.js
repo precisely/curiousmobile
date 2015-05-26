@@ -16,6 +16,7 @@ define(function(require, exports, module) {
 	var DiscussionPost = require('models/DiscussionPost');
 	var discussionPostTemplate = require('text!templates/discussion-post.html');
 	var commentTemplate = require('text!templates/comments.html');
+	var User = require('models/User');
 
 	function DiscussionDetailView() {
 		BaseView.apply(this, arguments);
@@ -195,6 +196,7 @@ define(function(require, exports, module) {
 		discussionPost.posts.forEach(function(post) {
 
 			post.prettyDate = u.prettyDate(new Date(post.updated));
+			post.isAdmin = post.authorUserId == User.getCurrentUserId();
 			if (post.message) {
 				var commentSurface = new Surface({
 					size: [undefined, true],

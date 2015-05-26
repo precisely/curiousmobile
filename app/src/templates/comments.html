@@ -8,13 +8,15 @@
 			<span class="posting-time">{{= prettyDate }}</span>
 		</a>
 		<span class="posting-time" data-time="{{= updated }}"></span>
-		<div class="pull-right">
+		{{ if (isAdmin) { }}
+			<div class="pull-right">
 				<span class="delete"> 
-					<a href="#" class="delete-post" data-post-id="{{= id }}"> 
+					<a href="#" class="delete-post"> 
 						<i class="fa fa-times-circle pull-right"></i>
 					</a>
 				</span>
-		</div>
+			</div>
+		{{ } }}
 	</div>
 	<div>
 		<p class="without-margin">

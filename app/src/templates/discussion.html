@@ -22,26 +22,29 @@
 				</div>
 				<hr>
 				<div class="row">
-					<div class="col-xs-2 posting-time"">
+					<div class="col-xs-3 posting-time"">
 						{{= prettyDate }}
 					</div>
-					<div class="col-xs-10 buttons">
+					<div class="col-xs-9 buttons">
 						<button>
-							<img src="content/images/follow.png" alt="follow">Follow
+							<img src="content/images/follow.png" alt="follow"/>
+							<span class="footer-label">Follow</span>
 						</button>
 						{{ if (isAdmin) {  }}
 							<button class="share-button" data-toggle="popover" title="Share:" data-placement="top" 
 									data-content="<input class='share-link' type='text' value='{{ location.protocol+'//'+location.hostname+(location.port ? ':' + location.port : '') }}/discussion/show/{{= hash }}\'>">
-								<img src="content/images/share.png" alt="share">Share
+								<img src="content/images/share.png" alt="share"/>
+								<span class="footer-label">Share</span>
 							</button>
 						{{ } }}
 						<button>
 							{{ if (!totalComments ||	totalComments < 1) {  }}
-								<img src="content/images/comment.png" alt="comment" /> Comment
+								<img src="content/images/comment.png" alt="comment" /> 
+								<span class="footer-label">Comment</span>
 							{{ } else { }}
 							<div class="dark-comment comment-button" data-total-comments="{{= totalComments }}">
 								{{= totalComments }}</div>
-									Comment
+								<span class="footer-label">Comment</span>
 							{{ } }}
 						</button>
 					</div>

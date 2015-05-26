@@ -4,6 +4,7 @@ define(function(require, exports, module) {
 	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
 	var ImageSurface = require('famous/surfaces/ImageSurface');
+    var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var Timer = require('famous/utilities/Timer');
 	var Transform = require('famous/core/Transform');
 	var Transitionable = require('famous/transitions/Transitionable');
@@ -70,16 +71,30 @@ define(function(require, exports, module) {
 		this.setHeaderSurface(this.headerSurface, this.pencilIconModifier);
 		this.setHeaderLabel('FEED');
 
+
 		this.headerSurface.on('click', function(e) {
 			App.pageView.changePage(CreatePostView.name);
 		}.bind(this));
 
-		this.pillsScrollViewModifier = new StateModifier({
+		this.pillsScrollViewContainerModifier = new StateModifier({
 			origin: [0, 0],
 			align: [0, 0],
-			transform: Transform.translate(0, 65, App.zIndex.header)
+			transform: Transform.translate(0, 64, App.zIndex.header)
 		});
 
+		var pillsScrollViewContainer = new ContainerSurface({
+			size: [undefined, 50],
+			properties: {
+				backgroundColor: '#efefef',
+				textAlign: 'center'
+			}
+		});
+		this.add(this.pillsScrollViewContainerModifier).add(pillsScrollViewContainer);
+
+		this.pillsScrollViewModifier = new StateModifier({
+			origin: [0.5, 0],
+			align: [0.5, 0]
+		});
 		var navPills = [];
 		this.pillsScrollView.sequenceFrom(navPills);
 
@@ -89,7 +104,8 @@ define(function(require, exports, module) {
 		navPills.push(this.createPillsSurface('DISCUSSIONS'));
 		navPills.push(this.createPillsSurface('SPRINT'));
 
-		this.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
+		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
+
 
 		this.scrollView.sync.on('start', function() {
 			if (this.itemsAvailable) {
