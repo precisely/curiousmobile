@@ -160,9 +160,13 @@ define(function(require, exports, module) {
 
 	FeedView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
+	}
+
+	FeedView.prototype.preShow = function(state) {
 		if (this.deck.length < 0  || (state && state.reload)) {
 			this.fetchFeedItems(this.currentPill || 'ALL');
 		}
+		return true;
 	};
 
 	FeedView.prototype.getCurrentState = function() {

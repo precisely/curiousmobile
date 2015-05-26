@@ -93,13 +93,17 @@ define(function(require, exports, module) {
 	};
 
 	DiscussionDetailView.prototype.onShow = function(state) {
+		BaseView.prototype.onShow.call(this);
+	};
+
+	DiscussionDetailView.prototype.preShow = function(state) {
 		if (!state) {
 			App.pageView.changePage('FeedView');
-			return;
+			return false;
 		}
-		BaseView.prototype.onShow.call(this);
 		this.discussionId = state.discussionId;
 		this.refresh();
+		return true;
 	};
 
 	DiscussionDetailView.prototype.refresh = function() {
@@ -252,7 +256,7 @@ define(function(require, exports, module) {
 			discussionId: this.discussionId,
 			message: message
 		}, function(success) {
-			this.refresh();
+			App.pageView.changePage('DiscussionDetailView', {discussionId: this.discussionId});
 		}.bind(this));
 	};
 	App.pages[DiscussionDetailView.name] = DiscussionDetailView;
