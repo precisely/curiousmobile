@@ -10,7 +10,7 @@ define(function(require, exports, module) {
 	function CreatePostView() {
 		BaseView.apply(this, arguments);
 		_createView.call(this);
-		this.parentPage = 'DiscussionListView';
+		this.parentPage = 'FeedView';
 	}
 
 	CreatePostView.prototype = Object.create(BaseView.prototype);
@@ -37,7 +37,7 @@ define(function(require, exports, module) {
 				classList = e.srcElement.classList;
 				if (_.contains(classList, 'cancel-post')) {
 					this.clear();
-					App.pageView.changePage('DiscussionListView');
+					App.pageView.changePage('FeedView');
 				} else if (_.contains(classList, 'submit-post')) {
 					this.submit();
 				}
@@ -66,7 +66,7 @@ define(function(require, exports, module) {
 					console.log('Posted a new discussion');
 					u.showAlert("Detail is a required field!");
 					// Indicating this is a new like state so list gets reloaded
-					App.pageView.changePage('DiscussionListView', {
+					App.pageView.changePage('FeedView', {
 						new: true
 					});
 				}.bind(this)

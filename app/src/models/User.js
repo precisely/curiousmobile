@@ -118,5 +118,21 @@ define(function(require, exports, module) {
 		store.set('mobileSessionId', false);
 	}
 
+	User.max = 10;
+
+	User.fetch = function(args, callback) {
+		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
+			max : User.max,
+			offset: args.offset?args.offset:0,
+			type: 'people'
+		});
+		u.backgroundJSON("loading feeds", u.makeGetUrl('indexData', 'search'), 
+		u.makeGetArgs(argsToSend), function(data) {
+			if (u.checkData(data)) {
+				callback(data.listItems);
+			}
+		});
+	};
+
 	module.exports = User;
 });

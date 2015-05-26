@@ -1,40 +1,66 @@
-<div class="row ">
-	<div class="col-md-12">
-		<form role="form" class="form-inline comment-form" name="commentForm" onSubmit="return false;">
-			<div class="input-group">
-				<input type="text" class="form-control" id="message" name="message"
-				placeholder="Comment"/>
-				<span class="input-group-btn">
-					<button type="button" class="btn btn-default submit-comment"
-						type="button"> POST
-					</button>
-				</span>
-			</div>
-		</form>
-	</div>
-</div>
 
-<div class="panel panel-default discussion">
-	<div class="close-discussion delete-discussion pull-right">
-		<i class="fa fa-times-circle pull-right delete-discussion"></i> 
-	</div>
-	<div class="panel-body">
-		<div class="media">
-			<div class="media-body">
-				<div class="clearfix">
-					<div class="pull-left">
-						<i class="fa fa-circle"></i>
-						<strong>	<span class="media-heading">{{discussionTitle}}</span> </strong>
+<div class="feed-item">
+	<div class="discussion">
+		<div class="discussion-topic">
+			<div class="contents">
+				<div class="row">
+					<div class="col-xs-9 discussion-header">
+						<a href="#">
+							<img class="avatar" src="/content/images/avatar.png" alt="avatar">
+							<span class="user-name"> {{= discussionOwner }}</span>
+						</a>
 					</div>
-					<div class="pull-right">
-						{{prettyDate}} 
+					<div class="col-xs-3 discussion-topic-span discussion-header">
+						<span class="posting-time" data-time="{{ discussionCreatedOn }}"></span>
+						{{ if (isAdmin) { }}
+							<li class="dropdown">
+								<a href="#" data-toggle="dropdown"><b class="caret"></b></a>
+								<ul class="dropdown-menu" role="menu">
+									<li>
+										<a href="#" class="delete-discussion" data-discussion-hash-id=""> 
+											<img src="/content/images/x.png" width="auto" height="23">Delete
+										</a>
+									</li>
+								</ul>
+							</li>
+						{{ } }}
 					</div>
 				</div>
-				<div class="clearfix">
-					{{firstPost.message}}
+				<div class="discussion-title">
+						<a href="#"> 
+							<span> {{= discussionTitle ? discussionTitle : '(No Title)' }}</span>
+						</a>
+						<p>{{= firstPost.message }}</p>
+				</div>
+				<hr>
+				<div class="row">
+					<div class="col-xs-2 posting-time"">
+						{{= prettyDate }}
+					</div>
+					<div class="col-xs-10 buttons">
+						<button>
+							<img src="/content/images/follow.png" alt="follow">Follow
+						</button>
+						{{ if (isAdmin) {  }}
+							<button class="share-button" data-toggle="popover" title="Share:" data-placement="top" 
+									data-content="<input class='share-link' type='text' value='{{ location.protocol+'//'+location.hostname+(location.port ? ':' + location.port : '') }}/discussion/show/\'>">
+								<img src="/content/images/share.png" alt="share">Share
+							</button>
+						{{ } }}
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
-
+<div class="post-comment">
+	<form role="form" class="form-inline comment-form" name="commentForm" onSubmit="return false;">
+		<div class="input-group">
+			<input type="text" class="form-control" id="message" name="message"
+					placeholder="Comment">
+			<span class="input-group-addon submit-comment">
+				POST
+			</span>
+		</div>
+	</form>
+</div>

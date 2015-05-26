@@ -135,7 +135,7 @@ define(function(require, exports, module) {
 				console.log('footerSurface event');
 				var pageName = e.srcElement.getAttribute('data');
 				e.data = pageName;
-				if (e.data == 'TrackView' || e.data == 'DiscussionListView') {
+				if (e.data == 'TrackView' || e.data == 'FeedView') {
 					this._eventOutput.emit('change-page', e);
 				}
 			}

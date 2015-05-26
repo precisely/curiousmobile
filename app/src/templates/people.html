@@ -1,0 +1,21 @@
+<div class="people-wrapper">
+	<div class="user-details-header">
+		<a href="#">
+			<i class="fa fa-circle"></i>
+			<span class="user-name">{{= username }}</span>
+		</a>
+		<button class="follow">FOLLOW</button>
+	</div>
+	<div class="user-details-content">
+		<span>Interest Tags:</span>
+		<span class="label-value">{{= interestTags.join(", ") }}</span>
+	</div>
+	<div class="user-details-content">
+		<span>Public Sprints:</span>
+		<span class="label-value">{{= sprints.join(", ") }}</span>
+	</div>
+	<div class="user-details-content">
+		<span>Start Date:</span>
+		<span class="label-value">{{= updated }}</span>
+	</div>
+</div>

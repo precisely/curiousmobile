@@ -30,16 +30,14 @@ define(function(require, exports, module) {
 
 	Discussion.fetch = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
-			//			q : "searchQuery",
-			userId: User.getCurrentUserId(),
 			max : Discussion.max,
-			offset: args.offset?args.offset:0,
-			timeZoneName: window.jstz.determine().name()
+			offset: args.offset ? args.offset : 0,
+			type: 'discussions'
 		});
-		u.backgroundJSON("loading discussion list", u.makeGetUrl("listDiscussionData"), 
-		u.makeGetArgs(argsToSend), function(discussions) {
-			if (u.checkData(discussions)) {
-				callback(discussions);
+		u.backgroundJSON("loading discussion list", u.makeGetUrl('indexData', 'search'), 
+		u.makeGetArgs(argsToSend), function(data) {
+			if (u.checkData(data)) {
+				callback(data.listItems.discussionList);
 			}
 		});
 	};

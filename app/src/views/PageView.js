@@ -11,7 +11,7 @@ define(function(require, exports, module) {
 	var HomeView = require('views/HomeView');
 	var LoginView = require('views/LoginView');
 	var RegisterView = require('views/RegisterView');
-	var DiscussionListView = require('views/community/DiscussionListView');
+	var FeedView = require('views/community/FeedView');
 	var EntryFormView = require('views/entry/EntryFormView');
 	var ContextMenuView = require('views/ContextMenuView');
 	var Utils = require('util/Utils');

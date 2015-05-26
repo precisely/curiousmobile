@@ -1,12 +1,23 @@
-<div class="panel panel-default discussion">
-	<div class="close-discussion delete-comment">
-		<i class="fa fa-times-circle pull-right"></i>
-	</div>
-	<div class="panel-body">
-		<div class="media">
-			<div class="media-body">
-				{{message}}
-			</div>
+<div class="discussion-comment multiple-comments">
+	<div>
+		<a href="#">
+			<img class="avatar" src="/content/images/avatar2.png" alt="avatar">
+			<span class="user-name"> 
+				{{= authorName }}
+			</span>
+		</a>
+		<span class="posting-time" data-time="{{= updated }}"></span>
+		<div class="pull-right">
+				<span class="delete"> 
+					<a href="#" class="delete-post" data-post-id="{{= id }}"> 
+						<i class="fa fa-times-circle pull-right"></i>
+					</a>
+				</span>
 		</div>
+	</div>
+	<div>
+		<p class="without-margin">
+			{{= message }}
+		</p>
 	</div>
 </div>

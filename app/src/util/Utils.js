@@ -381,8 +381,11 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				return store.get('mobileSessionId') != null;
 			}
 
-			Utils.makeGetUrl = function(url) {
-				return u.getServerUrl() + "/mobiledata/" + url + '?callback=?';
+			Utils.makeGetUrl = function(action, controller) {
+				if (controller) {
+					return u.getServerUrl() + '/' + controller + '/' + action + '?callback=?';
+				}
+				return u.getServerUrl() + '/mobiledata/' + action + '?callback=?';
 			}
 
 			Utils.makeGetArgs = function(args) {
@@ -391,8 +394,11 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				return args;
 			}
 
-			Utils.makePostUrl = function(url) {
-				return u.getServerUrl() + "/mobiledata/" + url;
+			Utils.makePostUrl = function(action, controller) {
+				if (controller) {
+					return u.getServerUrl() + '/' + controller + '/' + action;
+				}
+				return u.getServerUrl() + "/mobiledata/" + action;
 			}
 
 			Utils.makePostArgs = function(args) {

@@ -19,22 +19,23 @@ define(function(require, exports, module) {
 
 	function DiscussionDetailView() {
 		BaseView.apply(this, arguments);
-		this.parentPage = 'DiscussionListView';
-		var transition = new Transitionable(Transform.translate(0, 75, 0));
-		this.renderController = new RenderController();
-		this.renderController.inTransformFrom(transition);
-
-		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
-		var mod = new StateModifier({
-			size: [undefined, App.height - 130],
-		});
-		var node = new RenderNode(mod);
-		node.add(this.renderController);
-		this.add(node);
+		this.parentPage = 'FeedView';
 		this.setHeaderLabel('FEED');
+
+		this.backgroundSurface = new Surface({
+			size: [undefined, undefined],
+			properties: {
+				backgroundColor: '#efefef',
+				zIndex: 5
+			}
+		});
+
+		this.setBody(this.backgroundSurface);
+
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.Y,
 		});
+		this.surfaceList = [];
 
 		this.scrollView.sync.on('start', function() {
 			if (this.itemsAvailable) {
@@ -60,6 +61,9 @@ define(function(require, exports, module) {
 				}.bind(this));
 			}
 		}.bind(this));
+
+		this.initRenderController();
+
 	}
 
 	DiscussionDetailView.prototype = Object.create(BaseView.prototype);
@@ -70,14 +74,36 @@ define(function(require, exports, module) {
 		footer: true,
 	};
 
+	DiscussionDetailView.prototype.initRenderController = function() {
+		this.surfaceList = [];
+		var transition = new Transitionable(Transform.translate(0, 75, App.zIndex.feedItem));
+		this.renderController = new RenderController();
+		this.renderController.inTransformFrom(transition);
+
+		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
+		var mod = new StateModifier({
+			size: [undefined, App.height - 130],
+		});
+		var node = new RenderNode(mod);
+		node.add(this.renderController);
+		this.add(node);
+		this.scrollView.sequenceFrom(this.surfaceList);
+		this.renderController.show(this.scrollView);
+	};
+
 	DiscussionDetailView.prototype.onShow = function(state) {
+		if (!state) {
+			App.pageView.changePage('FeedView');
+			return;
+		}
 		BaseView.prototype.onShow.call(this);
 		this.discussionId = state.discussionId;
 		this.refresh();
 	};
 
 	DiscussionDetailView.prototype.refresh = function() {
-		console.log('DiscussionListView: refresh called...');
+		console.log('DiscussionDetailView: refresh called...');
+		this.initRenderController();
 		DiscussionPost.fetch({
 			discussionId: this.discussionId
 		}, function(discussionPost) {
@@ -90,12 +116,16 @@ define(function(require, exports, module) {
 		this.loadMoreItems = true;
 		this.itemsAvailable = true;
 		this.offset = 0;
-		this.surfaceList = [];
 		var discussionPost = this.discussionPost;
 		var prettyDate = u.prettyDate(new Date(discussionPost.updated));
 		discussionPost.prettyDate = prettyDate;
 		var discussionPostSurface = new Surface({
 			size: [undefined, true],
+			properties: {
+				zIndex: 1999,
+				padding: '5px 10px',
+				marginTop: '10px'
+			},
 			content: _.template(discussionPostTemplate, discussionPost, templateSettings),
 		});
 
@@ -107,7 +137,8 @@ define(function(require, exports, module) {
 				this.setSize([width, height]);
 			}.bind(this), 2);
 		});
-		this.surfaceList.push(discussionPostSurface)
+		this.surfaceList.push(discussionPostSurface);
+		discussionPostSurface.pipe(this.scrollView);
 
 		discussionPostSurface.on('keyup', function(e) {
 			if (e.keyCode == 13) {
@@ -127,7 +158,7 @@ define(function(require, exports, module) {
 							Discussion.deleteDiscussion({
 								id: this.discussionId
 							}, function(success) {
-								App.pageView.changePage('DiscussionListView');
+								App.pageView.changePage('FeedView');
 							}.bind(this));
 						}.bind(this),
 						onB: function() {}.bind(this),
@@ -185,7 +216,7 @@ define(function(require, exports, module) {
 					if (u.isAndroid() || (e instanceof CustomEvent)) {
 						var classList;
 						classList = e.srcElement.parentElement.classList;
-						if (_.contains(classList, 'delete-comment')) {
+						if (_.contains(classList, 'delete-post')) {
 							u.showAlert({
 								message: 'Are you sure to delete this comment ?',
 								a: 'Yes',
