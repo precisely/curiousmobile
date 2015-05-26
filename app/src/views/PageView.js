@@ -56,10 +56,10 @@ define(function(require, exports, module) {
 
 		this.changePage(this.getCurrentPage());
 
-		App.coreEventHandler.on('app-paused', function () {
+		App.coreEventHandler.on('app-paused', function() {
 			this.saveState();
 		}.bind(this));
-		App.coreEventHandler.on('app-resume', function () {
+		App.coreEventHandler.on('app-resume', function() {
 			this.loadState();
 		}.bind(this));
 	}
@@ -154,15 +154,9 @@ define(function(require, exports, module) {
 		} else {
 			if (comingFromPage && comingFromPage !== pageName) {
 				this.history.push(comingFromPage);
-			} else if(view.parentPage) {
-				this.history.push(view.parentPage);
 			}
 		}
 		this.setCurrentPage(view.constructor.name);
-
-		this.renderController.hide({
-			duration: 200
-		}); //hides the last page
 
 		this.renderController.show(view, {
 			duration: 200
@@ -203,8 +197,11 @@ define(function(require, exports, module) {
 	/**
 	 * Goes back to the last page in the history
 	 */
-	PageView.prototype.goBack = function() {
+	PageView.prototype.goBack = function(parent) {
 		var backTo = this.history.pop();
+		if (parent) {
+			backTo = parent;	
+		}
 		this.changePage(backTo);
 	};
 
@@ -243,7 +240,7 @@ define(function(require, exports, module) {
 	PageView.prototype.loadState = function() {
 		var view = this.getCurrentView();
 		view.getStateFromCache();
-		view.clearLastCachedState();	
+		view.clearLastCachedState();
 	};
 
 	module.exports = PageView;

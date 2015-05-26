@@ -33,7 +33,8 @@ return this._;
 		jstzdetect: '../lib/jstzdetect/jstz.min',
 		jscache: '../lib/jscache/cache',
 		'exoskeleton.localStorage': '../lib/exoskeleton.localStorage/backbone.localStorage',
-		bootstrap: '../lib/bootstrap/dist/js/bootstrap'
+		bootstrap: '../lib/bootstrap/dist/js/bootstrap',
+		entry: './models/Entry.js',
 	},
 	packages: [
 

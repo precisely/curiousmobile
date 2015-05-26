@@ -164,14 +164,15 @@ define(function(require, exports, module) {
 				App.pageView.clearHistory();
 			}
 		}
-		
+
 		if (state) {
 			this.loadState(state);
 		}
 	};
 
 	BaseView.prototype.goBack = function() {
-		App.pageView.goBack(); 	
+		App.pageView.goBack(this.parentPage);
+		this._eventOutput.emit('go-back');
 	};
 
 	BaseView.prototype.setHeaderLabel = function(title) {

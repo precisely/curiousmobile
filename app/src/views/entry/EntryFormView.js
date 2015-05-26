@@ -1,6 +1,5 @@
 define(function(require, exports, module) {
 	var BaseView = require('views/BaseView');
-	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
 	var Timer = require('famous/utilities/Timer');
 	var ImageSurface = require('famous/surfaces/ImageSurface');
@@ -62,16 +61,16 @@ define(function(require, exports, module) {
 			this.changePage('TrackView');
 		}.bind(App.pageView));
 
-		this.on('go-back', function(e) {
-			console.log('EventHandler: this.entryFormView event: go-back');
-			store.set('lastPage', 'TrackView');
-			this.getPage('EntryFormView').blur();
-		}.bind(App.pageView));
-
 		this.on('hiding-form-view', function(e) {
 			console.log('EventHandler: this.entryFormView event: hiding-form-view');
 			this.changePage('TrackView');
 		}.bind(App.pageView));
+
+		this.on('go-back', function(e) {
+			console.log('EventHandler: this.entryFormView event: go-back');
+			this.blur();
+		}.bind(this));
+
 	}
 
 	function _createForm() {
@@ -289,7 +288,9 @@ define(function(require, exports, module) {
 
 		var state = {
 			viewProperties: {
-				entry: entry,
+				name: 'entry',
+				value: entry,
+				model: 'entry'
 			},
 			form: [{
 				id: 'entry-description',
@@ -411,6 +412,8 @@ define(function(require, exports, module) {
 			window.App.collectionCache.clear();
 		}
 
+
+
 		if (this.hasFuture()) {
 			this.alert = u.showAlert({
 				message: 'Update just this one event or also future events?',
@@ -425,7 +428,7 @@ define(function(require, exports, module) {
 			});
 			return;
 		}
-		this.saveEntry(false);
+		this.saveEntry(true);
 	};
 
 	EntryFormView.prototype.saveEntry = function(allFuture) {
@@ -446,7 +449,7 @@ define(function(require, exports, module) {
 
 	EntryFormView.prototype.hasFuture = function() {
 		var entry = this.entry;
-		return ((entry.isRepeat() && !entry.isRemind()) || entry.isGhost()) && entry.isTodayOrLater();
+		return ((entry.isRepeat() && !entry.isRemind()) || entry.isGhost()) && !entry.isTodayOrLater();
 	};
 
 	App.pages[EntryFormView.name] = EntryFormView;

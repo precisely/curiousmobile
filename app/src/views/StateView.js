@@ -4,6 +4,7 @@ define(function(require, exports, module) {
 	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var Timer = require('famous/utilities/Timer');
 
 	/**
 	 * All stateful views need to extend this class. On app-pause this will save the state of all stateful views in
@@ -51,7 +52,7 @@ define(function(require, exports, module) {
 		if (!state) {
 			return;
 		}
-		
+
 		if (state.reload) {
 			this.clearLastCachedState();
 			window.location.reload();
@@ -60,13 +61,14 @@ define(function(require, exports, module) {
 
 
 		if (state && state.viewProperties) {
-			
-			for (var i = 0, len = state.form.length; i < len; i++) {
+
+			for (var i = 0, len = state.viewProperties.length; i < len; i++) {
 				var property = state.viewProperties[i];
 				var value = property.value;
 				if (property.model) {
 					// TODO get model class from model cache and instantiate
-					// value = new ModelClass(value);	
+					var ModelClass = require(property.model);
+					value = new ModelClass(value);
 				}
 				this[property.name] = value;
 			}
@@ -77,15 +79,17 @@ define(function(require, exports, module) {
 			for (var i = 0, len = state.form.length; i < len; i++) {
 				var element = state.form[i];
 				console.log(this.constructor.name + ': Setting value for ' + element.id);
-				var elementDOM = document.getElementById(element.id);
-				elementDOM.value = element.value;
-				if (element.selectionRange) {
-					elementDOM.setSelectionRange(element.selectionRange[0], element.selectionRange[1]);
-				}
+				Timer.setTimeout(function() {
+					var elementDOM = document.getElementById(element.id);
+					elementDOM.value = element.value;
+					if (element.selectionRange) {
+						elementDOM.setSelectionRange(element.selectionRange[0], element.selectionRange[1]);
+					}
 
-				if (element.focus) {
-					elementDOM.focus();
-				}
+					if (element.focus) {
+						elementDOM.focus();
+					}
+				}.bind(this), 300);
 			}
 		}
 

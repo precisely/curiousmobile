@@ -65,6 +65,10 @@ define(function(require, exports, module) {
 		inputElement.focus();
 	};
 
+//	LoginView.prototype.getCurrentState = function() {
+	
+//	};
+
 	LoginView.prototype.submit = function() {
 		var currentUser = new User();
 		var username = document.forms["loginForm"]["username"].value;
