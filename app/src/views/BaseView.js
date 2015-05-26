@@ -171,7 +171,7 @@ define(function(require, exports, module) {
 	};
 
 	BaseView.prototype.preShow = function() {
-	
+		return true;
 	};
 
 	BaseView.prototype.goBack = function() {

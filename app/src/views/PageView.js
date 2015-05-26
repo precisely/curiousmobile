@@ -161,14 +161,16 @@ define(function(require, exports, module) {
 			}
 		}
 		this.setCurrentPage(view.constructor.name);
-		view.preShow(state);
+		var continueChangePage = view.preShow(state);
 		this.renderController.show(view, {
 			duration: 200
 		}, function() {
 			console.log("PageView: show complete");
-			Timer.setTimeout(function() {
-				this.onShow(state);
-			}.bind(this), 300);
+			if (continueChangePage) {
+				Timer.setTimeout(function() {
+					this.onShow(state);
+				}.bind(this), 300);
+			}
 		}.bind(view));
 		this._eventOutput.emit('page-change-complete');
 	};
@@ -204,7 +206,7 @@ define(function(require, exports, module) {
 	PageView.prototype.goBack = function(parent) {
 		var backTo = this.history.pop();
 		if (parent) {
-			backTo = parent;	
+			backTo = parent;
 		}
 		this.changePage(backTo);
 	};
