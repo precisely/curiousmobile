@@ -168,7 +168,7 @@ define(function(require, exports, module) {
 		BaseView.prototype.preShow.call(this);
 		if (state && state.new) {
 			EntryCollection.clearCache();
-			this.changeDate(new Date());
+			this.changeDate(this.calendarView.selectedDate);
 		} else if (state && (state.entryDate)) {
 			EntryCollection.clearCache();
 			this.changeDate(state.entryDate);

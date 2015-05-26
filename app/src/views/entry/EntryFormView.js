@@ -248,10 +248,6 @@ define(function(require, exports, module) {
 
 	EntryFormView.prototype.buildStateFromEntry = function(entry) {
 		console.log('entry selected with id: ' + entry.id);
-		var currentDayEntries =
-			new EntryCollection(EntryCollection.getFromCache(
-				App.pageView.getPage('TrackView').getSelectedDate()));
-		entry = currentDayEntries.get(entry);
 		this.entry = entry;
 		var directlyCreateEntry = false;
 		if (entry.isContinuous() || (entry.isRemind() && entry.isGhost())) {
@@ -414,6 +410,7 @@ define(function(require, exports, module) {
 					this.saveEntry(true);
 				}.bind(this),
 			});
+			this.autoCompleteView.hide();
 			return;
 		}
 		this.saveEntry(true);
