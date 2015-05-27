@@ -228,6 +228,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 					if (successCallback)
 						successCallback(data);
 					u.nextJSONCall(background);
+					window.plugins.spinnerDialog.hide();
 				};
 				var wrapFailCallback = function(data, msg) {
 					stillRunning = false;
@@ -252,9 +253,11 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 							u.queueJSON(description, url, args, successCallback, failCallback, delay, background);
 						}, delay);
 					}
+					window.plugins.spinnerDialog.hide();
 				};
 				if ((!background) && (u.numJSONCalls > 0)) { // json call in progress
 					var jsonCall = function() {
+						window.plugins.spinnerDialog.show(null, null, true);
 						$.ajax({
 							type: (post ? "post" : "get"),
 							dataType: "json",
@@ -270,6 +273,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				} else { // first call
 					if (!background)
 						++u.numJSONCalls;
+					window.plugins.spinnerDialog.show(null, null, true);
 					$.ajax({
 						type: (post ? "post" : "get"),
 						dataType: "json",
