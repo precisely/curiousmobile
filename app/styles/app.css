@@ -542,7 +542,7 @@ button.close {
 }
 
 .feed-item .discussion .dark-comment {
-	background-image: url('/content/images/comment-dark.png');
+	background-image: url('../content/images/comment-dark.png');
 	text-align: center;
 	vertical-align: middle;
 	background-repeat: no-repeat;
