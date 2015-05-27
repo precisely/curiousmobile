@@ -107,7 +107,7 @@ define(function(require, exports, module) {
 		var movementY = Math.abs(data.position[1]);
 		console.log('main.js: ', ' movementy: ', movementY);
 		// Don't show context menu if there is intent to move something
-		if (movementY > 80) {
+		if (movementY > 80 && App.pageView.getCurrentPage === 'TrackView') {
 			App.coreEventHandler.emit('refresh-entries');
 		}
 	});
