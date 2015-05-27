@@ -263,6 +263,7 @@ define(function(require, exports, module) {
 		this.loadMoreItems = true;
 		this.itemsAvailable = true;
 		this.offset = 0;
+		this.scrollView.setPosition(0);
 	};
 
 	App.pages[FeedView.name] = FeedView;
