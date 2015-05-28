@@ -60,7 +60,7 @@ define(function(require, exports, module) {
 			this.saveState();
 		}.bind(this));
 		App.coreEventHandler.on('app-resume', function() {
-			this.loadState();
+//			this.loadState();
 		}.bind(this));
 	}
 

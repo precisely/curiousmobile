@@ -6,6 +6,7 @@ define(function(require, exports, module) {
 	var LoginTemplate = require('text!templates/login.html');
 	var User = require('models/User');
 	var u = require('util/Utils');
+	var push = require('util/Push');
 
 	function LoginView() {
 		BaseView.apply(this, arguments);
@@ -85,6 +86,7 @@ define(function(require, exports, module) {
 					window.App.currentUser = user;
 					console.log('LoginView: login success');
 					App.pageView.changePage('TrackView');
+					push.registerNotification();
 				}.bind(this)
 			)
 		}

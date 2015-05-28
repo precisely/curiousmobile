@@ -72,6 +72,7 @@ define(function(require, exports, module) {
 
 		},
 		successHandler: function(result) {
+			console.log('Push success handler');
 			if (push.isIOS()) {
 				push.tokenHandler(result);
 			}
@@ -79,6 +80,7 @@ define(function(require, exports, module) {
 		},
 
 		onNotificationAPN: function(event) {
+			console.log("APNS received');
 			var keys = [];
 			for(var key in event){
 				console.log("APN Event property name "+key);
@@ -93,7 +95,7 @@ define(function(require, exports, module) {
 			//
 			event.pushNotification = true;
 			event.entryDate = new Date(event.entryDate);
-			App.pageView.changePage('track', event);
+			App.pageView.changePage('TrackView', event);
 
 			if ( event.alert ) {
 				navigator.notification.alert(event.alert);
@@ -163,5 +165,6 @@ define(function(require, exports, module) {
 
 	};
 
+	window.push = push;
 	module.exports = push;
 });
