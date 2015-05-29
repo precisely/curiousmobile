@@ -204,7 +204,7 @@ define(function(require, exports, module) {
 		if (lable === 'ALL') {
 			params.type = 'all';
 			var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', params);
-			u.backgroundJSON("loading feeds", u.makeGetUrl('indexData', 'search'), 
+			u.queueJSON("loading feeds", u.makeGetUrl('indexData', 'search'), 
 			u.makeGetArgs(argsToSend), function(data) {
 				if (u.checkData(data)) {
 					data.listItems.sort(function(a, b) {

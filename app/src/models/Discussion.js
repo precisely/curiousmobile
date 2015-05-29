@@ -34,7 +34,7 @@ define(function(require, exports, module) {
 			offset: args.offset ? args.offset : 0,
 			type: 'discussions'
 		});
-		u.backgroundJSON("loading discussion list", u.makeGetUrl('indexData', 'search'), 
+		u.queueJSON("loading discussion list", u.makeGetUrl('indexData', 'search'), 
 		u.makeGetArgs(argsToSend), function(data) {
 			if (u.checkData(data)) {
 				callback(data.listItems.discussionList);
@@ -47,7 +47,7 @@ define(function(require, exports, module) {
 			userId: User.getCurrentUserId(),
 			id : args.id
 		});
-		u.backgroundJSON("loading discussion list", u.makeGetUrl("deleteDiscussionId"), 
+		u.queueJSON("loading discussion list", u.makeGetUrl("deleteDiscussionId"), 
 		u.makeGetArgs(argsToSend), function(data) {
 			if (data == 'success') {
 				callback(data);

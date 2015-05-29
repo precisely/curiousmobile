@@ -40,7 +40,7 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 				timeZoneName: window.jstz.determine().name()
 			});
 			console.log('Fetching entries from the server for dates: ' + dates);
-			u.backgroundJSON("loading entry list", u.makeGetUrl("getListData"), u.makeGetArgs(argsToSend),
+			u.queueJSON("loading entry list", u.makeGetUrl("getListData"), u.makeGetArgs(argsToSend),
 				function(entries) {
 					if (u.checkData(entries)) {
 						console.log('entries from the server: ' + entries);

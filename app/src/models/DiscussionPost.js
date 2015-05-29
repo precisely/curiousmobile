@@ -16,7 +16,7 @@ define( function(require, exports, module) {
 			offset: params.offset?params.offset:0
 		});
 		console.log('Fetching discussions from the server: ');
-		u.backgroundJSON("loading discussion list", u.makeGetUrl("listCommentData"),
+		u.queueJSON("loading comments", u.makeGetUrl("listCommentData"),
 		  u.makeGetArgs(argsToSend), function(comments) {
 			if (u.checkData(comments)) {
 				callback(comments);
@@ -31,7 +31,7 @@ define( function(require, exports, module) {
 			clearPostId : args.clearPostId
 		});
 		console.log(args.clearPostId, args.discussionId);
-		u.backgroundJSON("loading discussion list", u.makeGetUrl("deleteCommentData"), 
+		u.queueJSON("deleting a comment", u.makeGetUrl("deleteCommentData"), 
 		  u.makeGetArgs(argsToSend), function(data) {
 			console.log(data);
 			if (data == 'success') {
@@ -49,7 +49,7 @@ define( function(require, exports, module) {
 			message : args.message,
 			plotIdMessage : args.plotIdMessage
 		});
-		u.backgroundJSON("loading discussion list", u.makeGetUrl("createCommentData"), 
+		u.queueJSON("adding a comment", u.makeGetUrl("createCommentData"), 
 		  u.makeGetArgs(argsToSend), function(data) {
 			console.log(data);
 			if (data == 'success') {
