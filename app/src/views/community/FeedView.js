@@ -129,6 +129,13 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
+		this.renderController = new RenderController();
+		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
+		var mod = new StateModifier({
+			size: [undefined, App.height - 130],
+			transform: Transform.translate(0, 110, App.zIndex.feedItem)
+		});
+		this.add(mod).add(this.renderController);
 		this.initScrollView();
 		this.fetchFeedItems(this.currentPill || 'ALL');
 	};
@@ -164,6 +171,7 @@ define(function(require, exports, module) {
 
 	FeedView.prototype.preShow = function(state) {
 		if (this.deck.length <= 0  || (state && state.reload)) {
+			this.initScrollView();
 			this.fetchFeedItems(this.currentPill || 'ALL');
 		}
 		return true;
@@ -212,6 +220,8 @@ define(function(require, exports, module) {
 		} else if (lable === 'DISCUSSIONS') {
 			Discussion.fetch(params, addListItemsToScrollView.bind(this));
 		}
+		this.scrollView.sequenceFrom(this.deck);
+		this.renderController.show(this.scrollView);
 	};
 
 	function addListItemsToScrollView (listItems) {
@@ -239,7 +249,7 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 			
-		this.add(Scrollview);
+		//this.add(Scrollview);
 	}
 
 	FeedView.prototype.refresh = function() {
@@ -248,25 +258,12 @@ define(function(require, exports, module) {
 
 	FeedView.prototype.initScrollView = function() {
 
-		var transition = new Transitionable(Transform.translate(0, 110, App.zIndex.feedItem));
-		this.renderController = new RenderController();
-		this.renderController.inTransformFrom(transition);
-
-		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
-		var mod = new StateModifier({
-			size: [undefined, App.height - 130],
-		});
-		var node = new RenderNode(mod);
-		node.add(this.renderController);
-		this.add(node);
-		this.group = '';
 		this.deck = [];
+		this.group = '';
 		this.loadMoreItems = true;
 		this.itemsAvailable = true;
 		this.offset = 0;
-
-		this.scrollView.sequenceFrom(this.deck);
-		this.renderController.show(this.scrollView);
+		this.scrollView.setPosition(0);
 	};
 
 	App.pages[FeedView.name] = FeedView;

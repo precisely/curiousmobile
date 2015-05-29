@@ -5,6 +5,33 @@
 var App = {};
 App.pages = {};
 App.CSRF = {};
+require.config({
+	baseUrl: './src/'
+});
+function onLoad() {
+	document.addEventListener("deviceready", onDeviceReady, false);
+	document.addEventListener("resume", onAppResume, false);
+	document.addEventListener("pause", function() {
+		App.coreEventHandler.emit('app-paused');
+	}, false);
+}
+
+// Cordova is loaded and it is now safe to make calls Cordova methods
+//
+function onDeviceReady() {
+	// Now safe to use the Cordova API
+	console.log('index.html:56 Device Ready');
+	StatusBar.hide();
+	cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+	document.getElementById('reloading').style.display = "none";
+}
+
+function onAppResume() {
+	console.log('App has resumed from background');
+	console.log(device.platform);
+	App.coreEventHandler.emit('app-resume');
+}
+
 define(function(require, exports, module) {
 	var App = window.App;
 	App.CSRF.SyncTokenKeyName = "SYNCHRONIZER_TOKEN"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_KEY
@@ -49,9 +76,9 @@ define(function(require, exports, module) {
 	App.stateCache = stateCache;
 	//App.serverUrl = "http://192.168.0.31:8080";
 	//App.serverUrl = "http://192.168.0.111:8080";
-	App.serverUrl = "http://dev.wearecurio.us";
+	//App.serverUrl = "http://dev.wearecurio.us";
 	//App.serverUrl = "http://127.0.0.1:8080";
-	//App.serverUrl = "http://192.168.0.108:8080";
+	App.serverUrl = "http://192.168.0.108:8080";
 	Engine.setOptions({
 		containerClass: 'app-container'
 	});

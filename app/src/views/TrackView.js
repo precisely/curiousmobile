@@ -139,11 +139,8 @@ define(function(require, exports, module) {
 		this.on('create-entry', function(e) {
 			console.log('EventHandler: this.trackView.on event: create-entry');
 			this.getPage('EntryFormView').unsetEntry();
-			this.changePage('EntryFormView', {
-				viewProperties: {
-					entry: new Entry(),
-				},
-			});
+			var formViewState = App.pageView.getPage('EntryFormView').buildStateFromEntry(new Entry());
+			this.changePage('EntryFormView', formViewState);
 		}.bind(App.pageView));
 	}
 
