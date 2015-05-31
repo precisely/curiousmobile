@@ -4,7 +4,7 @@ define(function(require, exports, module) {
 	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
 	var ImageSurface = require('famous/surfaces/ImageSurface');
-    var ContainerSurface = require("famous/surfaces/ContainerSurface");
+	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var Timer = require('famous/utilities/Timer');
 	var Transform = require('famous/core/Transform');
 	var Transitionable = require('famous/transitions/Transitionable');
@@ -170,7 +170,7 @@ define(function(require, exports, module) {
 	}
 
 	FeedView.prototype.preShow = function(state) {
-		if (this.deck.length <= 0  || (state && state.reload)) {
+		if (this.deck.length <= 0 || (state && state.reload)) {
 			this.initScrollView();
 			this.fetchFeedItems(this.currentPill || 'ALL');
 		}
@@ -204,15 +204,14 @@ define(function(require, exports, module) {
 		if (lable === 'ALL') {
 			params.type = 'all';
 			var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', params);
-			u.queueJSON("loading feeds", u.makeGetUrl('indexData', 'search'), 
-			u.makeGetArgs(argsToSend), function(data) {
-				if (u.checkData(data)) {
+			u.queueJSON("loading feeds", u.makeGetUrl('indexData', 'search'),
+				u.makeGetArgs(argsToSend),
+				function(data) {
 					data.listItems.sort(function(a, b) {
 						return a.updated > b.updated ? -1 : (a.updated < b.updated ? 1 : 0)
 					});
 					addListItemsToScrollView.call(this, data.listItems);
-				}
-			}.bind(this));
+				}.bind(this));
 		} else if (lable === 'PEOPLE') {
 			User.fetch(params, addListItemsToScrollView.bind(this));
 		} else if (lable === 'SPRINT') {
@@ -224,7 +223,7 @@ define(function(require, exports, module) {
 		this.renderController.show(this.scrollView);
 	};
 
-	function addListItemsToScrollView (listItems) {
+	function addListItemsToScrollView(listItems) {
 		if (!listItems) {
 			this.itemsAvailable = false;
 			console.log('no more items available');
@@ -248,7 +247,7 @@ define(function(require, exports, module) {
 				peopleCardView.setScrollView(this.scrollView);
 			}
 		}.bind(this));
-			
+
 		//this.add(Scrollview);
 	}
 

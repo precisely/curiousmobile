@@ -5,32 +5,6 @@
 var App = {};
 App.pages = {};
 App.CSRF = {};
-require.config({
-	baseUrl: './src/'
-});
-function onLoad() {
-	document.addEventListener("deviceready", onDeviceReady, false);
-	document.addEventListener("resume", onAppResume, false);
-	document.addEventListener("pause", function() {
-		App.coreEventHandler.emit('app-paused');
-	}, false);
-}
-
-// Cordova is loaded and it is now safe to make calls Cordova methods
-//
-function onDeviceReady() {
-	// Now safe to use the Cordova API
-	console.log('index.html:56 Device Ready');
-	StatusBar.hide();
-	cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-	document.getElementById('reloading').style.display = "none";
-}
-
-function onAppResume() {
-	console.log('App has resumed from background');
-	console.log(device.platform);
-	App.coreEventHandler.emit('app-resume');
-}
 
 define(function(require, exports, module) {
 	var App = window.App;

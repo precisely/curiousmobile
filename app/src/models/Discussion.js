@@ -30,32 +30,29 @@ define(function(require, exports, module) {
 
 	Discussion.fetch = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
-			max : Discussion.max,
+			max: Discussion.max,
 			offset: args.offset ? args.offset : 0,
 			type: 'discussions'
 		});
-		u.queueJSON("loading discussion list", u.makeGetUrl('indexData', 'search'), 
-		u.makeGetArgs(argsToSend), function(data) {
-			if (u.checkData(data)) {
+		u.queueJSON("loading discussion list", u.makeGetUrl('indexData', 'search'),
+			u.makeGetArgs(argsToSend),
+			function(data) {
 				callback(data.listItems.discussionList);
-			}
-		});
+			});
 	};
 
 	Discussion.deleteDiscussion = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			userId: User.getCurrentUserId(),
-			id : args.id
+			id: args.id
 		});
-		u.queueJSON("loading discussion list", u.makeGetUrl("deleteDiscussionId"), 
-		u.makeGetArgs(argsToSend), function(data) {
-			if (data == 'success') {
+		u.queueJSON("loading discussion list", u.makeGetUrl("deleteDiscussionId"),
+			u.makeGetArgs(argsToSend),
+			function(data) {
 				callback(data);
-			} else {
-				u.showAlert('Failed to delete discussion, please try again');
 			}
 		}.bind(this));
-	};
+};
 
-	module.exports = Discussion;
+module.exports = Discussion;
 });

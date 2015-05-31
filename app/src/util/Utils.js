@@ -220,23 +220,24 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				args['dateToken'] = new Date().getTime();
 			}
 			var wrapSuccessCallback = function(data, msg) {
+				u.spinnerStop();
 				stillRunning = false;
 				if (alertShown)
 					u.closeAlerts();
 				if (currentLoginSession != u._loginSessionNumber)
 					return; // if current login session is over, cancel callbacks
-				if (successCallback)
+				if (u.checkData(data) && successCallback)
 					successCallback(data);
 				u.nextJSONCall(background);
-				window.plugins.spinnerDialog.hide();
 			};
 			var wrapFailCallback = function(data, msg) {
 				stillRunning = false;
+				u.spinnerStop();
 				if (alertShown)
 					u.closeAlerts();
 				if (currentLoginSession != u._loginSessionNumber)
 					return; // if current login session is over, cancel callbacks
-				if (failCallback)
+				if (u.checkData(data) && failCallback)
 					failCallback(data);
 
 				u.nextJSONCall(background);
@@ -253,12 +254,11 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 						u.queueJSON(description, url, args, successCallback, failCallback, delay, background);
 					}, delay);
 				}
-				window.plugins.spinnerDialog.hide();
 			};
 			if ((!background) && (u.numJSONCalls > 0)) { // json call in progress
 				var jsonCall = function() {
 					console.log('Requesting url' + url);
-					window.plugins.spinnerDialog.show(null, null, true);
+					u.spinnerStart();
 					$.ajax({
 							type: (post ? "post" : "get"),
 							dataType: "json",
@@ -274,7 +274,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			} else { // first call
 				if (!background) {
 					++u.numJSONCalls;
-					window.plugins.spinnerDialog.show(null, null, true);
+					u.spinnerStart();	
 				}
 
 				$.ajax({
@@ -359,8 +359,8 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			if (data == 'login') {
 				if (status != 'cached') {
 					u.showAlert("Session timed out.");
-					App.pageView.changePage('launch');
 					User.logout();
+					App.pageView.changePage('LoginView');
 				}
 				return false;
 			}
@@ -377,7 +377,6 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			if (typeof(data) == 'string') {
 				if (status != 'cached' && data != "") {
 					u.showAlert(data);
-					location.reload(true);
 				}
 				return false;
 			}
@@ -393,6 +392,20 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				return u.getServerUrl() + '/' + controller + '/' + action + '?callback=?';
 			}
 			return u.getServerUrl() + '/mobiledata/' + action + '?callback=?';
+		}
+
+		Utils.spinnerStart = function () {
+			var spinnerDialog = window.plugins? window.plugins.spinnerDialog : false;
+			if (window.plugins && spinnerDialog) {
+				spinnerDialog.show(null, null, true);
+			}	
+		}
+
+		Utils.spinnerStop = function () {
+			var spinnerDialog = window.plugins? window.plugins.spinnerDialog : false;
+			if (window.plugins && spinnerDialog) {
+				spinnerDialog.hide();
+			}	
 		}
 
 		Utils.makeGetArgs = function(args) {

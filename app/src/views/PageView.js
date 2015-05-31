@@ -54,7 +54,7 @@ define(function(require, exports, module) {
 		});
 		this.add(this.hiddenModifier).add(this.renderController);
 
-		this.changePage(this.getCurrentPage());
+		this.changePage(this.getCurrentPage(), { onLoad: true });
 
 		App.coreEventHandler.on('app-paused', function() {
 			this.saveState();
@@ -79,10 +79,9 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.on('logout', function(e) {
-			push.unregisterNotification(function() {
-				User.logout(function(user) {
-					this.changePage('HomeView');
-				}.bind(this));
+			User.logout(function(user) {
+				this.changePage('HomeView');
+				push.unregisterNotification(user, function() {}.bind(this));
 			}.bind(this));
 			console.log('PageView: logout');
 		}.bind(this));
@@ -153,6 +152,11 @@ define(function(require, exports, module) {
 			console.log('Unable to find view with name: ' + pageName);
 		}
 
+		var continueChangePage = view.preShow(state);
+		if (!continueChangePage && !state.onLoad) {
+			return false;	
+		}
+
 		if (view.options.noBackButton) {
 			this.clearHistory();
 		} else {
@@ -161,7 +165,6 @@ define(function(require, exports, module) {
 			}
 		}
 		this.setCurrentPage(view.constructor.name);
-		var continueChangePage = view.preShow(state);
 		this.renderController.show(view, {
 			duration: 200
 		}, function() {

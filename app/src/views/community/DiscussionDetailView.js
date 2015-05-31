@@ -79,8 +79,7 @@ define(function(require, exports, module) {
 	};
 
 	DiscussionDetailView.prototype.preShow = function(state) {
-		if (!state) {
-			//App.pageView.changePage('FeedView');
+		if (!state || !state.discussionId) {
 			return false;
 		}
 		this.discussionId = state.discussionId;
@@ -157,7 +156,7 @@ define(function(require, exports, module) {
 							Discussion.deleteDiscussion({
 								id: this.discussionId
 							}, function(success) {
-								App.pageView.changePage('FeedView', {reload: true});
+								this.refresh();
 							}.bind(this));
 						}.bind(this),
 						onB: function() {}.bind(this),

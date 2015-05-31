@@ -208,7 +208,16 @@ define(function(require, exports, module) {
 		formContainerSurface.add(this.buttonsAndHelp);
 		this.setBody(formContainerSurface);
 	}
-
+	
+	EntryFormView.prototype.preShow = function(state) {
+		if (state.preShowCheck) {
+			this[state.preShowCheck.name].apply(this, state.preShowCheck.args);
+			if (state.preShowCheck.doNotLoad) {
+				return false;
+			}
+		}
+		return true;
+	};
 	EntryFormView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 		console.log('FormView: on-show ' + state);
@@ -287,9 +296,10 @@ define(function(require, exports, module) {
 		};
 
 		if (directlyCreateEntry) {
-			state.postLoadAction = {
+			state.preShowCheck = {
 				name: 'submit',
 				args: [entry, true],
+				doNotLoad: true,
 			}
 		}
 

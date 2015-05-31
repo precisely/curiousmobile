@@ -27,7 +27,7 @@ define(function(require, exports, module) {
 			}
 
 		},
-		unregisterNotification: function(callback) {
+		unregisterNotification: function(user, callback) {
 			console.log("Unregistering push notification");
 			if (!window.plugins) {
 				// for development purposes
@@ -37,7 +37,7 @@ define(function(require, exports, module) {
 				return;
 			}
 			var pushNotification = window.plugins.pushNotification;
-			pushNotification.unregister(function() { 
+			pushNotification.unregister(function(e) { 
 				console.log("Unregistered Notification");
 				var token;
 				if (u.supportsLocalStorage()) {
@@ -46,13 +46,13 @@ define(function(require, exports, module) {
 					token = push.pushNotificationToken;
 				}
 
-				var user = store.get('user');
+				if (user) {
+					return;
+				}
 				var argsToSend = u.getCSRFPreventionObject('registerForPushNotificationCSRF', 
 					{userId:user.id, token:token,deviceType:push.deviceType()});
 					$.getJSON(u.makeGetUrl("unregisterPushNotificationData"), argsToSend,
 					function(data){
-						store.set('mobileSessionId', undefined);
-						store.set('user', undefined);
 						if (u.checkData(data)) {
 							console.log("Notification token removed from the server");
 							callback();
@@ -80,7 +80,7 @@ define(function(require, exports, module) {
 		},
 
 		onNotificationAPN: function(event) {
-			console.log("APNS received');
+			console.log('APNS received');
 			var keys = [];
 			for(var key in event){
 				console.log("APN Event property name "+key);

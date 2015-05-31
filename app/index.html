@@ -38,18 +38,41 @@
 		<script src="lib/angular/angular.js"></script>
 		<script src="lib/angular-resource/angular-resource.js"></script>
 		<!-- process:remove:dev -->
-		<script type="text/javascript" src="src/main.js"></script>
+		<script type="text/javascript" charset="utf-8">
+
+			require.config({
+				baseUrl: './src/'
+			});
+			require(['main']);
+			function onLoad() {
+				document.addEventListener("deviceready", onDeviceReady, false);
+				document.addEventListener("resume", onAppResume, false);
+				document.addEventListener("pause", function() {
+					App.coreEventHandler.emit('app-paused');
+				}, false);
+			}
+
+			// Cordova is loaded and it is now safe to make calls Cordova methods
+			//
+			function onDeviceReady() {
+				// Now safe to use the Cordova API
+				console.log('index.html:56 Device Ready');
+				StatusBar.hide();
+				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+			}
+
+			function onAppResume() {
+				console.log('App has resumed from background');
+				console.log(device.platform);
+				App.coreEventHandler.emit('app-resume');
+			}
+		</script>
 		<script type="text/javascript" src="src/util/Base.js"></script>
 		<!-- /process -->
 		<script type="text/javascript" src="cordova.js"></script>
 	</head>
 
 	<body onload="onLoad()" >
-		<!--
-		<div id='reloading' style="display:block; text-align: center">	
-			<i class="fa fa-spinner fa-spin" style="font-size:40px; vertical-align: middle"> </i> 
-		</div>
-		--!>
 	</body>
 
 </html>

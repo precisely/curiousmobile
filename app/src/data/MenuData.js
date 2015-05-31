@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 	}, {
 		title: 'Logout',
 		iconFont: '<i class="fa fa-cloud"></i>',
-		trigger: {name:'logout', data: 'TrackView'}
+		trigger: {name:'logout', data: 'HomeView'}
 	}, {
 		title: '             ',
 	}, {
