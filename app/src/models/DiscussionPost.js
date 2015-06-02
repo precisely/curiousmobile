@@ -2,8 +2,12 @@ define( function(require, exports, module) {
 	var u = require('util/Utils');
 	var User = require('models/User');
 
-	function DiscussionPost(){
-	}
+	var DiscussionPost = Backbone.Model.extend({
+		constructor: function(argument) {
+			Backbone.Model.apply(this, arguments);
+		},
+		url: "/api/discussionPost"
+	});
 
 	DiscussionPost.max = 20;
 

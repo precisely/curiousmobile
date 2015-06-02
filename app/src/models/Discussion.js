@@ -11,6 +11,7 @@ define(function(require, exports, module) {
 			this.eventInput = new EventHandler();
 			Backbone.Model.apply(this, arguments);
 		},
+		urlRoot: 'http://192.168.0.119:8080/api/discussion'
 	});
 
 	Discussion.max = 20;
