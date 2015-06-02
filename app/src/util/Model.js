@@ -31,7 +31,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			if (options.success)
 				options.success(modelInstance, response);
 			m.nextJSONCall();
-			window.plugins.spinnerDialog.hide();
+			u.spinnerStop();
 		};
 		var wrapFailCallback = function(modelInstance, response) {
 			stillRunning = false;
@@ -55,12 +55,12 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 					m.queueJSON(model, method, attributes, options);
 				}, delay);
 			}
-			window.plugins.spinnerDialog.hide();
+			u.spinnerStop();
 		};
 
 		if (m.numJSONCalls > 0) { // json call in progress
 			var jsonCall = function() {
-				window.plugins.spinnerDialog.show(null, null, true);
+				u.spinnerStart();
 				console.log('pending Json call in progress');
 				model[method](attributes, {
 					success: wrapSuccessCallback,
@@ -70,7 +70,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			++m.numJSONCalls;
 			m.pendingJSONCalls.push(jsonCall);
 		} else { // first call
-			window.plugins.spinnerDialog.show(null, null, true);
+			u.spinnerStart();
 			console.log('first Json call in progress');
 			model[method](attributes, {
 				success: wrapSuccessCallback,

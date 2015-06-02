@@ -73,8 +73,8 @@ define(function(require, exports, module) {
 					var state = {
 						discussionId: this.discussion.id
 					};
-					App.pageView.changePage('DiscussionDetailView', state);
-					/*var discussion = new Discussion({id: 1});
+					//App.pageView.changePage('DiscussionDetailView', state);
+					var discussion = new Discussion({id: 1});
 					m.queueJSON(discussion, 'fetch', u.getCSRFPreventionObject('getListDataCSRF'), {
 						success: function(discussionModel, response) {
 							console.log('test data recieved successfully.....', discussionModel, ' and response: ', response);
@@ -83,7 +83,7 @@ define(function(require, exports, module) {
 							console.log('test data recieved but with some errors.....', discussionModel,
 							'and response:', response);
 						}
-					});*/
+					});
 				}
 			}
 		}.bind(this));
