@@ -50,9 +50,8 @@ define(function(require, exports, module) {
 			u.makeGetArgs(argsToSend),
 			function(data) {
 				callback(data);
-			}
-		}.bind(this));
-};
+			});
+	};
 
-module.exports = Discussion;
+	module.exports = Discussion;
 });
