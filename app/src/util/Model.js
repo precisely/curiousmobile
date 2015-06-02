@@ -26,10 +26,14 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 
 		var wrapSuccessCallback = function(modelInstance, response) {
 			stillRunning = false;
-			if (currentLoginSession != u._loginSessionNumber)
+			if (currentLoginSession != u._loginSessionNumber) {
 				return; // if current login session is over, cancel callbacks
-			if (options.success)
+			}
+
+			if (options.success) {
 				options.success(modelInstance, response);
+			}
+
 			m.nextJSONCall();
 			u.spinnerStop();
 		};
