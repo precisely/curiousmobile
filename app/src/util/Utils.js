@@ -499,7 +499,6 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		}
 
 		Utils.isAndroid = function() {
-			console.log('checking if android....' + device.platform);
 			return device.platform == 'android' || device.platform == 'Android';
 		}
 		var device = {};

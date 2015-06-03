@@ -990,3 +990,164 @@ button.close {
 		display: none;
 	}
 }
+
+.help-wizard .sub-heading {
+	color: #fff;
+	font-style: italic;
+	font-weight: 500;
+	font-size: 14px;
+}
+
+.help-wizard h4 {
+	color: #fff;
+}
+
+.help-wizard .questions {
+	font-weight: 600;
+	margin: 30px 0px;
+	color: #fff;
+}
+
+.help-wizard input {
+	font-weight: 600;
+	border-radius: 2px;
+	color: #999999;
+	font-style: italic;
+	font-size: 14px;
+}
+
+.help-wizard label {
+	margin: 15px 0px 10px 65px;
+	font-weight: 400;
+	font-size: 12px;
+	text-align: left;
+	color: #fff;
+}
+
+.exercise-questions label, .help-wizard .back-label {
+	margin-left: 0px;
+	float: left;
+}
+
+.help-wizard .skip-label {
+	float: right;
+}
+
+.help-wizard .back-label, .help-wizard .skip-label {
+	font-size: 18px;
+}
+
+.help-wizard .exercise-details {
+	padding: 10px;
+	height: 40px;
+	width: 100%;
+}
+
+#sleep-hour {
+	padding: 10px;
+	height: 50px;
+	width: 100%;
+}
+.help-wizard .left-carousel-control {
+	float: left;
+	color: #fff;
+	margin-top: 20px;
+}
+
+.help-wizard .right-carousel-control {
+	float: right;
+	color: #fff;
+	margin-top: 20px;
+}
+
+.help-wizard .modal-footer {
+	border-top: none;
+	height: 50px;
+	margin-top: 40px;
+}
+
+.help-wizard .next-question {
+	background-color: #e27c4a;
+	color: white;
+	height: 50px;
+	width: 100%;
+	border-radius: 0px;
+	font-size: 18px;
+}
+
+.help-wizard .next-question:active {
+	background-color: #d46c39;
+}
+
+.help-wizard input[type='range'] {
+	-webkit-appearance: none !important;
+	background: #e27c4a;
+	height: 13px;
+	border-radius: 6px !important;
+	-webkit-box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.75);
+	-moz-box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.75);
+	box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.75);
+}
+
+.help-wizard input[type=range]::-moz-range-track {
+	background: #e27c4a;
+	height: 13px;
+	width: 465px;
+	border-radius: 6px !important; 
+	-moz-box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.75);
+	text-align: center; 
+}
+
+.help-wizard input[type='range']::-webkit-slider-thumb {
+	-webkit-appearance: none !important;
+	background: #fff;
+	height: 35px;
+	border-radius: 17.5px;
+	width: 35px;
+}
+
+.help-wizard input[type=range]::-moz-range-thumb {
+	background: #fff;
+	height: 35px;
+	border-radius: 17.5px;
+	width: 35px;
+}
+
+.help-wizard .good-day {
+	float: left;
+	text-align: center;
+	margin: 30px 0px;
+	width: 90px;
+	display: inline-table;
+}
+
+.help-wizard .calm-day {
+	text-align: center;
+	margin: 30px 0px;
+	width: 80px;
+	display: inline-table;
+}
+
+.help-wizard .super-day {
+	float: right;
+	text-align: center;
+	margin: 30px 0px;
+	display: inline-table;
+	width: 90px;
+}
+
+.help-wizard .range-box {
+	width: 100%;
+}
+
+.help-wizard .wait-form-submit {
+	width: 100%;
+	height: 100%;
+	background-color: #F0F0F0;
+}
+
+#sleep-entry-label, #mood-entry-label {
+	text-align: left;
+	margin: 20px 0px;
+}
+

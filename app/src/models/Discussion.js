@@ -51,7 +51,7 @@ define(function(require, exports, module) {
 			function(data) {
 				callback(data);
 			}
-		}.bind(this));
+		.bind(this));
 };
 
 module.exports = Discussion;
