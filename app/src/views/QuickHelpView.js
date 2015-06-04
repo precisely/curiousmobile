@@ -35,7 +35,7 @@ define(function(require, exports, module) {
 
 	function createStepSurfaces(helpStepTemplate) {
 		var stepSurface = new Surface({
-			size: [undefined, undefined],
+			size: [App.width, App.height],
 			content: _.template(helpStepTemplate, templateSettings),
 			properties: {
 				backgroundColor: '#f48d5b',
@@ -82,14 +82,12 @@ define(function(require, exports, module) {
 				classList = event.srcElement.classList;
 				if (_.contains(classList, 'next-question')) {
 					this.sleepEntry = document.getElementById('sleep-hour-entry').value;
-					this.renderController.hide();
 					this.renderController.show(step2Surface);
 				} else if (_.contains(classList, 'skip-label')) {
 					document.getElementById('sleep-hour-entry').value = '';
 					document.getElementById('sleep-hour').value = '';
 					document.getElementById('sleep-entry-label').innerHTML = '';
 					this.sleepEntry = '';
-					this.renderController.hide();
 					this.renderController.show(step2Surface);
 				}
 			}
@@ -125,33 +123,7 @@ define(function(require, exports, module) {
 					this.renderController.hide();
 					this.renderController.show(step2Surface);
 				} else if (_.contains(classList, 'next-question')) {
-					var argsToSend = u.getCSRFPreventionObject("addEntryCSRF", {
-						currentTime: new Date().toUTCString(),
-						baseDate: new Date().toUTCString(),
-						timeZoneName: u.getTimezone(),
-						'entry.0': this.sleepEntry,
-						'entry.1': this.moodEntry,
-						'entry.2': document.getElementById('cardio').value,
-						'entry.3': document.getElementById('resistance').value,
-						'entry.4': document.getElementById('stretch').value,
-						'entry.5': document.getElementById('metabolic').value
-					});
-					u.queuePostJSON('Creating entries', u.makePostUrl('createHelpEntriesData'),
-						u.makeGetArgs(argsToSend), 
-						function (data) {
-							if (u.checkData(data)) {
-								console.log('Success: ', data);
-								if (data.success) {
-									u.showAlert(data.message);
-									App.pageView.changePage('trackView');
-								} else {
-									u.showAlert(data.message);
-								}
-							}
-						}, function (error) {
-							u.showAlert('Internal server error occurred');
-							console.log('Error occured: ', error);
-						});
+					createEntries.call(this);
 				} else if (event.srcElement.type === 'text') {
 					event.srcElement.focus();
 				}
@@ -159,7 +131,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		var mod = new StateModifier({
-			size: [undefined, undefined],
+			size: [App.width, App.height],
 			transform: Transform.translate(0, 0, 16)
 		});
 		this.add(mod).add(this.renderController);
@@ -172,7 +144,8 @@ define(function(require, exports, module) {
 			if (id === 'sleep-hour') {
 				var sleepInputElement = document.getElementById('sleep-hour');
 				if (event.which === 13) {
-					event.preventDefault(); 
+					this.sleepEntry = document.getElementById('sleep-hour-entry').value;
+					this.renderController.show(step2Surface);
 				} else if (sleepInputElement.value === '') {
 					document.getElementById('sleep-entry-label').innerHTML = '';
 					document.getElementById('sleep-hour-entry').value = '';
@@ -180,8 +153,48 @@ define(function(require, exports, module) {
 					document.getElementById('sleep-entry-label').innerHTML = '[sleep ' + sleepInputElement.value + ']';
 					document.getElementById('sleep-hour-entry').value =  'sleep ' + sleepInputElement.value;
 				}
+			} else if (event.which === 13) {
+				if (id === 'cardio') {
+					document.getElementById('resistance').focus();
+				} else if(id === 'resistance') {
+					document.getElementById('stretch').focus();
+				} else if (id === 'stretch') {
+					document.getElementById('metabolic').focus();
+				} else if (id === 'metabolic') {
+					createEntries.call(this);
+				}
 			}
+		}.bind(this));
+	};
+
+	function createEntries() {
+		var argsToSend = u.getCSRFPreventionObject("addEntryCSRF", {
+			currentTime: new Date().toUTCString(),
+			baseDate: new Date().toUTCString(),
+			timeZoneName: u.getTimezone(),
+			'entry.0': this.sleepEntry,
+			'entry.1': this.moodEntry,
+			'entry.2': document.getElementById('cardio').value,
+			'entry.3': document.getElementById('resistance').value,
+			'entry.4': document.getElementById('stretch').value,
+			'entry.5': document.getElementById('metabolic').value
 		});
+		u.queuePostJSON('Creating entries', u.makePostUrl('createHelpEntriesData'),
+			u.makeGetArgs(argsToSend), 
+			function (data) {
+				if (u.checkData(data)) {
+					console.log('Success: ', data);
+					if (data.success) {
+						u.showAlert(data.message);
+						App.pageView.changePage('trackView');
+					} else {
+						u.showAlert(data.message);
+					}
+				}
+			}, function (error) {
+				u.showAlert('Internal server error occurred');
+				console.log('Error occured: ', error);
+			});
 	};
 
 	QuickHelpView.prototype.onShow = function(state) {
