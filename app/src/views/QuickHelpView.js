@@ -29,7 +29,7 @@ define(function(require, exports, module) {
 	QuickHelpView.prototype.constructor = QuickHelpView;
 
 	QuickHelpView.DEFAULT_OPTIONS = {
-		header: true,
+		header: false,
 		footer: true,
 	};
 
@@ -40,25 +40,36 @@ define(function(require, exports, module) {
 			properties: {
 				backgroundColor: '#f48d5b',
 				textAlign: 'center',
-				padding: '10px'
+				paddingTop: '30px'
 			}
 		});
 		return stepSurface;
 	}
 
 	QuickHelpView.prototype.init = function() {
-		this.setHeaderLabel('Quick Help');
-
 		var step1Surface = createStepSurfaces(HelpStep1Template);
 		var step2Surface = createStepSurfaces(HelpStep2Template);
 		var step3Surface = createStepSurfaces(HelpStep3Template);
 
+		var yRange = Math.max(0, (620 - App.height));
+		var lastDraggablePosition = 0;
+
 		var draggable = new Draggable({
 			xRange: [0, 0],
-			yRange: [-(660 - App.height), 0]
+			yRange: [-yRange, 0]
 		});
 
 		draggable.subscribe(step3Surface);
+
+		draggable.on('end', function(e) {
+			console.log(e);
+			if (e.position[1] <= lastDraggablePosition) {
+				this.setPosition([0, -yRange, 0], {duration: 300});
+			} else {
+				this.setPosition([0, 0, 0], {duration: 300});
+			}
+			lastDraggablePosition = e.position[1];
+		});
 
 		var nodePlayer = new RenderNode();
 		nodePlayer.add(draggable).add(step3Surface);
@@ -141,13 +152,15 @@ define(function(require, exports, module) {
 							u.showAlert('Internal server error occurred');
 							console.log('Error occured: ', error);
 						});
+				} else if (event.srcElement.type === 'text') {
+					event.srcElement.focus();
 				}
 			}
 		}.bind(this));
 
 		var mod = new StateModifier({
-			size: [undefined, 600],
-			transform: Transform.translate(0, 64, 16)
+			size: [undefined, undefined],
+			transform: Transform.translate(0, 0, 16)
 		});
 		this.add(mod).add(this.renderController);
 
