@@ -991,6 +991,12 @@ button.close {
 	}
 }
 
+.help-wizard {
+	background-color: #f48d5b;
+	width: 100%;
+	padding: 10px;
+}
+
 .help-wizard .sub-heading {
 	color: #fff;
 	font-style: italic;
@@ -1004,7 +1010,7 @@ button.close {
 
 .help-wizard .questions {
 	font-weight: 600;
-	margin: 30px 0px;
+	margin: 20px 0px;
 	color: #fff;
 }
 

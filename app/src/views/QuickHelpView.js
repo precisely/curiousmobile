@@ -10,6 +10,8 @@ define(function(require, exports, module) {
 	var RenderController = require('famous/views/RenderController');
 	var Transform = require('famous/core/Transform');
 	var Transitionable = require('famous/transitions/Transitionable');
+	var Draggable = require("famous/modifiers/Draggable");
+	var RenderNode = require('famous/core/RenderNode');
 	var View = require('famous/core/View');
 	var HelpStep1Template = require('text!templates/help-step-1.html');
 	var HelpStep2Template = require('text!templates/help-step-2.html');
@@ -51,15 +53,15 @@ define(function(require, exports, module) {
 		var step2Surface = createStepSurfaces(HelpStep2Template);
 		var step3Surface = createStepSurfaces(HelpStep3Template);
 
-		var scrollView = new Scrollview({
-			direction: Utility.Direction.Y,
-			clipSize: 50
+		var draggable = new Draggable({
+			xRange: [0, 0],
+			yRange: [-(660 - App.height), 0]
 		});
-		step3Surface.pipe(scrollView);
-		scrollView.sequenceFrom([step3Surface]);
 
-		scrollView.sync.on('update', function() {
-		});
+		draggable.subscribe(step3Surface);
+
+		var nodePlayer = new RenderNode();
+		nodePlayer.add(draggable).add(step3Surface);
 
 		this.renderController = new RenderController();
 
@@ -88,17 +90,14 @@ define(function(require, exports, module) {
 				classList = event.srcElement.classList;
 				if (_.contains(classList, 'next-question')) {
 					this.moodEntry = document.getElementById('mood-entry').value;
-					this.renderController.hide();
-					this.renderController.show(scrollView);
+					this.renderController.show(nodePlayer);
 				} else if (_.contains(classList, 'back-label')) {
-					this.renderController.hide();
 					this.renderController.show(step1Surface);
 				} else if (_.contains(classList, 'skip-label')) {
 					document.getElementById('mood-entry').value = '';
 					document.getElementById('mood-entry-label').innerHTML = '';
 					this.moodEntry = '';
-					this.renderController.hide();
-					this.renderController.show(scrollView);
+					this.renderController.show(nodePlayer);
 				} else if (event.srcElement.id === 'mood-range') {
 					var value = 'mood ' + document.getElementById('mood-range').value;
 					document.getElementById('mood-entry-label').innerHTML = '[' + value + ']';
