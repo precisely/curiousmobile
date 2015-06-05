@@ -4,8 +4,11 @@ define(function(require, exports, module) {
 	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
 	var Engine = require('famous/core/Engine');
+	var Modifier = require('famous/core/Modifier');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var ImageSurface = require("famous/surfaces/ImageSurface");
+	var InputSurface = require("famous/surfaces/InputSurface");
+	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var Scrollview = require('famous/views/Scrollview');
 	var RenderController = require('famous/views/RenderController');
 	var Transform = require('famous/core/Transform');
@@ -48,9 +51,28 @@ define(function(require, exports, module) {
 
 	QuickHelpView.prototype.init = function() {
 		var step1Surface = createStepSurfaces(HelpStep1Template);
-		var step2Surface = createStepSurfaces(HelpStep2Template);
+		var step2InnerSurface = createStepSurfaces(HelpStep2Template);
 		var step3Surface = createStepSurfaces(HelpStep3Template);
+		var step2Surface = new ContainerSurface({
+			size: [App.width, App.height],
+		});
+		step2Surface.add(step2InnerSurface);
+		var moodRangeSurface = new InputSurface({
+			size: [App.width - 60, 5],
+			type: 'range',
+			properties: {
+				zIndex: 99,
+			},
+			attributes: {
+				min: 1,
+				max: 10
+			}
+		});
 
+		var rangeModifier = new Modifier({
+			transform: Transform.translate(30, 134, 0)
+		});
+		step2Surface.add(rangeModifier).add(moodRangeSurface);
 		var yRange = Math.max(0, (620 - App.height));
 		var lastDraggablePosition = 0;
 
@@ -64,9 +86,13 @@ define(function(require, exports, module) {
 		draggable.on('end', function(e) {
 			console.log(e);
 			if (e.position[1] <= lastDraggablePosition) {
-				this.setPosition([0, -yRange, 0], {duration: 300});
+				this.setPosition([0, -yRange, 0], {
+					duration: 300
+				});
 			} else {
-				this.setPosition([0, 0, 0], {duration: 300});
+				this.setPosition([0, 0, 0], {
+					duration: 300
+				});
 			}
 			lastDraggablePosition = e.position[1];
 		});
@@ -151,12 +177,12 @@ define(function(require, exports, module) {
 					document.getElementById('sleep-hour-entry').value = '';
 				} else {
 					document.getElementById('sleep-entry-label').innerHTML = '[sleep ' + sleepInputElement.value + ']';
-					document.getElementById('sleep-hour-entry').value =  'sleep ' + sleepInputElement.value;
+					document.getElementById('sleep-hour-entry').value = 'sleep ' + sleepInputElement.value;
 				}
 			} else if (event.which === 13) {
 				if (id === 'cardio') {
 					document.getElementById('resistance').focus();
-				} else if(id === 'resistance') {
+				} else if (id === 'resistance') {
 					document.getElementById('stretch').focus();
 				} else if (id === 'stretch') {
 					document.getElementById('metabolic').focus();
@@ -180,8 +206,8 @@ define(function(require, exports, module) {
 			'entry.5': document.getElementById('metabolic').value
 		});
 		u.queuePostJSON('Creating entries', u.makePostUrl('createHelpEntriesData'),
-			u.makeGetArgs(argsToSend), 
-			function (data) {
+			u.makeGetArgs(argsToSend),
+			function(data) {
 				if (u.checkData(data)) {
 					console.log('Success: ', data);
 					if (data.success) {
@@ -191,7 +217,8 @@ define(function(require, exports, module) {
 						u.showAlert(data.message);
 					}
 				}
-			}, function (error) {
+			},
+			function(error) {
 				u.showAlert('Internal server error occurred');
 				console.log('Error occured: ', error);
 			});
