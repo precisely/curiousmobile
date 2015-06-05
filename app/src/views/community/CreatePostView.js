@@ -64,7 +64,6 @@ define(function(require, exports, module) {
 				discussionPost,
 				function(result) {
 					console.log('Posted a new discussion');
-					u.showAlert("Detail is a required field!");
 					// Indicating this is a new like state so list gets reloaded
 					App.pageView.changePage('FeedView', {
 						new: true
