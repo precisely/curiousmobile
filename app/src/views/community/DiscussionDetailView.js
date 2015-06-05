@@ -156,7 +156,7 @@ define(function(require, exports, module) {
 							Discussion.deleteDiscussion({
 								id: this.discussionId
 							}, function(success) {
-								this.refresh();
+								App.pageView.changePage('FeedView', {new: true});
 							}.bind(this));
 						}.bind(this),
 						onB: function() {}.bind(this),

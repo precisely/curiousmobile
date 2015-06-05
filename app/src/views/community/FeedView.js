@@ -170,7 +170,7 @@ define(function(require, exports, module) {
 	}
 
 	FeedView.prototype.preShow = function(state) {
-		if (this.deck.length <= 0 || (state && state.reload)) {
+		if (this.deck.length <= 0 || (state && state.new)) {
 			this.initScrollView();
 			this.fetchFeedItems(this.currentPill || 'ALL');
 		}
@@ -252,6 +252,7 @@ define(function(require, exports, module) {
 	}
 
 	FeedView.prototype.refresh = function() {
+		this.initScrollView();
 		this.fetchFeedItems(this.currentPill);
 	};
 
