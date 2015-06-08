@@ -105,6 +105,7 @@ define(function(require, exports, module) {
 				if (_.contains(classList, 'back-label')) {
 					this.navigate('step2');
 				} else if (_.contains(classList, 'next-question')) {
+					document.activeElement.blur();
 					createEntries.call(this);
 				} else if (event.srcElement.type === 'text') {
 					event.srcElement.focus();

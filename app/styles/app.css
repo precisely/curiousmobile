@@ -305,6 +305,7 @@ input, textarea {
 
 button.close {
 	padding: 5px;
+	float: right;
 }
 
 @media screen and (max-width: 768px) {
@@ -1143,3 +1144,13 @@ button.close {
 	margin: 20px 0px;
 }
 
+.alert {
+	padding: 10px;
+	min-height: 50px;
+}
+
+.alert button {
+	color: #fff;
+	padding: 5px 10px;
+	border-radius: 2px;
+}
