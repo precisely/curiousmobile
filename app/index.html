@@ -38,12 +38,15 @@
 		<script src="lib/angular/angular.js"></script>
 		<script src="lib/angular-resource/angular-resource.js"></script>
 		<!-- process:remove:dev -->
-		<script type="text/javascript" charset="utf-8">
-
+		<script type="text/javascript" src="src/util/Base.js"></script>
+		<!-- /process -->
+		<script type="text/javascript">
 			require.config({
 				baseUrl: './src/'
 			});
 			require(['main']);
+		</script>
+		<script type="text/javascript">
 			function onLoad() {
 				document.addEventListener("deviceready", onDeviceReady, false);
 				document.addEventListener("resume", onAppResume, false);
@@ -66,10 +69,10 @@
 				console.log(device.platform);
 				App.coreEventHandler.emit('app-resume');
 			}
+
 		</script>
-		<script type="text/javascript" src="src/util/Base.js"></script>
-		<!-- /process -->
 		<script type="text/javascript" src="cordova.js"></script>
+		<script type="text/javascript" charset="utf-8" src="PushNotification.js"></script>
 	</head>
 
 	<body onload="onLoad()" >

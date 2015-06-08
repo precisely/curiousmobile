@@ -33,7 +33,13 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		};
 
 		Utils.isOnline = function() {
-			return window.navigator.onLine;
+			var networkState = navigator.connection.type;
+
+			if (!cordova) {
+				return window.navigator.onLine;
+			}
+
+			return networkState !== Connection.NONE;
 		};
 
 		Utils.supportsLocalStorage = function() {
