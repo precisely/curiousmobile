@@ -371,7 +371,7 @@ define(function(require, exports, module) {
 		}
 
 		if (!u.isOnline()) {
-			u.showAlert("Please wait until online to add an entry");
+			u.showAlert("You don't seem to be connected. Please wait until you are online to add an entry.");
 			return;
 		}
 		if (!entry || !entry.get('id') || entry.isContinuous()) {

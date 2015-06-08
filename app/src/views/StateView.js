@@ -25,7 +25,7 @@ define(function(require, exports, module) {
 	StateView.prototype.constructor = StateView;
 
 	StateView.DEFAULT_OPTIONS = {
-		reloadOnResume: false,	
+		reloadOnResume: false,
 	};
 
 	/**
@@ -74,8 +74,11 @@ define(function(require, exports, module) {
 				var value = property.value;
 				if (property.model) {
 					// TODO get model class from model cache and instantiate
-					var ModelClass = require(property.model);
-					value = new ModelClass(value);
+					require([property.model], function(ModelClass) {
+						value = new ModelClass(value);
+						this[property.name] = value;
+					}.bind(this));
+					continue;
 				}
 				this[property.name] = value;
 			}

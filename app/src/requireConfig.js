@@ -9,12 +9,12 @@ require.config({
 		},
 		underscore: {
 			exports: '_',
-			init: function () {
-this._.extend(this._.templateSettings, {
-interpolate: /\{\{(.+?)\}\}/g
-});
-return this._;
-}
+			init: function() {
+				this._.extend(this._.templateSettings, {
+					interpolate: /\{\{(.+?)\}\}/g
+				});
+				return this._;
+			}
 		}
 	},
 	paths: {
@@ -34,7 +34,7 @@ return this._;
 		jscache: '../lib/jscache/cache',
 		'exoskeleton.localStorage': '../lib/exoskeleton.localStorage/backbone.localStorage',
 		bootstrap: '../lib/bootstrap/dist/js/bootstrap',
-		entry: './models/Entry.js',
+		'Entry': './models/Entry',
 	},
 	packages: [
 

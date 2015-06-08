@@ -159,7 +159,6 @@ define(function(require, exports, module) {
 			if (!this.options.noBackButton && App.pageView.hasHistory()) {
 				return this.showBackButton();
 			}
-			this.showMenuButton();
 			if (this.options.noBackButton) {
 				App.pageView.clearHistory();
 			}

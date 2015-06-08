@@ -11,6 +11,7 @@ define(function(require, exports, module) {
 	function LoginView() {
 		BaseView.apply(this, arguments);
 		_createView.call(this);
+		this.parentPage = 'HomeView';
 	}
 
 	LoginView.prototype = Object.create(BaseView.prototype);
@@ -41,10 +42,10 @@ define(function(require, exports, module) {
 				this.submit();
 			} else if (_.contains(classList, 'create-account')) {
 				console.log("Show create-account form");
-				App.changePage('RegisterView');
+				App.pageView.changePage('RegisterView');
 			} else if (_.contains(classList, 'forgot-password')) {
 				console.log("otherLinksSurface forgot password");
-				App.changePage('ForgotPasswordView');
+				App.pageView.changePage('ForgotPasswordView');
 			}
 		}.bind(this));
 

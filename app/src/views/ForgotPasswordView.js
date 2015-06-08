@@ -67,9 +67,7 @@ define(function(require, exports, module) {
 			function(data) {
 				if (data.success) {
 					u.showAlert('Look for instructions on recovering your account information in your email.');
-					setTimeout(function() {
-						this._eventOutput.emit('password-reset');
-					}, 3000);
+					App.pageView.changePage('LoginView');
 				} else {
 					u.showAlert(data.message + ' Please try again or hit the back button to return to the login screen.');
 				}

@@ -48,7 +48,7 @@ define(function(require, exports, module) {
 				function(data) {
 					if (data['success']) {
 						this.getUserData(data);
-						callback(data);
+						this.u.addDataReadyCallback(callback);
 					} else {
 						this.u.showAlert(data.message + ' Please try again or hit Cancel to return to the login screen.');
 					}
@@ -65,10 +65,8 @@ define(function(require, exports, module) {
 					this.u.makeGetUrl("getPeopleData"),
 					this.u.makeGetArgs(this.u.getCSRFPreventionObject("getPeopleDataCSRF")),
 					function(data) {
-						if (!u.checkData(data))
-							return;
-						this.cache(data);
-					}
+						this.cache(data[0]);
+					}.bind(this)
 				);
 
 			}
@@ -112,11 +110,13 @@ define(function(require, exports, module) {
 	User.logout = function(callback) {
 		var userData = store.get('user');
 		window.App.collectionCache.clear();
+		window.App.stateCache.clear();
 		u.callLogoutCallbacks();
 		if (typeof callback != 'undefined') {
 			callback(userData);	
 		}
 		store.set('mobileSessionId', false);
+		store.set('user', false);
 	}
 
 	User.max = 10;

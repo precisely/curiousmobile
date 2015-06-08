@@ -17,6 +17,7 @@ define(function(require, exports, module) {
 	function RegisterView() {
 		BaseView.apply(this, arguments);
 		this.createView();
+		this.parentPage = 'HomeView';
 	}
 
 	RegisterView.prototype = Object.create(BaseView.prototype);
@@ -36,9 +37,7 @@ define(function(require, exports, module) {
 				backgroundColor: 'white'
 			}
 		});
-		var registerModifier = new Modifier({
-			transform: Transform.translate(0, 74, 0),
-		});
+		var registerModifier = new Modifier();
 		registerModifier.sizeFrom(function() {
 			return [App.width, App.height - 70];
 		});
@@ -89,7 +88,7 @@ define(function(require, exports, module) {
 				username,
 				password,
 				function(user) {
-					this._eventOutput.emit('registration-success');
+					App.pageView.changePage('TrackView', { new: true });
 				}.bind(this)
 			)
 		}
