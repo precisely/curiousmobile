@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
 	'use strict';
 	var View = require('famous/core/View');
-	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
+	var Surface = require('famous/core/Surface');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
 	var StateView = require('views/StateView');
@@ -14,8 +14,13 @@ define(function(require, exports, module) {
 
 	function MoodHelpView(quickHelpView) {
 		StateView.apply(this, arguments);
-		this.init();
 		this.quickHelpView = quickHelpView;
+		this.labelSurfaceProperties = {
+			backgroundColor: 'transparent',
+			textAlign: 'center',
+			color: '#fff'
+		};
+		this.init();
 	}
 
 	MoodHelpView.prototype = Object.create(StateView.prototype);
@@ -64,6 +69,8 @@ define(function(require, exports, module) {
 			snapX: 4
 		});
 
+		rangeDraggable.setRelativePosition([xRange / 2, 0], null, null);
+
 		rangeDraggable.on('end', function(e) {
 			var interval = xRange / 10;
 			var moodValue = Math.floor(e.position[0] / interval);
@@ -107,31 +114,19 @@ define(function(require, exports, module) {
 		var moodCalmLabel = new Surface({
 			size: [80, true],
 			content: '<label class="calm-day">Pretty Calm, even-keeled.</label>',
-			properties: {
-				backgroundColor: 'transparent',
-				textAlign: 'center',
-				color: '#fff'
-			}
+			properties: this.labelSurfaceProperties
 		});
 
 		var moodLowLabel = new Surface({
 			size: [70, true],
 			content: '<label class="good-day">Oh dear, what a day.</label>',
-			properties: {
-				backgroundColor: 'transparent',
-				textAlign: 'center',
-				color: '#fff'
-			}
+			properties: this.labelSurfaceProperties
 		});
 
 		var moodbestLabel = new Surface({
 			size: [90, true],
 			content: '<label class="super-day">Super stocked, cheerful frame of mind.</label>',
-			properties: {
-				backgroundColor: 'transparent',
-				textAlign: 'center',
-				color: '#fff'
-			}
+			properties: this.labelSurfaceProperties
 		});
 
 		var centerLabelModifier = new Modifier({
