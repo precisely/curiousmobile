@@ -86,7 +86,7 @@ define(function(require, exports, module) {
 		}
 	});
 
-	Engine.on('click', function() {
+	Engine.on('click', function(e) {
 		u.closeAlerts();
 	});
 
