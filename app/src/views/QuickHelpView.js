@@ -1,14 +1,10 @@
 define(function(require, exports, module) {
 	'use strict';
-	var Utility = require('famous/utilities/Utility');
 	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
 	var Engine = require('famous/core/Engine');
 	var Modifier = require('famous/core/Modifier');
 	var StateModifier = require('famous/modifiers/StateModifier');
-	var ImageSurface = require("famous/surfaces/ImageSurface");
-	var InputSurface = require("famous/surfaces/InputSurface");
-	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var Scrollview = require('famous/views/Scrollview');
 	var RenderController = require('famous/views/RenderController');
 	var Transform = require('famous/core/Transform');
@@ -17,14 +13,16 @@ define(function(require, exports, module) {
 	var RenderNode = require('famous/core/RenderNode');
 	var View = require('famous/core/View');
 	var HelpStep1Template = require('text!templates/help-step-1.html');
-	var HelpStep2Template = require('text!templates/help-step-2.html');
 	var HelpStep3Template = require('text!templates/help-step-3.html');
+	var MoodHelpView = require('views/help/MoodHelpView');
 	var u = require('util/Utils');
 
 	function QuickHelpView() {
 		BaseView.apply(this, arguments);
-		this.entry = [];
 		this.init();
+	this.on('backToStep1', function() {
+		this.navigate('step1');
+	});
 	}
 
 	QuickHelpView.prototype = Object.create(BaseView.prototype);
@@ -50,29 +48,9 @@ define(function(require, exports, module) {
 	}
 
 	QuickHelpView.prototype.init = function() {
-		var step1Surface = createStepSurfaces(HelpStep1Template);
-		var step2InnerSurface = createStepSurfaces(HelpStep2Template);
+		this.step1Surface = createStepSurfaces(HelpStep1Template);
 		var step3Surface = createStepSurfaces(HelpStep3Template);
-		var step2Surface = new ContainerSurface({
-			size: [App.width, App.height],
-		});
-		step2Surface.add(step2InnerSurface);
-		var moodRangeSurface = new InputSurface({
-			size: [App.width - 60, 5],
-			type: 'range',
-			properties: {
-				zIndex: 99,
-			},
-			attributes: {
-				min: 1,
-				max: 10
-			}
-		});
-
-		var rangeModifier = new Modifier({
-			transform: Transform.translate(30, 134, 0)
-		});
-		step2Surface.add(rangeModifier).add(moodRangeSurface);
+		this.step2Surface = new MoodHelpView(this);
 		var yRange = Math.max(0, (620 - App.height));
 		var lastDraggablePosition = 0;
 
@@ -97,57 +75,35 @@ define(function(require, exports, module) {
 			lastDraggablePosition = e.position[1];
 		});
 
-		var nodePlayer = new RenderNode();
-		nodePlayer.add(draggable).add(step3Surface);
+		this.nodePlayer = new RenderNode();
+		this.nodePlayer.add(draggable).add(step3Surface);
 
 		this.renderController = new RenderController();
 
-		step1Surface.on('click', function(event) {
+		this.step1Surface.on('click', function(event) {
 			var classList;
 			if (u.isAndroid() || (event instanceof CustomEvent)) {
 				classList = event.srcElement.classList;
 				if (_.contains(classList, 'next-question')) {
 					this.sleepEntry = document.getElementById('sleep-hour-entry').value;
-					this.renderController.show(step2Surface);
+					this.navigate('step2');
 				} else if (_.contains(classList, 'skip-label')) {
 					document.getElementById('sleep-hour-entry').value = '';
 					document.getElementById('sleep-hour').value = '';
 					document.getElementById('sleep-entry-label').innerHTML = '';
 					this.sleepEntry = '';
-					this.renderController.show(step2Surface);
+					this.navigate('step2');
 				}
 			}
 		}.bind(this));
 
-		step2Surface.on('click', function(event) {
-			var classList;
-			if (u.isAndroid() || (event instanceof CustomEvent)) {
-				classList = event.srcElement.classList;
-				if (_.contains(classList, 'next-question')) {
-					this.moodEntry = document.getElementById('mood-entry').value;
-					this.renderController.show(nodePlayer);
-				} else if (_.contains(classList, 'back-label')) {
-					this.renderController.show(step1Surface);
-				} else if (_.contains(classList, 'skip-label')) {
-					document.getElementById('mood-entry').value = '';
-					document.getElementById('mood-entry-label').innerHTML = '';
-					this.moodEntry = '';
-					this.renderController.show(nodePlayer);
-				} else if (event.srcElement.id === 'mood-range') {
-					var value = 'mood ' + document.getElementById('mood-range').value;
-					document.getElementById('mood-entry-label').innerHTML = '[' + value + ']';
-					document.getElementById('mood-entry').value = value;
-				}
-			}
-		}.bind(this));
 
 		step3Surface.on('click', function(event) {
 			var classList;
 			if (u.isAndroid() || (event instanceof CustomEvent)) {
 				classList = event.srcElement.classList;
 				if (_.contains(classList, 'back-label')) {
-					this.renderController.hide();
-					this.renderController.show(step2Surface);
+					this.navigate('step2');
 				} else if (_.contains(classList, 'next-question')) {
 					createEntries.call(this);
 				} else if (event.srcElement.type === 'text') {
@@ -162,7 +118,7 @@ define(function(require, exports, module) {
 		});
 		this.add(mod).add(this.renderController);
 
-		this.renderController.show(step1Surface);
+		this.navigate('step1');
 
 		Engine.on('keyup', function(event) {
 			var classList;
@@ -171,7 +127,7 @@ define(function(require, exports, module) {
 				var sleepInputElement = document.getElementById('sleep-hour');
 				if (event.which === 13) {
 					this.sleepEntry = document.getElementById('sleep-hour-entry').value;
-					this.renderController.show(step2Surface);
+					this.renderController.show(this.step2Surface);
 				} else if (sleepInputElement.value === '') {
 					document.getElementById('sleep-entry-label').innerHTML = '';
 					document.getElementById('sleep-hour-entry').value = '';
@@ -194,9 +150,11 @@ define(function(require, exports, module) {
 	};
 
 	function createEntries() {
+		var now = new Date();
+		var baseDate = now.setHours(0, 0, 0, 0);
 		var argsToSend = u.getCSRFPreventionObject("addEntryCSRF", {
-			currentTime: new Date().toUTCString(),
-			baseDate: new Date().toUTCString(),
+			currentTime: now.toUTCString(),
+			baseDate: new Date(baseDate).toUTCString(),
 			timeZoneName: u.getTimezone(),
 			'entry.0': this.sleepEntry,
 			'entry.1': this.moodEntry,
@@ -224,10 +182,25 @@ define(function(require, exports, module) {
 			});
 	};
 
+	QuickHelpView.prototype.storeMoodEntry = function(moodEntry) {
+		this.moodEntry = moodEntry;
+		this.navigate('step3');
+	};
+
+
 	QuickHelpView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
-		this.entry = [];
 		this.setBody(this.renderController);
+	};
+
+	QuickHelpView.prototype.navigate = function(step) {
+		if (step === 'step1') {
+			this.renderController.show(this.step1Surface);
+		} else if (step === 'step2') {
+			this.renderController.show(this.step2Surface);
+		} else if (step === 'step3') {
+			this.renderController.show(this.nodePlayer);
+		}
 	};
 
 	App.pages[QuickHelpView.name] = QuickHelpView;
