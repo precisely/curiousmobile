@@ -18,7 +18,8 @@ define(function(require, exports, module) {
 		this.labelSurfaceProperties = {
 			backgroundColor: 'transparent',
 			textAlign: 'center',
-			color: '#fff'
+			color: '#fff',
+			zIndex: 16
 		};
 		this.init();
 	}
@@ -130,15 +131,15 @@ define(function(require, exports, module) {
 		});
 
 		var centerLabelModifier = new Modifier({
-			transform: Transform.translate((App.width / 2) - 40, 170, 10)
+			transform: Transform.translate((App.width / 2) - 40, 170, 0)
 		});
 
 		var leftLabelModifier = new Modifier({
-			transform: Transform.translate(10, 170, 10)
+			transform: Transform.translate(10, 170, 0)
 		});
 
 		var rightLabelModifier = new Modifier({
-			transform: Transform.translate(App.width - 100, 170, 10)
+			transform: Transform.translate(App.width - 100, 170, 0)
 		});
 
 		this.add(leftLabelModifier).add(moodLowLabel);

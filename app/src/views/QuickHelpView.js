@@ -19,10 +19,19 @@ define(function(require, exports, module) {
 
 	function QuickHelpView() {
 		BaseView.apply(this, arguments);
+
+		this.renderController = new RenderController();
+		var mod = new StateModifier({
+			size: [App.width, App.height],
+			transform: Transform.translate(0, 0, 16)
+		});
+
+		this.add(mod).add(this.renderController);
 		this.init();
-	this.on('backToStep1', function() {
-		this.navigate('step1');
-	});
+
+		this.on('backToStep1', function() {
+			this.navigate('step1');
+		});
 	}
 
 	QuickHelpView.prototype = Object.create(BaseView.prototype);
@@ -78,8 +87,6 @@ define(function(require, exports, module) {
 		this.nodePlayer = new RenderNode();
 		this.nodePlayer.add(draggable).add(step3Surface);
 
-		this.renderController = new RenderController();
-
 		this.step1Surface.on('click', function(event) {
 			var classList;
 			if (u.isAndroid() || (event instanceof CustomEvent)) {
@@ -97,7 +104,6 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-
 		step3Surface.on('click', function(event) {
 			var classList;
 			if (u.isAndroid() || (event instanceof CustomEvent)) {
@@ -105,19 +111,15 @@ define(function(require, exports, module) {
 				if (_.contains(classList, 'back-label')) {
 					this.navigate('step2');
 				} else if (_.contains(classList, 'next-question')) {
-					document.activeElement.blur();
+					if (cordova) {
+						cordova.plugins.Keyboard.close();
+					}
 					createEntries.call(this);
 				} else if (event.srcElement.type === 'text') {
 					event.srcElement.focus();
 				}
 			}
 		}.bind(this));
-
-		var mod = new StateModifier({
-			size: [App.width, App.height],
-			transform: Transform.translate(0, 0, 16)
-		});
-		this.add(mod).add(this.renderController);
 
 		this.navigate('step1');
 
@@ -128,7 +130,7 @@ define(function(require, exports, module) {
 				var sleepInputElement = document.getElementById('sleep-hour');
 				if (event.which === 13) {
 					this.sleepEntry = document.getElementById('sleep-hour-entry').value;
-					this.renderController.show(this.step2Surface);
+					this.navigate('step2');
 				} else if (sleepInputElement.value === '') {
 					document.getElementById('sleep-entry-label').innerHTML = '';
 					document.getElementById('sleep-hour-entry').value = '';
@@ -191,7 +193,8 @@ define(function(require, exports, module) {
 
 	QuickHelpView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
-		this.setBody(this.renderController);
+		this.init();
+
 	};
 
 	QuickHelpView.prototype.navigate = function(step) {
