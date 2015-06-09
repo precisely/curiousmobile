@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var InputSurface = require("famous/surfaces/InputSurface");
+	var Engine = require('famous/core/Engine');
 	var AlertTemplate = require('text!templates/alert.html');
 	var AlertABTemplate = require('text!templates/alert-ab.html');
 	var RenderController = require("famous/views/RenderController");
@@ -17,7 +18,9 @@ define(function(require, exports, module) {
 		_createAlert.call(this);
 		this.controller = new RenderController();
 		window.mainContext.add(this.controller);
-		this.controller.show(this);
+		this.controller.show(this, null, function() {
+			Engine.on('click', closeAlert);
+		});
 	}
 
 	AlertView.prototype = Object.create(View.prototype);
@@ -49,7 +52,6 @@ define(function(require, exports, module) {
 			content: _.template(template, this.options, templateSettings)
 		});
 
-
 		messageSurface.on('click', function(e) {
 			var u = require('util/Utils');
 			var classList;
@@ -71,5 +73,15 @@ define(function(require, exports, module) {
 
 		this.add(messageModifier).add(messageSurface);
 	}
+
+	function closeAlert() {
+		var u = require('util/Utils');
+		u.closeAlerts();
+	}
+
+	AlertView.prototype.removeHandler = function() {
+		Engine.removeListener('click', closeAlert);
+	};
+
 	module.exports = AlertView;
 });

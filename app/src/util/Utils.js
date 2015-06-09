@@ -1,6 +1,7 @@
 define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'views/AlertView'],
 	function(require, exports, module, store, jstz, exoskeleton, AlertView) {
 		'use strict';
+		var Engine = require('famous/core/Engine');
 		var Utils = {};
 		var u = Utils;
 
@@ -28,6 +29,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		Utils.closeAlerts = function() {
 			_.each(u.alertViewsOpen, function(view) {
 				view.controller.hide();
+				view.removeHandler();
 			});
 			u.alertViewsOpen = [];
 		};
