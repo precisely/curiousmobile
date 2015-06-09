@@ -28,7 +28,7 @@ define(function(require, exports, module) {
 
 		this.add(mod).add(this.renderController);
 		this.init();
-
+		Engine.on('keyup', onKeyUp.bind(this));
 		this.on('backToStep1', function() {
 			this.navigate('step1');
 		});
@@ -123,34 +123,35 @@ define(function(require, exports, module) {
 
 		this.navigate('step1');
 
-		Engine.on('keyup', function(event) {
-			var classList;
-			var id = event.srcElement.id;
-			if (id === 'sleep-hour') {
-				var sleepInputElement = document.getElementById('sleep-hour');
-				if (event.which === 13) {
-					this.sleepEntry = document.getElementById('sleep-hour-entry').value;
-					this.navigate('step2');
-				} else if (sleepInputElement.value === '') {
-					document.getElementById('sleep-entry-label').innerHTML = '';
-					document.getElementById('sleep-hour-entry').value = '';
-				} else {
-					document.getElementById('sleep-entry-label').innerHTML = '[sleep ' + sleepInputElement.value + ']';
-					document.getElementById('sleep-hour-entry').value = 'sleep ' + sleepInputElement.value;
-				}
-			} else if (event.which === 13) {
-				if (id === 'cardio') {
-					document.getElementById('resistance').focus();
-				} else if (id === 'resistance') {
-					document.getElementById('stretch').focus();
-				} else if (id === 'stretch') {
-					document.getElementById('metabolic').focus();
-				} else if (id === 'metabolic') {
-					createEntries.call(this);
-				}
-			}
-		}.bind(this));
 	};
+
+	function onKeyUp(event) {
+		var classList;
+		var id = event.srcElement.id;
+		if (id === 'sleep-hour') {
+			var sleepInputElement = document.getElementById('sleep-hour');
+			if (event.which === 13) {
+				this.sleepEntry = document.getElementById('sleep-hour-entry').value;
+				this.navigate('step2');
+			} else if (sleepInputElement.value === '') {
+				document.getElementById('sleep-entry-label').innerHTML = '';
+				document.getElementById('sleep-hour-entry').value = '';
+			} else {
+				document.getElementById('sleep-entry-label').innerHTML = '[sleep ' + sleepInputElement.value + ']';
+				document.getElementById('sleep-hour-entry').value = 'sleep ' + sleepInputElement.value;
+			}
+		} else if (event.which === 13) {
+			if (id === 'cardio') {
+				document.getElementById('resistance').focus();
+			} else if (id === 'resistance') {
+				document.getElementById('stretch').focus();
+			} else if (id === 'stretch') {
+				document.getElementById('metabolic').focus();
+			} else if (id === 'metabolic') {
+				createEntries.call(this);
+			}
+		}
+	}
 
 	function createEntries() {
 		var now = new Date();
@@ -173,7 +174,9 @@ define(function(require, exports, module) {
 					console.log('Success: ', data);
 					if (data.success) {
 						u.showAlert(data.message);
-						App.pageView.changePage('trackView');
+						App.pageView.changePage('TrackView', {
+							new: true
+						});
 					} else {
 						u.showAlert(data.message);
 					}
