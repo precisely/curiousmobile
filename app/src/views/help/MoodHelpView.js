@@ -76,7 +76,7 @@ define(function(require, exports, module) {
 			var interval = xRange / 10;
 			var moodValue = Math.floor(e.position[0] / interval);
 			var value = 'mood ' + ++moodValue;
-			document.getElementById('mood-entry-label').innerHTML = '[' + value + ']';
+			document.getElementById('mood-entry-label').innerHTML = value;
 			this.moodEntry = value;
 		}.bind(this));
 
@@ -93,6 +93,7 @@ define(function(require, exports, module) {
 		step2Surface.add(rangeModifier).add(moodRangeSurface);
 		this.add(step2Surface);
 		this.createMoodRangeLabels();
+		this.moodEntry = 'mood 5';
 
 		step2Surface.on('click', function(event) {
 			var classList;

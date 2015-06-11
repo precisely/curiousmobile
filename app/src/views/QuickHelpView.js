@@ -137,7 +137,7 @@ define(function(require, exports, module) {
 				document.getElementById('sleep-entry-label').innerHTML = '';
 				document.getElementById('sleep-hour-entry').value = '';
 			} else {
-				document.getElementById('sleep-entry-label').innerHTML = '[sleep ' + sleepInputElement.value + ']';
+				document.getElementById('sleep-entry-label').innerHTML = 'sleep ' + sleepInputElement.value;
 				document.getElementById('sleep-hour-entry').value = 'sleep ' + sleepInputElement.value;
 			}
 		} else if (event.which === 13) {
@@ -173,7 +173,6 @@ define(function(require, exports, module) {
 				if (u.checkData(data)) {
 					console.log('Success: ', data);
 					if (data.success) {
-						u.showAlert(data.message);
 						App.pageView.changePage('TrackView', {
 							new: true
 						});
