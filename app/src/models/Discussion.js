@@ -10,7 +10,8 @@ define(function(require, exports, module) {
 		constructor: function(argument) {
 			this.eventInput = new EventHandler();
 			Backbone.Model.apply(this, arguments);
-		}
+		},
+		urlRoot: 'http://dev.wearecurio.us/api/discussion'
 	});
 
 	Discussion.max = 20;

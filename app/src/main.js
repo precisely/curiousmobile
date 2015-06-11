@@ -87,10 +87,6 @@ define(function(require, exports, module) {
 		}
 	});
 
-	Engine.on('click', function(e) {
-		u.closeAlerts();
-	});
-
 	Engine.pipe(touchSync);
 	module.exports = App;
 });
