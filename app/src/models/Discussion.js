@@ -10,7 +10,7 @@ define(function(require, exports, module) {
 		constructor: function(argument) {
 			this.eventInput = new EventHandler();
 			Backbone.Model.apply(this, arguments);
-		},
+		}
 	});
 
 	Discussion.max = 20;
@@ -50,7 +50,8 @@ define(function(require, exports, module) {
 			u.makeGetArgs(argsToSend),
 			function(data) {
 				callback(data);
-			});
+			}
+		.bind(this));
 	};
 
 	module.exports = Discussion;

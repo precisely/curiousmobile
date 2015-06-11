@@ -11,7 +11,9 @@ define(function(require, exports, module) {
 	var CardView = require('views/community/card/CardView');
 	var DiscussoinTemplate = require('text!templates/discussion.html');
 	var Discussion = require('models/Discussion');
+	var DiscussionPost = require('models/DiscussionPost');
 	var u = require('util/Utils');
+	var m = require('util/Model');
 
 	function DiscussionCardView(discussion) {
 		CardView.apply(this, arguments);
