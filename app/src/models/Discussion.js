@@ -11,6 +11,7 @@ define(function(require, exports, module) {
 			this.eventInput = new EventHandler();
 			Backbone.Model.apply(this, arguments);
 		},
+		urlRoot: 'http://dev.wearecurio.us/api/discussion'
 	});
 
 	Discussion.max = 20;
@@ -50,7 +51,8 @@ define(function(require, exports, module) {
 			u.makeGetArgs(argsToSend),
 			function(data) {
 				callback(data);
-			});
+			}
+		.bind(this));
 	};
 
 	module.exports = Discussion;
