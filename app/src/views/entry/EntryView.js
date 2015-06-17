@@ -8,13 +8,15 @@ define(function(require, exports, module) {
 	var RenderController = require('famous/views/RenderController');
 	var TouchSync = require("famous/inputs/TouchSync");
 	var Entry = require('models/Entry');
+	var TrackView = require('views/TrackView');
 	var u = require('util/Utils');
 
 	var entrySurface = null;
 
-	function EntryView(entry) {
+	function EntryView(entry, trackView) {
 		View.apply(this, arguments);
 		this.entry = entry;
+		this.trackView = trackView;
 		_createView.call(this);
 	}
 
@@ -101,7 +103,7 @@ define(function(require, exports, module) {
 	EntryView.prototype.select = function() {
 		console.log('entry selected with id: ' + this.entry.id);
 		var formViewState = App.pageView.getPage('EntryFormView').buildStateFromEntry(this.entry);
-		App.pageView.changePage('EntryFormView', formViewState);
+		this.trackView._eventOutput.emit('create-entry');
 	};
 
 	EntryView.prototype.delete = function(e) {

@@ -123,6 +123,7 @@ define(function(require, exports, module) {
 		entryListContainer.add(this.renderController);
 
 		this.setBody(formContainerSurface);
+		this.entryListContainer = entryListContainer;
 		this.addContent(entryListModifier, entryListContainer);
 
 		if (User.isLoggedIn()) {
@@ -138,22 +139,43 @@ define(function(require, exports, module) {
 
 		this.on('create-entry', function(e) {
 			console.log('EventHandler: this.trackView.on event: create-entry');
-			this.getPage('EntryFormView').unsetEntry();
-			var formViewState = App.pageView.getPage('EntryFormView').buildStateFromEntry(new Entry());
-			this.changePage('EntryFormView', formViewState);
-		}.bind(App.pageView));
+			//this.getPage('EntryFormView').unsetEntry();
+			//var formViewState = App.pageView.getPage('EntryFormView').buildStateFromEntry(new Entry());
+			this.entryFormView = new EntryFormView(this);
+			this.entryListContainer.setProperties({
+				webkitFilter: 'blur(4px)',
+				filter: 'blur(4px)'
+			});
+			this.showBackButton();
+			this.setHeaderLabel('ENTER TAG');
+			this.showOverlayContent(this.entryFormView);
+		}.bind(this));
 	}
 
 	function _createCalendar() {
 		this.calendarView = new CalendarView();
-		var calendarModifier = new StateModifier({
-			transform: Transform.translate(50, 0, 0)
-		});
 		this.calendarView.on('manual-date-change', function(e) {
 			this.changeDate(e.date);
 		}.bind(this));
-		this.layout.header.add(calendarModifier).add(this.calendarView);
+		this.setHeaderSurface(this.calendarView);
 
+	}
+
+	function _createFormHeader() {
+		var formHeader = new Surface({
+			size: [undefined, 30],
+			content: 'ENTER TAG',
+			properties: {
+				textAlign: 'center',
+				verticalAlign: 'middle',
+				zIndex: 4,
+				backgroundColor: '#fff'
+			}
+		});
+		var formHeaderModifier = new StateModifier({
+			transform: Transform.translate(0, 0, 5)
+		});
+		this.setHeaderSurface(formHeader);
 	}
 
 	TrackView.prototype.onShow = function(state) {
@@ -173,6 +195,16 @@ define(function(require, exports, module) {
 
 		return true;
 	};
+
+	TrackView.prototype.killEntryForm = function(state) {
+		this.entryListContainer.setProperties({
+			webkitFilter: 'blur(0px)',
+			filter: 'blur(0px)'
+		});
+		this.killOverlayContent();
+		_createCalendar.call(this);
+		this.preShow(state);
+	}
 
 	TrackView.prototype.changeDate = function(date, callback) {
 		date = u.getMidnightDate(date);

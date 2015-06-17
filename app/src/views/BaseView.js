@@ -25,6 +25,8 @@ define(function(require, exports, module) {
 		}
 		this._header = options ? options.header : true;
 		this.topLevelPage = true;
+		this.overlayController = new RenderController();
+		this.headerController = new RenderController();
 		StateView.apply(this, arguments);
 		_createLayout.call(this);
 		_createHeader.call(this);
@@ -57,6 +59,14 @@ define(function(require, exports, module) {
 	}
 
 	function _createHeader() {
+		var headerMainControllerModifier = new StateModifier({
+			transform: Transform.translate(50, 0, window.App.zIndex.header + 1)
+		});
+		this.layout.header.add(headerMainControllerModifier).add(this.headerController);
+		this.headerContainer = new ContainerSurface({
+			size: [undefined, undefined],
+		});
+
 		if (!this.options.header) {
 			return;
 		}
@@ -73,7 +83,7 @@ define(function(require, exports, module) {
 			transform: Transform.translate(0, 0, App.zIndex.header - 1)
 		});
 
-		this.layout.header.add(headerModifier).add(backgroundSurface);
+		this.headerContainer.add(headerModifier).add(backgroundSurface);
 		this.headerLeftIconController = new RenderController();
 		var leftModifier = new StateModifier({
 			transform: Transform.translate(0, 0, window.App.zIndex.header + 1)
@@ -110,6 +120,7 @@ define(function(require, exports, module) {
 		} else {
 			this.headerLeftIconController.show(this.hamburgerSurface);
 		}
+		this.headerController.show(this.headerContainer);
 	}
 
 	function _createFooter() {
@@ -178,11 +189,8 @@ define(function(require, exports, module) {
 	};
 
 	BaseView.prototype.setHeaderLabel = function(title) {
-		var labelModifier = new Modifier({
-			transform: Transform.translate(0, 0, App.zIndex.header)
-		});
 		var labelSurface = new Surface({
-			size: [window.innerWidth, 64],
+			size: [window.innerWidth - 100, 64],
 			content: title,
 			properties: {
 				fontSize: '15px',
@@ -193,18 +201,14 @@ define(function(require, exports, module) {
 			}
 		});
 
-		this.addLayoutContent(labelModifier, labelSurface, this.layout.header);
+		this.setHeaderSurface(labelSurface);
 	}
 
 	BaseView.prototype.setHeaderSurface = function(headerSurface, surfaceModifier) {
-		if (surfaceModifier == null) {
 			var labelModifier = new Modifier({
 				transform: Transform.translate(0, 0, App.zIndex.header)
 			});
-			this.addLayoutContent(labelModifier, headerSurface, this.layout.header);
-		} else {
-			this.addLayoutContent(surfaceModifier, headerSurface, this.layout.header);
-		}
+			this.headerController.show(headerSurface);
 	}
 	BaseView.prototype.setBody = function(body) {
 		var bodyModifier = new StateModifier({
@@ -228,6 +232,19 @@ define(function(require, exports, module) {
 		} else if (renderable && section) {
 			section.add(renderable);
 		}
+	}
+
+	BaseView.prototype.showOverlayContent = function(renderable) {
+		var overlayModifier = new StateModifier({
+			origin: [0, 0],
+			transform: Transform.translate(0, 0, 25)
+		});
+		this.layout.content.add(overlayModifier).add(this.overlayController);
+		this.overlayController.show(renderable);
+	}
+
+	BaseView.prototype.killOverlayContent = function(renderable) {
+		this.overlayController.hide();
 	}
 
 	module.exports = BaseView;
