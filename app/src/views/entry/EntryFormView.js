@@ -179,8 +179,8 @@ define(function(require, exports, module) {
 			size: [undefined, undefined],
 			classes: ['entry-form-buttons'],
 			properties: {
-				color: '#fff',
-				background: 'rgba(173, 50, 108, 0.5)'
+				color: '#ad326c',
+				background: 'rgba(255, 255, 255, 0.5)'
 			}
 		});
 		this.buttonsAndHelp.add(sequentialLayout);
@@ -189,7 +189,7 @@ define(function(require, exports, module) {
 			content: 'You can repeat the tag, make a button out of it (for instant access), or remind yourself later.<hr>',
 			properties: {
 				fontStyle: 'italic',
-				color: '#fff',
+				color: '#ad326c',
 				margin: '30px 20px',
 				padding: '12px 10px',
 				textAlign: 'center',
