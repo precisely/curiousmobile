@@ -88,7 +88,7 @@ define(function(require, exports, module) {
 				username,
 				password,
 				function(user) {
-					App.pageView.changePage('TrackView', { new: true });
+					App.pageView.changePage('QuickHelpView');
 				}.bind(this)
 			)
 		}
