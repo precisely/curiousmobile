@@ -28,6 +28,8 @@ define(function(require, exports, module) {
 	function TrackView() {
 		BaseView.apply(this, arguments);
 		this.pageChange = false; //making sure the pageChange even is disregarded on page reload
+		this.entryFormView = new EntryFormView(this);
+		this.showingEntryForm = false;
 		_createBody.call(this);
 		_createCalendar.call(this);
 	}
@@ -139,16 +141,8 @@ define(function(require, exports, module) {
 
 		this.on('create-entry', function(e) {
 			console.log('EventHandler: this.trackView.on event: create-entry');
-			//this.getPage('EntryFormView').unsetEntry();
-			//var formViewState = App.pageView.getPage('EntryFormView').buildStateFromEntry(new Entry());
-			this.entryFormView = new EntryFormView(this);
-			this.entryListContainer.setProperties({
-				webkitFilter: 'blur(4px)',
-				filter: 'blur(4px)'
-			});
-			this.showBackButton();
-			this.setHeaderLabel('ENTER TAG');
-			this.showOverlayContent(this.entryFormView);
+			var formViewState = this.entryFormView.buildStateFromEntry(new Entry());
+			this.showEntryFormView(formViewState);
 		}.bind(this));
 	}
 
@@ -159,23 +153,6 @@ define(function(require, exports, module) {
 		}.bind(this));
 		this.setHeaderSurface(this.calendarView);
 
-	}
-
-	function _createFormHeader() {
-		var formHeader = new Surface({
-			size: [undefined, 30],
-			content: 'ENTER TAG',
-			properties: {
-				textAlign: 'center',
-				verticalAlign: 'middle',
-				zIndex: 4,
-				backgroundColor: '#fff'
-			}
-		});
-		var formHeaderModifier = new StateModifier({
-			transform: Transform.translate(0, 0, 5)
-		});
-		this.setHeaderSurface(formHeader);
 	}
 
 	TrackView.prototype.onShow = function(state) {
@@ -202,6 +179,8 @@ define(function(require, exports, module) {
 			filter: 'blur(0px)'
 		});
 		this.killOverlayContent();
+		this.showingEntryForm = false;
+		this.showMenuButton();
 		_createCalendar.call(this);
 		this.preShow(state);
 	}
@@ -239,6 +218,37 @@ define(function(require, exports, module) {
 
 	TrackView.prototype.getSelectedDate = function() {
 		return this.calendarView.getSelectedDate();
+	}
+
+	TrackView.prototype.showEntryFormView = function(state) {
+		this.entryListContainer.setProperties({
+			webkitFilter: 'blur(20px)',
+			filter: 'blur(20px)'
+		});
+		this.showBackButton();
+		this.setHeaderLabel('ENTER TAG');
+		this.showOverlayContent(this.entryFormView, function() {
+			this.onShow(state);
+		}.bind(this.entryFormView));
+		this.showingEntryForm = true;
+	}
+
+	TrackView.prototype.buildStateFromEntry = function(entry) {
+		return this.entryFormView.buildStateFromEntry(entry);
+	}
+
+	TrackView.prototype.getCurrentState = function() {
+		if (this.showingEntryForm) {
+			return {
+				new: true,
+				postLoadAction: {
+					name: 'showEntryFormView',
+					args: this.entryFormView.getCurrentState()
+				}
+			};
+		} else {
+			return {new: true};
+		}
 	}
 
 	App.pages[TrackView.name] = TrackView;

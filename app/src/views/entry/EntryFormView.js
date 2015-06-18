@@ -55,7 +55,7 @@ define(function(require, exports, module) {
 			console.log('EntryListView: Updating an entry');
 			var currentListView = this.trackView.currentListView;
 			currentListView.refreshEntries(resp.entries, resp.glowEntry);
-			this.trackView.killEntryForm({new: true});
+			this.trackView.killEntryForm({new: false});
 		}.bind(this));
 	}
 
@@ -65,7 +65,7 @@ define(function(require, exports, module) {
 		var formContainerSurface = new ContainerSurface({
 			classes: ['entry-form'],
 			properties: {
-				backgroundColor: 'transparent'
+				background: 'rgba(123, 120, 120, 0.48)'
 			}
 		});
 
@@ -179,8 +179,8 @@ define(function(require, exports, module) {
 			size: [undefined, undefined],
 			classes: ['entry-form-buttons'],
 			properties: {
-				color: '#ad326c',
-				background: 'rgba(255, 255, 255, 0.5)'
+				color: '#fff',
+				backgroundColor: 'transparent'
 			}
 		});
 		this.buttonsAndHelp.add(sequentialLayout);
@@ -189,7 +189,7 @@ define(function(require, exports, module) {
 			content: 'You can repeat the tag, make a button out of it (for instant access), or remind yourself later.<hr>',
 			properties: {
 				fontStyle: 'italic',
-				color: '#ad326c',
+				color: '#DDDDDD',
 				margin: '30px 20px',
 				padding: '12px 10px',
 				textAlign: 'center',
@@ -227,7 +227,7 @@ define(function(require, exports, module) {
 	};
 
 	EntryFormView.prototype.toggleSuffix = function(suffix) {
-		var text = document.getElementsByName("entry-description")[0].value;
+		var text = document.getElementById("entry-description").value;
 		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned')) {
 			text = text.substr(0, text.length - 7);
 		}
@@ -235,13 +235,13 @@ define(function(require, exports, module) {
 		if (typeof suffix != 'undefined') {
 			text += ' ' + suffix;
 		}
-		document.getElementsByName("entry-description")[0].value = text;
+		document.getElementById("entry-description").value = text;
 
 		return text.length > 0;
 	};
 
 	EntryFormView.prototype.removeSuffix = function(text) {
-		text = text ? text : document.getElementsByName("entry-description")[0].value;
+		text = text ? text : document.getElementById("entry-description").value;
 		if (text.endsWith(' repeat') || text.endsWith(' pinned') ||
 			text.endsWith(' button')) {
 			text = text.substr(0, text.length - 7);
@@ -352,12 +352,12 @@ define(function(require, exports, module) {
 	};
 
 	EntryFormView.prototype.setEntryText = function(text) {
-		document.getElementsByName("entry-description")[0].value = '';
+		document.getElementById("entry-description").value = '';
 	};
 
 	EntryFormView.prototype.submit = function(e, directlyCreateEntry) {
 		var entry = null;
-		var newText = document.getElementsByName("entry-description")[0].value;
+		var newText = document.getElementById("entry-description").value;
 
 		if (e instanceof Entry && directlyCreateEntry) {
 			entry = e;
@@ -367,10 +367,10 @@ define(function(require, exports, module) {
 			entry = this.entry;
 		}
 
-		//if (!u.isOnline()) {
-		//	u.showAlert("You don't seem to be connected. Please wait until you are online to add an entry.");
-		//	return;
-		//}
+		if (!u.isOnline()) {
+			u.showAlert("You don't seem to be connected. Please wait until you are online to add an entry.");
+			return;
+		}
 		if (!entry || !entry.get('id') || entry.isContinuous()) {
 			var newEntry = new Entry();
 			newEntry.set('date', window.App.selectedDate);
