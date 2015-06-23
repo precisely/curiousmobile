@@ -75,20 +75,29 @@ define(function(require, exports, module) {
 			align: [0, 0],
 			size: [window.innerWidth, 64],
 			properties: {
-				backgroundColor: 'white'
+				backgroundColor: '#fff'
 			}
 		});
 
-		var headerModifier = new Modifier({
+		var headerBackgroundModifier = new Modifier({
 			transform: Transform.translate(0, 0, App.zIndex.header - 1)
 		});
 
-		this.headerContainer.add(headerModifier).add(backgroundSurface);
+		this.headerContainer.add(headerBackgroundModifier).add(backgroundSurface);
 		this.headerLeftIconController = new RenderController();
+		this.headerRightIconController = new RenderController();
+
 		var leftModifier = new StateModifier({
 			transform: Transform.translate(0, 0, window.App.zIndex.header + 1)
 		});
+		var rightModifier = new StateModifier({
+			align: [1, 0],
+			origin: [1, 0],
+			transform: Transform.translate(0, 0, window.App.zIndex.header + 1)
+		});
+
 		this.layout.header.add(leftModifier).add(this.headerLeftIconController);
+		this.layout.header.add(rightModifier).add(this.headerRightIconController);
 		this.leftSurface = new Surface({
 			content: '<img src="content/images/left.png" />',
 			size: [61, 64],
@@ -120,7 +129,7 @@ define(function(require, exports, module) {
 		} else {
 			this.headerLeftIconController.show(this.hamburgerSurface);
 		}
-		this.headerController.show(this.headerContainer);
+		this.layout.header.add(this.headerContainer);
 	}
 
 	function _createFooter() {
@@ -165,6 +174,10 @@ define(function(require, exports, module) {
 		this.headerLeftIconController.show(this.leftSurface);
 	};
 
+	BaseView.prototype.setRightIcon = function (iconSurface) {
+		this.headerRightIconController.show(iconSurface);
+	};
+
 	BaseView.prototype.onShow = function(state) {
 		if (this.options.header) {
 			if (!this.options.noBackButton && App.pageView.hasHistory()) {
@@ -205,11 +218,9 @@ define(function(require, exports, module) {
 	}
 
 	BaseView.prototype.setHeaderSurface = function(headerSurface, surfaceModifier) {
-			var labelModifier = new Modifier({
-				transform: Transform.translate(0, 0, App.zIndex.header)
-			});
 			this.headerController.show(headerSurface);
 	}
+
 	BaseView.prototype.setBody = function(body) {
 		var bodyModifier = new StateModifier({
 			origin: [0, 0],
