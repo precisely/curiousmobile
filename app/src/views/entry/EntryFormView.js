@@ -11,6 +11,7 @@ define(function(require, exports, module) {
 	var Transitionable = require('famous/transitions/Transitionable');
 	var Easing = require("famous/transitions/Easing");
 	var RenderController = require("famous/views/RenderController");
+	var StateView = require('views/StateView');
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var AutocompleteView = require("views/AutocompleteView");
 	var u = require('util/Utils');
@@ -20,20 +21,16 @@ define(function(require, exports, module) {
 	var EventHandler = require('famous/core/EventHandler');
 	var inputSurfaceTemplate = require('text!templates/input-surface.html');
 
-	function EntryFormView() {
-		BaseView.apply(this, arguments);
+	function EntryFormView(trackView) {
+		StateView.apply(this, arguments);
+		this.trackView = trackView;
 		_setListeners.call(this);
 		_createForm.call(this);
-		this.parentPage = 'TrackView';
 	}
 
-	EntryFormView.prototype = Object.create(BaseView.prototype);
+	EntryFormView.prototype = Object.create(StateView.prototype);
 	EntryFormView.prototype.constructor = EntryFormView;
 
-	EntryFormView.DEFAULT_OPTIONS = {
-		header: true,
-		backButton: true,
-	};
 	EntryFormView.prototype.eventHandler = new EventHandler();
 	var enteredKey;
 
@@ -47,28 +44,28 @@ define(function(require, exports, module) {
 			console.log('update the Input Surface');
 		}.bind(this));
 
-		this.on('new-entry', function(data) {
+		this.on('new-entry', function(resp) {
 			console.log("New Entry - TrackView event");
-			var currentListView = this.getPage('TrackView').currentListView;
-			currentListView.refreshEntries(data.entries, data.glowEntry);
-			this.changePage('TrackView', { new: false });
-		}.bind(App.pageView));
+			var currentListView = this.trackView.currentListView;
+			currentListView.refreshEntries(resp.entries, resp.glowEntry);
+			this.trackView.killEntryForm({ new: false });
+		}.bind(this));
 
 		this.on('update-entry', function(resp) {
 			console.log('EntryListView: Updating an entry');
-			var currentListView = this.getPage('TrackView').currentListView;
+			var currentListView = this.trackView.currentListView;
 			currentListView.refreshEntries(resp.entries, resp.glowEntry);
-			this.changePage('TrackView',  { new: false });
-		}.bind(App.pageView));
+			this.trackView.killEntryForm({new: false});
+		}.bind(this));
 	}
 
 	function _createForm() {
 		this.clazz = 'EntryFormView';
-		this.setHeaderLabel('ENTER TAG');
+
 		var formContainerSurface = new ContainerSurface({
 			classes: ['entry-form'],
 			properties: {
-				backgroundColor: '#ad326c',
+				background: 'rgba(123, 120, 120, 0.48)'
 			}
 		});
 
@@ -91,7 +88,6 @@ define(function(require, exports, module) {
 		});
 
 		this.inputSurface.on('keyup', function(e) {
-			console.log('keyup on formview');
 			//on enter
 			if (e.keyCode == 13) {
 				this.submit(e);
@@ -124,7 +120,7 @@ define(function(require, exports, module) {
 			defaultItemSize: [100, 24],
 		});
 
-		var firstOffset = 20;
+		var firstOffset = (App.width / 2) - 140;
 		sequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
 			if (index === 0) {
@@ -180,11 +176,11 @@ define(function(require, exports, module) {
 		}.bind(this));
 		sequentialLayout.sequenceFrom([this.repeatSurface, this.pinSurface, this.remindSurface]);
 		this.buttonsAndHelp = new ContainerSurface({
-			size: [undefined, 320],
+			size: [undefined, undefined],
 			classes: ['entry-form-buttons'],
 			properties: {
-				color: '#ffffff',
-				backgroundColor: '#ad326c',
+				color: '#fff',
+				backgroundColor: 'transparent'
 			}
 		});
 		this.buttonsAndHelp.add(sequentialLayout);
@@ -193,10 +189,10 @@ define(function(require, exports, module) {
 			content: 'You can repeat the tag, make a button out of it (for instant access), or remind yourself later.<hr>',
 			properties: {
 				fontStyle: 'italic',
-				color: 'white',
+				color: '#DDDDDD',
 				margin: '30px 20px',
 				padding: '12px 10px',
-				textAlign: 'justify',
+				textAlign: 'center',
 			}
 		});
 
@@ -205,8 +201,9 @@ define(function(require, exports, module) {
 		});
 		this.buttonsAndHelp.add(helpModifier).add(helpSurface);
 
-		formContainerSurface.add(this.buttonsAndHelp);
-		this.setBody(formContainerSurface);
+		this.formContainerSurface.add(this.buttonsAndHelp);
+		this.add(this.formContainerSurface);
+		//this.setBody(formContainerSurface);
 	}
 	
 	EntryFormView.prototype.preShow = function(state) {
@@ -230,7 +227,7 @@ define(function(require, exports, module) {
 	};
 
 	EntryFormView.prototype.toggleSuffix = function(suffix) {
-		var text = document.getElementsByName("entry-description")[0].value;
+		var text = document.getElementById("entry-description").value;
 		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned')) {
 			text = text.substr(0, text.length - 7);
 		}
@@ -238,13 +235,13 @@ define(function(require, exports, module) {
 		if (typeof suffix != 'undefined') {
 			text += ' ' + suffix;
 		}
-		document.getElementsByName("entry-description")[0].value = text;
+		document.getElementById("entry-description").value = text;
 
 		return text.length > 0;
 	};
 
 	EntryFormView.prototype.removeSuffix = function(text) {
-		text = text ? text : document.getElementsByName("entry-description")[0].value;
+		text = text ? text : document.getElementById("entry-description").value;
 		if (text.endsWith(' repeat') || text.endsWith(' pinned') ||
 			text.endsWith(' button')) {
 			text = text.substr(0, text.length - 7);
@@ -355,12 +352,12 @@ define(function(require, exports, module) {
 	};
 
 	EntryFormView.prototype.setEntryText = function(text) {
-		document.getElementsByName("entry-description")[0].value = '';
+		document.getElementById("entry-description").value = '';
 	};
 
 	EntryFormView.prototype.submit = function(e, directlyCreateEntry) {
 		var entry = null;
-		var newText = document.getElementsByName("entry-description")[0].value;
+		var newText = document.getElementById("entry-description").value;
 
 		if (e instanceof Entry && directlyCreateEntry) {
 			entry = e;

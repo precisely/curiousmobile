@@ -28,6 +28,8 @@ define(function(require, exports, module) {
 	function TrackView() {
 		BaseView.apply(this, arguments);
 		this.pageChange = false; //making sure the pageChange even is disregarded on page reload
+		this.entryFormView = new EntryFormView(this);
+		this.showingEntryForm = false;
 		_createBody.call(this);
 		_createCalendar.call(this);
 	}
@@ -123,6 +125,7 @@ define(function(require, exports, module) {
 		entryListContainer.add(this.renderController);
 
 		this.setBody(formContainerSurface);
+		this.entryListContainer = entryListContainer;
 		this.addContent(entryListModifier, entryListContainer);
 
 		if (User.isLoggedIn()) {
@@ -138,21 +141,17 @@ define(function(require, exports, module) {
 
 		this.on('create-entry', function(e) {
 			console.log('EventHandler: this.trackView.on event: create-entry');
-			this.getPage('EntryFormView').unsetEntry();
-			var formViewState = App.pageView.getPage('EntryFormView').buildStateFromEntry(new Entry());
-			this.changePage('EntryFormView', formViewState);
-		}.bind(App.pageView));
+			var formViewState = this.entryFormView.buildStateFromEntry(new Entry());
+			this.showEntryFormView(formViewState);
+		}.bind(this));
 	}
 
 	function _createCalendar() {
 		this.calendarView = new CalendarView();
-		var calendarModifier = new StateModifier({
-			transform: Transform.translate(50, 0, 0)
-		});
 		this.calendarView.on('manual-date-change', function(e) {
 			this.changeDate(e.date);
 		}.bind(this));
-		this.layout.header.add(calendarModifier).add(this.calendarView);
+		this.setHeaderSurface(this.calendarView);
 
 	}
 
@@ -173,6 +172,18 @@ define(function(require, exports, module) {
 
 		return true;
 	};
+
+	TrackView.prototype.killEntryForm = function(state) {
+		this.entryListContainer.setProperties({
+			webkitFilter: 'blur(0px)',
+			filter: 'blur(0px)'
+		});
+		this.killOverlayContent();
+		this.showingEntryForm = false;
+		this.showMenuButton();
+		_createCalendar.call(this);
+		this.preShow(state);
+	}
 
 	TrackView.prototype.changeDate = function(date, callback) {
 		date = u.getMidnightDate(date);
@@ -207,6 +218,37 @@ define(function(require, exports, module) {
 
 	TrackView.prototype.getSelectedDate = function() {
 		return this.calendarView.getSelectedDate();
+	}
+
+	TrackView.prototype.showEntryFormView = function(state) {
+		this.entryListContainer.setProperties({
+			webkitFilter: 'blur(20px)',
+			filter: 'blur(20px)'
+		});
+		this.showBackButton();
+		this.setHeaderLabel('ENTER TAG');
+		this.showOverlayContent(this.entryFormView, function() {
+			this.onShow(state);
+		}.bind(this.entryFormView));
+		this.showingEntryForm = true;
+	}
+
+	TrackView.prototype.buildStateFromEntry = function(entry) {
+		return this.entryFormView.buildStateFromEntry(entry);
+	}
+
+	TrackView.prototype.getCurrentState = function() {
+		if (this.showingEntryForm) {
+			return {
+				new: true,
+				postLoadAction: {
+					name: 'showEntryFormView',
+					args: this.entryFormView.getCurrentState()
+				}
+			};
+		} else {
+			return {new: true};
+		}
 	}
 
 	App.pages[TrackView.name] = TrackView;

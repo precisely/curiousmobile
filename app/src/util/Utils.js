@@ -35,12 +35,12 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		};
 
 		Utils.isOnline = function() {
-			var networkState = navigator.connection.type;
 
-			if (!cordova) {
+			if (typeof cordova == 'undefined') {
 				return window.navigator.onLine;
 			}
 
+			var networkState = navigator.connection.type;
 			return networkState !== Connection.NONE;
 		};
 

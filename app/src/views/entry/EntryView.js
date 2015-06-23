@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 	var RenderController = require('famous/views/RenderController');
 	var TouchSync = require("famous/inputs/TouchSync");
 	var Entry = require('models/Entry');
+	var TrackView = require('views/TrackView');
 	var u = require('util/Utils');
 
 	var entrySurface = null;
@@ -56,7 +57,6 @@ define(function(require, exports, module) {
 		this.touchSync.on('update', function(data) {
 			var movementX = Math.abs(data.position[0]);
 			var movementY = Math.abs(data.position[1]);
-			console.log('movementx: ', movementX, ' movementy: ', movementY);
 			// Don't show context menu if there is intent to move something
 			if (movementX > 8 || movementY > 8) {
 				clearTimeout(this.touchTimeout);
@@ -100,8 +100,9 @@ define(function(require, exports, module) {
 
 	EntryView.prototype.select = function() {
 		console.log('entry selected with id: ' + this.entry.id);
-		var formViewState = App.pageView.getPage('EntryFormView').buildStateFromEntry(this.entry);
-		App.pageView.changePage('EntryFormView', formViewState);
+		var trackView = App.pageView.getPage('TrackView');
+		var formViewState = trackView.buildStateFromEntry(this.entry);
+		trackView.showEntryFormView(formViewState);
 	};
 
 	EntryView.prototype.delete = function(e) {
