@@ -43,12 +43,7 @@ define(function(require, exports, module) {
 			content: 'content/images/edit-pencil.png',
 		});
 
-		this.pencilIconModifier = new StateModifier({
-			origin: [1, 0],
-			align: [1, 0],
-			transform: Transform.translate(0, 0, App.zIndex.header + 1)
-		});
-
+		this.setRightIcon(this.pencilSurface);
 		this.setHeaderSurface(this.pencilSurface, this.pencilIconModifier);
 		this.initContent();
 	}
