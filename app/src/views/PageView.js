@@ -156,6 +156,11 @@ define(function(require, exports, module) {
 		var continueChangePage = view.preShow(state);
 		if (!continueChangePage && (state && !state.onLoad)) {
 			return false;	
+		} else if (state && state.onLoad) {
+			if (view.parentPage) {
+				this.goBack(view.parentPage, {new: true});
+				return false;
+			}
 		}
 
 		if (view.options.noBackButton) {
