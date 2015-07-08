@@ -84,7 +84,7 @@ define(function(require, exports, module) {
 					var state = {
 						hash: this.hash,
 						name: this.name,
-						parentPage: 'SprintActivityView'
+						parentPage: this.parentPage != 'SprintDetailView' ? 'SprintActivityView' : undefined
 					};
 					App.pageView.changePage('SprintDetailView', state);
 				}

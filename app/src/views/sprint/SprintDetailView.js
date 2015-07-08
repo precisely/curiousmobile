@@ -78,7 +78,9 @@ define(function(require, exports, module) {
 	};
 
 	SprintDetailView.prototype.refresh = function() {
+		this.participantsOffset = 10;
 		Sprint.show(this.hash, function(sprintDetails) {
+			this.totalParticipants = sprintDetails.totalParticipants;
 			var sprintSurface = new Surface({
 				size: [undefined, undefined],
 				content: _.template(SprintDetailsTemplate, sprintDetails, templateSettings),
@@ -95,16 +97,19 @@ define(function(require, exports, module) {
 						var state = {
 							hash: this.hash,
 							name: this.name,
-							parentPage: 'SprintDetailView'
+							parentPage: this.parentPage != 'SprintActivityView' ? 'SprintDetailView' : undefined
 						};
 						App.pageView.changePage('SprintActivityView', state);
 					} else if (e.srcElement.id.indexOf('more-participants') > -1) {
-						Sprint.getMoreParticipants({id: this.hash, offset: 10}, function(participantsList) {
+						Sprint.getMoreParticipants({id: this.hash, offset: this.participantsOffset ,max: 10}, function(participantsList) {
 							_.each(participantsList, function(participant) {
 								document.getElementById('sprint-participants').insertAdjacentHTML( 'beforeend', participant.username + '<br>');
 							});
-							document.getElementById('more-participants').style.visibility = 'hidden';
-						}, function() {
+							this.participantsOffset += 10;
+							if (this.participantsOffset >= this.totalParticipants) {
+								document.getElementById('more-participants').style.visibility = 'hidden';
+							}
+						}.bind(this), function() {
 
 						});
 					}
