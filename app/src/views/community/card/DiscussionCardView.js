@@ -15,9 +15,10 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 	var m = require('util/Model');
 
-	function DiscussionCardView(discussion) {
+	function DiscussionCardView(discussion, parentPage) {
 		CardView.apply(this, arguments);
 		this.discussion = discussion;
+		this.parentPage = parentPage || 'FeedView';
 		createCard.call(this);
 	}
 
@@ -71,7 +72,8 @@ define(function(require, exports, module) {
 					});
 				} else {
 					var state = {
-						discussionId: this.discussion.id
+						discussionId: this.discussion.id,
+						parentPage: this.parentPage
 					};
 					App.pageView.changePage('DiscussionDetailView', state);
 				}

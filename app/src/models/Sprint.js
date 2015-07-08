@@ -21,12 +21,66 @@ define(function(require, exports, module) {
 			offset: args.offset?args.offset:0,
 			type: 'sprints'
 		});
-		u.queueJSON("loading feeds", u.makeGetUrl('indexData', 'search'), 
+		u.queueJSON('loading feeds', u.makeGetUrl('indexData', 'search'), 
 		u.makeGetArgs(argsToSend), function(data) {
 			if (u.checkData(data)) {
 				callback(data.listItems.sprintList);
 			}
 		});
 	};
+
+	Sprint.show = function(hash, successCallback, failCallback) {
+		u.queueJSON('Getting sprint data', App.serverUrl + '/api/sprint/' + hash + '?' + 
+			u.getCSRFPreventionURI('getSprintData') + '&callback=?', 
+		function(data) {
+			if (u.checkData(data)) {
+				if (data.success) {
+					successCallback({sprint: data.sprint, entries: data.entries, participants: data.participants,
+						totalParticipants: data.totalParticipants});
+				} else {
+					u.showAlert(data.message);
+					failCallback();
+				}
+			}
+		}, function(error) {
+			console.log('error: ', error);
+		}
+		);
+	};
+
+	Sprint.listDiscussions = function(args, successCallback, failCallback) {
+		u.queueJSON('Getting more discussions', App.serverUrl + '/api/discussion/action/sprintList?' +
+			u.getCSRFPreventionURI('getSprintData') + '&callback=?',
+			args, function(data) {
+				if (u.checkData(data)) {
+					if (data.success) {
+						successCallback(data.listItems.discussionList);
+					} else {
+						u.showAlert(data.message);
+						failCallback();
+					}
+				}
+			}, function(error) {
+				console.log(error);
+			});	
+	};
+
+	Sprint.getMoreParticipants = function(args, successCallback, failCallback) {
+		u.queueJSON('Getting more participants', App.serverUrl + '/data/getSprintParticipantsData?' +
+			u.getCSRFPreventionURI('getParticipantsData') + '&callback=?',
+			args, function(data) {
+				if (u.checkData(data)) {
+					if (data.success) {
+						successCallback(data.participants);
+					} else {
+						u.showAlert(data.message);
+						failCallback();
+					}
+				}
+			}, function(error) {
+				console.log(error);
+			});	
+	};
+
 	module.exports = Sprint;
 });

@@ -49,7 +49,7 @@ define(function(require, exports, module) {
 
 	function init() {
 		this.deck = [];
-		this.headerSurface = new ImageSurface({
+		this.pencilSurface = new ImageSurface({
 			size: [44, 64],
 			content: 'content/images/edit-pencil.png',
 		});
@@ -62,11 +62,11 @@ define(function(require, exports, module) {
 		});
 
 		this.setBody(this.backgroundSurface);
-		this.setRightIcon(this.headerSurface);
+		this.setRightIcon(this.pencilSurface);
 		this.setHeaderLabel('FEED');
 
 
-		this.headerSurface.on('click', function(e) {
+		this.pencilSurface.on('click', function(e) {
 			App.pageView.changePage(CreatePostView.name);
 		}.bind(this));
 

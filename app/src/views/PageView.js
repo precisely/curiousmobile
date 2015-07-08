@@ -154,7 +154,7 @@ define(function(require, exports, module) {
 		}
 
 		var continueChangePage = view.preShow(state);
-		if (!continueChangePage && !state.onLoad) {
+		if (!continueChangePage && (state && !state.onLoad)) {
 			return false;	
 		}
 
@@ -209,7 +209,7 @@ define(function(require, exports, module) {
 	 */
 	PageView.prototype.goBack = function(parent, state) {
 		var backTo = this.history.pop();
-		if (parent) {
+		if (parent && (!state || (state && !state.goBackToHistory))) {
 			backTo = parent;
 		}
 		this.changePage(backTo, state);

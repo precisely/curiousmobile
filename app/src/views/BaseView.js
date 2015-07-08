@@ -198,7 +198,7 @@ define(function(require, exports, module) {
 	};
 
 	BaseView.prototype.goBack = function(state) {
-		App.pageView.goBack(this.parentPage, state);
+		App.pageView.goBack(this.parentPage, state || this.state);
 	};
 
 	BaseView.prototype.setHeaderLabel = function(title) {

@@ -2,34 +2,23 @@
 	<div class="sprint">
 		<div class="contents">
 			<div class="row">
-				<div class="col-xs-9">
+				<div class="col-xs-8">
 					<a href="/home/sprint/{{= hash }}">
 						<span> {{= name }}</span>
 					</a>
 				</div>
-				<div class="col-xs-3 align-right">
-					<span class="posting-time" data-time="{{= created }}"></span>
+				<div class="col-xs-4 align-right">
+					<span class="sprint-card-participants">
+						PARTICIPANTS({{= totalParticipants }})
+					</span>
 				</div>
 			</div>
 			<div class="sprint-description">
-				<div>
-					{{= description }}
-				</div>
+				{{= description }}
 			</div>
-			<div class="row">
-				<div class="col-xs-8 tags-participants-label">
-					<a href="/home/sprint/{{= hash }}">
-						TAGS({{= totalTags }})
-					</a>
-					<a href="/home/sprint/{{= hash }}">
-						PARTICIPANTS({{= totalParticipants }})
-					</a>
-				</div>
-				<div class="col-xs-4 align-right read-more">
-					<a href="/home/sprint/{{= hash }}">
-						VIEW MORE
-					</a>
-				</div>
+			<div>
+				<button class="sprint-card-button details">DETAILS</button>
+				<button class="sprint-card-button activity">ACTIVITY</button>
 			</div>
 		</div>
 	</div>

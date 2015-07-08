@@ -83,6 +83,7 @@ define(function(require, exports, module) {
 			return false;
 		}
 		this.discussionId = state.discussionId;
+		this.parentPage = state.parentPage || 'FeedView';
 		this.refresh();
 		return true;
 	};
