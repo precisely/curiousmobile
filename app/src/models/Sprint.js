@@ -48,7 +48,7 @@ define(function(require, exports, module) {
 	};
 
 	Sprint.listDiscussions = function(args, successCallback, failCallback) {
-		u.queueJSON('Getting more discussions', App.serverUrl + '/api/discussion/action/sprintList?callback=?', 
+		u.queueJSON('Getting more discussions', App.serverUrl + '/api/sprint/action/discussions?callback=?', 
 		u.getCSRFPreventionObject('getSprintData', args), 
 		function(data) {
 			if (u.checkData(data)) {
