@@ -48,7 +48,7 @@ define(function(require, exports, module) {
 			console.log("New Entry - TrackView event");
 			var currentListView = this.trackView.currentListView;
 			currentListView.refreshEntries(resp.entries, resp.glowEntry);
-			this.trackView.killEntryForm({ new: false });
+			this.trackView.killEntryForm({ entryDate: resp.glowEntry.date });
 		}.bind(this));
 
 		this.on('update-entry', function(resp) {
