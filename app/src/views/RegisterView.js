@@ -72,12 +72,17 @@ define(function(require, exports, module) {
 		var user = new User();
 		var emailRegEx = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 		var email = document.forms["registerForm"]["email"].value;
+		var confirmEmail = document.forms["registerForm"]["confirm_email"].value;
 		var username = document.forms["registerForm"]["username"].value;
 		var password = document.forms["registerForm"]["password"].value;
 		if (!email) {
 			u.showAlert("Email is a required field!");
 		} else if (email.search(emailRegEx) == -1) {
 			u.showAlert("Please enter a valid email address!");
+		} else if (!confirmEmail) {
+			u.showAlert("Confirm email is a required field!");
+		} else if (email != confirmEmail) {
+			u.showAlert("Email and confirm email fields do not match!");
 		} else if (!username) {
 			u.showAlert("Username is a required field!");
 		} else if (!password) {
@@ -85,6 +90,7 @@ define(function(require, exports, module) {
 		} else {
 			user.register(
 				email,
+				confirmEmail,
 				username,
 				password,
 				function(user) {

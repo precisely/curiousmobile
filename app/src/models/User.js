@@ -36,11 +36,12 @@ define(function(require, exports, module) {
 		isLoggedIn: function() {
 			User.isLoggedIn();
 		},
-		register: function(email, username, password, callback) {
+		register: function(email, confirmEmail, username, password, callback) {
 			this.u.queuePostJSON("creating account",
 				this.u.makePostUrl('doregisterData'),
 				this.u.makePostArgs({
 					email: email,
+					confirm_email: confirmEmail,
 					username: username,
 					password: password,
 					groups: "['announce','curious','curious announce']"
