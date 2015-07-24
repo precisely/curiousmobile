@@ -178,6 +178,10 @@ define(function(require, exports, module) {
 		this.headerRightIconController.show(iconSurface);
 	};
 
+	BaseView.prototype.removeRightIcon = function () {
+		this.headerRightIconController.hide();
+	};
+
 	BaseView.prototype.onShow = function(state) {
 		if (this.options.header) {
 			if (!this.options.noBackButton && App.pageView.hasHistory()) {

@@ -62,7 +62,6 @@ define(function(require, exports, module) {
 		});
 
 		this.setBody(this.backgroundSurface);
-		this.setRightIcon(this.pencilSurface);
 		this.setHeaderLabel('FEED');
 
 
@@ -195,6 +194,7 @@ define(function(require, exports, module) {
 			offset: 0,
 			max: this.max
 		};
+		this.removeRightIcon();
 		if (lable === 'ALL') {
 			params.type = 'all';
 			var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', params);
@@ -211,6 +211,7 @@ define(function(require, exports, module) {
 		} else if (lable === 'SPRINT') {
 			Sprint.fetch(params, addListItemsToScrollView.bind(this));
 		} else if (lable === 'DISCUSSIONS') {
+			this.setRightIcon(this.pencilSurface);
 			Discussion.fetch(params, addListItemsToScrollView.bind(this));
 		}
 		this.scrollView.sequenceFrom(this.deck);
