@@ -43,8 +43,8 @@ define(function(require, exports, module) {
 			content: 'content/images/edit-pencil.png',
 		});
 
-		this.setRightIcon(this.pencilSurface);
-		this.setHeaderSurface(this.pencilSurface, this.pencilIconModifier);
+		// Pencil icon will appear after the sprint edit is functional
+		//this.setRightIcon(this.pencilSurface);
 		this.initContent();
 	}
 
