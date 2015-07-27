@@ -45,9 +45,9 @@ define(function(require, exports, module) {
 	Discussion.deleteDiscussion = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			userId: User.getCurrentUserId(),
-			id: args.id
+			hash: args.hash
 		});
-		u.queueJSON("loading discussion list", u.makeGetUrl("deleteDiscussionId"),
+		u.queueJSON("loading discussion list", u.makeGetUrl("deleteDiscussionHash"),
 			u.makeGetArgs(argsToSend),
 			function(data) {
 				callback(data);

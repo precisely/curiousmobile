@@ -231,7 +231,7 @@ define(function(require, exports, module) {
 				sprintCardView.setScrollView(this.scrollView);
 
 			} else if (item.type === 'dis') {
-				var discussionCardView = new DiscussionCardView(item);
+				var discussionCardView = new DiscussionCardView(item, null, this.deck);
 				this.deck.push(discussionCardView);
 				discussionCardView.setScrollView(this.scrollView);
 

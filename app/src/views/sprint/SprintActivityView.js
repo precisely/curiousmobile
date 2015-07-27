@@ -148,6 +148,7 @@ define(function(require, exports, module) {
 		this.hash = state.hash;
 		this.name = state.name;
 		this.parentPage = state.parentPage || 'FeedView';
+		this.initScrollView();
 		this.fetchDiscussions({sprintHash: this.hash, max: 5, offset: 0});
 		return true;
 	};
@@ -159,7 +160,7 @@ define(function(require, exports, module) {
 			return;
 		}
 		listItems.forEach(function(item) {
-			var discussionCardView = new DiscussionCardView(item, 'SprintActivityView');
+			var discussionCardView = new DiscussionCardView(item, 'SprintActivityView', this.deck);
 			this.deck.push(discussionCardView);
 			discussionCardView.setScrollView(this.scrollView);
 		}.bind(this));

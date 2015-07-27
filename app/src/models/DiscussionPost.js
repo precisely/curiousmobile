@@ -14,7 +14,7 @@ define( function(require, exports, module) {
 	DiscussionPost.fetch = function(params, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			Id: User.getCurrentUserId(),
-			discussionId: params.discussionId,
+			discussionHash: params.discussionHash,
 			timeZoneName: window.jstz.determine().name(),
 			max: DiscussionPost.max,
 			offset: params.offset?params.offset:0
@@ -31,7 +31,7 @@ define( function(require, exports, module) {
 	DiscussionPost.deleteComment = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			userId: User.getCurrentUserId(),
-			discussionId : args.discussionId,
+			discussionHash : args.discussionHash,
 			clearPostId : args.clearPostId
 		});
 		console.log(args.clearPostId, args.discussionId);
@@ -49,7 +49,7 @@ define( function(require, exports, module) {
 	DiscussionPost.createComment = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			userId: User.getCurrentUserId(),
-			discussionId : args.discussionId,
+			discussionHash : args.discussionHash,
 			message : args.message,
 			plotIdMessage : args.plotIdMessage
 		});
