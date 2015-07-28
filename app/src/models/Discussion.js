@@ -14,7 +14,7 @@ define(function(require, exports, module) {
 		urlRoot: 'http://dev.wearecurio.us/api/discussion'
 	});
 
-	Discussion.max = 20;
+	Discussion.max = 10;
 
 	Discussion.post = function(name, discussionPost, callback) {
 		u.queueJSON("posting in",

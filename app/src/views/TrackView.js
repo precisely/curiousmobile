@@ -167,6 +167,7 @@ define(function(require, exports, module) {
 			this.changeDate(this.calendarView.selectedDate);
 		} else if (state && (state.entryDate)) {
 			EntryCollection.clearCache();
+			this.calendarView.setSelectedDate(state.entryDate);
 			this.changeDate(state.entryDate);
 		}
 

@@ -37,7 +37,8 @@ define(function(require, exports, module) {
 			content: 'content/images/edit-pencil.png',
 		});
 
-		this.setRightIcon(this.pencilSurface);
+		// Pencil icon will appear when sprint edit will be functional
+		//this.setRightIcon(this.pencilSurface);
 
 		this.renderController = new RenderController();
 		var mod = new StateModifier({
