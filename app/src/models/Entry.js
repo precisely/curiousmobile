@@ -161,12 +161,12 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			create: function(callback) {
 				var collectionCache = window.App.collectionCache;
 				var now = new Date();
-				var baseDate = window.App.selectedDate || now.setHours(0, 0, 0, 0);
+				var baseDate = window.App.selectedDate || new Date(now.setHours(0, 0, 0, 0));
 				var argsToSend = u.getCSRFPreventionObject("addEntryCSRF", {
 					currentTime: new Date().toUTCString(),
 					userId: User.getCurrentUserId(),
 					text: this.text,
-					baseDate: new Date(baseDate).toUTCString(),
+					baseDate: baseDate.toUTCString(),
 					timeZoneName: u.getTimezone(),
 					defaultToNow: '1'
 				});
