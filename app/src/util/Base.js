@@ -41,6 +41,13 @@ String.prototype.endsWith = function(str) {
 	return this.length >= str.length && this.substr(this.length - str.length) == str;
 }
 
+/**                                                                                                                      
+ * Universal indexOf method to get index by passing regex as argument                                                    
+ */                                                                                                                      
+String.prototype.indexOfRegex = function(regex){                                                                         
+	var match = this.match(regex);                                                                                       
+	return match ? this.indexOf(match[0]) : -1;                                                                          
+}  
 /*
  * Simple, clean Javascript inheritance scheme
  *

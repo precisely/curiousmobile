@@ -13,8 +13,11 @@ define(function(require, exports, module) {
 	var RenderNode = require('famous/core/RenderNode');
 	var View = require('famous/core/View');
 	var HelpStep1Template = require('text!templates/help-step-1.html');
+	var HelpStep2Template = require('text!templates/help-step-2.html');
 	var HelpStep3Template = require('text!templates/help-step-3.html');
+	var HelpGetStartedTemplate = require('text!templates/help-get-started.html');
 	var MoodHelpView = require('views/help/MoodHelpView');
+	var Entry = require('models/Entry');
 	var u = require('util/Utils');
 
 	function QuickHelpView() {
@@ -58,53 +61,85 @@ define(function(require, exports, module) {
 
 	QuickHelpView.prototype.init = function() {
 		this.step1Surface = createStepSurfaces(HelpStep1Template);
-		var step3Surface = createStepSurfaces(HelpStep3Template);
-		this.step2Surface = new MoodHelpView(this);
-		var yRange = Math.max(0, (620 - App.height));
-		var lastDraggablePosition = 0;
-
-		var draggable = new Draggable({
-			xRange: [0, 0],
-			yRange: [-yRange, 0]
-		});
-
-		draggable.subscribe(step3Surface);
-
-		draggable.on('end', function(e) {
-			console.log(e);
-			if (e.position[1] <= lastDraggablePosition) {
-				this.setPosition([0, -yRange, 0], {
-					duration: 300
-				});
-			} else {
-				this.setPosition([0, 0, 0], {
-					duration: 300
-				});
-			}
-			lastDraggablePosition = e.position[1];
-		});
-
-		this.nodePlayer = new RenderNode();
-		this.nodePlayer.add(draggable).add(step3Surface);
+		this.step2Surface = createStepSurfaces(HelpStep2Template);
+		this.step3Surface = createStepSurfaces(HelpStep3Template);
+		this.getStartedSurface = createStepSurfaces(HelpGetStartedTemplate);
 
 		this.step1Surface.on('click', function(event) {
 			var classList;
 			if (u.isAndroid() || (event instanceof CustomEvent)) {
 				classList = event.srcElement.classList;
+				var value = document.getElementById('sleep-hour-entry').value;
 				if (_.contains(classList, 'next-question')) {
-					this.sleepEntry = document.getElementById('sleep-hour-entry').value;
-					this.navigate('step2');
+					if (value != '') {
+						value = value.substring(value.indexOfRegex(/[0-9]/g));
+						if (isNaN(value.charAt(0))) {
+							u.showAlert("Please enter a duration such as '8 hours'");
+							return false;
+						} else {
+							value = 'sleep ' + value;
+						}
+						createSingleEntry.call(this, value, function(resp) {
+							this.navigate('step2');
+						}.bind(this));
+					} else {
+						this.navigate('step2');
+					}
 				} else if (_.contains(classList, 'skip-label')) {
-					document.getElementById('sleep-hour-entry').value = '';
-					document.getElementById('sleep-hour').value = '';
-					document.getElementById('sleep-entry-label').innerHTML = '';
-					this.sleepEntry = '';
-					this.navigate('step2');
+					if (value != '') {
+						value = value.substring(value.indexOfRegex(/[0-9]/g));
+						if (isNaN(value.charAt(0))) {
+							u.showAlert("Please enter a duration such as '8 hours'");
+							return false;
+						} else {
+							value = 'sleep ' + value;
+						}
+						createSingleEntry.call(this, value, function(resp) {
+							App.pageView.changePage('TrackView', {
+								new: true
+							});
+						});
+					} else {
+						App.pageView.changePage('TrackView', {
+							new: true
+						});
+					}
 				}
 			}
 		}.bind(this));
 
-		step3Surface.on('click', function(event) {
+		this.step2Surface.on('click', function(event) {
+			var classList;
+			if (u.isAndroid() || (event instanceof CustomEvent)) {
+				classList = event.srcElement.classList;
+				var value = document.getElementById('mood-entry').value;
+				if (_.contains(classList, 'back-label')) {
+					this.navigate('step1');
+				} else if (_.contains(classList, 'next-question')) {
+					if (value != '') {
+						createSingleEntry.call(this, value, function(resp) {
+							this.navigate('step3');
+						}.bind(this));
+					} else {
+						this.navigate('step3');
+					}
+				} else if (_.contains(classList, 'skip-label')) {
+					if (value != '') {
+						createSingleEntry.call(this, value, function(resp) {
+							App.pageView.changePage('TrackView', {
+								new: true
+							});
+						});
+					} else {
+						App.pageView.changePage('TrackView', {
+							new: true
+						});
+					}
+				}
+			}
+		}.bind(this));
+
+		this.step3Surface.on('click', function(event) {
 			var classList;
 			if (u.isAndroid() || (event instanceof CustomEvent)) {
 				classList = event.srcElement.classList;
@@ -121,6 +156,20 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
+		this.getStartedSurface.on('click', function(event) {
+			var classList;
+			if (u.isAndroid() || (event instanceof CustomEvent)) {
+				classList = event.srcElement.classList;
+				if (_.contains(classList, 'back-label')) {
+					this.navigate('step3');
+				} else if (_.contains(classList, 'next-question')) {
+					App.pageView.changePage('TrackView', {
+						new: true
+					});
+				}
+			}
+		}.bind(this));
+
 		this.navigate('step1');
 
 	};
@@ -131,16 +180,48 @@ define(function(require, exports, module) {
 		if (id === 'sleep-hour') {
 			var sleepInputElement = document.getElementById('sleep-hour');
 			if (event.which === 13) {
-				this.sleepEntry = document.getElementById('sleep-hour-entry').value;
-				this.navigate('step2');
+				var value = document.getElementById('sleep-hour-entry').value;
+				if (value != '') {
+					value = value.substring(value.indexOfRegex(/[0-9]/g));
+					if (isNaN(value.charAt(0))) {
+						u.showAlert("Please enter a duration such as '8 hours'");
+						return false;
+					} else {
+						value = 'sleep ' + value;
+					}
+					createSingleEntry.call(this, value, function(resp) {
+						this.navigate('step2');
+					}.bind(this));
+				} else {
+					this.navigate('step2');
+				}
 			} else if (sleepInputElement.value === '') {
 				document.getElementById('sleep-entry-label').innerHTML = '';
 				document.getElementById('sleep-hour-entry').value = '';
 			} else {
-				document.getElementById('sleep-entry-label').innerHTML = 'sleep ' + sleepInputElement.value;
+				document.getElementById('sleep-entry-label').innerHTML = 'You have just tracked: \'sleep ' + sleepInputElement.value + '\'';
 				document.getElementById('sleep-hour-entry').value = 'sleep ' + sleepInputElement.value;
 			}
-		} else if (event.which === 13) {
+		} else if (id === 'mood-box') {
+			var moodInputElement = document.getElementById('mood-box');
+			if (event.which === 13) {
+				var value = document.getElementById('mood-entry').value;
+				if (value != '') {
+					createSingleEntry.call(this, value, function(resp) {
+						this.navigate('step3');
+					}.bind(this));
+				} else {
+					this.navigate('step3');
+				}
+			} else if (moodInputElement.value === '') {
+				document.getElementById('mood-entry-label').innerHTML = '';
+				document.getElementById('mood-entry').value = '';
+			} else {
+				document.getElementById('mood-entry-label').innerHTML = 'You have just tracked: \'mood ' + moodInputElement.value + '\'';
+				document.getElementById('mood-entry').value = 'mood ' + moodInputElement.value;
+			}
+			
+		}else if (event.which === 13) {
 			if (id === 'cardio') {
 				document.getElementById('resistance').focus();
 			} else if (id === 'resistance') {
@@ -153,34 +234,35 @@ define(function(require, exports, module) {
 		}
 	}
 
+	function createSingleEntry(value, callback) {
+		var entry = new Entry;
+		entry.setText(value);
+		entry.create(callback);
+	}
+
 	function createEntries() {
 		var now = new Date();
 		var baseDate = now.setHours(0, 0, 0, 0);
 		var argsToSend = u.getCSRFPreventionObject("addEntryCSRF", {
-			currentTime: now.toUTCString(),
+			currentTime: new Date().toUTCString(),
 			baseDate: new Date(baseDate).toUTCString(),
 			timeZoneName: u.getTimezone(),
-			'entry.0': this.sleepEntry,
-			'entry.1': this.moodEntry,
-			'entry.2': document.getElementById('cardio').value,
-			'entry.3': document.getElementById('resistance').value,
-			'entry.4': document.getElementById('stretch').value,
-			'entry.5': document.getElementById('metabolic').value
+			'entry.0': document.getElementById('cardio').value,
+			'entry.1': document.getElementById('resistance').value,
+			'entry.2': document.getElementById('stretch').value,
+			'entry.3': document.getElementById('metabolic').value
 		});
 		u.queuePostJSON('Creating entries', u.makePostUrl('createHelpEntriesData'),
 			u.makeGetArgs(argsToSend),
 			function(data) {
 				if (u.checkData(data)) {
-					console.log('Success: ', data);
 					if (data.success) {
-						App.pageView.changePage('TrackView', {
-							new: true
-						});
+						this.navigate('getStarted');
 					} else {
 						u.showAlert(data.message);
 					}
 				}
-			},
+			}.bind(this),
 			function(error) {
 				u.showAlert('Internal server error occurred');
 				console.log('Error occured: ', error);
@@ -205,7 +287,9 @@ define(function(require, exports, module) {
 		} else if (step === 'step2') {
 			this.renderController.show(this.step2Surface);
 		} else if (step === 'step3') {
-			this.renderController.show(this.nodePlayer);
+			this.renderController.show(this.step3Surface);
+		} else {
+			this.renderController.show(this.getStartedSurface);
 		}
 	};
 
