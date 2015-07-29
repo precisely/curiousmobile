@@ -16,7 +16,6 @@ define(function(require, exports, module) {
 	var HelpStep2Template = require('text!templates/help-step-2.html');
 	var HelpStep3Template = require('text!templates/help-step-3.html');
 	var HelpGetStartedTemplate = require('text!templates/help-get-started.html');
-	var MoodHelpView = require('views/help/MoodHelpView');
 	var Entry = require('models/Entry');
 	var u = require('util/Utils');
 
