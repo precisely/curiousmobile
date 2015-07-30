@@ -214,8 +214,6 @@ define(function(require, exports, module) {
 			this.setRightIcon(this.pencilSurface);
 			Discussion.fetch(params, addListItemsToScrollView.bind(this));
 		}
-		this.scrollView.sequenceFrom(this.deck);
-		this.renderController.show(this.scrollView);
 	};
 
 	function addListItemsToScrollView(listItems) {
@@ -259,6 +257,8 @@ define(function(require, exports, module) {
 		this.itemsAvailable = true;
 		this.offset = 0;
 		this.scrollView.setPosition(0);
+		this.scrollView.sequenceFrom(this.deck);
+		this.renderController.show(this.scrollView);
 	};
 
 	App.pages[FeedView.name] = FeedView;

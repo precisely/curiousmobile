@@ -75,7 +75,8 @@ define(function(require, exports, module) {
 			align: [0, 0],
 			size: [window.innerWidth, 64],
 			properties: {
-				backgroundColor: '#fff'
+				backgroundColor: '#fff',
+				boxShadow: '0px 3px 5px #dddddd'
 			}
 		});
 
