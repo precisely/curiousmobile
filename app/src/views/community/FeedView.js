@@ -62,7 +62,8 @@ define(function(require, exports, module) {
 		});
 
 		this.setBody(this.backgroundSurface);
-		this.setHeaderLabel('FEED');
+		this.setRightIcon(this.headerSurface);
+		this.setHeaderLabel('SOCIAL');
 
 
 		this.pencilSurface.on('click', function(e) {
