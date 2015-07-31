@@ -96,7 +96,6 @@ define(function(require, exports, module) {
 		navPills.push(this.createPillsSurface('ALL', true));
 		navPills.push(this.createPillsSurface('PEOPLE'));
 		navPills.push(this.createPillsSurface('DISCUSSIONS'));
-		navPills.push(this.createPillsSurface('SPRINT'));
 
 		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
 
@@ -209,8 +208,6 @@ define(function(require, exports, module) {
 				}.bind(this));
 		} else if (lable === 'PEOPLE') {
 			User.fetch(params, addListItemsToScrollView.bind(this));
-		} else if (lable === 'SPRINT') {
-			Sprint.fetch(params, addListItemsToScrollView.bind(this));
 		} else if (lable === 'DISCUSSIONS') {
 			this.setRightIcon(this.pencilSurface);
 			Discussion.fetch(params, addListItemsToScrollView.bind(this));

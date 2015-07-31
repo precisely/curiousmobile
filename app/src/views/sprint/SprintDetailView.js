@@ -20,7 +20,7 @@ define(function(require, exports, module) {
 
 	function SprintDetailView() {
 		BaseView.apply(this, arguments);
-		this.parentPage = 'FeedView';
+		this.parentPage = 'SprintListView';
 		this.setHeaderLabel('');
 
 		this.backgroundSurface = new Surface({
@@ -67,7 +67,7 @@ define(function(require, exports, module) {
 		}
 		this.hash = state.hash;
 		this.name = state.name;
-		this.parentPage = state.parentPage || 'FeedView';
+		this.parentPage = state.parentPage || 'SprintListView';
 		this.refresh();
 		return true;
 	};

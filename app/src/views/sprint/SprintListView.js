@@ -91,7 +91,7 @@ define(function(require, exports, module) {
 		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
 		var mod = new StateModifier({
 			size: [undefined, App.height - 130],
-			transform: Transform.translate(0, 110, App.zIndex.feedItem)
+			transform: Transform.translate(0, 70, App.zIndex.feedItem)
 		});
 		this.add(mod).add(this.renderController);
 		this.initScrollView();
@@ -105,17 +105,13 @@ define(function(require, exports, module) {
 	SprintListView.prototype.preShow = function(state) {
 		if (this.deck.length <= 0 || (state && state.new)) {
 			this.initScrollView();
-			this.fetchSprints(this.currentPill || 'ALL');
+			this.fetchSprints();
 		}
 		return true;
 	};
 
 	SprintListView.prototype.getCurrentState = function() {
-		var state = {
-			viewProperties: {
-				currentPill: this.currentPill,
-			}
-		};
+		var state = {};
 		return state;
 	};
 
