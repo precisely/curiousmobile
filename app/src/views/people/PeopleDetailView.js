@@ -63,6 +63,8 @@ define(function(require, exports, module) {
 
 	PeopleDetailView.prototype.refresh = function() {
 		User.show(this.hash, function(peopleDetails) {
+
+			this.setHeaderLabel(peopleDetails.user.name);
 			var peopleSurface = new Surface({
 				size: [undefined, undefined],
 				content: _.template(PeopleDetailsTemplate, peopleDetails, templateSettings),

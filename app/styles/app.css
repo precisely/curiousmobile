@@ -1140,7 +1140,7 @@ button.close {
 }
 
 .sprint-details {
-	padding: 15px;
+	padding: 0px 15px 15px 15px;
 	color: #787878;
 }
 
@@ -1215,8 +1215,8 @@ button.close {
 	height: 40px;
 }
 
-.people-detail {
-
+.people-detail .fa-4x {
+	font-size: 70px;
 }
 
 .people-detail .upper-body {

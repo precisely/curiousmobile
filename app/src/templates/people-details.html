@@ -15,7 +15,7 @@
 					<img src="content/images/tag.png" height="30" width="auto">
 				</div>
 				<div class="media-body">
-					<p> {{= user.interestTags.join(", ") }}</p>
+					<p> {{= (user.interestTags.length == 0) ? "No Tags" : user.interestTags.join(", ") }}</p>
 				</div>
 			</div>
 		</div>
@@ -24,6 +24,16 @@
 			<label class="people-label">
 				SPRINTS
 			</label>
+			{{ if (user.sprints.length == 0) { }}
+				<div class="media">
+					<div class="media-left">
+						<img src="content/images/sprint-icon.png" height="30" width="auto">
+					</div>
+					<div class="media-body">
+						<p>No Sprints</p>
+					</div>
+				</div>
+			{{ } else { }}
 			{{ _.each(user.sprints, function(sprint) { }}
 			<div class="media">
 				<div class="media-left">
@@ -34,7 +44,7 @@
 					<p>{{= sprint.description }}</p>
 				</div>
 			</div>
-			{{ }) }}
+			{{ })} }}
 		</div>
 
 		<div class="public-groups">
