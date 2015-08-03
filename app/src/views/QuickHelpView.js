@@ -99,6 +99,9 @@ define(function(require, exports, module) {
 							});
 						});
 					} else {
+						createSingleEntry.call(this, value, function(resp) {
+							this.navigate('step2');
+						}.bind(this));
 						App.pageView.changePage('TrackView', {
 							new: true
 						});
@@ -123,17 +126,11 @@ define(function(require, exports, module) {
 						this.navigate('step3');
 					}
 				} else if (_.contains(classList, 'skip-label')) {
-					if (value != '') {
-						createSingleEntry.call(this, value, function(resp) {
-							App.pageView.changePage('TrackView', {
-								new: true
-							});
-						});
-					} else {
+					createSingleEntry.call(this, value, function(resp) {
 						App.pageView.changePage('TrackView', {
 							new: true
 						});
-					}
+					});
 				}
 			}
 		}.bind(this));
