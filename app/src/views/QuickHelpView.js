@@ -226,11 +226,12 @@ define(function(require, exports, module) {
 		if (args.entryId) {
 			entry.set('id', args.entryId + '');
 		}
-		entry.setText(args.value);
 
 		if (args.entryId) {
+			entry.setText(args.value + ' ' + u.dateToTimeStr(new Date(), false));
 			entry.save(false, callback);
 		} else {
+			entry.setText(args.value);
 			entry.create(callback);
 		}
 	}
