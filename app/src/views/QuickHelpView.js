@@ -243,10 +243,8 @@ define(function(require, exports, module) {
 			currentTime: new Date().toUTCString(),
 			baseDate: new Date(baseDate).toUTCString(),
 			timeZoneName: u.getTimezone(),
-			'entry.0': document.getElementById('cardio').value,
-			'entry.1': document.getElementById('resistance').value,
-			'entry.2': document.getElementById('stretch').value,
-			'entry.3': document.getElementById('metabolic').value
+			entries: [document.getElementById('cardio').value, document.getElementById('resistance').value,
+				 document.getElementById('stretch').value, document.getElementById('metabolic').value]
 		});
 		u.queuePostJSON('Creating entries', u.makePostUrl('createHelpEntriesData'),
 		u.makeGetArgs(argsToSend),
