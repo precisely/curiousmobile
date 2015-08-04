@@ -69,43 +69,20 @@ define(function(require, exports, module) {
 			if (u.isAndroid() || (event instanceof CustomEvent)) {
 				classList = event.srcElement.classList;
 				var value = document.getElementById('sleep-hour-entry').value;
+				var entryId = document.getElementById('sleep-hour-entry').dataset.id;
 				if (_.contains(classList, 'next-question')) {
-					if (value != '') {
-						value = value.substring(value.indexOfRegex(/[0-9]/g));
-						if (isNaN(value.charAt(0))) {
-							u.showAlert("Please enter a duration such as '8 hours'");
-							return false;
-						} else {
-							value = 'sleep ' + value;
+					this.createSleepEntry(value, entryId, function(resp) {
+						if (resp.glowEntry) {
+							document.getElementById('sleep-hour-entry').dataset.id = resp.glowEntry.id;
 						}
-						createSingleEntry.call(this, value, function(resp) {
-							this.navigate('step2');
-						}.bind(this));
-					} else {
 						this.navigate('step2');
-					}
+					}.bind(this));
 				} else if (_.contains(classList, 'skip-label')) {
-					if (value != '') {
-						value = value.substring(value.indexOfRegex(/[0-9]/g));
-						if (isNaN(value.charAt(0))) {
-							u.showAlert("Please enter a duration such as '8 hours'");
-							return false;
-						} else {
-							value = 'sleep ' + value;
-						}
-						createSingleEntry.call(this, value, function(resp) {
-							App.pageView.changePage('TrackView', {
-								new: true
-							});
-						});
-					} else {
-						createSingleEntry.call(this, value, function(resp) {
-							this.navigate('step2');
-						}.bind(this));
+					this.createSleepEntry(value, entryId, function(resp) {
 						App.pageView.changePage('TrackView', {
 							new: true
 						});
-					}
+					});
 				}
 			}
 		}.bind(this));
@@ -115,18 +92,22 @@ define(function(require, exports, module) {
 			if (u.isAndroid() || (event instanceof CustomEvent)) {
 				classList = event.srcElement.classList;
 				var value = document.getElementById('mood-entry').value;
+				var entryId = document.getElementById('mood-entry').dataset.id;
 				if (_.contains(classList, 'back-label')) {
 					this.navigate('step1');
 				} else if (_.contains(classList, 'next-question')) {
 					if (value != '') {
-						createSingleEntry.call(this, value, function(resp) {
+						createSingleEntry.call(this, {value: value, entryId: entryId}, function(resp) {
+							if (resp.glowEntry) {
+								document.getElementById('mood-entry').dataset.id = resp.glowEntry.id;
+							}
 							this.navigate('step3');
 						}.bind(this));
 					} else {
 						this.navigate('step3');
 					}
 				} else if (_.contains(classList, 'skip-label')) {
-					createSingleEntry.call(this, value, function(resp) {
+					createSingleEntry.call(this, {value: value, entryId: entryId}, function(resp) {
 						App.pageView.changePage('TrackView', {
 							new: true
 						});
@@ -156,9 +137,7 @@ define(function(require, exports, module) {
 			var classList;
 			if (u.isAndroid() || (event instanceof CustomEvent)) {
 				classList = event.srcElement.classList;
-				if (_.contains(classList, 'back-label')) {
-					this.navigate('step3');
-				} else if (_.contains(classList, 'next-question')) {
+				if (_.contains(classList, 'next-question')) {
 					App.pageView.changePage('TrackView', {
 						new: true
 					});
@@ -177,20 +156,13 @@ define(function(require, exports, module) {
 			var sleepInputElement = document.getElementById('sleep-hour');
 			if (event.which === 13) {
 				var value = document.getElementById('sleep-hour-entry').value;
-				if (value != '') {
-					value = value.substring(value.indexOfRegex(/[0-9]/g));
-					if (isNaN(value.charAt(0))) {
-						u.showAlert("Please enter a duration such as '8 hours'");
-						return false;
-					} else {
-						value = 'sleep ' + value;
+				var entryId = document.getElementById('sleep-hour-entry').dataset.id;
+				this.createSleepEntry(value, entryId, function(resp) {
+					if (resp.glowEntry) {
+						document.getElementById('sleep-hour-entry').dataset.id = resp.glowEntry.id;
 					}
-					createSingleEntry.call(this, value, function(resp) {
-						this.navigate('step2');
-					}.bind(this));
-				} else {
 					this.navigate('step2');
-				}
+				}.bind(this));
 			} else if (sleepInputElement.value === '') {
 				document.getElementById('sleep-entry-label').innerHTML = '';
 				document.getElementById('sleep-hour-entry').value = '';
@@ -202,8 +174,12 @@ define(function(require, exports, module) {
 			var moodInputElement = document.getElementById('mood-box');
 			if (event.which === 13) {
 				var value = document.getElementById('mood-entry').value;
+				var entryId = document.getElementById('mood-entry').dataset.id;
 				if (value != '') {
-					createSingleEntry.call(this, value, function(resp) {
+					createSingleEntry.call(this, {value: value, entryId: entryId}, function(resp) {
+						if (resp.glowEntry) {
+							document.getElementById('mood-entry').dataset.id = resp.glowEntry.id;
+						}
 						this.navigate('step3');
 					}.bind(this));
 				} else {
@@ -216,7 +192,7 @@ define(function(require, exports, module) {
 				document.getElementById('mood-entry-label').innerHTML = 'You have just tracked: \'mood ' + moodInputElement.value + '\'';
 				document.getElementById('mood-entry').value = 'mood ' + moodInputElement.value;
 			}
-			
+
 		}else if (event.which === 13) {
 			if (id === 'cardio') {
 				document.getElementById('resistance').focus();
@@ -230,10 +206,33 @@ define(function(require, exports, module) {
 		}
 	}
 
-	function createSingleEntry(value, callback) {
-		var entry = new Entry;
-		entry.setText(value);
-		entry.create(callback);
+	QuickHelpView.prototype.createSleepEntry = function(value, entryId, callback) {
+		if (value != '') {
+			value = value.substring(value.indexOfRegex(/[0-9]/g));
+			if (isNaN(value.charAt(0))) {
+				u.showAlert("Please enter a duration such as '8 hours'");
+				return false;
+			} else {
+				value = 'sleep ' + value;
+			}
+			createSingleEntry.call(this, {value: value, entryId: entryId}, callback);
+		} else {
+			callback([]);
+		}
+	};
+
+	function createSingleEntry(args, callback) {
+		var entry = new Entry();
+		if (args.entryId) {
+			entry.set('id', args.entryId + '');
+		}
+		entry.setText(args.value);
+
+		if (args.entryId) {
+			entry.save(false, callback);
+		} else {
+			entry.create(callback);
+		}
 	}
 
 	function createEntries() {
@@ -249,20 +248,20 @@ define(function(require, exports, module) {
 			'entry.3': document.getElementById('metabolic').value
 		});
 		u.queuePostJSON('Creating entries', u.makePostUrl('createHelpEntriesData'),
-			u.makeGetArgs(argsToSend),
-			function(data) {
-				if (u.checkData(data)) {
-					if (data.success) {
-						this.navigate('getStarted');
-					} else {
-						u.showAlert(data.message);
-					}
+		u.makeGetArgs(argsToSend),
+		function(data) {
+			if (u.checkData(data)) {
+				if (data.success) {
+					this.navigate('getStarted');
+				} else {
+					u.showAlert(data.message);
 				}
-			}.bind(this),
-			function(error) {
-				u.showAlert('Internal server error occurred');
-				console.log('Error occured: ', error);
-			});
+			}
+		}.bind(this),
+		function(error) {
+			u.showAlert('Internal server error occurred');
+			console.log('Error occured: ', error);
+		});
 	};
 
 	QuickHelpView.prototype.storeMoodEntry = function(moodEntry) {

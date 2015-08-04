@@ -198,9 +198,11 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				}.bind(this), 0, false, false);
 
 			},
+
 			save: function(allFuture, callback) {
 				var collectionCache = window.App.collectionCache;
-				var baseDate = window.App.selectedDate;
+				var now = new Date();
+				var baseDate = window.App.selectedDate || new Date(now.setHours(0, 0, 0, 0));
 				var argsToSend = u.getCSRFPreventionObject("updateEntrySDataCSRF", {
 					entryId: this.get('id'),
 					currentTime: new Date().toUTCString(),
