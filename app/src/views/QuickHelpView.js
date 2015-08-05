@@ -107,11 +107,17 @@ define(function(require, exports, module) {
 						this.navigate('step3');
 					}
 				} else if (_.contains(classList, 'skip-label')) {
-					createSingleEntry.call(this, {value: value, entryId: entryId}, function(resp) {
+					if (value != '') {
+						createSingleEntry.call(this, {value: value, entryId: entryId}, function(resp) {
+							App.pageView.changePage('TrackView', {
+								new: true
+							});
+						});
+					} else {
 						App.pageView.changePage('TrackView', {
 							new: true
 						});
-					});
+					}
 				}
 			}
 		}.bind(this));
