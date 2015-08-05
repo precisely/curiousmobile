@@ -239,12 +239,18 @@ define(function(require, exports, module) {
 	function createEntries() {
 		var now = new Date();
 		var baseDate = now.setHours(0, 0, 0, 0);
+		var entries = [document.getElementById('cardio').value, document.getElementById('resistance').value,
+			document.getElementById('stretch').value, document.getElementById('metabolic').value];
+		entries = _.filter(entries, Boolean);
+		if (entries.length == 0) {
+			this.navigate('getStarted');
+			return false;
+		}
 		var argsToSend = u.getCSRFPreventionObject("addEntryCSRF", {
 			currentTime: new Date().toUTCString(),
 			baseDate: new Date(baseDate).toUTCString(),
 			timeZoneName: u.getTimezone(),
-			entries: [document.getElementById('cardio').value, document.getElementById('resistance').value,
-				 document.getElementById('stretch').value, document.getElementById('metabolic').value]
+			entries: entries
 		});
 		u.queuePostJSON('Creating entries', u.makePostUrl('createHelpEntriesData'),
 		u.makeGetArgs(argsToSend),
