@@ -55,6 +55,7 @@ define(function(require, exports, module) {
 	SprintDetailView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
+		activeMenu: 'sprint'
 	};
 
 	SprintDetailView.prototype.onShow = function(state) {

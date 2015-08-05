@@ -42,6 +42,7 @@ define(function(require, exports, module) {
 		footer: true,
 		noBackButton: true,
 		reloadOnResume: true,
+		activeMenu: 'track'
 	};
 
 	function _getDefaultDates(date) {

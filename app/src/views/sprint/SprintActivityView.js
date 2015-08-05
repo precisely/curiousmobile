@@ -55,6 +55,7 @@ define(function(require, exports, module) {
 	SprintActivityView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
+		activeMenu: 'sprint'
 	};
 
 	SprintActivityView.prototype.initContent = function() {

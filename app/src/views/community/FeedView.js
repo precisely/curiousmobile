@@ -45,6 +45,7 @@ define(function(require, exports, module) {
 		header: true,
 		footer: true,
 		noBackButton: true,
+		activeMenu: 'feed'
 	};
 
 	function init() {

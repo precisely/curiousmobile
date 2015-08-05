@@ -43,6 +43,7 @@ define(function(require, exports, module) {
 		header: true,
 		backButton: false,
 		footer: false,
+		activeMenu: 'track'
 	};
 
 	function _createLayout() {
@@ -141,7 +142,7 @@ define(function(require, exports, module) {
 		});
 
 		var footerSurface = new Surface({
-			content: FooterTemplate,
+			content: _.template(FooterTemplate, {activeMenu: this.options.activeMenu}, templateSettings),
 			classes: ['footer-surface'],
 			size: [undefined, 50],
 			properties: {

@@ -72,6 +72,7 @@ define(function(require, exports, module) {
 	DiscussionDetailView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
+		activeMenu: 'feed'
 	};
 
 	DiscussionDetailView.prototype.onShow = function(state) {
