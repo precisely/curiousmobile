@@ -15,6 +15,15 @@ define(function(require, exports, module) {
 
 	Sprint.max = 10;
 
+	Sprint.create = function(callback) {
+		u.queuePostJSON('Creating Sprints', App.serverUrl + '/api/sprint', u.getCSRFPreventionObject('createSprintCSRF'), 
+		function(data) {
+			if (u.checkData(data)) {
+				callback(data);
+			}
+		});
+	}
+
 	Sprint.fetch = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			max : Sprint.max,
@@ -39,12 +48,33 @@ define(function(require, exports, module) {
 							totalParticipants: data.totalParticipants});
 					} else {
 						u.showAlert(data.message);
-						failCallback();
+						if (failCallback) {
+							failCallback();
+						}
 					}
 				}
 			}, function(error) {
 				console.log('error: ', error);
 			});
+	};
+
+	Sprint.update = function(params, successCallback, failCallback) {
+		u.queueJSONAll('Updating sprint', App.serverUrl + '/api/sprint/' + params.id + '?' + 
+			u.getCSRFPreventionURI('updateSprintDataCSRF'), JSON.stringify(params), 
+			function(data) {
+				if (u.checkData(data)) {
+					if (data.success) {
+						successCallback({hash: data.hash});
+					} else {
+						u.showAlert(data.message);
+						if (failCallback) {
+							failCallback();
+						}
+					}
+				}
+			}, function(error) {
+				console.log('error: ', error);
+			}, null, 'PUT');
 	};
 
 	Sprint.listDiscussions = function(args, successCallback, failCallback) {

@@ -205,6 +205,10 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		}
 
 		Utils.queueJSON = function(description, url, args, successCallback, failCallback, delay, post, background) {
+			u.queueJSONAll(description, url, args, successCallback, failCallback, delay, post ? 'POST' : 'GET', background);
+		}
+
+		Utils.queueJSONAll = function(description, url, args, successCallback, failCallback, delay, requestMethod, background) {
 			var currentLoginSession = u._loginSessionNumber; // cache current login session
 			var stillRunning = true;
 			var alertShown = false;
@@ -215,17 +219,21 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				}
 			}, 10000);
 			if (typeof args == "function") {
+				background = requestMethod;
+				requestMethod = delay;
 				delay = failCallback;
 				failCallback = successCallback
 				successCallback = args;
 				args = undefined;
 			}
+			requestMethod = requestMethod || 'GET';
+
 			if (args == undefined || args == null) {
 				args = {
 					dateToken: new Date().getTime()
 				};
 			} else if (!args['dateToken']) {
-				args['dateToken'] = new Date().getTime();
+				//args['dateToken'] = new Date().getTime();
 			}
 			var wrapSuccessCallback = function(data, msg) {
 				u.spinnerStop();
@@ -268,14 +276,15 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 					console.log('Requesting url' + url);
 					u.spinnerStart();
 					$.ajax({
-							type: (post ? "post" : "get"),
-							dataType: "json",
-							url: url,
-							data: args,
-							timeout: 20000 + (delay > 0 ? delay : 0)
-						})
-						.done(wrapSuccessCallback)
-						.fail(wrapFailCallback);
+						type: requestMethod,
+						dataType: "json",
+						contentType: (requestMethod == 'PUT') ? 'application/json; charset=UTF-8' : 'application/x-www-form-urlencoded; charset=UTF-8', 
+						url: url,
+						data: args,
+						timeout: 20000 + (delay > 0 ? delay : 0)
+					})
+					.done(wrapSuccessCallback)
+					.fail(wrapFailCallback);
 				};
 				++u.numJSONCalls;
 				u.pendingJSONCalls.push(jsonCall);
@@ -286,14 +295,15 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				}
 
 				$.ajax({
-						type: (post ? "post" : "get"),
-						dataType: "json",
-						url: url,
-						data: args,
-						timeout: 20000 + (delay > 0 ? delay : 0)
-					})
-					.done(wrapSuccessCallback)
-					.fail(wrapFailCallback);
+					type: requestMethod,
+					dataType: "json",
+					contentType: (requestMethod == 'PUT') ? 'application/json; charset=UTF-8' : 'application/x-www-form-urlencoded; charset=UTF-8', 
+					url: url,
+					data: args,
+					timeout: 20000 + (delay > 0 ? delay : 0)
+				})
+				.done(wrapSuccessCallback)
+				.fail(wrapFailCallback);
 			}
 		}
 
@@ -327,9 +337,12 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		 */
 		Utils.getCSRFPreventionURI = function(key) {
 			var App = window.App;
-			var preventionURI = App.CSRF.SyncTokenKeyName + "=" + App.CSRF[key] + "&" + App.CSRF.SyncTokenUriName + "=" + key;
-			if (App.CSRF[key] == undefined) {
-				console.error("Missing csrf prevention token for key", key);
+			var mobileSessionId = store.get('mobileSessionId');
+			var preventionURI;
+			if (mobileSessionId) {
+				preventionURI = "mobileSessionId=" + mobileSessionId;
+			} else {
+				console.error("Missing mobileSessionId for CSRF protection");
 			}
 			return preventionURI;
 		}

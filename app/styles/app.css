@@ -1147,10 +1147,11 @@ button.close {
 .sprint-default-label {
 	background-color: white;
 	text-align: center;
-	padding: 5px 10px;
+	padding: 7px 10px;
 	font-weight: 500;
 	color: #f48d5b;
 	margin: 10px 0px;
+	font-size: 10px;
 }
 
 .sprint-details h2 {
@@ -1162,6 +1163,19 @@ button.close {
 .sprint-details p, .people-detail p {
 	font-style: normal;
 	font-weight: 500;
+}
+
+.sprint-details input, .sprint-details textarea {
+	background-color: #fff;
+	width: 100%;
+	display: block;
+	margin-bottom: 10px;
+	border: 1px solid #979797;
+	padding: 10px;
+}
+
+.sprint-details textarea {
+	resize: none;
 }
 
 .sprint-details button, .sprint-activity button, .people-detail button {
@@ -1176,7 +1190,7 @@ button.close {
 	color: #5d5d5d;
 }
 
-.tags-div button {
+.tags-div button, .entry-button {
 	margin: 5px 10px 5px 0px;
 }
 
@@ -1275,4 +1289,27 @@ button.close {
 	font-weight: 500;
 	font-size: 15px;
 	display: block;
+}
+
+#participant-username {
+	padding: 10px;
+	width: 100%;
+	border-radius: 4px;
+}
+
+.right-icons {
+	float: right;
+	margin-right: 10px;
+	margin-top: 15px;
+	color: #aeaeae;
+}
+
+.right-icons p {
+	font-size: 10px;
+	display: inline-block;
+	margin-left: 10px;
+}
+
+.right-icons img {
+	height: 23px;
 }

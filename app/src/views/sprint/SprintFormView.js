@@ -10,16 +10,17 @@ define(function(require, exports, module) {
 	var Modifier = require('famous/core/Modifier');
 	var Draggable = require("famous/modifiers/Draggable");
 	var StateView = require('views/StateView');
+	var AddSprintTagsView = require('views/sprint/AddSprintTagsView');
+	var AddSprintParticipantsView = require('views/sprint/AddSprintParticipantsView');
 	var RenderNode = require("famous/core/RenderNode");
 	var RenderController = require('famous/views/RenderController');
 	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var Draggable = require("famous/modifiers/Draggable");
-	var SprintDetailsTemplate = require('text!templates/sprint-details.html');
-	var SprintFormView = require("views/sprint/SprintFormView");
+	var SprintEditTemplate = require('text!templates/sprint-details.html');
 	var Sprint = require('models/Sprint');
 	var u = require('util/Utils');
 
-	function SprintDetailView() {
+	function SprintFormView() {
 		BaseView.apply(this, arguments);
 		this.parentPage = 'SprintListView';
 		this.setHeaderLabel('');
@@ -33,20 +34,6 @@ define(function(require, exports, module) {
 		});
 		this.setBody(this.backgroundSurface);
 
-		this.pencilSurface = new ImageSurface({
-			size: [44, 64],
-			content: 'content/images/edit-pencil.png',
-		});
-
-		// Pencil icon will appear when sprint edit will be functional
-		this.setRightIcon(this.pencilSurface);
-
-		this.pencilSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				App.pageView.changePage('SprintFormView', {hash: this.hash});
-			}
-		}.bind(this));
-
 		this.renderController = new RenderController();
 		var mod = new StateModifier({
 			size: [App.width, App.height - 120],
@@ -56,69 +43,68 @@ define(function(require, exports, module) {
 		this.add(mod).add(this.renderController);
 	}
 
-	SprintDetailView.prototype = Object.create(BaseView.prototype);
-	SprintDetailView.prototype.constructor = SprintDetailView;
+	SprintFormView.prototype = Object.create(BaseView.prototype);
+	SprintFormView.prototype.constructor = SprintFormView;
 
-	SprintDetailView.DEFAULT_OPTIONS = {
+	SprintFormView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
 		activeMenu: 'sprint'
 	};
 
-	SprintDetailView.prototype.onShow = function(state) {
+	SprintFormView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 	};
 
-	SprintDetailView.prototype.preShow = function(state) {
+	SprintFormView.prototype.preShow = function(state) {
 		if (!state || !state.hash) {
 			return false;
 		}
 		this.hash = state.hash;
-		this.name = state.name;
 		this.parentPage = state.parentPage || 'SprintListView';
+		this.killOverlayContent();
 		this.refresh();
 		return true;
 	};
 
-	SprintDetailView.prototype.refresh = function() {
+	SprintFormView.prototype.refresh = function() {
 		this.participantsOffset = 10;
 		Sprint.show(this.hash, function(sprintDetails) {
 			this.totalParticipants = sprintDetails.totalParticipants;
-			if (!this.name) {
-				this.name = sprintDetails.sprint.name;
-			}
-			sprintDetails.isFormView = false;
-			var sprintSurface = new Surface({
+			this.virtualUserId = sprintDetails.sprint.virtualUserId;
+			this.virtualGroupId = sprintDetails.sprint.virtualGroupId;
+			sprintDetails.isFormView = true;
+			this.sprintSurface = new Surface({
 				size: [undefined, undefined],
-				content: _.template(SprintDetailsTemplate, sprintDetails, templateSettings),
-				properties: {
-
-				}
+				content: _.template(SprintEditTemplate, sprintDetails, templateSettings),
 			});
 
-			sprintSurface.on('click', function(e) {
+			this.sprintSurface.on('click', function(e) {
 				var classList;
 				if (u.isAndroid() || (e instanceof CustomEvent)) {
 					classList = e.srcElement.classList;
-					if (_.contains(classList, 'activity')) {
-						var state = {
-							hash: this.hash,
-							name: this.name,
-							parentPage: this.parentPage != 'SprintActivityView' ? 'SprintDetailView' : undefined
-						};
-						App.pageView.changePage('SprintActivityView', state);
-					} else if (e.srcElement.id.indexOf('more-participants') > -1) {
-						Sprint.getMoreParticipants({id: this.hash, offset: this.participantsOffset ,max: 10}, function(participantsList) {
-							_.each(participantsList, function(participant) {
-								document.getElementById('sprint-participants').insertAdjacentHTML( 'beforeend', participant.username + '<br>');
-							});
-							this.participantsOffset += 10;
-							if (this.participantsOffset >= this.totalParticipants) {
-								document.getElementById('more-participants').style.visibility = 'hidden';
-							}
-						}.bind(this), function() {
+					if (_.contains(classList, 'submit')) {
+						var name = document.getElementById('sprint-title').value;
+						var description = document.getElementById('sprint-description').value;
+						if (name == '') {
+							u.showAlert('Sprint title can not be blank');
+							return false;
+						} else if (description == '') {
+							u.showAlert('Sprint description can not be blank');
+							return false;
+						}
 
+						Sprint.update({name: name, description: description, id: this.hash}, function(state) {
+							App.pageView.changePage('SprintDetailView', state);
 						});
+					} else if (e.srcElement.tagName == 'INPUT' || e.srcElement.tagName == 'TEXTAREA') {
+						e.srcElement.focus();
+					} else if (_.contains(classList, 'add-tags') || _.contains(e.srcElement.parentElement.classList, 'add-tags')) {
+						this.addSprintTagsView = new AddSprintTagsView(this);
+						this.showOverlayContent(this.addSprintTagsView);
+					} else if (_.contains(classList, 'add-participants') || _.contains(e.srcElement.parentElement.classList, 'add-participants')) {
+						this.addSprintParticipantsView = new AddSprintParticipantsView(this);
+						this.showOverlayContent(this.addSprintParticipantsView);
 					}
 				}
 			}.bind(this));
@@ -131,7 +117,7 @@ define(function(require, exports, module) {
 				yRange: [-1500, 0]
 			});
 
-			draggable.subscribe(sprintSurface);
+			draggable.subscribe(this.sprintSurface);
 
 			draggable.on('end', function(e) {
 				console.log(e);
@@ -152,13 +138,23 @@ define(function(require, exports, module) {
 			});
 
 			var nodePlayer = new RenderNode();
-			nodePlayer.add(draggable).add(sprintSurface);
+			nodePlayer.add(draggable).add(this.sprintSurface);
 			this.renderController.show(nodePlayer);
 		}.bind(this), function() {
 			App.pageView.goBack();
 		}.bind(this));
 	};
 
-	App.pages['SprintDetailView'] = SprintDetailView;
-	module.exports = SprintDetailView;
+	SprintFormView.prototype.killAddSprintTagsOverlay = function(entryItem) {
+		this.killOverlayContent();
+		document.getElementsByClassName('tags-wrapper')[0].innerHTML += entryItem;
+	};
+
+	SprintFormView.prototype.killAddSprintParticipantsOverlay = function(participant) {
+		this.killOverlayContent();
+		document.getElementById('sprint-participants').innerHTML += participant;
+	};
+
+	App.pages['SprintFormView'] = SprintFormView;
+	module.exports = SprintFormView;
 });

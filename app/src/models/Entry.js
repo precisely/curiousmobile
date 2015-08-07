@@ -159,11 +159,12 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						return text;
 			},
 			create: function(callback) {
+				var now = new Date();
 				var collectionCache = window.App.collectionCache;
-				var baseDate = window.App.selectedDate;
+				var baseDate = window.App.selectedDate || new Date(now.setHours(0, 0, 0, 0));
 				var argsToSend = u.getCSRFPreventionObject("addEntryCSRF", {
 					currentTime: new Date().toUTCString(),
-					userId: User.getCurrentUserId(),
+					userId: this.userId || User.getCurrentUserId(),
 					text: this.text,
 					baseDate: baseDate.toUTCString(),
 					timeZoneName: u.getTimezone(),

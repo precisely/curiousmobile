@@ -156,8 +156,10 @@ define(function(require, exports, module) {
 				console.log('footerSurface event');
 				var pageName = e.srcElement.getAttribute('data');
 				e.data = pageName;
-				if (e.data == 'TrackView' || e.data == 'FeedView' || e.data == 'SprintListView') {
+				if (e.data == 'TrackView' || e.data == 'FeedView') {
 					this._eventOutput.emit('change-page', e);
+				} else if ( e.data == 'SprintListView') {
+					App.pageView.changePage('SprintDetailView', {hash: 'jw5d64rl4elo', name: 'untitled'});
 				}
 			}
 		}.bind(this));

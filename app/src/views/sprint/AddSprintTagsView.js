@@ -2,37 +2,34 @@ define(function(require, exports, module) {
 	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
 	var Timer = require('famous/utilities/Timer');
-	var ImageSurface = require('famous/surfaces/ImageSurface');
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var InputSurface = require('famous/surfaces/InputSurface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
 	var Transitionable = require('famous/transitions/Transitionable');
-	var Easing = require("famous/transitions/Easing");
-	var RenderController = require("famous/views/RenderController");
 	var StateView = require('views/StateView');
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var AutocompleteView = require("views/AutocompleteView");
 	var Autocomplete = require('models/Autocomplete');
 	var u = require('util/Utils');
+	var Utility = require('famous/utilities/Utility');
 	var store = require('store');
 	var Entry = require('models/Entry');
-	var EntryCollection = require('models/EntryCollection');
 	var EventHandler = require('famous/core/EventHandler');
 	var inputSurfaceTemplate = require('text!templates/input-surface.html');
 
-	function EntryFormView(trackView) {
+	function AddSprintTagsView(parentView) {
 		StateView.apply(this, arguments);
-		this.trackView = trackView;
+		this.parentView = parentView;
 		_setListeners.call(this);
 		_createForm.call(this);
 	}
 
-	EntryFormView.prototype = Object.create(StateView.prototype);
-	EntryFormView.prototype.constructor = EntryFormView;
+	AddSprintTagsView.prototype = Object.create(StateView.prototype);
+	AddSprintTagsView.prototype.constructor = AddSprintTagsView;
 
-	EntryFormView.prototype.eventHandler = new EventHandler();
+	AddSprintTagsView.prototype.eventHandler = new EventHandler();
 	var enteredKey;
 
 	function _zIndex(argument) {
@@ -41,34 +38,27 @@ define(function(require, exports, module) {
 
 	function _setListeners() {
 		var AutocompleteObj = new Autocomplete();
-		window.autocompleteCache = AutocompleteObj;
 		this.autoCompleteView = new AutocompleteView(AutocompleteObj);
 		this.autoCompleteView.on('updateInputSurface', function() {
 			console.log('update the Input Surface');
 		}.bind(this));
 
-		this.on('new-entry', function(resp) {
-			console.log("New Entry - TrackView event");
-			var currentListView = this.trackView.currentListView;
-			currentListView.refreshEntries(resp.entries, resp.glowEntry);
-			this.trackView.killEntryForm({ entryDate: resp.glowEntry.date });
-		}.bind(this));
-
-		this.on('update-entry', function(resp) {
-			console.log('EntryListView: Updating an entry');
-			var currentListView = this.trackView.currentListView;
-			currentListView.refreshEntries(resp.entries, resp.glowEntry);
-			this.trackView.killEntryForm({new: false});
+		this.on('form-sprint-entry', function(resp) {
+			var createdEntry = resp.glowEntry;
+			var icon = (createdEntry.comment.indexOf("repeat") > -1) ? '<i class="fa fa-repeat"></i>' : 
+					(createdEntry.comment.indexOf("remind") > -1) ? '<i class="fa fa-bell"></i>': '<i class="fa fa-thumb-track"></i>';
+			var entryItem = '<button class="entry-button">' + createdEntry.description + icon + '</button>';
+			this.parentView.killAddSprintTagsOverlay(entryItem);
 		}.bind(this));
 	}
 
 	function _createForm() {
-		this.clazz = 'EntryFormView';
+		this.clazz = 'AddSprintTagsView';
 
 		var formContainerSurface = new ContainerSurface({
 			classes: ['entry-form'],
 			properties: {
-				background: 'rgba(123, 120, 120, 0.48)'
+				background: 'rgb(184, 182, 182)'
 			}
 		});
 
@@ -131,7 +121,7 @@ define(function(require, exports, module) {
 			} else {
 				offset += firstOffset;
 			}
-			var transform = Transform.translate(offset, 200, _zIndex() + 1);
+			var transform = Transform.translate(offset, 150, _zIndex() + 1);
 			return {
 				transform: transform,
 				target: input.render()
@@ -187,29 +177,12 @@ define(function(require, exports, module) {
 			}
 		});
 		this.buttonsAndHelp.add(sequentialLayout);
-		var helpSurface = new Surface({
-			size: [window.innerWidth - 40, undefined],
-			content: 'You can repeat the tag, make a button out of it (for instant access), or remind yourself later.<hr>',
-			properties: {
-				fontStyle: 'italic',
-				color: '#DDDDDD',
-				margin: '30px 20px',
-				padding: '12px 10px',
-				textAlign: 'center',
-			}
-		});
-
-		var helpModifier = new Modifier({
-			transform: Transform.translate(0, 50, 0)
-		});
-		this.buttonsAndHelp.add(helpModifier).add(helpSurface);
 
 		this.formContainerSurface.add(this.buttonsAndHelp);
 		this.add(this.formContainerSurface);
-		//this.setBody(formContainerSurface);
 	}
 	
-	EntryFormView.prototype.preShow = function(state) {
+	AddSprintTagsView.prototype.preShow = function(state) {
 		if (state.preShowCheck) {
 			this[state.preShowCheck.name].apply(this, state.preShowCheck.args);
 			if (state.preShowCheck.doNotLoad) {
@@ -218,18 +191,17 @@ define(function(require, exports, module) {
 		}
 		return true;
 	};
-	EntryFormView.prototype.onShow = function(state) {
+	AddSprintTagsView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
-		console.log('FormView: on-show ' + state);
 		if (!state) {
 			//TODO if no state
-			App.pageView.changePage(this.parentPage);
+			App.pageView.changePage(this.parentView);
 			return;
 		}
 		this.loadState(state);
 	};
 
-	EntryFormView.prototype.toggleSuffix = function(suffix) {
+	AddSprintTagsView.prototype.toggleSuffix = function(suffix) {
 		var text = document.getElementById("entry-description").value;
 		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned')) {
 			text = text.substr(0, text.length - 7);
@@ -243,7 +215,7 @@ define(function(require, exports, module) {
 		return text.length > 0;
 	};
 
-	EntryFormView.prototype.removeSuffix = function(text) {
+	AddSprintTagsView.prototype.removeSuffix = function(text) {
 		text = text ? text : document.getElementById("entry-description").value;
 		if (text.endsWith(' repeat') || text.endsWith(' pinned') ||
 			text.endsWith(' button')) {
@@ -255,7 +227,7 @@ define(function(require, exports, module) {
 		return text;
 	};
 
-	EntryFormView.prototype.buildStateFromEntry = function(entry) {
+	AddSprintTagsView.prototype.buildStateFromEntry = function(entry) {
 		console.log('entry selected with id: ' + entry.id);
 		this.entry = entry;
 		var directlyCreateEntry = false;
@@ -306,12 +278,12 @@ define(function(require, exports, module) {
 		return state;
 	};
 
-	EntryFormView.prototype.blur = function(e) {
+	AddSprintTagsView.prototype.blur = function(e) {
 		this.autoCompleteView.hide();
 		this.unsetEntry();
 	};
 
-	EntryFormView.prototype.getCurrentState = function() {
+	AddSprintTagsView.prototype.getCurrentState = function() {
 		var state = BaseView.prototype.getCurrentState.call(this);
 		var inputElement = document.getElementById("entry-description");
 		return {
@@ -331,7 +303,7 @@ define(function(require, exports, module) {
 		};
 	};
 
-	EntryFormView.prototype.setCurrentState = function(state) {
+	AddSprintTagsView.prototype.setCurrentState = function(state) {
 		var result = BaseView.prototype.setCurrentState.call(this, state);
 		if (state && result) {
 			var inputElement = document.getElementById("entry-description");
@@ -341,11 +313,11 @@ define(function(require, exports, module) {
 		}
 	}
 
-	EntryFormView.prototype.setEntry = function(entry) {
+	AddSprintTagsView.prototype.setEntry = function(entry) {
 		this.entry = entry;
 	};
 
-	EntryFormView.prototype.unsetEntry = function() {
+	AddSprintTagsView.prototype.unsetEntry = function() {
 		var inputElement = document.getElementById("entry-description");
 		if (inputElement) {
 			inputElement.value = '';
@@ -354,11 +326,11 @@ define(function(require, exports, module) {
 		this.setEntryText('');
 	};
 
-	EntryFormView.prototype.setEntryText = function(text) {
+	AddSprintTagsView.prototype.setEntryText = function(text) {
 		document.getElementById("entry-description").value = '';
 	};
 
-	EntryFormView.prototype.submit = function(e, directlyCreateEntry) {
+	AddSprintTagsView.prototype.submit = function(e, directlyCreateEntry) {
 		var entry = null;
 		var newText = document.getElementById("entry-description").value;
 
@@ -377,6 +349,7 @@ define(function(require, exports, module) {
 		if (!entry || !entry.get('id') || entry.isContinuous()) {
 			var newEntry = new Entry();
 			newEntry.set('date', window.App.selectedDate);
+			newEntry.userId = this.parentView.virtualUserId;
 			newEntry.setText(newText);
 			newEntry.create(function(resp) {
 				if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1 ||
@@ -384,11 +357,11 @@ define(function(require, exports, module) {
 					window.App.collectionCache.clear();
 				}
 				this.blur();
-				this._eventOutput.emit('new-entry', resp);
+				this._eventOutput.emit('form-sprint-entry', resp);
 			}.bind(this));
 			return;
 		} else if (this.originalText == newText) {
-			console.log("EntryFormView: No changes made");
+			console.log("AddSprintTagsView: No changes made");
 			if (entry.isRemind()) {
 				entry.setText(newText);
 				this.saveEntry(false);
@@ -426,27 +399,27 @@ define(function(require, exports, module) {
 		this.saveEntry(true);
 	};
 
-	EntryFormView.prototype.saveEntry = function(allFuture) {
+	AddSprintTagsView.prototype.saveEntry = function(allFuture) {
 		var entry = this.entry;
 		entry.save(allFuture, function(resp) {
-			this._eventOutput.emit('update-entry', resp);
+			this._eventOutput.emit('form-sprint-entry', resp);
 			this.blur();
 		}.bind(this));
 	};
 
-	EntryFormView.prototype.createEntry = function() {
+	AddSprintTagsView.prototype.createEntry = function() {
 		var entry = this.entry;
 		entry.save(function(resp) {
 			this.entry = new Entry(entry);
-			this._eventOutput.emit('new-entry', resp);
+			this._eventOutput.emit('form-sprint-entry', resp);
 		}.bind(this));
 	};
 
-	EntryFormView.prototype.hasFuture = function() {
+	AddSprintTagsView.prototype.hasFuture = function() {
 		var entry = this.entry;
 		return ((entry.isRepeat() && !entry.isRemind()) || entry.isGhost()) && !entry.isTodayOrLater();
 	};
 
-	App.pages[EntryFormView.name] = EntryFormView;
-	module.exports = EntryFormView;
+	App.pages[AddSprintTagsView.name] = AddSprintTagsView;
+	module.exports = AddSprintTagsView;
 });
