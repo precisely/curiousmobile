@@ -23,7 +23,7 @@ define(function(require, exports, module) {
 
 	function SprintActivityView() {
 		BaseView.apply(this, arguments);
-		this.parentPage = 'FeedView';
+		this.parentPage = 'SprintListView';
 		this.goBackToHistory = false;
 		this.setHeaderLabel('');
 		this.max = 5;
@@ -55,6 +55,7 @@ define(function(require, exports, module) {
 	SprintActivityView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
+		activeMenu: 'sprint'
 	};
 
 	SprintActivityView.prototype.initContent = function() {
@@ -147,7 +148,7 @@ define(function(require, exports, module) {
 		}
 		this.hash = state.hash;
 		this.name = state.name;
-		this.parentPage = state.parentPage || 'FeedView';
+		this.parentPage = state.parentPage || 'SprintListView';
 		this.initScrollView();
 		this.fetchDiscussions({sprintHash: this.hash, max: 5, offset: 0});
 		return true;

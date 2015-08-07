@@ -43,6 +43,7 @@ define(function(require, exports, module) {
 		header: true,
 		backButton: false,
 		footer: false,
+		activeMenu: 'track'
 	};
 
 	function _createLayout() {
@@ -142,7 +143,7 @@ define(function(require, exports, module) {
 		});
 
 		var footerSurface = new Surface({
-			content: FooterTemplate,
+			content: _.template(FooterTemplate, {activeMenu: this.options.activeMenu}, templateSettings),
 			classes: ['footer-surface'],
 			size: [undefined, 50],
 			properties: {
@@ -156,7 +157,7 @@ define(function(require, exports, module) {
 				console.log('footerSurface event');
 				var pageName = e.srcElement.getAttribute('data');
 				e.data = pageName;
-				if (e.data == 'TrackView' || e.data == 'FeedView') {
+				if (e.data == 'TrackView' || e.data == 'FeedView' || e.data == 'SprintListView') {
 					this._eventOutput.emit('change-page', e);
 				}
 			}

@@ -39,7 +39,9 @@ define(function(require, exports, module) {
 			var classList;
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				classList = e.srcElement.classList;
-				if (_.contains(classList, 'details')) {
+				if (App.pageView.getCurrentPage() == 'FeedView') {
+					App.pageView.changePage('SprintListView');
+				} else if (_.contains(classList, 'details')) {
 					var state = {
 						hash: this.sprint.hash,
 						name: this.sprint.name

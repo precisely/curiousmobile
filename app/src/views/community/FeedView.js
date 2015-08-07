@@ -45,6 +45,7 @@ define(function(require, exports, module) {
 		header: true,
 		footer: true,
 		noBackButton: true,
+		activeMenu: 'feed'
 	};
 
 	function init() {
@@ -62,7 +63,8 @@ define(function(require, exports, module) {
 		});
 
 		this.setBody(this.backgroundSurface);
-		this.setHeaderLabel('FEED');
+		this.setRightIcon(this.headerSurface);
+		this.setHeaderLabel('SOCIAL');
 
 
 		this.pencilSurface.on('click', function(e) {
@@ -95,7 +97,6 @@ define(function(require, exports, module) {
 		navPills.push(this.createPillsSurface('ALL', true));
 		navPills.push(this.createPillsSurface('PEOPLE'));
 		navPills.push(this.createPillsSurface('DISCUSSIONS'));
-		navPills.push(this.createPillsSurface('SPRINT'));
 
 		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
 
@@ -201,15 +202,21 @@ define(function(require, exports, module) {
 			u.queueJSON("loading feeds", u.makeGetUrl('indexData', 'search'),
 				u.makeGetArgs(argsToSend),
 				function(data) {
-					data.listItems.sort(function(a, b) {
-						return a.updated > b.updated ? -1 : (a.updated < b.updated ? 1 : 0)
-					});
-					addListItemsToScrollView.call(this, data.listItems);
+					if(!u.checkData(data)) {
+						return;
+					}
+
+					if (data.listItems) {
+						data.listItems.sort(function(a, b) {
+							return a.updated > b.updated ? -1 : (a.updated < b.updated ? 1 : 0)
+						});
+						addListItemsToScrollView.call(this, data.listItems);
+					} else {
+						addListItemsToScrollView.call(this, data.listItems);
+					}
 				}.bind(this));
 		} else if (lable === 'PEOPLE') {
 			User.fetch(params, addListItemsToScrollView.bind(this));
-		} else if (lable === 'SPRINT') {
-			Sprint.fetch(params, addListItemsToScrollView.bind(this));
 		} else if (lable === 'DISCUSSIONS') {
 			this.setRightIcon(this.pencilSurface);
 			Discussion.fetch(params, addListItemsToScrollView.bind(this));

@@ -46,6 +46,7 @@ define(function(require, exports, module) {
 	PeopleDetailView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
+		activeMenu: 'feed'
 	};
 
 	PeopleDetailView.prototype.onShow = function(state) {

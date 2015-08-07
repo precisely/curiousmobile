@@ -50,6 +50,13 @@
 	background-image: url('../content/images/icon-search-active.png');
 }
 
+.icon-sprints {
+	background-image: url('../content/images/icon-sprints.png');
+}
+
+.icon-sprints.active {
+	background-image: url('../content/images/icon-sprints-active.png');
+}
 
 .icon-comment {
 	width: 33px;
