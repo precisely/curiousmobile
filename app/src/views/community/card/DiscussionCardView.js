@@ -15,9 +15,11 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 	var m = require('util/Model');
 
-	function DiscussionCardView(discussion) {
+	function DiscussionCardView(discussion, parentPage, cardViewCollection) {
 		CardView.apply(this, arguments);
 		this.discussion = discussion;
+		this.parentPage = parentPage || 'FeedView';
+		this.cardViewCollection = cardViewCollection;
 		createCard.call(this);
 	}
 
@@ -59,10 +61,10 @@ define(function(require, exports, module) {
 						b: 'No',
 						onA: function() {
 							Discussion.deleteDiscussion({
-								id: this.discussion.id
+								hash: this.discussion.hash
 							}, function(success) {
 								console.log('deleted successfully...');
-								App.pageView.getPage('FeedView').refresh();
+								this.cardViewCollection.splice(this.cardViewCollection.indexOf(this), 1);
 							}.bind(this));
 						}.bind(this),
 						onB: function() {
@@ -71,7 +73,8 @@ define(function(require, exports, module) {
 					});
 				} else {
 					var state = {
-						discussionId: this.discussion.id
+						discussionHash: this.discussion.hash,
+						parentPage: this.parentPage
 					};
 					App.pageView.changePage('DiscussionDetailView', state);
 				}

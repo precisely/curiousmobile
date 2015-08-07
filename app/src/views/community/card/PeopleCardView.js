@@ -7,8 +7,9 @@ define(function(require, exports, module) {
 	var Modifier = require('famous/core/Modifier');
 	var InputSurface = require('famous/surfaces/InputSurface');
 	var FastClick = require('famous/inputs/FastClick');
-	var CardView = require('views/community/card/CardView')
-	var peopleTemplate = require('text!templates/people.html')
+	var CardView = require('views/community/card/CardView');
+	var peopleTemplate = require('text!templates/people.html');
+	var PeopleDetailView = require('views/people/PeopleDetailView');
 	var u = require('util/Utils');
 
 	function PeopleCardView(user) {
@@ -33,6 +34,21 @@ define(function(require, exports, module) {
 				padding: '10px'
 			}
 		});
+
+		this.cardSurface.on('click', function(e) {
+			var classList;
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				classList = e.srcElement.classList;
+				if (_.contains(classList, 'follow')) {
+				} else {
+					var state = {
+						hash: this.user.hash
+					};
+					App.pageView.changePage('PeopleDetailView', state);
+				}
+			}
+		}.bind(this));
+
 		this.add(this.cardSurface);
 	};
 

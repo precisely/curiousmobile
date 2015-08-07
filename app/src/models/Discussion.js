@@ -14,7 +14,7 @@ define(function(require, exports, module) {
 		urlRoot: 'http://dev.wearecurio.us/api/discussion'
 	});
 
-	Discussion.max = 20;
+	Discussion.max = 10;
 
 	Discussion.post = function(name, discussionPost, callback) {
 		u.queueJSON("posting in",
@@ -45,9 +45,9 @@ define(function(require, exports, module) {
 	Discussion.deleteDiscussion = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			userId: User.getCurrentUserId(),
-			id: args.id
+			hash: args.hash
 		});
-		u.queueJSON("loading discussion list", u.makeGetUrl("deleteDiscussionId"),
+		u.queueJSON("loading discussion list", u.makeGetUrl("deleteDiscussionHash"),
 			u.makeGetArgs(argsToSend),
 			function(data) {
 				callback(data);

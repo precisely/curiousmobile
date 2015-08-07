@@ -49,7 +49,7 @@ define(function(require, exports, module) {
 
 	function init() {
 		this.deck = [];
-		this.headerSurface = new ImageSurface({
+		this.pencilSurface = new ImageSurface({
 			size: [44, 64],
 			content: 'content/images/edit-pencil.png',
 		});
@@ -62,11 +62,10 @@ define(function(require, exports, module) {
 		});
 
 		this.setBody(this.backgroundSurface);
-		this.setRightIcon(this.headerSurface);
 		this.setHeaderLabel('FEED');
 
 
-		this.headerSurface.on('click', function(e) {
+		this.pencilSurface.on('click', function(e) {
 			App.pageView.changePage(CreatePostView.name);
 		}.bind(this));
 
@@ -195,6 +194,7 @@ define(function(require, exports, module) {
 			offset: 0,
 			max: this.max
 		};
+		this.removeRightIcon();
 		if (lable === 'ALL') {
 			params.type = 'all';
 			var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', params);
@@ -211,10 +211,9 @@ define(function(require, exports, module) {
 		} else if (lable === 'SPRINT') {
 			Sprint.fetch(params, addListItemsToScrollView.bind(this));
 		} else if (lable === 'DISCUSSIONS') {
+			this.setRightIcon(this.pencilSurface);
 			Discussion.fetch(params, addListItemsToScrollView.bind(this));
 		}
-		this.scrollView.sequenceFrom(this.deck);
-		this.renderController.show(this.scrollView);
 	};
 
 	function addListItemsToScrollView(listItems) {
@@ -231,7 +230,7 @@ define(function(require, exports, module) {
 				sprintCardView.setScrollView(this.scrollView);
 
 			} else if (item.type === 'dis') {
-				var discussionCardView = new DiscussionCardView(item);
+				var discussionCardView = new DiscussionCardView(item, null, this.deck);
 				this.deck.push(discussionCardView);
 				discussionCardView.setScrollView(this.scrollView);
 
@@ -258,6 +257,8 @@ define(function(require, exports, module) {
 		this.itemsAvailable = true;
 		this.offset = 0;
 		this.scrollView.setPosition(0);
+		this.scrollView.sequenceFrom(this.deck);
+		this.renderController.show(this.scrollView);
 	};
 
 	App.pages[FeedView.name] = FeedView;

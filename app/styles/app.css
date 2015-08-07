@@ -19,6 +19,10 @@ button {
 	border: none;
 }
 
+.inline {
+	display: inline;
+}
+
 input, textarea {
 	-webkit-user-select: auto !important;
 	-webkit-appearance: caret;
@@ -650,43 +654,17 @@ button.close {
 	font-weight: 800;
 }
 
-.feed-item .sprint .sprint-description {
+.feed-item .sprint-description {
 	font-size: 14px;
 	margin-top: 10px;
-	margin-right: 60px;
-	height: 40px;
+	height: calc(14px * 1.2 * 2);
+	line-height: 1.2;
+	-webkit-line-clamp: 2;
 	overflow: hidden;
-}
-
-.feed-item .sprint .sprint-description:before {
-	content: "";
-	float: left;
-	width: 5px;
-	height: 40px;
-}
-
-.feed-item .sprint .sprint-description > *:first-child {
-	float: right;
-	width: 100%;
-	margin-left: -5px;
-}
-
-.feed-item .sprint .sprint-description:after {
-	content: "\02026";  
-
-	box-sizing: content-box;
-	-webkit-box-sizing: content-box;
-	-moz-box-sizing: content-box;
-
-	font-weight: 600;
-	float: right;
-	position: relative;
-	top: -21px;
-	left: 100%; 
-	width: 3em;
-	margin-left: -3em;
-	padding-right: 5px;
-	text-align: right;
+	text-overflow: ellipsis;
+	display: block;
+	-webkit-box-orient: vertical;
+	display: -webkit-box;
 }
 
 .feed-item .sprint .read-more a {
@@ -695,12 +673,17 @@ button.close {
 	margin-top: 10px;
 }
 
-.feed-item .sprint .tags-participants-label a {
+.sprint-card-button {
 	margin-top: 10px;
 	margin-right: 15px;
+	height: 30px;
 	font-size: 14px;
 	color: #ff935f;
 	font-weight: 500;
+	border-radius: 15px;
+	border: 1px #ff935f solid;
+	background-color: #fff;
+	padding: 0px 15px;
 }
 
 .feed-item .discussion .discussion-topic .avatar {
@@ -708,7 +691,7 @@ button.close {
 	width: 30px;
 }
 
-.feed-item .discussion .discussion-topic .posting-time, .feed-item .sprint .posting-time {
+.feed-item .posting-time, .sprint-card-participants {
 	font-size: 10px;
 	color: #a8a8a8;
 }
@@ -793,8 +776,8 @@ button.close {
 }
 
 .feed-item .discussion .comments .multiple-comments {
-	 padding: 0px 0px;
-	 margin-bottom: 20px;
+	padding: 0px 0px;
+	margin-bottom: 20px;
 }
 
 #postList {
@@ -1154,4 +1137,142 @@ button.close {
 	color: #fff;
 	padding: 5px 10px;
 	border-radius: 2px;
+}
+
+.sprint-details {
+	padding: 0px 15px 15px 15px;
+	color: #787878;
+}
+
+.sprint-default-label {
+	background-color: white;
+	text-align: center;
+	padding: 5px 10px;
+	font-weight: 500;
+	color: #f48d5b;
+	margin: 10px 0px;
+}
+
+.sprint-details h2 {
+	font-size: 25px;
+	color: #5d5d5d;
+	margin: 0px 0px 10px 0px;
+}
+
+.sprint-details p, .people-detail p {
+	font-style: normal;
+	font-weight: 500;
+}
+
+.sprint-details button, .sprint-activity button, .people-detail button {
+	background-color: transparent;
+	border: 1px solid #979797;
+	border-radius: 2px;
+	font-weight: 500;
+}
+
+.upper-body button {
+	padding: 2px 20px;
+	color: #5d5d5d;
+}
+
+.tags-div button {
+	margin: 5px 10px 5px 0px;
+}
+
+.sprint-details .fa {
+	float: none !important;
+	padding: 0px 5px;
+}
+
+.sprint-details .participants-wrapper {
+	margin-left: 10px;
+}
+
+.sprint-activity .upper {
+	background-color: #fff;
+	text-align: center;
+	color: #5d5d5d;
+	padding: 20px 0px;
+}
+
+.sprint-activity .lower {
+	padding: 5px 0px 5px 10px;
+	background-color: #efefef;
+}
+
+.sprint-activity h2, .people-detail h2 {
+	margin: 0px 0px 15px 0px;
+}
+
+.more-participants {
+	font-weight: 600;
+	margin: 10px 0px 20px 0px;
+}
+
+.full-width-button {
+	width: 100%;
+	height: 40px;
+}
+
+.people-detail .fa-4x {
+	font-size: 70px;
+}
+
+.people-detail .upper-body {
+	text-align: center;
+	background-color: #efefef;
+	padding: 15px 0px;
+}
+
+.people-detail .lower-body {
+	padding: 15px;
+	background-color: #fff;
+}
+
+.people-detail p {
+	color: #696969;
+	display: inline;
+	font-weight: 300;
+}
+
+.people-detail h4 {
+	color: #696969;
+}
+
+.people-detail h2 {
+	color: #5d5d5d;
+	font-size: 22px;
+}
+
+.people-detail .media {
+	margin-top: 10px;
+}
+
+.people-detail .media-body {
+	padding-left: 10px;
+	padding-top: 5px;
+}
+
+.public-interests, .public-groups, .public-sprints {
+	margin-bottom: 20px;
+}
+
+.public-sprints p {
+	height: calc(14px * 1.2 * 2);
+	line-height: 1.2;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	display: block;
+	-webkit-box-orient: vertical;
+	display: -webkit-box;
+	margin-bottom: 0px;
+}
+
+.people-label {
+	color: #b6b6b6;
+	font-weight: 500;
+	font-size: 15px;
+	display: block;
 }

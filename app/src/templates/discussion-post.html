@@ -21,7 +21,7 @@
 						<a href="#"> 
 							<span> {{= discussionTitle ? discussionTitle : '(No Title)' }}</span>
 						</a>
-						<p>{{= firstPost.message }}</p>
+						<p>{{= firstPost ? firstPost.message : '' }}</p>
 				</div>
 				<hr>
 				<div class="text-right buttons">

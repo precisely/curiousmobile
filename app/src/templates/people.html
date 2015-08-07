@@ -12,7 +12,12 @@
 	</div>
 	<div class="user-details-content">
 		<span>Public Sprints:</span>
-		<span class="label-value">{{= sprints.join(", ") }}</span>
+		<span class="label-value">
+			{{ _.each(sprints, function(sprint, index) { }}
+				{{= sprint.name }}
+				{{ if (index < sprints.length - 1) { print(', '); } }}
+			{{ }) }}
+		</span>
 	</div>
 	<div class="user-details-content">
 		<span>Start Date:</span>

@@ -136,5 +136,22 @@ define(function(require, exports, module) {
 		});
 	};
 
+	User.show = function(hash, successCallback, failCallback) {
+		u.queueJSON('Getting user data', App.serverUrl + '/api/user/' + hash + '?callback=?', 
+		u.getCSRFPreventionObject('getUserData'),
+		function(data) {
+			if (u.checkData(data)) {
+				if (data.success) {
+					successCallback({user: data.user});
+				} else {
+					u.showAlert(data.message);
+					failCallback();
+				}
+			}
+		}, function(error) {
+			console.log('error: ', error);
+		});
+	};
+
 	module.exports = User;
 });

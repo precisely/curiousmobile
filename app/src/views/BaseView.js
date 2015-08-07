@@ -75,7 +75,8 @@ define(function(require, exports, module) {
 			align: [0, 0],
 			size: [window.innerWidth, 64],
 			properties: {
-				backgroundColor: '#fff'
+				backgroundColor: '#fff',
+				boxShadow: '0px 3px 5px #dddddd'
 			}
 		});
 
@@ -178,6 +179,10 @@ define(function(require, exports, module) {
 		this.headerRightIconController.show(iconSurface);
 	};
 
+	BaseView.prototype.removeRightIcon = function () {
+		this.headerRightIconController.hide();
+	};
+
 	BaseView.prototype.onShow = function(state) {
 		if (this.options.header) {
 			if (!this.options.noBackButton && App.pageView.hasHistory()) {
@@ -198,7 +203,7 @@ define(function(require, exports, module) {
 	};
 
 	BaseView.prototype.goBack = function(state) {
-		App.pageView.goBack(this.parentPage, state);
+		App.pageView.goBack(this.parentPage, state || this.state);
 	};
 
 	BaseView.prototype.setHeaderLabel = function(title) {

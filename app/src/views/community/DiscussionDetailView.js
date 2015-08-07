@@ -53,7 +53,7 @@ define(function(require, exports, module) {
 				this.offset += DiscussionPost.max;
 
 				var params = {
-					discussionId: this.discussionId,
+					discussionHash: this.discussionHash,
 					offset: this.offset
 				}
 				DiscussionPost.fetch(params, function(discussionPost) {
@@ -79,10 +79,11 @@ define(function(require, exports, module) {
 	};
 
 	DiscussionDetailView.prototype.preShow = function(state) {
-		if (!state || !state.discussionId) {
+		if (!state || !state.discussionHash) {
 			return false;
 		}
-		this.discussionId = state.discussionId;
+		this.discussionHash = state.discussionHash;
+		this.parentPage = state.parentPage || 'FeedView';
 		this.refresh();
 		return true;
 	};
@@ -104,7 +105,7 @@ define(function(require, exports, module) {
 		this.scrollView.sequenceFrom(this.surfaceList);
 		this.renderController.show(this.scrollView);
 		DiscussionPost.fetch({
-			discussionId: this.discussionId
+			discussionHash: this.discussionHash
 		}, function(discussionPost) {
 			this.discussionPost = discussionPost;
 			this.postRefresh();
@@ -154,7 +155,7 @@ define(function(require, exports, module) {
 						b: 'No',
 						onA: function() {
 							Discussion.deleteDiscussion({
-								id: this.discussionId
+								hash: this.discussionHash
 							}, function(success) {
 								App.pageView.changePage('FeedView', {new: true});
 							}.bind(this));
@@ -174,7 +175,7 @@ define(function(require, exports, module) {
 		var inputElement = document.getElementById("message");
 		var state = {
 			viewProperties: {
-				discussionId: this.discussionId,
+				discussionHash: this.discussionHash,
 			},
 			form: [{
 				id: 'message',
@@ -191,8 +192,9 @@ define(function(require, exports, module) {
 			return;
 		}
 		console.log('Comments: ', discussionPost);
-		discussionPost.posts.forEach(function(post) {
+		var discussionHash = this.discussionHash;
 
+		discussionPost.posts.forEach(function(post) {
 			post.prettyDate = u.prettyDate(new Date(post.updated));
 			post.isAdmin = post.authorUserId == User.getCurrentUserId();
 			if (post.message) {
@@ -222,7 +224,7 @@ define(function(require, exports, module) {
 								b: 'No',
 								onA: function() {
 									DiscussionPost.deleteComment({
-										discussionId: post.discussionId,
+										discussionHash: discussionHash,
 										clearPostId: post.id
 									}, function(sucess) {
 										console.log('delete success...');
@@ -247,10 +249,10 @@ define(function(require, exports, module) {
 	DiscussionDetailView.prototype.postComment = function() {
 		var message = document.getElementById('message').value;
 		DiscussionPost.createComment({
-			discussionId: this.discussionId,
+			discussionHash: this.discussionHash,
 			message: message
 		}, function(success) {
-			App.pageView.changePage('DiscussionDetailView', {discussionId: this.discussionId});
+			App.pageView.changePage('DiscussionDetailView', {discussionHash: this.discussionHash});
 		}.bind(this));
 	};
 	App.pages[DiscussionDetailView.name] = DiscussionDetailView;

@@ -3,13 +3,13 @@
 		<div class="discussion-topic">
 			<div class="contents">
 				<div class="row">
-					<div class="col-xs-9 discussion-header">
+					<div class="col-xs-10 discussion-header">
 						<a href="#">
 							<img class="avatar" src="content/images/avatar.png" alt="avatar">
 							<span class="user-name"> {{= userName }}</span>
 						</a>
 					</div>
-					<div class="col-xs-3 discussion-topic-span discussion-header close-discussion">
+					<div class="col-xs-2 discussion-topic-span discussion-header close-discussion">
 						{{ if (isAdmin) { }}
 							<i class="fa fa-times-circle"></i>
 						{{ } }}
@@ -26,10 +26,12 @@
 						{{= prettyDate }}
 					</div>
 					<div class="col-xs-9 buttons">
-						<button>
-							<img src="content/images/follow.png" alt="follow"/>
-							<span class="footer-label">Follow</span>
-						</button>
+						{{ if (!isAdmin) { }}
+							<button>
+								<img src="content/images/follow.png" alt="follow"/>
+								<span class="footer-label">Follow</span>
+							</button>
+						{{ } }}
 						{{ if (isAdmin) {  }}
 							<button class="share-button" data-toggle="popover" title="Share:" data-placement="top" 
 									data-content="<input class='share-link' type='text' value='{{ location.protocol+'//'+location.hostname+(location.port ? ':' + location.port : '') }}/discussion/show/{{= hash }}\'>">
