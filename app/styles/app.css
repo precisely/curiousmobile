@@ -1074,40 +1074,6 @@ button.close {
 	background-color: #d46c39;
 }
 
-.help-wizard input[type='range'] {
-	-webkit-appearance: none !important;
-	background: #e27c4a;
-	height: 13px;
-	border-radius: 6px !important;
-	-webkit-box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.75);
-	-moz-box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.75);
-	box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.75);
-}
-
-.help-wizard input[type=range]::-moz-range-track {
-	background: #e27c4a;
-	height: 13px;
-	width: 465px;
-	border-radius: 6px !important; 
-	-moz-box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.75);
-	text-align: center; 
-}
-
-.help-wizard input[type='range']::-webkit-slider-thumb {
-	-webkit-appearance: none !important;
-	background: #fff;
-	height: 35px;
-	border-radius: 17.5px;
-	width: 35px;
-}
-
-.help-wizard input[type=range]::-moz-range-thumb {
-	background: #fff;
-	height: 35px;
-	border-radius: 17.5px;
-	width: 35px;
-}
-
 .calm-day, .super-day, .good-day {
 	font-weight: 400;
 	font-size: 12px;
@@ -1172,6 +1138,9 @@ button.close {
 	margin-bottom: 10px;
 	border: 1px solid #979797;
 	padding: 10px;
+	-webkit-appearance: none;
+	box-shadow: none;
+	border-radius: 2px;
 }
 
 .sprint-details textarea {
@@ -1294,7 +1263,7 @@ button.close {
 #participant-username {
 	padding: 10px;
 	width: 100%;
-	border-radius: 4px;
+	border-radius: 2px;
 }
 
 .right-icons {

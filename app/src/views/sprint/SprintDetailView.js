@@ -43,7 +43,7 @@ define(function(require, exports, module) {
 
 		this.pencilSurface.on('click', function(e) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				App.pageView.changePage('SprintFormView', {hash: this.hash});
+				App.pageView.changePage('SprintFormView', {parentPage: 'SprintDetailView', hash: this.hash});
 			}
 		}.bind(this));
 

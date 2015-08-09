@@ -62,7 +62,6 @@ define(function(require, exports, module) {
 		}
 		this.hash = state.hash;
 		this.parentPage = state.parentPage || 'SprintListView';
-		this.killOverlayContent();
 		this.refresh();
 		return true;
 	};
@@ -74,6 +73,7 @@ define(function(require, exports, module) {
 			this.virtualUserId = sprintDetails.sprint.virtualUserId;
 			this.virtualGroupId = sprintDetails.sprint.virtualGroupId;
 			sprintDetails.isFormView = true;
+			sprintDetails.isCreateForm = (this.parentPage == 'SprintDetailView') ? false : true;
 			this.sprintSurface = new Surface({
 				size: [undefined, undefined],
 				content: _.template(SprintEditTemplate, sprintDetails, templateSettings),

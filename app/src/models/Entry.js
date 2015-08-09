@@ -15,7 +15,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 		};
 
 		var Entry = Backbone.Model.extend({
-			'userId': -1,
+			'userId': 0,
 			'date': '2014-08-03T11:58:28.000Z',
 			'datePrecisionSecs': 86400,
 			'description': '',

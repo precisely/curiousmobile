@@ -29,7 +29,6 @@ define(function(require, exports, module) {
 		BaseView.apply(this, arguments);
 		this.pageChange = false; //making sure the pageChange even is disregarded on page reload
 		this.entryFormView = new EntryFormView(this);
-		this.showingEntryForm = false;
 		_createBody.call(this);
 		_createCalendar.call(this);
 	}
@@ -175,13 +174,16 @@ define(function(require, exports, module) {
 		return true;
 	};
 
+	TrackView.prototype.killOverlayContent = function () {
+		this.killEntryForm();
+	};
+
 	TrackView.prototype.killEntryForm = function(state) {
 		this.entryListContainer.setProperties({
 			webkitFilter: 'blur(0px)',
 			filter: 'blur(0px)'
 		});
-		this.killOverlayContent();
-		this.showingEntryForm = false;
+		BaseView.prototype.killOverlayContent.call(this);
 		this.showMenuButton();
 		_createCalendar.call(this);
 		this.preShow(state);
@@ -232,7 +234,6 @@ define(function(require, exports, module) {
 		this.showOverlayContent(this.entryFormView, function() {
 			this.onShow(state);
 		}.bind(this.entryFormView));
-		this.showingEntryForm = true;
 	}
 
 	TrackView.prototype.buildStateFromEntry = function(entry) {
@@ -240,7 +241,7 @@ define(function(require, exports, module) {
 	}
 
 	TrackView.prototype.getCurrentState = function() {
-		if (this.showingEntryForm) {
+		if (this.currentOverlay == 'EntryFormView') {
 			return {
 				new: true,
 				postLoadAction: {

@@ -67,9 +67,13 @@
 			{{ if (totalParticipants > 10) { print('<h5 id="more-participants">See All Participants</h5>'); } }}
 		</div>
 	</div>
-	{{ if (isFormView) { }}
+	{{ if (isFormView && isCreateForm) { }}
 		<button class="full-width-button submit">
-			Submit
+			Create Sprint
+		</button>
+	{{ } else if (isFormView) { }}
+		<button class="full-width-button submit">
+			 Update Sprint
 		</button>
 	{{ } else { }}
 		<button class="full-width-button activity">
