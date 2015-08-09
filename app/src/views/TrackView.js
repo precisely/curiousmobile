@@ -230,7 +230,7 @@ define(function(require, exports, module) {
 			filter: 'blur(20px)'
 		});
 		this.showBackButton();
-		this.setHeaderLabel('ENTER TAG');
+		this.setHeaderLabel('');
 		this.showOverlayContent(this.entryFormView, function() {
 			this.onShow(state);
 		}.bind(this.entryFormView));
