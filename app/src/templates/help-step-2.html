@@ -1,14 +1,19 @@
 <div class="help-wizard">
 	<div class="range-box active">
 		<h3 class="questions mood-question">How's your mood right now?</h3>
-		<h4 class="entry-label">To track this, enter: <span id="mood-entry-label">mood 5</span></h4>
+		<p>                                                                                                           
+			Please enter a number from 1 to 10<br><br>Examples:<br>1 would mean 'Oh dear, what a day'<br>
+			5 would mean 'Pretty calm, even-keeled'<br>10 would mean 'Super stoked, cheerful state of mind'<br><br>
+		</p> 
+		<input type="number" min="1" max="10" id="mood-box" placeholder="Click to enter a number from 1 to 10"/>
+		<h4 class="entry-label"><span id="mood-entry-label"></span></h4>
 		<input type="hidden" name="entry.1" id="mood-entry">
 	</div>
 	<label class="skip-label">
-		Skip
+		Skip Rest of Tutorial
 	</label>
 	<label class="back-label">
 		Back
 	</label>
-	<button class="next-question" type="button">NEXT( 2 OF 3)</button>
+	<button class="next-question" type="button">NEXT (2 OF 3)</button>
 </div>

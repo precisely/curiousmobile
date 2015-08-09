@@ -26,6 +26,7 @@
 		<!-- endbuild -->
 
 		<!-- build:js(app/) src/polyfills.js -->
+		<script type="text/javascript" src="src/util/Base.js"></script>
 		<script type="text/javascript" src="lib/famous-polyfills/functionPrototypeBind.js"></script>
 		<script type="text/javascript" src="lib/famous-polyfills/classList.js"></script>
 		<script type="text/javascript" src="lib/famous-polyfills/requestAnimationFrame.js"></script>
@@ -38,7 +39,6 @@
 		<script src="lib/angular/angular.js"></script>
 		<script src="lib/angular-resource/angular-resource.js"></script>
 		<!-- process:remove:dev -->
-		<script type="text/javascript" src="src/util/Base.js"></script>
 		<!-- /process -->
 		<script type="text/javascript">
 			require.config({
