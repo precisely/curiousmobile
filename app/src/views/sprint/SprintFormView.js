@@ -79,6 +79,12 @@ define(function(require, exports, module) {
 				content: _.template(SprintEditTemplate, sprintDetails, templateSettings),
 			});
 
+			this.sprintSurface.on('keydown', function(e) {
+				if (cordova && e.keyCode == 13) {
+					cordova.plugins.Keyboard.close();
+				}
+			}.bind(this));
+
 			this.sprintSurface.on('click', function(e) {
 				var classList;
 				if (u.isAndroid() || (e instanceof CustomEvent)) {
@@ -94,7 +100,11 @@ define(function(require, exports, module) {
 							return false;
 						}
 
-						Sprint.update({name: name, description: description, id: this.hash}, function(state) {
+						Sprint.update({
+							name: name,
+							description: description,
+							id: this.hash
+						}, function(state) {
 							App.pageView.changePage('SprintDetailView', state);
 						});
 					} else if (e.srcElement.tagName == 'INPUT' || e.srcElement.tagName == 'TEXTAREA') {
