@@ -3,7 +3,7 @@ define( function(require, exports, module) {
 
 	function ParticipantsAutocomplete() {
 		this.fetch = function(term, callback) {
-			u.queueJSON('Getting autocomplete', '/data/getAutocompleteParticipantsData?callback=',
+			u.queueJSON('Getting autocomplete', App.serverUrl + '/data/getAutocompleteParticipantsData?callback=',
 					u.getCSRFPreventionObject("getAutocompleteParticipantsDataCSRF", {searchString: term}), function(data) {
 				if (!checkData(data))
 					return;
