@@ -43,8 +43,10 @@ define(function(require, exports, module) {
 
 		this.on('form-sprint-entry', function(resp) {
 			var createdEntry = resp.glowEntry;
-			var icon = (createdEntry.comment.indexOf("repeat") > -1) ? '<i class="fa fa-repeat"></i>' : 
-					(createdEntry.comment.indexOf("remind") > -1) ? '<i class="fa fa-bell"></i>': '<i class="fa fa-thumb-track"></i>';
+			console.log('Entry comment: ' + createdEntry.comment);
+			var icon = (createdEntry.comment.indexOf('repeat') > -1) ? '<i class="fa fa-repeat"></i>' : 
+					(createdEntry.comment.indexOf('remind') > -1) ? '<i class="fa fa-bell"></i>' : 
+					(createdEntry.comment.indexOf('pinned') > -1) ? '<i class="fa fa-thumb-track"></i>' : '';
 			var entryItem = '<button class="entry-button">' + createdEntry.description + icon + '</button>';
 			this.parentView.killAddSprintTagsOverlay(entryItem);
 		}.bind(this));

@@ -15,7 +15,6 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 	var Utility = require('famous/utilities/Utility');
 	var store = require('store');
-	var Entry = require('models/Entry');
 	var EventHandler = require('famous/core/EventHandler');
 	var inputSurfaceTemplate = require('text!templates/input-surface.html');
 
@@ -80,7 +79,13 @@ define(function(require, exports, module) {
 		this.inputSurface.on('keyup', function(e) {
 			//on enter
 			if (e.keyCode == 13) {
-				this.submit(e);
+				if (cordova) {
+					cordova.plugins.Keyboard.close();
+				}
+				var username = document.getElementById("participant-username").value;
+				if (username && username != '') {
+					this.submit(username);
+				}
 			} else if (e.keyCode == 27) {
 				this.blur(e);
 				this.goBack();
@@ -90,14 +95,11 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		//update input field
 		this.autoCompleteView.onSelect(function(inputLabel) {
 			console.log(inputLabel);
-			Timer.setTimeout(function() {
-				var inputElement = document.getElementById("participant-username");
-				inputElement.value = inputLabel;
-				this.submit(inputLabel);
-			}.bind(this), 500);
+			var inputElement = document.getElementById("participant-username");
+			inputElement.value = inputLabel;
+			this.submit(inputLabel);
 		}.bind(this));
 
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
@@ -127,23 +129,15 @@ define(function(require, exports, module) {
 
 	AddSprintParticipantsView.prototype.blur = function(e) {
 		this.autoCompleteView.hide();
-		this.unsetEntry();
 	};
 
 	AddSprintParticipantsView.prototype.getCurrentState = function() {
 		var state = BaseView.prototype.getCurrentState.call(this);
-		var inputElement = document.getElementById("entry-description");
+		var inputElement = document.getElementById("participant-username");
 		return {
-			viewProperties: [{
-					name: 'entry',
-					model: 'User',
-					value: this.entry,
-				},
-			],
 			form: [{
-				id: 'entry-description',
+				id: 'participant-username',
 				value: inputElement.value,
-				selectionRange: [inputElement.selectionStart, inputElement.selectionEnd],
 				elementType: ElementType.domElement,
 				focus: true,
 			}]
@@ -153,28 +147,17 @@ define(function(require, exports, module) {
 	AddSprintParticipantsView.prototype.setCurrentState = function(state) {
 		var result = BaseView.prototype.setCurrentState.call(this, state);
 		if (state && result) {
-			var inputElement = document.getElementById("entry-description");
-			this.entry = new Entry(state.entry);
+			var inputElement = document.getElementById("participant-username");
 		} else {
 			return false;
 		}
 	}
 
-	AddSprintParticipantsView.prototype.setEntry = function(entry) {
-		this.entry = entry;
-	};
-
-	AddSprintParticipantsView.prototype.unsetEntry = function() {
-		var inputElement = document.getElementById("entry-description");
+	AddSprintParticipantsView.prototype.unsetInputField = function() {
+		var inputElement = document.getElementById("participant-username");
 		if (inputElement) {
 			inputElement.value = '';
 		}
-		this.entry = null;
-		this.setEntryText('');
-	};
-
-	AddSprintParticipantsView.prototype.setEntryText = function(text) {
-		document.getElementById("entry-description").value = '';
 	};
 
 	AddSprintParticipantsView.prototype.submit = function(participantUsername) {

@@ -157,7 +157,13 @@ define(function(require, exports, module) {
 
 	SprintFormView.prototype.killAddSprintTagsOverlay = function(entryItem) {
 		this.killOverlayContent();
-		document.getElementsByClassName('tags-wrapper')[0].innerHTML += entryItem;
+		if (entryItem != '') {
+			var noTagsLabel = document.getElementById('no-tags-added');
+			if (noTagsLabel) {
+				noTagsLabel.parentNode.removeChild(noTagsLabel);
+			}
+			document.getElementsByClassName('tags-wrapper')[0].innerHTML += entryItem;
+		}
 	};
 
 	SprintFormView.prototype.killAddSprintParticipantsOverlay = function(participant) {
