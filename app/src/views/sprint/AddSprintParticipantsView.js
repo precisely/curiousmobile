@@ -23,8 +23,8 @@ define(function(require, exports, module) {
 		StateView.apply(this, arguments);
 		this.parentView = parentView;
 		this.parentPage = parentView;
-		_setListeners.call(this);
 		_createForm.call(this);
+		_setListeners.call(this);
 	}
 
 	AddSprintParticipantsView.prototype = Object.create(StateView.prototype);
@@ -38,8 +38,6 @@ define(function(require, exports, module) {
 	}
 
 	function _setListeners() {
-		var AutocompleteObj = new ParticipantsAutocomplete();
-		this.autoCompleteView = new AutocompleteView(AutocompleteObj);
 		this.autoCompleteView.on('updateInputSurface', function() {
 			console.log('update the Input Surface');
 		}.bind(this));
@@ -52,12 +50,14 @@ define(function(require, exports, module) {
 
 	function _createForm() {
 		this.clazz = 'AddSprintParticipantsView';
-
+		var AutocompleteObj = new ParticipantsAutocomplete();
+		this.autoCompleteView = new AutocompleteView(AutocompleteObj);
 		var formContainerSurface = new ContainerSurface({
 			properties: {
 				background: 'rgb(184, 182, 182)'
 			}
 		});
+		formContainerSurface.add(this.autoCompleteView);
 
 		this.inputModifier = new Modifier({
 			align: [0, 0],
@@ -87,7 +87,6 @@ define(function(require, exports, module) {
 			} else {
 				enteredKey = e.srcElement.value;
 				this.autoCompleteView.getAutocompletes(enteredKey);
-				formContainerSurface.add(this.autoCompleteView);
 			}
 		}.bind(this));
 
