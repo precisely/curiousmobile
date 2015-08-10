@@ -158,7 +158,7 @@ define(function(require, exports, module) {
 
 		this.pinSurface = new Surface({
 			content: '<i class="fa fa-thumb-tack"></i><br/> Pin It',
-			size: [34, 24],
+			size: [37, 24],
 		});
 
 		this.pinSurface.on('click', function(e) {
