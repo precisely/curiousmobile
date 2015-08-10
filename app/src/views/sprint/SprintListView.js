@@ -170,6 +170,10 @@ define(function(require, exports, module) {
 		this.scrollView.setPosition(0);
 	};
 
+	SprintListView.prototype.getScrollPosition = function() {
+		return this.scrollView.getPosition()	
+	};
+
 	App.pages[SprintListView.name] = SprintListView;
 	module.exports = SprintListView;
 });

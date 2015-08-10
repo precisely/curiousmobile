@@ -34,6 +34,11 @@
 		{{ } }}
 		<br>
 		<div class="tags-wrapper">
+			{{ if (entries) { }}
+				No tags added yet.
+			{{ } }}
+
+			<div class="right-icons add-tags">
 			{{ _.each(entries, function(entry) { }}
 				<button>
 					{{= entry.description }}

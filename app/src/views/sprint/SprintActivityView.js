@@ -132,7 +132,9 @@ define(function(require, exports, module) {
 	SprintActivityView.prototype.fetchDiscussions = function(args) {
 		var params = args;
 		this.sprintActivityTitleSurface.setContent(_.template(SprintActivityTitleTemplate, {name: this.name}, templateSettings));
+		// 
 		Sprint.listDiscussions(args, addListItemsToScrollView.bind(this), function() {
+			// On fail go back
 			App.pageView.goBack();
 		});
 		this.scrollView.sequenceFrom(this.deck);
@@ -156,6 +158,16 @@ define(function(require, exports, module) {
 
 	function addListItemsToScrollView(listItems) {
 		if (!listItems) {
+			if (this.deck.length == 0) {
+				var noActivityMessage = new Surface({ 
+					content: 'No activity yet.',
+					properties: {
+						padding: '0px 10px',	
+					}
+				});	
+				this.renderController.show(noActivityMessage);
+				return;
+			}
 			this.itemsAvailable = false;
 			console.log('no more items available');
 			return;

@@ -132,19 +132,19 @@ define(function(require, exports, module) {
 			this.changeDate(new Date());
 		}
 
-		App.coreEventHandler.on('refresh-entries', function() {
-			EntryCollection.clearCache();
-			this.changeDate(this.calendarView.selectedDate, function() {
-				console.log('TrackView: Entries refreshed');
-			}.bind(this));
-		}.bind(this));
-
 		this.on('create-entry', function(e) {
 			console.log('EventHandler: this.trackView.on event: create-entry');
 			var formViewState = this.entryFormView.buildStateFromEntry(new Entry());
 			this.showEntryFormView(formViewState);
 		}.bind(this));
 	}
+
+	TrackView.prototype.refresh = function() {
+		EntryCollection.clearCache();
+		this.changeDate(this.calendarView.selectedDate, function() {
+			console.log('TrackView: Entries refreshed');
+		}.bind(this));
+	};
 
 	function _createCalendar() {
 		this.calendarView = new CalendarView();
