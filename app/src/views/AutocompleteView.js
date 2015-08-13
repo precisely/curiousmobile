@@ -9,14 +9,11 @@ define(function(require, exports, module) {
 	var Scrollview = require('famous/views/Scrollview');
 	var FastClick = require('famous/inputs/FastClick');
 	var u = require('util/Utils');
-	var Autocomplete = require('models/Autocomplete');
-	var AutocompleteObj;
 
-	function AutocompleteView() {
+	function AutocompleteView(AutocompleteObj) {
 		View.apply(this, arguments);
 		this.init();
-		AutocompleteObj = new Autocomplete();
-		window.autocompleteCache = AutocompleteObj;
+		this.AutocompleteObj = AutocompleteObj;
 	}
 
 	AutocompleteView.prototype = Object.create(View.prototype);
@@ -38,6 +35,7 @@ define(function(require, exports, module) {
 	AutocompleteView.prototype.onSelect = function(callback) {
 		onSelectCallback = callback;
 	};
+
 	AutocompleteView.prototype.getAutocompletes = function(enteredKey) {
 		this.surfaceList = [];
 		this.scrollView = new Scrollview({
@@ -50,7 +48,7 @@ define(function(require, exports, module) {
 		}
 		enteredKey = enteredKey.toLowerCase().trim();
 		this.addItem({label:enteredKey}, 0, false)
-		AutocompleteObj.fetch(enteredKey, function(autocompletes) {
+		this.AutocompleteObj.fetch(enteredKey, function(autocompletes) {
 			this.processAutocompletes(autocompletes, enteredKey);
 		}.bind(this));
 	}
@@ -59,10 +57,10 @@ define(function(require, exports, module) {
 		if (autocompletes) {
 			autocompletes.forEach(function(autocomplete, index) {
 				var isLastItem = false;
-				if (autocomplete.label.trim() === enteredKey ) {
+				if (autocomplete.label && (autocomplete.label.trim() === enteredKey)) {
 					return;	
 				}
-				if (index == autocompletes.length-1){
+				if (index == autocompletes.length-1) {
 					isLastItem = true;	
 				} 
 				this.addItem(autocomplete, index+1, isLastItem);	
@@ -83,7 +81,7 @@ define(function(require, exports, module) {
 			backgroundColor = '#cccccc';
 		}
 		myView.autoCompleteSurface = new Surface({
-			content: autocomplete.label,
+			content: autocomplete.label || autocomplete,
 			properties: {
 				backgroundColor: backgroundColor,
 				padding: '9px',
@@ -102,7 +100,7 @@ define(function(require, exports, module) {
 		myView.autoCompleteSurface.on('click', function(e) {
 			console.log('Autocomplete click: ' + e);
 			this.renderController.hide(this.scrollView);
-			onSelectCallback(autocomplete.label);
+			onSelectCallback(autocomplete.label || autocomplete);
 		}.bind(this));
 
 		myView.add(myView.autoCompleteModifier).add(myView.autoCompleteSurface);

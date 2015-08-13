@@ -15,7 +15,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 		};
 
 		var Entry = Backbone.Model.extend({
-			'userId': -1,
+			'userId': 0,
 			'date': '2014-08-03T11:58:28.000Z',
 			'datePrecisionSecs': 86400,
 			'description': '',
@@ -159,11 +159,12 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						return text;
 			},
 			create: function(callback) {
+				var now = new Date();
 				var collectionCache = window.App.collectionCache;
-				var baseDate = window.App.selectedDate;
+				var baseDate = window.App.selectedDate || new Date(now.setHours(0, 0, 0, 0));
 				var argsToSend = u.getCSRFPreventionObject("addEntryCSRF", {
 					currentTime: new Date().toUTCString(),
-					userId: User.getCurrentUserId(),
+					userId: this.userId || User.getCurrentUserId(),
 					text: this.text,
 					baseDate: baseDate.toUTCString(),
 					timeZoneName: u.getTimezone(),
@@ -197,9 +198,11 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				}.bind(this), 0, false, false);
 
 			},
+
 			save: function(allFuture, callback) {
 				var collectionCache = window.App.collectionCache;
-				var baseDate = window.App.selectedDate;
+				var now = new Date();
+				var baseDate = window.App.selectedDate || new Date(now.setHours(0, 0, 0, 0));
 				var argsToSend = u.getCSRFPreventionObject("updateEntrySDataCSRF", {
 					entryId: this.get('id'),
 					currentTime: new Date().toUTCString(),

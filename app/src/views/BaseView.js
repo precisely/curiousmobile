@@ -157,8 +157,10 @@ define(function(require, exports, module) {
 				console.log('footerSurface event');
 				var pageName = e.srcElement.getAttribute('data');
 				e.data = pageName;
-				if (e.data == 'TrackView' || e.data == 'FeedView' || e.data == 'SprintListView') {
+				if (e.data == 'TrackView' || e.data == 'FeedView') {
 					this._eventOutput.emit('change-page', e);
+				} else if ( e.data == 'SprintListView') {
+					App.pageView.changePage('SprintListView');
 				}
 			}
 		}.bind(this));
@@ -204,6 +206,10 @@ define(function(require, exports, module) {
 	};
 
 	BaseView.prototype.goBack = function(state) {
+		if (this.currentOverlay) {
+			this.killOverlayContent();
+			return;
+		}
 		App.pageView.goBack(this.parentPage, state || this.state);
 	};
 
@@ -258,10 +264,12 @@ define(function(require, exports, module) {
 		});
 		this.layout.content.add(overlayModifier).add(this.overlayController);
 		this.overlayController.show(renderable, null, callback);
+		this.currentOverlay = renderable.constructor.name;
 	}
 
 	BaseView.prototype.killOverlayContent = function(renderable) {
 		this.overlayController.hide();
+		this.currentOverlay = null;
 	}
 
 	module.exports = BaseView;

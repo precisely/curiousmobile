@@ -159,6 +159,10 @@ define(function(require, exports, module) {
 		return pillSurface;
 	};
 
+	FeedView.prototype.getScrollPosition = function() {
+		return this.scrollView.getPosition()	
+	};
+
 	FeedView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 	}

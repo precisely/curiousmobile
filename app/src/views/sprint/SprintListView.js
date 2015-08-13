@@ -19,6 +19,7 @@ define(function(require, exports, module) {
 	var TrueSurface = require('surfaces/TrueSurface');
 	var u = require('util/Utils');
 	var DiscussionDetailView = require("views/community/DiscussionDetailView");
+	var SprintFormView = require("views/sprint/SprintFormView");
 	var CreatePostView = require('views/community/CreatePostView');
 	var SprintCardView = require('views/community/card/SprintCardView')
 	var PeopleCardView = require('views/community/card/PeopleCardView')
@@ -58,12 +59,16 @@ define(function(require, exports, module) {
 		});
 
 		this.setBody(this.backgroundSurface);
-		this.setRightIcon(this.headerSurface);
+		this.setRightIcon(this.pencilSurface);
 		this.setHeaderLabel('SPRINTS');
 
 
 		this.pencilSurface.on('click', function(e) {
-			App.pageView.changePage(CreatePostView.name);
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				Sprint.create(function(data) {
+					App.pageView.changePage('SprintFormView', {hash: data.hash});
+				});
+			}
 		}.bind(this));
 
 		this.scrollView.sync.on('start', function() {
@@ -163,6 +168,10 @@ define(function(require, exports, module) {
 		this.itemsAvailable = true;
 		this.offset = 0;
 		this.scrollView.setPosition(0);
+	};
+
+	SprintListView.prototype.getScrollPosition = function() {
+		return this.scrollView.getPosition()	
 	};
 
 	App.pages[SprintListView.name] = SprintListView;

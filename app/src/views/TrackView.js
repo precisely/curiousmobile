@@ -29,7 +29,6 @@ define(function(require, exports, module) {
 		BaseView.apply(this, arguments);
 		this.pageChange = false; //making sure the pageChange even is disregarded on page reload
 		this.entryFormView = new EntryFormView(this);
-		this.showingEntryForm = false;
 		_createBody.call(this);
 		_createCalendar.call(this);
 	}
@@ -133,19 +132,19 @@ define(function(require, exports, module) {
 			this.changeDate(new Date());
 		}
 
-		App.coreEventHandler.on('refresh-entries', function() {
-			EntryCollection.clearCache();
-			this.changeDate(this.calendarView.selectedDate, function() {
-				console.log('TrackView: Entries refreshed');
-			}.bind(this));
-		}.bind(this));
-
 		this.on('create-entry', function(e) {
 			console.log('EventHandler: this.trackView.on event: create-entry');
 			var formViewState = this.entryFormView.buildStateFromEntry(new Entry());
 			this.showEntryFormView(formViewState);
 		}.bind(this));
 	}
+
+	TrackView.prototype.refresh = function() {
+		EntryCollection.clearCache();
+		this.changeDate(this.calendarView.selectedDate, function() {
+			console.log('TrackView: Entries refreshed');
+		}.bind(this));
+	};
 
 	function _createCalendar() {
 		this.calendarView = new CalendarView();
@@ -175,13 +174,16 @@ define(function(require, exports, module) {
 		return true;
 	};
 
+	TrackView.prototype.killOverlayContent = function () {
+		this.killEntryForm();
+	};
+
 	TrackView.prototype.killEntryForm = function(state) {
 		this.entryListContainer.setProperties({
 			webkitFilter: 'blur(0px)',
 			filter: 'blur(0px)'
 		});
-		this.killOverlayContent();
-		this.showingEntryForm = false;
+		BaseView.prototype.killOverlayContent.call(this);
 		this.showMenuButton();
 		_createCalendar.call(this);
 		this.preShow(state);
@@ -228,11 +230,10 @@ define(function(require, exports, module) {
 			filter: 'blur(20px)'
 		});
 		this.showBackButton();
-		this.setHeaderLabel('ENTER TAG');
+		this.setHeaderLabel('');
 		this.showOverlayContent(this.entryFormView, function() {
 			this.onShow(state);
 		}.bind(this.entryFormView));
-		this.showingEntryForm = true;
 	}
 
 	TrackView.prototype.buildStateFromEntry = function(entry) {
@@ -240,7 +241,7 @@ define(function(require, exports, module) {
 	}
 
 	TrackView.prototype.getCurrentState = function() {
-		if (this.showingEntryForm) {
+		if (this.currentOverlay == 'EntryFormView') {
 			return {
 				new: true,
 				postLoadAction: {

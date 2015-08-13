@@ -3,39 +3,64 @@
 		<label class="sprint-default-label">
 			TITLE
 		</label>
-		<h2>
-			{{= sprint.name }}
-		</h2>
+		{{ if (isFormView) { }}
+			<input type="text" placeholder="Enter Sprint Title..." id="sprint-title" value="{{= sprint.name }}"></input>
+		{{ } else { }}
+			<h2>
+				{{= sprint.name }}
+			</h2>
+		{{ } }}
 	</div>
 	<div class="description-div">
 		<label class="sprint-default-label">
 			DESCRIPTION
 		</label>
-		<p>
-			{{= sprint.description }}
-		</p>
+		{{ if (isFormView) { }}
+			<textarea placeholder="Enter Sprint Description..." rows="5" id="sprint-description" value="{{= sprint.description }}">{{= sprint.description }}</textarea>
+		{{ } else { }}
+			<p>
+				{{= sprint.description }}
+			</p>
+		{{ } }}
 	</div>
 	<div class="tags-div">
 		<label class="sprint-default-label">
 			TAGS
-		</label><br>
-		{{ _.each(entries, function(entry) { }}
-			<button>
-				{{= entry.description }}
-				{{ if (entry.comment.indexOf("repeat") > -1) { }}
-					<i class="fa fa-repeat"></i>
-					{{ } else if (entry.comment.indexOf("pinned") > -1) { }}
-					<i class="fa fa-thumb-tack"></i>
-					{{ } else if (entry.comment.indexOf("remind") > -1) { }}
-					<i class="fa fa-bell"></i>
-				{{ } }}
-			</button>
-		{{ }); }}
+		</label>
+		{{ if (isFormView) { }}
+			<div class="right-icons add-tags">
+				<img src="content/images/plus-circle.png" alt="+"><p>ADD TAG</p>
+			</div>
+		{{ } }}
+		<br>
+		<div class="tags-wrapper">
+			{{ if (entries.length == 0) { }}
+				<p id="no-tags-added">No tags added yet.</p>
+			{{ } }}
+
+			{{ _.each(entries, function(entry) { }}
+				<button>
+					{{= entry.description }}
+					{{ if (entry.comment.indexOf("repeat") > -1) { }}
+						<i class="fa fa-repeat"></i>
+						{{ } else if (entry.comment.indexOf("pinned") > -1) { }}
+						<i class="fa fa-thumb-tack"></i>
+						{{ } else if (entry.comment.indexOf("remind") > -1) { }}
+						<i class="fa fa-bell"></i>
+					{{ } }}
+				</button>
+			{{ }); }}
+		</div>
 	</div>
 	<div class="participants-div">
 		<label class="sprint-default-label">
 			PARTICIPANTS ({{= totalParticipants }})
 		</label>
+		{{ if (isFormView) { }}
+			<div class="right-icons add-participants">
+				<img src="content/images/plus-circle.png" alt="+"><p>INVITE</p>
+			</div>
+		{{ } }}
 		<div class="participants-wrapper">
 			<p id="sprint-participants">
 				{{ _.each(participants, function(participant) { }}
@@ -46,7 +71,17 @@
 			{{ if (totalParticipants > 10) { print('<h5 id="more-participants">See All Participants</h5>'); } }}
 		</div>
 	</div>
-	<button class="full-width-button activity">
-		VIEW ALL ACTIVITY
-	</button>
+	{{ if (isFormView && isCreateForm) { }}
+		<button class="full-width-button submit">
+			Create Sprint
+		</button>
+	{{ } else if (isFormView) { }}
+		<button class="full-width-button submit">
+			 Update Sprint
+		</button>
+	{{ } else { }}
+		<button class="full-width-button activity">
+			VIEW ALL ACTIVITY
+		</button>
+	{{ } }}
 </div>

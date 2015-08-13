@@ -999,14 +999,17 @@ button.close {
 	color: #fff;
 }
 
-.help-wizard .mood-question {
-	margin-bottom: 160px;
+.help-wizard p {
+	font-size: 12px;
+	color: #fff;
+	font-style: normal;
+	font-weight: 500;
 }
 
 .help-wizard input {
 	font-weight: 600;
 	border-radius: 2px;
-	color: #999999;
+	color: #8C8C8C;
 	font-style: italic;
 	font-size: 14px;
 }
@@ -1038,7 +1041,7 @@ button.close {
 	width: 100%;
 }
 
-#sleep-hour {
+#sleep-hour, #mood-box{
 	padding: 10px;
 	height: 50px;
 	width: 100%;
@@ -1072,40 +1075,6 @@ button.close {
 
 .help-wizard .next-question:active {
 	background-color: #d46c39;
-}
-
-.help-wizard input[type='range'] {
-	-webkit-appearance: none !important;
-	background: #e27c4a;
-	height: 13px;
-	border-radius: 6px !important;
-	-webkit-box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.75);
-	-moz-box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.75);
-	box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.75);
-}
-
-.help-wizard input[type=range]::-moz-range-track {
-	background: #e27c4a;
-	height: 13px;
-	width: 465px;
-	border-radius: 6px !important; 
-	-moz-box-shadow: inset 0px 1px 1px 0px rgba(0, 0, 0, 0.75);
-	text-align: center; 
-}
-
-.help-wizard input[type='range']::-webkit-slider-thumb {
-	-webkit-appearance: none !important;
-	background: #fff;
-	height: 35px;
-	border-radius: 17.5px;
-	width: 35px;
-}
-
-.help-wizard input[type=range]::-moz-range-thumb {
-	background: #fff;
-	height: 35px;
-	border-radius: 17.5px;
-	width: 35px;
 }
 
 .calm-day, .super-day, .good-day {
@@ -1147,10 +1116,11 @@ button.close {
 .sprint-default-label {
 	background-color: white;
 	text-align: center;
-	padding: 5px 10px;
+	padding: 7px 10px;
 	font-weight: 500;
 	color: #f48d5b;
 	margin: 10px 0px;
+	font-size: 10px;
 }
 
 .sprint-details h2 {
@@ -1162,6 +1132,22 @@ button.close {
 .sprint-details p, .people-detail p {
 	font-style: normal;
 	font-weight: 500;
+}
+
+.sprint-details input, .sprint-details textarea {
+	background-color: #fff;
+	width: 100%;
+	display: block;
+	margin-bottom: 10px;
+	border: 1px solid #979797;
+	padding: 10px;
+	-webkit-appearance: none;
+	box-shadow: none;
+	border-radius: 2px;
+}
+
+.sprint-details textarea {
+	resize: none;
 }
 
 .sprint-details button, .sprint-activity button, .people-detail button {
@@ -1176,7 +1162,7 @@ button.close {
 	color: #5d5d5d;
 }
 
-.tags-div button {
+.tags-div button, .entry-button {
 	margin: 5px 10px 5px 0px;
 }
 
@@ -1275,4 +1261,54 @@ button.close {
 	font-weight: 500;
 	font-size: 15px;
 	display: block;
+}
+
+#participant-username {
+	padding: 10px;
+	width: 100%;
+	border-radius: 2px;
+}
+
+.right-icons {
+	float: right;
+	margin-right: 10px;
+	margin-top: 15px;
+	color: #aeaeae;
+}
+
+.right-icons p {
+	font-size: 10px;
+	display: inline-block;
+	margin-left: 10px;
+}
+
+.right-icons img {
+	height: 23px;
+}
+
+@media only screen 
+and (max-device-height: 480px) {
+	.help-wizard .questions {
+		margin: 0px 0px 10px 0px;
+	}
+
+	.exercise-questions .questions {
+		margin-top: -15px;
+	}
+
+	.exercise-questions label {
+		margin: 7px 0px 0px 0px;
+	}
+}
+
+@media only screen 
+and (max-device-height: 568px) {
+	.exercise-questions .questions {
+		margin-top: 0px;
+		margin-bottom: 0px;
+	}
+
+	.exercise-questions label {
+		margin: 15px 0px 5px 0px;
+	}
 }

@@ -82,9 +82,15 @@ define(function(require, exports, module) {
 	touchSync.on('end', function(data) {
 		var movementY = data.position[1];
 		// Don't show context menu if there is intent to move something
-		if (movementY > 80 && App.pageView.getCurrentPage() === 'TrackView') {
+		if (movementY > 80) {
 			console.log('main.js: ', ' movementy: ', movementY);
-			App.coreEventHandler.emit('refresh-entries');
+			var currentView = App.pageView.getCurrentView();
+			if (currentView && currentView.refresh) {
+				if (currentView.getScrollPosition && currentView.getScrollPosition() > 0) {
+					return;
+				}
+				currentView.refresh();
+			}
 		}
 	});
 

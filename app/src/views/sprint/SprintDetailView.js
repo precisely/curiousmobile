@@ -15,6 +15,7 @@ define(function(require, exports, module) {
 	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var Draggable = require("famous/modifiers/Draggable");
 	var SprintDetailsTemplate = require('text!templates/sprint-details.html');
+	var SprintFormView = require("views/sprint/SprintFormView");
 	var Sprint = require('models/Sprint');
 	var u = require('util/Utils');
 
@@ -38,7 +39,13 @@ define(function(require, exports, module) {
 		});
 
 		// Pencil icon will appear when sprint edit will be functional
-		//this.setRightIcon(this.pencilSurface);
+		this.setRightIcon(this.pencilSurface);
+
+		this.pencilSurface.on('click', function(e) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				App.pageView.changePage('SprintFormView', {parentPage: 'SprintDetailView', hash: this.hash});
+			}
+		}.bind(this));
 
 		this.renderController = new RenderController();
 		var mod = new StateModifier({
@@ -77,6 +84,10 @@ define(function(require, exports, module) {
 		this.participantsOffset = 10;
 		Sprint.show(this.hash, function(sprintDetails) {
 			this.totalParticipants = sprintDetails.totalParticipants;
+			if (!this.name) {
+				this.name = sprintDetails.sprint.name;
+			}
+			sprintDetails.isFormView = false;
 			var sprintSurface = new Surface({
 				size: [undefined, undefined],
 				content: _.template(SprintDetailsTemplate, sprintDetails, templateSettings),
