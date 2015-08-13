@@ -337,3 +337,40 @@ function checkData(data, status, errorMessage, successMessage) {
 	}
 	return true;
 }
+
+/**
+ * A method used to trim a given text upto the given length including or excluding the last word at boundary.
+ * For example: Trimming a string "The quick brown fox jumps over the lazy dog" with following max length should result
+ * something (consider includeLastWord = false}
+ * 
+ * Max 1:function""
+ * Max 2:function""
+ * Max 5:function"The"
+ * Max 15:function"The quick brown"
+ * Max 21:function"The quick brown fox"
+ * Max 70:function"The quick brown fox jumps over the lazy dog"
+ * 
+ * (Now consider includeLastWord = true}
+ * 
+ * Max 1:function"The"
+ * Max 2:function"The"
+ * Max 5:function"The quick"
+ * Max 15:function"The quick brown"
+ * Max 21:function"The quick brown fox jumps"
+ * Max 70:function"The quick brown fox jumps over the lazy dog"
+ * 
+ * http://stackoverflow.com/questions/5454235/javascript-shorten-string-without-cutting-words
+ */
+function shorten(text, maxLength, includeLastWord) {
+	if (text.length <= maxLength) {
+		return text;
+	}
+
+	if (includeLastWord) {
+		var regex = new RegExp("^(.{" + maxLength + "}[^\s]*).*");
+		return text.replace(regex, "$1");
+	} else {
+		var trimmedText = text.substring(0, maxLength + 1);
+		return trimmedText.substring(0, Math.min(trimmedText.length, trimmedText.lastIndexOf(" ")));
+	}
+}

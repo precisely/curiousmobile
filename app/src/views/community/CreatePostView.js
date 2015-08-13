@@ -48,21 +48,19 @@ define(function(require, exports, module) {
 
 	CreatePostView.prototype.clear = function() {
 		document.forms["postForm"]["name"].value = '';
-		document.forms["postForm"]["discussionPost"].value = '';
 	};
 
 	CreatePostView.prototype.submit = function() {
-		var name = document.forms["postForm"]["name"].value;
-		var discussionPost = document.forms["postForm"]["discussionPost"].value;
-		if (!name) {
+		var value = document.forms["postForm"]["name"].value;
+		if (!value) {
 			u.showAlert("Topic is a required field!");
-		} else if (!discussionPost) {
-			u.showAlert("Detail is a required field!");
 		} else {
+			var extractedData = extractDiscussionNameAndPost(value);
 			Discussion.post(
-				name,
-				discussionPost,
+				extractedData.name,
+				extractedData.post,
 				function(result) {
+					this.clear();
 					console.log('Posted a new discussion');
 					// Indicating this is a new like state so list gets reloaded
 					App.pageView.changePage('FeedView', {
@@ -75,20 +73,35 @@ define(function(require, exports, module) {
 
 	CreatePostView.prototype.getCurrentState = function() {
 		var name = document.forms["postForm"]["name"].value;
-		var discussionPost = document.forms["postForm"]["discussionPost"].value;
 		var state = {
 			form: [{
 				id: 'name',
 				value: name,
 				elementType: ElementType.domElement,
-			}, {
-				id: 'discussionPost',
-				value: discussionPost,
-				elementType: ElementType.domElement,
 			}]
 		};
 		return state;
 	};
+
+	function extractDiscussionNameAndPost(value) {
+		var discussionName, discussionPost;
+		
+		// Try to get the first sentence i.e. a line ending with either "." "?" or "!"
+		var firstSentenceData = /^.*?[\.!\?](?:\s|$)/.exec(value);
+			
+		if (firstSentenceData) {
+			discussionName = firstSentenceData[0].trim();
+		} else {App// If user has not used any of the above punctuations
+			discussionName = value;
+		}
+			
+		// Trim the entered text max upto the 100 characters and use it as the discussion name/title
+		discussionName = shorten(discussionName, 100).trim();	// See Base.js for "shorten" method
+		// And the rest of the string (if any) will be used as first discussion comment message
+		discussionPost = value.substring(discussionName.length).trim();
+			
+		return {name: discussionName, post: discussionPost};
+	}
 
 	App.pages[CreatePostView.name] = CreatePostView;
 	module.exports = CreatePostView;
