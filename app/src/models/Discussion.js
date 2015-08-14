@@ -17,8 +17,7 @@ define(function(require, exports, module) {
 	Discussion.max = 10;
 
 	Discussion.post = function(name, discussionPost, callback) {
-		u.queueJSON("posting in",
-			u.makeGetUrl('createDiscussionData'),
+		u.queuePostJSON("posting in", App.serverUrl + '/api/discussion',
 			u.makeGetArgs({
 				name: name,
 				discussionPost: discussionPost,
@@ -45,14 +44,16 @@ define(function(require, exports, module) {
 	Discussion.deleteDiscussion = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			userId: User.getCurrentUserId(),
-			hash: args.hash
 		});
-		u.queueJSON("loading discussion list", u.makeGetUrl("deleteDiscussionHash"),
+		u.queueJSONAll("loading discussion list", App.serverUrl + '/api/discussion/' + args.hash,
 			u.makeGetArgs(argsToSend),
 			function(data) {
 				callback(data);
-			}
-		.bind(this));
+			}.bind(this), 
+			function(xhr) {
+				u.showAlert('Internal server error occurred');
+			}, null, 'DELETE'
+		);
 	};
 
 	module.exports = Discussion;

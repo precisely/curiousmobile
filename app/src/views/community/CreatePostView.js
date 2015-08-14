@@ -63,9 +63,13 @@ define(function(require, exports, module) {
 					this.clear();
 					console.log('Posted a new discussion');
 					// Indicating this is a new like state so list gets reloaded
-					App.pageView.changePage('FeedView', {
-						new: true
-					});
+					u.spinnerStart();
+					setTimeout(function(){ 
+						u.spinnerStop();
+						App.pageView.changePage('FeedView', {
+							new: true
+						});
+					}, 1000);
 				}.bind(this)
 			);
 		}
@@ -91,7 +95,7 @@ define(function(require, exports, module) {
 			
 		if (firstSentenceData) {
 			discussionName = firstSentenceData[0].trim();
-		} else {App// If user has not used any of the above punctuations
+		} else {	// If user has not used any of the above punctuations
 			discussionName = value;
 		}
 			
