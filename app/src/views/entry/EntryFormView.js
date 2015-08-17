@@ -58,7 +58,17 @@ define(function(require, exports, module) {
 			console.log('EntryListView: Updating an entry');
 			var currentListView = this.trackView.currentListView;
 			currentListView.refreshEntries(resp.entries, resp.glowEntry);
-			this.trackView.killEntryForm({new: false});
+			var state = {};
+			if (resp.glowEntry.changed.date) {
+				state = {
+					entryDate: resp.glowEntry.changed.date
+				}
+			} else {
+				state = {
+					new: false
+				}
+			}
+			this.trackView.killEntryForm(state);
 		}.bind(this));
 	}
 
