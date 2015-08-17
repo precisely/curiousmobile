@@ -62,8 +62,6 @@ define(function(require, exports, module) {
 				}.bind(this));
 			}
 		}.bind(this));
-
-
 	}
 
 	DiscussionDetailView.prototype = Object.create(BaseView.prototype);
