@@ -108,6 +108,8 @@ define(function(require, exports, module) {
 		}, function(discussionPost) {
 			this.discussionPost = discussionPost;
 			this.postRefresh();
+		}.bind(this), function() {
+			App.pageView.goBack();
 		}.bind(this));
 	};
 
@@ -124,7 +126,7 @@ define(function(require, exports, module) {
 				padding: '5px 10px',
 				marginTop: '10px'
 			},
-			content: _.template(discussionPostTemplate, discussionPost, templateSettings),
+			content: _.template(discussionPostTemplate, discussionPost.discussionDetails, templateSettings),
 		});
 
 		discussionPostSurface.on('deploy', function() {
@@ -156,7 +158,13 @@ define(function(require, exports, module) {
 							Discussion.deleteDiscussion({
 								hash: this.discussionHash
 							}, function(success) {
-								App.pageView.changePage('FeedView', {new: true});
+								u.spinnerStart();
+								setTimeout(function(){ 
+									u.spinnerStop();
+									App.pageView.changePage('FeedView', {
+										new: true
+									});
+								}, 1000);
 							}.bind(this));
 						}.bind(this),
 						onB: function() {}.bind(this),
@@ -186,7 +194,7 @@ define(function(require, exports, module) {
 	};
 
 	DiscussionDetailView.prototype.showComments = function(discussionPost) {
-		if (discussionPost.posts.length === 0) {
+		if (!discussionPost.posts || discussionPost.posts.length === 0) {
 			this.itemsAvailable = false;
 			return;
 		}
@@ -223,8 +231,7 @@ define(function(require, exports, module) {
 								b: 'No',
 								onA: function() {
 									DiscussionPost.deleteComment({
-										discussionHash: discussionHash,
-										clearPostId: post.id
+										postId: post.id
 									}, function(sucess) {
 										console.log('delete success...');
 										this.discussionView.surfaceList.splice(
