@@ -198,7 +198,6 @@ define(function(require, exports, module) {
 			this.itemsAvailable = false;
 			return;
 		}
-		console.log('Comments: ', discussionPost);
 		var discussionHash = this.discussionHash;
 
 		discussionPost.posts.forEach(function(post) {
