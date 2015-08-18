@@ -11,55 +11,57 @@ define( function(require, exports, module) {
 
 	DiscussionPost.max = 10;
 
-	DiscussionPost.fetch = function(params, callback) {
+	DiscussionPost.fetch = function(params, successCallback, failCallback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			Id: User.getCurrentUserId(),
 			discussionHash: params.discussionHash,
-			timeZoneName: window.jstz.determine().name(),
 			max: DiscussionPost.max,
-			offset: params.offset?params.offset:0
+			offset: params.offset ? params.offset : 0
 		});
-		console.log('Fetching discussions from the server: ');
-		u.queueJSON("loading comments", u.makeGetUrl("listCommentData"),
-		  u.makeGetArgs(argsToSend), function(comments) {
-			if (u.checkData(comments)) {
-				callback(comments);
+		u.queueJSON("loading comments", App.serverUrl + '/api/discussionPost',
+		  u.makeGetArgs(argsToSend), function(data) {
+			if (!u.checkData(data)) {
+				return false;
+			}
+			if (data.success) {
+				successCallback(data);
+			} else {
+				u.showAlert(data.message);
+				if (failCallback) {
+					failCallback();
+				}
 			}
 		});
 	};
 
 	DiscussionPost.deleteComment = function(args, callback) {
-		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
-			userId: User.getCurrentUserId(),
-			discussionHash : args.discussionHash,
-			clearPostId : args.clearPostId
-		});
+		var argsToSend = u.getCSRFPreventionObject('deleteCommentDataCSRF');
 		console.log(args.clearPostId, args.discussionId);
-		u.queueJSON("deleting a comment", u.makeGetUrl("deleteCommentData"), 
+		u.queueJSONAll("deleting a comment", App.serverUrl + '/api/discussionPost/' + args.postId, 
 		  u.makeGetArgs(argsToSend), function(data) {
-			console.log(data);
-			if (data == 'success') {
+			if (data.success) {
 				callback(data);
 			} else {
-				this.u.showAlert('Failed to delete discussion, please try again');
+				u.showAlert(u.message);
 			}
-		}.bind(this));
+		}.bind(this), function(error) {
+			u.showAlert('Internal server error occurred');
+		}, null, 'DELETE');
 	};
 
 	DiscussionPost.createComment = function(args, callback) {
-		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
+		var argsToSend = u.getCSRFPreventionObject('createCommentDataCSRF', {
 			userId: User.getCurrentUserId(),
 			discussionHash : args.discussionHash,
 			message : args.message,
 			plotIdMessage : args.plotIdMessage
 		});
-		u.queueJSON("adding a comment", u.makeGetUrl("createCommentData"), 
+		u.queuePostJSON("adding a comment", App.serverUrl + '/api/discussionPost', 
 		  u.makeGetArgs(argsToSend), function(data) {
-			console.log(data);
-			if (data == 'success') {
+			if (data.success) {
 				callback(data);
 			} else {
-				this.u.showAlert('Failed to delete discussion, please try again');
+				u.showAlert(data.message);
 			}
 		}.bind(this));
 	};
