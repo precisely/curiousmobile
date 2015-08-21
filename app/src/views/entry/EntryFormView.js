@@ -18,15 +18,19 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 	var store = require('store');
 	var Entry = require('models/Entry');
+	var DateUtil = require('util/DateUtil');
+	var DateGridView = require('views/calendar/DateGridView');
 	var EntryCollection = require('models/EntryCollection');
 	var EventHandler = require('famous/core/EventHandler');
 	var inputSurfaceTemplate = require('text!templates/input-surface.html');
+	var repeatModifierTemplate = require('text!templates/repeat-input-modifier.html');
 
 	function EntryFormView(trackView) {
 		StateView.apply(this, arguments);
 		this.trackView = trackView;
-		_setListeners.call(this);
+		this.dateGridOpen = false;
 		_createForm.call(this);
+		_setListeners.call(this);
 	}
 
 	EntryFormView.prototype = Object.create(StateView.prototype);
@@ -45,6 +49,70 @@ define(function(require, exports, module) {
 		this.autoCompleteView = new AutocompleteView(AutocompleteObj);
 		this.autoCompleteView.on('updateInputSurface', function() {
 			console.log('update the Input Surface');
+		}.bind(this));
+
+		//update input field
+		this.autoCompleteView.onSelect(function(inputLabel) {
+			console.log(inputLabel);
+			Timer.setTimeout(function() {
+				var inputElement = document.getElementById("entry-description");
+				inputElement.value = inputLabel;
+				inputElement.focus();
+			}.bind(this), 500);
+		}.bind(this));
+
+		this.repeatSurface.on('click', function(e) {
+			console.log("repeatSurface event");
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				this.removeSuffix();
+				this.toggleSuffix('repeat');
+				//this.submit();
+				this.renderController.show(this.repeatModifierSurface);
+			}
+		}.bind(this));
+
+		this.remindSurface.on('click', function(e) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				this.removeSuffix();
+				this.toggleSuffix('remind');
+				//this.submit();
+				this.renderController.hide();
+			}
+		}.bind(this));
+
+		this.pinSurface.on('click', function(e) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				this.removeSuffix();
+				this.toggleSuffix('pinned');
+				//this.submit();
+				this.renderController.hide();
+			}
+		}.bind(this));
+
+		this.repeatModifierSurface.on('click', function(e) {
+			var classList = e.srcElement.parentElement.classList;
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				if (_.contains(classList, 'entry-checkbox') || 
+						_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {
+					var repeatEachCheckbox = document.getElementById('each-repeat-checkbox');
+					repeatEachCheckbox.checked = !repeatEachCheckbox.checked;
+				} else if (_.contains(classList, 'input-group')) {
+					if(this.dateGridOpen) {
+						this.dateGridRenderController.hide();
+					} else {
+						var dateGridView = new DateGridView(this.selectedDate || new Date());
+						this.dateGrid = dateGridView;
+						this.dateGridRenderController.show(this.dateGrid);
+						this.dateGrid.on('select-date', function(date) {
+							console.log('CalenderView: Date selected');
+							this.setSelectedDate(date);
+							this.dateGridRenderController.hide();
+							this.dateGridOpen = false;
+						}.bind(this));
+					}
+					this.dateGridOpen = !this.dateGridOpen;
+				}
+			}
 		}.bind(this));
 
 		this.on('new-entry', function(resp) {
@@ -70,6 +138,18 @@ define(function(require, exports, module) {
 			}
 			this.trackView.killEntryForm(state);
 		}.bind(this));
+	}
+
+	EntryFormView.prototype.setSelectedDate = function(date) {
+		var App = window.App;
+		App.selectedDate = DateUtil.getMidnightDate(date);
+		this.selectedDate = date;
+
+		var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 
+				'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		var monthName = months[date.getMonth()];
+		document.getElementsByClassName('choose-date-input')[0].value = date.getDate() + ' '  + monthName 
+				+ ' ' + date.getFullYear();
 	}
 
 	function _createForm() {
@@ -114,34 +194,24 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		//update input field
-		this.autoCompleteView.onSelect(function(inputLabel) {
-			console.log(inputLabel);
-			Timer.setTimeout(function() {
-				var inputElement = document.getElementById("entry-description");
-				inputElement.value = inputLabel;
-				inputElement.focus();
-			}.bind(this), 500);
-		}.bind(this));
-
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
 		this.formContainerSurface = formContainerSurface;
 
 		var sequentialLayout = new SequentialLayout({
 			direction: 0,
-			itemSpacing: 80,
-			defaultItemSize: [100, 24],
+			itemSpacing: 30,
+			defaultItemSize: [80, 24],
 		});
 
-		var firstOffset = (App.width / 2) - 140;
+		var firstOffset = (App.width / 2) - 175;
 		sequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
 			if (index === 0) {
-				offset = firstOffset;
+				offset = (firstOffset < 0) ? 10 : firstOffset;
 			} else {
-				offset += firstOffset;
+				offset += (firstOffset < 0) ? 0 : firstOffset;
 			}
-			var transform = Transform.translate(offset, 200, _zIndex() + 1);
+			var transform = Transform.translate(offset, 80, _zIndex() + 1);
 			return {
 				transform: transform,
 				target: input.render()
@@ -149,45 +219,21 @@ define(function(require, exports, module) {
 		});
 
 		this.repeatSurface = new Surface({
-			content: '<i class="fa fa-repeat"></i> <br/> Repeat',
-			size: [34, 24],
+			content: '<div class="text-center"><i class="fa fa-repeat"></i> <br/> Set Repeat</div>',
+			size: [84, 24],
 		});
-
-		this.repeatSurface.on('click', function(e) {
-			console.log("repeatSurface event");
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				this.removeSuffix();
-				this.toggleSuffix('repeat');
-				this.submit();
-			}
-		}.bind(this));
 
 		this.remindSurface = new Surface({
-			content: '<i class="fa fa-bell"></i> <br/> Remind',
-			size: [34, 24],
+			content: '<div class="text-center"><i class="fa fa-bell"></i> <br/> Set Alarm</div>',
+			size: [84, 24],
 		});
-
-		this.remindSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				this.removeSuffix();
-				this.toggleSuffix('remind');
-				this.submit();
-			}
-		}.bind(this));
 
 		this.pinSurface = new Surface({
-			content: '<i class="fa fa-thumb-tack"></i><br/> Pin It',
-			size: [37, 24],
+			content: '<div class="text-center"><i class="fa fa-plus-square-o"></i><br/> Make Button</div>',
+			size: [84, 24],
 		});
 
-		this.pinSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				this.removeSuffix();
-				this.toggleSuffix('pinned');
-				this.submit();
-			}
-		}.bind(this));
-		sequentialLayout.sequenceFrom([this.repeatSurface, this.pinSurface, this.remindSurface]);
+		sequentialLayout.sequenceFrom([this.repeatSurface, this.remindSurface, this.pinSurface]);
 		this.buttonsAndHelp = new ContainerSurface({
 			size: [undefined, undefined],
 			classes: ['entry-form-buttons'],
@@ -197,26 +243,30 @@ define(function(require, exports, module) {
 			}
 		});
 		this.buttonsAndHelp.add(sequentialLayout);
-		var helpSurface = new Surface({
-			size: [window.innerWidth - 40, undefined],
-			content: 'You can repeat the tag, make a button out of it (for instant access), or remind yourself later.<hr>',
+
+		this.formContainerSurface.add(this.buttonsAndHelp);
+
+		this.renderController = new RenderController();
+		this.dateGridRenderController = new RenderController();
+		this.repeatModifierSurface = new Surface({
+			content: _.template(repeatModifierTemplate, templateSettings),
+			size: [undefined, undefined],
 			properties: {
-				fontStyle: 'italic',
-				color: '#DDDDDD',
-				margin: '30px 20px',
-				padding: '12px 10px',
-				textAlign: 'center',
+				backgroundColor: 'transparent',
+				padding: '30px'
 			}
 		});
 
-		var helpModifier = new Modifier({
-			transform: Transform.translate(0, 50, 0)
+		var mod = new StateModifier({
+			size: [App.width, App.height - 220],
+			transform: Transform.translate(0, 130, 16)
 		});
-		this.buttonsAndHelp.add(helpModifier).add(helpSurface);
-
-		this.formContainerSurface.add(this.buttonsAndHelp);
+		var dateGridRenderControllerMod = new StateModifier({
+			transform: Transform.translate(0, 160, 16)
+		});
+		this.formContainerSurface.add(mod).add(this.renderController);
+		this.formContainerSurface.add(dateGridRenderControllerMod).add(this.dateGridRenderController);
 		this.add(this.formContainerSurface);
-		//this.setBody(formContainerSurface);
 	}
 	
 	EntryFormView.prototype.preShow = function(state) {
