@@ -65,7 +65,9 @@ define(function(require, exports, module) {
 			console.log("repeatSurface event");
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				this.removeSuffix();
-				this.toggleSuffix('repeat');
+				this.setRemind = false;
+				this.setRepeat = true;
+				this.setpinned = false;
 				//this.submit();
 				this.renderController.show(this.repeatModifierSurface);
 			}
@@ -74,8 +76,10 @@ define(function(require, exports, module) {
 		this.remindSurface.on('click', function(e) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				this.removeSuffix();
-				this.toggleSuffix('remind');
-				//this.submit();
+				this.setRemind = true;
+				this.setRepeat = false;
+				this.setpinned = false;
+				this.submit();
 				this.renderController.hide();
 			}
 		}.bind(this));
@@ -83,8 +87,10 @@ define(function(require, exports, module) {
 		this.pinSurface.on('click', function(e) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				this.removeSuffix();
-				this.toggleSuffix('pinned');
-				//this.submit();
+				this.setRemind = false;
+				this.setRepeat = false;
+				this.setPinned = true;
+				this.submit();
 				this.renderController.hide();
 			}
 		}.bind(this));
@@ -117,6 +123,10 @@ define(function(require, exports, module) {
 
 		this.on('new-entry', function(resp) {
 			console.log("New Entry - TrackView event");
+			if (document.getElementById('repeat-modifier-form')) {
+				document.getElementById('repeat-modifier-form').reset();
+			}
+			this.renderController.hide();
 			var currentListView = this.trackView.currentListView;
 			currentListView.refreshEntries(resp.entries, resp.glowEntry);
 			this.trackView.killEntryForm({ entryDate: resp.glowEntry.date });
@@ -124,6 +134,10 @@ define(function(require, exports, module) {
 
 		this.on('update-entry', function(resp) {
 			console.log('EntryListView: Updating an entry');
+			if (document.getElementById('repeat-modifier-form')) {
+				document.getElementById('repeat-modifier-form').reset();
+			}
+			this.renderController.hide();
 			var currentListView = this.trackView.currentListView;
 			currentListView.refreshEntries(resp.entries, resp.glowEntry);
 			var state = {};
@@ -142,7 +156,6 @@ define(function(require, exports, module) {
 
 	EntryFormView.prototype.setSelectedDate = function(date) {
 		var App = window.App;
-		App.selectedDate = DateUtil.getMidnightDate(date);
 		this.selectedDate = date;
 
 		var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 
@@ -314,6 +327,37 @@ define(function(require, exports, module) {
 		}
 		return text;
 	};
+	
+	EntryFormView.prototype.showEntryModifiers = function(arguments) {
+		var entry = this.entry;
+		var radioSelector;
+		if (entry.isWeekly()) {
+			radioSelector = 'weekly';
+		} else if (entry.isMonthly()) {
+			radioSelector = 'weekly';
+		} else if (entry.isDaily()) {
+			radioSelector = 'weekly';
+		}
+
+		if (radioSelector) {
+			this.setRepeat = true;
+			var setDate = function (entry) {
+				if (entry.attributes.repeatEnd) {
+					var repeatEnd = new Date(entry.attributes.repeatEnd);
+					this.selectedDate = repeatEnd;
+					this.setSelectedDate(repeatEnd);
+				}
+			}.bind(this);
+			this.renderController.show(this.repeatModifierSurface, null, function () {
+				document.getElementById(radioSelector).checked = true;
+				setDate(entry);
+			});
+		} else if (entry.isRemind()) {
+			this.setRemind = true;
+		} else if (entry.isContinuous()) {
+			this.setPinned = true;
+		}
+	}
 
 	EntryFormView.prototype.buildStateFromEntry = function(entry) {
 		console.log('entry selected with id: ' + entry.id);
@@ -352,7 +396,11 @@ define(function(require, exports, module) {
 				selectionRange: selectionRange,
 				elementType: ElementType.domElement,
 				focus: true,
-			}]
+			}],
+			postLoadAction: {
+				name: 'showEntryModifiers',
+				args: {entry: entry}
+			}
 		};
 
 		if (directlyCreateEntry) {
@@ -418,6 +466,38 @@ define(function(require, exports, module) {
 		document.getElementById("entry-description").value = '';
 	};
 
+	function getRepeatParams(repeatEnd) {
+		var repeatTypeId = getRepeatTypeId();
+		if (repeatEnd) {
+			var now = new Date();
+			if(repeatEnd < now) {
+				now.setHours(23,59,59,0);
+				repeatEnd = now;
+			}
+			repeatEnd = repeatEnd.toUTCString();
+		}
+		return {repeatTypeId: repeatTypeId, repeatEnd: repeatEnd};
+	}
+
+	function getRepeatTypeId() {
+		var confirmRepeat;
+		//confirmRepeat = $('#' + idSelector + 'each-repeat-checkbox').is(':checked');
+		var frequencyBit;
+
+		if (document.getElementById('daily').checked) {
+			frequencyBit = Entry.RepeatType.DAILYCONCRETEGHOST;
+		} else if (document.getElementById('weekly').checked) {
+			frequencyBit = Entry.RepeatType.WEEKLYCONCRETEGHOST;
+		} else if (document.getElementById('monthly').checked) {
+			frequencyBit = Entry.RepeatType.MONTHLYCONCRETEGHOST;
+		}
+		if (confirmRepeat) {
+			return (RepeatType.CONTINUOUS_BIT | frequencyBit);
+		} else {
+			return (frequencyBit);
+		}
+	}
+
 	EntryFormView.prototype.submit = function(e, directlyCreateEntry) {
 		var entry = null;
 		var newText = document.getElementById("entry-description").value;
@@ -434,20 +514,38 @@ define(function(require, exports, module) {
 			u.showAlert("You don't seem to be connected. Please wait until you are online to add an entry.");
 			return;
 		}
+
+		var repeatTypeId, repeatEnd;
+
+		if (this.setRemind) {
+			repeatTypeId = Entry.RepeatType.REMINDDAILYGHOST;
+		} else if (this.setRepeat) {
+			var repeatParams = getRepeatParams(this.selectedDate);
+			repeatTypeId = repeatParams.repeatTypeId;
+			repeatEnd = repeatParams.repeatEnd;
+		} else if (this.setPinned) {
+			repeatTypeId = Entry.RepeatType.CONTINUOUSGHOST;
+		}
+
 		if (!entry || !entry.get('id') || entry.isContinuous()) {
 			var newEntry = new Entry();
-			newEntry.set('date', window.App.selectedDate);
+			newEntry.set('date', DateUtil.getMidnightDate(this.selectedDate || App.selectedDate));
 			newEntry.setText(newText);
+			if (repeatTypeId) {
+				newEntry.repeatTypeId = repeatTypeId;
+			}
+			if (repeatEnd && repeatEnd != '') {
+				newEntry.repeatEnd = repeatEnd;
+			} 
 			newEntry.create(function(resp) {
-				if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1 ||
-					newText.indexOf('pinned') > -1) {
+				if (this.setRepeat || this.setRemind || this.setPinned) {
 					window.App.collectionCache.clear();
 				}
 				this.blur();
 				this._eventOutput.emit('new-entry', resp);
 			}.bind(this));
 			return;
-		} else if (this.originalText == newText) {
+		} else if ((this.originalText == newText) && (entry.repeatType == repeatTypeId) && (entry.repeatEnd == repeatEnd)) {
 			console.log("EntryFormView: No changes made");
 			if (entry.isRemind()) {
 				entry.setText(newText);
@@ -459,14 +557,17 @@ define(function(require, exports, module) {
 			return;
 		} else {
 			entry.setText(newText);
+			if (repeatTypeId) {
+				entry.repeatTypeId = repeatTypeId;
+			}
+			if (repeatEnd) {
+				entry.repeatEnd = repeatEnd;
+			} 
 		}
 
-		if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1 ||
-			newText.indexOf('pinned') > -1) {
+		if (this.setRepeat || this.setRemind || this.setPinned) {
 			window.App.collectionCache.clear();
 		}
-
-
 
 		if (this.hasFuture()) {
 			this.alert = u.showAlert({

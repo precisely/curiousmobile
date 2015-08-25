@@ -98,7 +98,6 @@ define(function(require, exports, module) {
 
 	CalendarView.prototype.setSelectedDate = function(date) {
 		var App = window.App;
-		App.selectedDate = DateUtil.getMidnightDate(date);
 		this.selectedDate = date;
 		this.selectDateView.setDate(this.selectedDate);
 		this.dateGrid.setSelectedDate(this.selectedDate);

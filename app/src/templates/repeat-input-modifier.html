@@ -1,27 +1,29 @@
 <div class="repeat-modifier">
-	<div class="input-group">
-		<span class="input-group-addon calander-addon"></span>
-		<input class="choose-date-input" placeholder="Choose End Date">
-		<span class="input-group-addon">(Optional)</span>
-	</div>
-	<div> 
-		<span class="instructions">
-			Set repeat frequency
-		</span>
-		<div class="repeat-frequency-radio-group">
-			<input type="radio" id="daily" name="repeat-frequency"/>
-			<label for="daily"><span></span>Daily</label>
-			<input type="radio" id="weekly" name="repeat-frequency"/>
-			<label for="weekly"><span></span>Weekly</label>
-			<input type="radio" id="monthly" name="repeat-frequency"/>
-			<label for="monthly"><span></span>Monthly</label>
+	<form id="repeat-modifier-form">
+		<div class="input-group">
+			<span class="input-group-addon calander-addon"></span>
+			<input class="choose-date-input" placeholder="Choose End Date">
+			<span class="input-group-addon">(Optional)</span>
 		</div>
-	</div>
-	<div>
-		<span class="instructions">Confirm Each Repeat</span>
-		<span class="entry-checkbox">
-			<input type="checkbox" name="repeat" value="repeat" id="each-repeat-checkbox">
-			<label for="each-repeat-checkbox"><span></span>Yes</label>
-		</span>
-	</div>
+		<div> 
+			<span class="instructions">
+				Set repeat frequency
+			</span>
+			<div class="repeat-frequency-radio-group">
+				<input type="radio" id="daily" name="repeat-frequency" value="daily" checked />
+				<label for="daily"><span></span>Daily</label>
+				<input type="radio" id="weekly" name="repeat-frequency" value="weekly" />
+				<label for="weekly"><span></span>Weekly</label>
+				<input type="radio" id="monthly" name="repeat-frequency" value="monthly" />
+				<label for="monthly"><span></span>Monthly</label>
+			</div>
+		</div>
+		<div>
+			<span class="instructions">Confirm Each Repeat</span>
+			<span class="entry-checkbox">
+				<input type="checkbox" name="repeat" value="repeat" id="each-repeat-checkbox">
+				<label for="each-repeat-checkbox"><span></span>Yes</label>
+			</span>
+		</div>
+	</form>
 </div>

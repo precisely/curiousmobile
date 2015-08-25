@@ -4,14 +4,31 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 
 		var User = require('models/User');
 		// Singleton Class function.
-		var RepeatType = {
-			CONTINUOUS_BIT: 0x100,
-			GHOST_BIT: 0x200,
-			CONCRETEGHOST_BIT: 0x400,
-			TIMED_BIT: 0x1 | 0x2 | 0x4,
-			REPEAT_BIT: 0x1 | 0x2,
-			REMIND_BIT: 0x4,
-
+		var RepeatType = new function() {
+			this.DAILY_BIT = 1;
+			this.WEEKLY_BIT = 2;
+			this.REMIND_BIT = 4;
+			this.HOURLY_BIT = 8;
+			this.MONTHLY_BIT = 0x0010;
+			this.YEARLY_BIT = 0x0020;
+			this.CONTINUOUS_BIT = 0x100;
+			this.GHOST_BIT = 0x200;
+			this.CONCRETEGHOST_BIT = 0x400;
+			this.TIMED_BIT = 0x1 | 0x2 | 0x4;
+			this.DURATION_BIT = 0x0800;
+			this.DAILYGHOST = this.DAILY_BIT | this.GHOST_BIT;
+			this.WEEKLYGHOST = this.WEEKLY_BIT | this.GHOST_BIT;
+			this.REMINDDAILY = this.REMIND_BIT | this.DAILY_BIT;
+			this.REMINDWEEKLY = this.REMIND_BIT | this.WEEKLY_BIT;
+			this.REMINDDAILYGHOST = this.REMIND_BIT | this.DAILY_BIT | this.GHOST_BIT;
+			this.REMINDWEEKLYGHOST = this.REMIND_BIT | this.WEEKLY_BIT | this.GHOST_BIT;
+			this.CONTINUOUSGHOST = this.CONTINUOUS_BIT|  this.GHOST_BIT;
+			this.DAILYCONCRETEGHOST = this.CONCRETEGHOST_BIT | this.DAILY_BIT;
+			this.DAILYCONCRETEGHOSTGHOST = this.CONCRETEGHOST_BIT | this.GHOST_BIT | this.DAILY_BIT;
+			this.WEEKLYCONCRETEGHOST = this.CONCRETEGHOST_BIT | this.WEEKLY_BIT;
+			this.MONTHLYCONCRETEGHOST = this.CONCRETEGHOST_BIT | this.WEEKLY_BIT;
+			this.WEEKLYCONCRETEGHOSTGHOST = this.CONCRETEGHOST_BIT | this.GHOST_BIT | this.WEEKLY_BIT;
+			this.DURATIONGHOST = this.GHOST_BIT | this.DURATION_BIT;
 		};
 
 		var Entry = Backbone.Model.extend({
@@ -27,6 +44,9 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			isConcreteGhost: function() {
 				return (this.get('repeatType') & RepeatType.CONCRETEGHOST_BIT) != 0;
 			},
+			isAnyGhost: function() {
+				return (this.get('repeatType') & (RepeatType.GHOST_BIT | RepeatType.CONCRETEGHOST_BIT)) != 0
+			},
 			isContinuous: function() {
 				return (this.get('repeatType') & RepeatType.CONTINUOUS_BIT) != 0;
 			},
@@ -37,11 +57,30 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				return (this.get('repeatType') & RepeatType.REMIND_BIT) != 0;
 			},
 			isRepeat: function() {
-				return (this.get('repeatType') & RepeatType.REPEAT_BIT) != 0;
+				return (this.get('repeatType') & (RepeatType.DAILY_BIT | RepeatType.WEEKLY_BIT | RepeatType.REMIND_BIT | RepeatType.CONTINUOUS_BIT)) != 0;
 			},
 			isTimed: function() {
-				return (this.get('repeatType') & RepeatType.TIMED_BIT) != 0;
+				return (this.get('repeatType') & (RepeatType.DAILY_BIT | RepeatType.WEEKLY_BIT | RepeatType.REMIND_BIT)) != 0;
 			},
+			isHourly: function() {
+				return (this.get('repeatType') & RepeatType.HOURLY_BIT) != 0
+			},
+			isDaily: function() {
+				return (this.get('repeatType') & RepeatType.DAILY_BIT) != 0
+			},
+			isHourlyOrDaily: function() {
+				return (this.get('repeatType') & (RepeatType.HOURLY_BIT | RepeatType.DAILY_BIT)) != 0
+			},
+			isWeekly: function() {
+				return (this.get('repeatType') & RepeatType.WEEKLY_BIT) != 0
+			},
+			isMonthly: function() {
+				return (this.get('repeatType') & RepeatType.MONTHLY_BIT) != 0
+			},
+			isYearly: function() {
+				return (this.get('repeatType') & RepeatType.YEARLY_BIT) != 0
+			},
+
 			repeatTypeAsClass: function() {
 				var repeatType = this.get('repeatType');
 				var classes = ['entry'];
@@ -63,7 +102,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					classes.push('remind');
 					return classes;
 				}
-				if (this.isRepeat(repeatType)) {
+				if (this.isRepeat(repeatType) || this.isDaily() || this.isWeekly() || this.isMonthly()) {
 					classes.push('repeat');
 				}
 				return classes;
@@ -170,6 +209,12 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					timeZoneName: u.getTimezone(),
 					defaultToNow: '1'
 				});
+				if (this.repeatTypeId) {
+					argsToSend.repeatTypeId = this.repeatTypeId;
+				}
+				if (this.repeatEnd) {
+					argsToSend.repeatEnd = this.repeatEnd;
+				}
 
 				argsToSend.text = argsToSend.text.replace('Repeat', 'repeat');
 				argsToSend.text = argsToSend.text.replace('Remind', 'remind');
@@ -212,6 +257,13 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					defaultToNow: 1, //TODO Is this going to be configurable
 					allFuture: allFuture ? '1' : '0'
 				});
+
+				if (this.repeatTypeId) {
+					argsToSend.repeatTypeId = this.repeatTypeId;
+				}
+				if (this.repeatEnd) {
+					argsToSend.repeatEnd = this.repeatEnd;
+				}
 
 				u.queueJSON("saving entry", u.makeGetUrl("updateEntrySData"), u.makeGetArgs(argsToSend),
 				function(entries) {

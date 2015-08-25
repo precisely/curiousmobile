@@ -111,8 +111,14 @@ define(function(require, exports, module) {
 		var displayText = this.entry.removeSuffix();
 		if (this.entry.isRemind()) {
 			return '<div class="help"><i class="fa fa-bell"></i> Reminder set </div>' + displayText;
-		} else if (this.entry.isRepeat()) {
+		} else if (this.entry.isDaily()) {
 			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every day</div>' + displayText;
+		} else if (this.entry.isWeekly()) {
+			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every week</div>' + displayText;
+		} else if (this.entry.isMonthly()) {
+			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every month</div>' + displayText;
+		} else if (this.entry.isRepeat()) {
+			return '<div class="help"><i class="fa fa-repeat"></i> Repeat</div>' + displayText;
 		}
 		return displayText;
 	}

@@ -22,6 +22,7 @@ define(function(require, exports, module) {
 	var EntryCollection = require('models/EntryCollection');
 	var User = require('models/User');
 	var u = require('util/Utils');
+	var DateUtil = require('util/DateUtil');
 	var inputSurfaceTemplate = require('text!templates/input-surface-dummy.html');
 
 
@@ -151,6 +152,7 @@ define(function(require, exports, module) {
 		this.calendarView.on('manual-date-change', function(e) {
 			this.changeDate(e.date);
 		}.bind(this));
+		App.selectedDate = DateUtil.getMidnightDate(this.calendarView.selectedDate);
 		this.setHeaderSurface(this.calendarView);
 
 	}
@@ -168,6 +170,7 @@ define(function(require, exports, module) {
 		} else if (state && (state.entryDate)) {
 			EntryCollection.clearCache();
 			this.calendarView.setSelectedDate(state.entryDate);
+			App.selectedDate = DateUtil.getMidnightDate(this.calendarView.selectedDate);
 			this.changeDate(state.entryDate);
 		}
 
