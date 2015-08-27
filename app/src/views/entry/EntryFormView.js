@@ -67,8 +67,11 @@ define(function(require, exports, module) {
 				this.removeSuffix();
 				this.setRemind = false;
 				this.setRepeat = true;
-				this.setpinned = false;
-				//this.submit();
+				this.setPinned = false;
+				this.highlightSelector(this.repeatSurface);
+				if (!this.isUpdating) {
+					this.resetRepeatModifierForm();
+				}
 				this.renderController.show(this.repeatModifierSurface);
 			}
 		}.bind(this));
@@ -77,10 +80,18 @@ define(function(require, exports, module) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				this.removeSuffix();
 				this.setRemind = true;
-				this.setRepeat = false;
-				this.setpinned = false;
-				this.submit();
-				this.renderController.hide();
+				this.setRepeat = true;
+				this.setPinned = false;
+				this.highlightSelector(this.remindSurface);
+				if (!this.isUpdating) {
+					this.resetRepeatModifierForm();
+					this.renderController.show(this.repeatModifierSurface, null, function() {
+						document.getElementById('daily').checked = false;
+						document.getElementById('each-repeat-checkbox').checked = true;
+					}.bind(this));
+				} else {
+					this.renderController.show(this.repeatModifierSurface);
+				}
 			}
 		}.bind(this));
 
@@ -90,6 +101,7 @@ define(function(require, exports, module) {
 				this.setRemind = false;
 				this.setRepeat = false;
 				this.setPinned = true;
+				this.highlightSelector(this.pinSurface);
 				this.submit();
 				this.renderController.hide();
 			}
@@ -123,9 +135,7 @@ define(function(require, exports, module) {
 
 		this.on('new-entry', function(resp) {
 			console.log("New Entry - TrackView event");
-			if (document.getElementById('repeat-modifier-form')) {
-				document.getElementById('repeat-modifier-form').reset();
-			}
+			this.resetRepeatModifierForm();
 			this.renderController.hide();
 			var currentListView = this.trackView.currentListView;
 			currentListView.refreshEntries(resp.entries, resp.glowEntry);
@@ -134,9 +144,7 @@ define(function(require, exports, module) {
 
 		this.on('update-entry', function(resp) {
 			console.log('EntryListView: Updating an entry');
-			if (document.getElementById('repeat-modifier-form')) {
-				document.getElementById('repeat-modifier-form').reset();
-			}
+			this.resetRepeatModifierForm();
 			this.renderController.hide();
 			var currentListView = this.trackView.currentListView;
 			currentListView.refreshEntries(resp.entries, resp.glowEntry);
@@ -328,19 +336,27 @@ define(function(require, exports, module) {
 		return text;
 	};
 	
+	/**
+	 * If form loads in edit mode, this will initialize
+	 * entry modifier form according to properties of current entry
+	 */
 	EntryFormView.prototype.showEntryModifiers = function(arguments) {
+		this.resetRepeatModifierForm();
 		var entry = this.entry;
 		var radioSelector;
 		if (entry.isWeekly()) {
 			radioSelector = 'weekly';
 		} else if (entry.isMonthly()) {
-			radioSelector = 'weekly';
+			radioSelector = 'monthly';
 		} else if (entry.isDaily()) {
-			radioSelector = 'weekly';
+			radioSelector = 'daily';
 		}
 
-		if (radioSelector) {
-			this.setRepeat = true;
+		this.isUpdating = false;
+		this.setRepeat = entry.isRepeat();
+		this.setRemind = entry.isRemind();
+		if (radioSelector || this.setRemind) {
+			this.isUpdating = true;
 			var setDate = function (entry) {
 				if (entry.attributes.repeatEnd) {
 					var repeatEnd = new Date(entry.attributes.repeatEnd);
@@ -349,13 +365,31 @@ define(function(require, exports, module) {
 				}
 			}.bind(this);
 			this.renderController.show(this.repeatModifierSurface, null, function () {
-				document.getElementById(radioSelector).checked = true;
+				if (radioSelector) {
+					document.getElementById(radioSelector).checked = true;
+				}
+				if (entry.isGhost()) {
+					document.getElementById('each-repeat-checkbox').checked = true;
+				}
 				setDate(entry);
-			});
-		} else if (entry.isRemind()) {
-			this.setRemind = true;
+				if (this.setRemind) {
+					this.highlightSelector(this.remindSurface);
+				} else {
+					this.highlightSelector(this.repeatSurface);
+				}
+			}.bind(this));
 		} else if (entry.isContinuous()) {
+			this.highlightSelector(this.pinSurface);
 			this.setPinned = true;
+		}
+	}
+
+	EntryFormView.prototype.highlightSelector = function(selectorSurface) {
+		this.pinSurface.removeClass('highlight-surface');
+		this.repeatSurface.removeClass('highlight-surface');
+		this.remindSurface.removeClass('highlight-surface');
+		if (selectorSurface) {
+			selectorSurface.addClass('highlight-surface');
 		}
 	}
 
@@ -466,8 +500,8 @@ define(function(require, exports, module) {
 		document.getElementById("entry-description").value = '';
 	};
 
-	function getRepeatParams(repeatEnd) {
-		var repeatTypeId = getRepeatTypeId();
+	function getRepeatParams(isRepeat, isRemind, repeatEnd) {
+		var repeatTypeId = getRepeatTypeId(isRepeat, isRemind, repeatEnd);
 		if (repeatEnd) {
 			var now = new Date();
 			if(repeatEnd < now) {
@@ -479,22 +513,39 @@ define(function(require, exports, module) {
 		return {repeatTypeId: repeatTypeId, repeatEnd: repeatEnd};
 	}
 
-	function getRepeatTypeId() {
-		var confirmRepeat;
-		//confirmRepeat = $('#' + idSelector + 'each-repeat-checkbox').is(':checked');
-		var frequencyBit;
+	function getRepeatTypeId(isRepeat, isRemind, repeatEnd) {
+		var confirmRepeat = document.getElementById('each-repeat-checkbox').checked;
+		var frequencyBit, repeatTypeBit;
 
 		if (document.getElementById('daily').checked) {
-			frequencyBit = Entry.RepeatType.DAILYCONCRETEGHOST;
+			frequencyBit = Entry.RepeatType.DAILY_BIT;
 		} else if (document.getElementById('weekly').checked) {
-			frequencyBit = Entry.RepeatType.WEEKLYCONCRETEGHOST;
+			frequencyBit = Entry.RepeatType.WEEKLY_BIT;
 		} else if (document.getElementById('monthly').checked) {
-			frequencyBit = Entry.RepeatType.MONTHLYCONCRETEGHOST;
+			frequencyBit = Entry.RepeatType.MONTHLY_BIT;
 		}
+		if (!isRepeat && (frequencyBit || repeatEnd || confirmRepeat)) {
+			isRepeat = true;
+		}
+		if (isRepeat) {
+			if (frequencyBit) {
+				repeatTypeBit = (Entry.RepeatType.CONCRETEGHOST_BIT | frequencyBit);
+			} else {
+				repeatTypeBit = (Entry.RepeatType.CONCRETEGHOST_BIT);
+			}
+		}
+		if (isRemind) {
+			if (repeatTypeBit) {
+				repeatTypeBit = (Entry.RepeatType.REMIND_BIT | repeatTypeBit);
+			} else {
+				repeatTypeBit = Entry.RepeatType.REMIND_BIT;
+			}
+		}
+
 		if (confirmRepeat) {
-			return (RepeatType.CONTINUOUS_BIT | frequencyBit);
+			return (repeatTypeBit | Entry.RepeatType.GHOST_BIT);
 		} else {
-			return (frequencyBit);
+			return (repeatTypeBit);
 		}
 	}
 
@@ -502,6 +553,9 @@ define(function(require, exports, module) {
 		var entry = null;
 		var newText = document.getElementById("entry-description").value;
 
+		if (newText === '') {
+			return false;
+		}
 		if (e instanceof Entry && directlyCreateEntry) {
 			entry = e;
 			this.entry = entry;
@@ -517,10 +571,8 @@ define(function(require, exports, module) {
 
 		var repeatTypeId, repeatEnd;
 
-		if (this.setRemind) {
-			repeatTypeId = Entry.RepeatType.REMINDDAILYGHOST;
-		} else if (this.setRepeat) {
-			var repeatParams = getRepeatParams(this.selectedDate);
+		if (this.setRepeat || this.setRemind) {
+			var repeatParams = getRepeatParams(this.setRepeat, this.setRemind, this.selectedDate);
 			repeatTypeId = repeatParams.repeatTypeId;
 			repeatEnd = repeatParams.repeatEnd;
 		} else if (this.setPinned) {
@@ -606,6 +658,13 @@ define(function(require, exports, module) {
 	EntryFormView.prototype.hasFuture = function() {
 		var entry = this.entry;
 		return ((entry.isRepeat() && !entry.isRemind()) || entry.isGhost()) && !entry.isTodayOrLater();
+	};
+
+	EntryFormView.prototype.resetRepeatModifierForm = function() {
+		this.highlightSelector(null);
+		if (document.getElementById('repeat-modifier-form')) {
+			document.getElementById('repeat-modifier-form').reset();
+		}
 	};
 
 	App.pages[EntryFormView.name] = EntryFormView;

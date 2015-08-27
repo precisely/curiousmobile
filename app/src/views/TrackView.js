@@ -58,7 +58,7 @@ define(function(require, exports, module) {
 
 	function _createBody() {
 		var formContainerSurface = new ContainerSurface({
-			size: [undefined, 70],
+			size: [undefined, 60],
 			properties: {
 				backgroundColor: '#eaeaea',
 			}
@@ -115,12 +115,12 @@ define(function(require, exports, module) {
 		});
 
 		var entryListModifier = new Modifier({
-			transform: Transform.translate(0, 70, 1),
+			transform: Transform.translate(0, 55, 1),
 		});
 
 		entryListModifier.sizeFrom(function() {
 			var size = [App.width, App.height];
-			return [undefined, size[1] - 185];
+			return [undefined, size[1] - 170];
 		});
 
 		entryListContainer.add(this.renderController);
@@ -151,6 +151,7 @@ define(function(require, exports, module) {
 		this.calendarView = new CalendarView();
 		this.calendarView.on('manual-date-change', function(e) {
 			this.changeDate(e.date);
+			App.selectedDate = DateUtil.getMidnightDate(this.calendarView.selectedDate);
 		}.bind(this));
 		App.selectedDate = DateUtil.getMidnightDate(this.calendarView.selectedDate);
 		this.setHeaderSurface(this.calendarView);
@@ -188,7 +189,8 @@ define(function(require, exports, module) {
 		});
 		BaseView.prototype.killOverlayContent.call(this);
 		this.showMenuButton();
-		_createCalendar.call(this);
+		this.setHeaderSurface(this.calendarView);
+		//_createCalendar.call(this);
 		this.preShow(state);
 	}
 

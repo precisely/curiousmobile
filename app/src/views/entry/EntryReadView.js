@@ -36,7 +36,6 @@ define(function(require, exports, module) {
 		var properties = {
 			padding: '15px 45px 15px 15px',
 			fontSize: this.options.lineHeight + 'px',
-			fontWeight: 'lighter',
 			lineHeight: this.options.lineHeight + 'px',
 			textOverflow: 'ellipsis',
 			whiteSpace: 'nowrap',
@@ -62,7 +61,7 @@ define(function(require, exports, module) {
 
 		this.entrySurface.pipe(this._eventOutput);
 		this.showMoreSurface = new ImageSurface({
-			content: 'content/images/show-more.png',
+			content: 'content/images/show-more-' + (this.entry.isRemind() ? 'remind' : this.entry.isRepeat() ? 'repeat' : 'default') + '.png',
 			size: [24, 24],
 		});
 		var showMoreModifier = new StateModifier({

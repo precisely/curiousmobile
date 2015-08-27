@@ -106,15 +106,18 @@ input, textarea {
 	backface-visibility: visible;
 }
 
-.ghost.remind {
+.ghost {
 	color: #c0c0c0;
 	opacity: 0.6 !important;
 }
 
 .entry {
-	background-color: #FF935F;
-	color: #ffffff;
+	color: #FF935F;
+	border-left: 5px solid #FF935F;
+	background: #ffffff;
 	line-height: 25px;
+	font-weight: 500;
+	border-bottom: 1px solid #eaeaea;
 }
 
 .glow {
@@ -133,8 +136,9 @@ input, textarea {
 }
 
 .repeat {
-	background: #FC3F28;
-	color: #ffffff;
+	color: #FC3F28;
+	background: #ffffff;
+	border-left: 5px solid #FC3F28;
 }
 
 .repeat.glow {
@@ -142,8 +146,9 @@ input, textarea {
 }
 
 .remind {
-	background: #C83A6E;
-	color: #ffffff;
+	color: #C83A6E;
+	background-color: #ffffff;
+	border-left: 5px solid #C83A6E;
 }
 
 .glow.remind {
@@ -153,12 +158,12 @@ input, textarea {
 .entry .help {
 	font-size: 10px;
 	text-transform: uppercase;
-	color: #cccccc;
+	color: #919191;
 	opacity: 0.8;
 	margin-top: -15px;
 	margin-left: -7px;
 	line-height: 10px;
-	padding: 5px 0;
+	padding: 5px 5px;
 }
 
 .blur {
@@ -175,6 +180,10 @@ input, textarea {
 	font-size: 30px;
 	margin-left: 7px;
 	color: #fff;
+}
+
+.highlight-surface, .highlight-surface .fa {
+	color: #C04F7F;
 }
 
 .selected {
@@ -333,6 +342,11 @@ button.close {
 		border-left: 800px solid #c04f7f;
 	}
 }
+
+.entry-input-surface {
+	border-bottom: 2px solid #d6d6d6;
+}
+
 .entry-input-surface .input-group-addon {
 	background: #ffffff;
 	border-color: #ffffff;

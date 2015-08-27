@@ -26,37 +26,23 @@ define(function(require, exports, module) {
 			size: [true, true],
 			content: this.getDisplayText(),
 			properties: {
-				border: '1px solid #868686',
-				color: '#868686',
-				padding: '5px',
-				paddingLeft: '20px',
+				color: '#5E5E5E',
+				padding: '10px',
 				borderRadius: '2px',
-				fontWeight: 'lighter',
 				lineHeight: '13px',
 				fontSize: '13px',
+				backgroundColor: '#e2e2e2',
 			}
 		};
 
 		this.entrySurface.setOptions(options);
 		this.glowInit(options);
-		var pinIcon = new Surface({
-			size: [9, 14],
-			content: '<i class="fa fa-thumb-tack"></i>',
-			properties: {
-				color: '#868686',
-			}
-		});
-
-		var pinIconModifier = new Modifier({
-			transform: Transform.translate(8, 5, 0)
-		});
-
-		this.add(pinIconModifier).add(pinIcon);
-
 	};
 
 	PinnedView.prototype.getSize = function () {
-		return this.entrySurface.getSize();
+		// This is to get exact width and height after surface gets rendered
+		return this.entrySurface._currentTarget ? 
+				[this.entrySurface._currentTarget.offsetWidth, this.entrySurface._currentTarget.offsetHeight] : this.entrySurface.getSize();
 	}
 
 	PinnedView.prototype.getDisplayText = function() {
