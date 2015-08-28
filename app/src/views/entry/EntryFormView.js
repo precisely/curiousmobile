@@ -68,10 +68,10 @@ define(function(require, exports, module) {
 				this.setRemind = false;
 				this.setRepeat = true;
 				this.setPinned = false;
-				this.highlightSelector(this.repeatSurface);
 				if (!this.isUpdating) {
 					this.resetRepeatModifierForm();
 				}
+				this.highlightSelector(this.repeatSurface);
 				this.renderController.show(this.repeatModifierSurface);
 			}
 		}.bind(this));
@@ -82,16 +82,16 @@ define(function(require, exports, module) {
 				this.setRemind = true;
 				this.setRepeat = true;
 				this.setPinned = false;
-				this.highlightSelector(this.remindSurface);
 				if (!this.isUpdating) {
 					this.resetRepeatModifierForm();
 					this.renderController.show(this.repeatModifierSurface, null, function() {
 						document.getElementById('daily').checked = false;
-						document.getElementById('each-repeat-checkbox').checked = true;
+						document.getElementById('confirm-each-repeat').checked = true;
 					}.bind(this));
 				} else {
 					this.renderController.show(this.repeatModifierSurface);
 				}
+				this.highlightSelector(this.remindSurface);
 			}
 		}.bind(this));
 
@@ -112,7 +112,7 @@ define(function(require, exports, module) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				if (_.contains(classList, 'entry-checkbox') || 
 						_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {
-					var repeatEachCheckbox = document.getElementById('each-repeat-checkbox');
+					var repeatEachCheckbox = document.getElementById('confirm-each-repeat');
 					repeatEachCheckbox.checked = !repeatEachCheckbox.checked;
 				} else if (_.contains(classList, 'input-group')) {
 					if(this.dateGridOpen) {
@@ -369,7 +369,7 @@ define(function(require, exports, module) {
 					document.getElementById(radioSelector).checked = true;
 				}
 				if (entry.isGhost()) {
-					document.getElementById('each-repeat-checkbox').checked = true;
+					document.getElementById('confirm-each-repeat').checked = true;
 				}
 				setDate(entry);
 				if (this.setRemind) {
@@ -514,7 +514,7 @@ define(function(require, exports, module) {
 	}
 
 	function getRepeatTypeId(isRepeat, isRemind, repeatEnd) {
-		var confirmRepeat = document.getElementById('each-repeat-checkbox').checked;
+		var confirmRepeat = document.getElementById('confirm-each-repeat').checked;
 		var frequencyBit, repeatTypeBit;
 
 		if (document.getElementById('daily').checked) {
@@ -544,9 +544,8 @@ define(function(require, exports, module) {
 
 		if (confirmRepeat) {
 			return (repeatTypeBit | Entry.RepeatType.GHOST_BIT);
-		} else {
-			return (repeatTypeBit);
 		}
+		return (repeatTypeBit);
 	}
 
 	EntryFormView.prototype.submit = function(e, directlyCreateEntry) {
