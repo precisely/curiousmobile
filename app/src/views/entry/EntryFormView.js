@@ -346,6 +346,8 @@ define(function(require, exports, module) {
 		this.selectedDate = null;
 		var entry = this.entry;
 		if (entry.isContinuous()) {
+			this.setRepeat = false;
+			this.setRemind = false;
 			return;
 		}
 
