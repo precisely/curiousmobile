@@ -80,7 +80,7 @@ define(function(require, exports, module) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				this.removeSuffix();
 				this.setRemind = true;
-				this.setRepeat = true;
+				this.setRepeat = false;
 				this.setPinned = false;
 				if (!this.isUpdating) {
 					this.resetRepeatModifierForm();
@@ -342,7 +342,13 @@ define(function(require, exports, module) {
 	 */
 	EntryFormView.prototype.showEntryModifiers = function(arguments) {
 		this.resetRepeatModifierForm();
+		this.renderController.hide();
+		this.selectedDate = null;
 		var entry = this.entry;
+		if (entry.isContinuous()) {
+			return;
+		}
+
 		var radioSelector;
 		if (entry.isWeekly()) {
 			radioSelector = 'weekly';
@@ -378,11 +384,8 @@ define(function(require, exports, module) {
 					this.highlightSelector(this.repeatSurface);
 				}
 			}.bind(this));
-		} else if (entry.isContinuous()) {
-			this.highlightSelector(this.pinSurface);
-			this.setPinned = true;
 		}
-	}
+	};
 
 	EntryFormView.prototype.highlightSelector = function(selectorSurface) {
 		this.pinSurface.removeClass('highlight-surface');
