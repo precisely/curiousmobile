@@ -508,12 +508,13 @@ define(function(require, exports, module) {
 	function getRepeatParams(isRepeat, isRemind, repeatEnd) {
 		var repeatTypeId = getRepeatTypeId(isRepeat, isRemind, repeatEnd);
 		if (repeatEnd) {
+			repeatEnd = repeatEnd.setHours(23, 59, 59, 0);
 			var now = new Date();
-			if(repeatEnd < now) {
+			if(new Date(repeatEnd) < now) {
 				now.setHours(23,59,59,0);
 				repeatEnd = now;
 			}
-			repeatEnd = repeatEnd.toUTCString();
+			repeatEnd = new Date(repeatEnd).toUTCString();
 		}
 		return {repeatTypeId: repeatTypeId, repeatEnd: repeatEnd};
 	}
