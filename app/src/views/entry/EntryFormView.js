@@ -207,7 +207,7 @@ define(function(require, exports, module) {
 				this.submit(e);
 			} else if (e.keyCode == 27) {
 				this.blur(e);
-				this.goBack();
+				this.trackView.killEntryForm(null);
 			} else {
 				enteredKey = e.srcElement.value;
 				this.autoCompleteView.getAutocompletes(enteredKey);
@@ -402,7 +402,7 @@ define(function(require, exports, module) {
 		console.log('entry selected with id: ' + entry.id);
 		this.entry = entry;
 		var directlyCreateEntry = false;
-		if (entry.isContinuous() || (entry.isRemind() && entry.isGhost())) {
+		if (entry.isContinuous() || ((entry.isRemind() || entry.isRepeat()) && entry.isGhost())) {
 			var tag = entry.get('description');
 			var tagStatsMap = autocompleteCache.tagStatsMap.get(tag);
 			if ((tagStatsMap && tagStatsMap.typicallyNoAmount) || tag.indexOf('start') > -1 ||
@@ -502,7 +502,9 @@ define(function(require, exports, module) {
 	};
 
 	EntryFormView.prototype.setEntryText = function(text) {
-		document.getElementById("entry-description").value = '';
+		if (document.getElementById('entry-description')) {
+			document.getElementById('entry-description').value = '';
+		}
 	};
 
 	function getRepeatParams(isRepeat, isRemind, repeatEnd) {
@@ -556,17 +558,24 @@ define(function(require, exports, module) {
 
 	EntryFormView.prototype.submit = function(e, directlyCreateEntry) {
 		var entry = null;
-		var newText = document.getElementById("entry-description").value;
+		var newText;
 
-		if (newText === '') {
-			return false;
-		}
 		if (e instanceof Entry && directlyCreateEntry) {
 			entry = e;
 			this.entry = entry;
 			newText = this.removeSuffix(entry.toString());
+			if (entry.isGhost() && !entry.isContinuous()) {
+				this.entry.setText(newText);
+				this.saveEntry(false);
+				return;
+			}
 		} else {
 			entry = this.entry;
+
+			newText = document.getElementById("entry-description").value;
+			if (newText === '') {
+				return false;
+			}
 		}
 
 		if (!u.isOnline()) {
@@ -604,13 +613,8 @@ define(function(require, exports, module) {
 			return;
 		} else if ((this.originalText == newText) && (entry.repeatType == repeatTypeId) && (entry.repeatEnd == repeatEnd)) {
 			console.log("EntryFormView: No changes made");
-			if (entry.isRemind()) {
-				entry.setText(newText);
-				this.saveEntry(false);
-				return;
-			}
 			this.blur();
-			this.goBack();
+			this.trackView.killEntryForm(null);
 			return;
 		} else {
 			entry.setText(newText);

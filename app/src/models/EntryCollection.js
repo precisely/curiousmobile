@@ -43,7 +43,7 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 			u.queueJSON("loading entry list", u.makeGetUrl("getListData"), u.makeGetArgs(argsToSend),
 				function(entries) {
 					if (u.checkData(entries)) {
-						console.log('entries from the server: ' + entries);
+						console.log('entries from the server: ', entries);
 						for (var prop in entries) {
 							Entry.cacheEntries(prop, entries[prop]);
 						}

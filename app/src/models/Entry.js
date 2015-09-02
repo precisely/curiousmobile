@@ -258,11 +258,11 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					allFuture: allFuture ? '1' : '0'
 				});
 
-				if (this.repeatTypeId) {
-					argsToSend.repeatTypeId = this.repeatTypeId;
+				if (this.repeatTypeId || this.get('repeatType')) {
+					argsToSend.repeatTypeId = this.repeatTypeId || this.get('repeatType');
 				}
-				if (this.repeatEnd) {
-					argsToSend.repeatEnd = this.repeatEnd;
+				if (this.repeatEnd || this.get('repeatEnd')) {
+					argsToSend.repeatEnd = this.repeatEnd || new Date(this.get('repeatEnd')).toUTCString();
 				}
 
 				u.queueJSON("saving entry", u.makeGetUrl("updateEntrySData"), u.makeGetArgs(argsToSend),

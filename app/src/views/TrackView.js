@@ -190,7 +190,6 @@ define(function(require, exports, module) {
 		BaseView.prototype.killOverlayContent.call(this);
 		this.showMenuButton();
 		this.setHeaderSurface(this.calendarView);
-		//_createCalendar.call(this);
 		this.preShow(state);
 	}
 

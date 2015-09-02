@@ -102,7 +102,11 @@ define(function(require, exports, module) {
 		console.log('entry selected with id: ' + this.entry.id);
 		var trackView = App.pageView.getPage('TrackView');
 		var formViewState = trackView.buildStateFromEntry(this.entry);
-		trackView.showEntryFormView(formViewState);
+		if (formViewState.preShowCheck) {
+			trackView.entryFormView.preShow(formViewState);
+		} else {
+			trackView.showEntryFormView(formViewState);
+		}
 	};
 
 	EntryView.prototype.delete = function(e) {
