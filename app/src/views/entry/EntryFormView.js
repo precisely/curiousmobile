@@ -507,55 +507,6 @@ define(function(require, exports, module) {
 		}
 	};
 
-	function getRepeatParams(isRepeat, isRemind, repeatEnd) {
-		var repeatTypeId = getRepeatTypeId(isRepeat, isRemind, repeatEnd);
-		if (repeatEnd) {
-			repeatEnd = repeatEnd.setHours(23, 59, 59, 0);
-			var now = new Date();
-			if(new Date(repeatEnd) < now) {
-				now.setHours(23,59,59,0);
-				repeatEnd = now;
-			}
-			repeatEnd = new Date(repeatEnd).toUTCString();
-		}
-		return {repeatTypeId: repeatTypeId, repeatEnd: repeatEnd};
-	}
-
-	function getRepeatTypeId(isRepeat, isRemind, repeatEnd) {
-		var confirmRepeat = document.getElementById('confirm-each-repeat').checked;
-		var frequencyBit, repeatTypeBit;
-
-		if (document.getElementById('daily').checked) {
-			frequencyBit = Entry.RepeatType.DAILY_BIT;
-		} else if (document.getElementById('weekly').checked) {
-			frequencyBit = Entry.RepeatType.WEEKLY_BIT;
-		} else if (document.getElementById('monthly').checked) {
-			frequencyBit = Entry.RepeatType.MONTHLY_BIT;
-		}
-		if (!isRepeat && (frequencyBit || repeatEnd || confirmRepeat)) {
-			isRepeat = true;
-		}
-		if (isRepeat) {
-			if (frequencyBit) {
-				repeatTypeBit = (Entry.RepeatType.CONCRETEGHOST_BIT | frequencyBit);
-			} else {
-				repeatTypeBit = (Entry.RepeatType.CONCRETEGHOST_BIT);
-			}
-		}
-		if (isRemind) {
-			if (repeatTypeBit) {
-				repeatTypeBit = (Entry.RepeatType.REMIND_BIT | repeatTypeBit);
-			} else {
-				repeatTypeBit = Entry.RepeatType.REMIND_BIT;
-			}
-		}
-
-		if (confirmRepeat) {
-			return (repeatTypeBit | Entry.RepeatType.GHOST_BIT);
-		}
-		return (repeatTypeBit);
-	}
-
 	EntryFormView.prototype.submit = function(e, directlyCreateEntry) {
 		var entry = null;
 		var newText;
@@ -586,7 +537,7 @@ define(function(require, exports, module) {
 		var repeatTypeId, repeatEnd;
 
 		if (this.setRepeat || this.setRemind) {
-			var repeatParams = getRepeatParams(this.setRepeat, this.setRemind, this.selectedDate);
+			var repeatParams = Entry.getRepeatParams(this.setRepeat, this.setRemind, this.selectedDate);
 			repeatTypeId = repeatParams.repeatTypeId;
 			repeatEnd = repeatParams.repeatEnd;
 		} else if (this.setPinned) {

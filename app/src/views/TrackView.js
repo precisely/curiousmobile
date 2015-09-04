@@ -151,7 +151,6 @@ define(function(require, exports, module) {
 		this.calendarView = new CalendarView();
 		this.calendarView.on('manual-date-change', function(e) {
 			this.changeDate(e.date);
-			App.selectedDate = DateUtil.getMidnightDate(this.calendarView.selectedDate);
 		}.bind(this));
 		App.selectedDate = DateUtil.getMidnightDate(this.calendarView.selectedDate);
 		this.setHeaderSurface(this.calendarView);
@@ -171,7 +170,6 @@ define(function(require, exports, module) {
 		} else if (state && (state.entryDate)) {
 			EntryCollection.clearCache();
 			this.calendarView.setSelectedDate(state.entryDate);
-			App.selectedDate = DateUtil.getMidnightDate(this.calendarView.selectedDate);
 			this.changeDate(state.entryDate);
 		}
 
@@ -196,6 +194,7 @@ define(function(require, exports, module) {
 	TrackView.prototype.changeDate = function(date, callback) {
 		date = u.getMidnightDate(date);
 
+		App.selectedDate = date;
 		EntryCollection.fetchEntries(_getDefaultDates(date), function(entries) {
 			//5 days before and 5 days after today
 			this.currentListView = new EntryListView(entries);

@@ -410,5 +410,54 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			collectionCache.setItem(key, entries);
 		}
 
+		Entry.getRepeatParams = function getRepeatParams(isRepeat, isRemind, repeatEnd) {
+			var repeatTypeId = getRepeatTypeId(isRepeat, isRemind, repeatEnd);
+			if (repeatEnd) {
+				repeatEnd = repeatEnd.setHours(23, 59, 59, 0);
+				var now = new Date();
+				if(new Date(repeatEnd) < now) {
+					now.setHours(23,59,59,0);
+					repeatEnd = now;
+				}
+				repeatEnd = new Date(repeatEnd).toUTCString();
+			}
+			return {repeatTypeId: repeatTypeId, repeatEnd: repeatEnd};
+		}
+
+		function getRepeatTypeId(isRepeat, isRemind, repeatEnd) {
+			var confirmRepeat = document.getElementById('confirm-each-repeat').checked;
+			var frequencyBit, repeatTypeBit;
+
+			if (document.getElementById('daily').checked) {
+				frequencyBit = RepeatType.DAILY_BIT;
+			} else if (document.getElementById('weekly').checked) {
+				frequencyBit = RepeatType.WEEKLY_BIT;
+			} else if (document.getElementById('monthly').checked) {
+				frequencyBit = RepeatType.MONTHLY_BIT;
+			}
+			if (!isRepeat && (frequencyBit || repeatEnd || confirmRepeat)) {
+				isRepeat = true;
+			}
+			if (isRepeat) {
+				if (frequencyBit) {
+					repeatTypeBit = (RepeatType.CONCRETEGHOST_BIT | frequencyBit);
+				} else {
+					repeatTypeBit = (RepeatType.CONCRETEGHOST_BIT);
+				}
+			}
+			if (isRemind) {
+				if (repeatTypeBit) {
+					repeatTypeBit = (RepeatType.REMIND_BIT | repeatTypeBit);
+				} else {
+					repeatTypeBit = RepeatType.REMIND_BIT;
+				}
+			}
+
+			if (confirmRepeat) {
+				return (repeatTypeBit | RepeatType.GHOST_BIT);
+			}
+			return (repeatTypeBit);
+		}
+
 		module.exports = Entry;
 	});
