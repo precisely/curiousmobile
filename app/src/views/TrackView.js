@@ -228,6 +228,7 @@ define(function(require, exports, module) {
 	}
 
 	TrackView.prototype.showEntryFormView = function(state) {
+		this.entryFormView.preShow(state);
 		this.entryListContainer.setProperties({
 			webkitFilter: 'blur(20px)',
 			filter: 'blur(20px)'

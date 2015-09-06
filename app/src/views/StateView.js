@@ -92,7 +92,7 @@ define(function(require, exports, module) {
 				Timer.setTimeout(function() {
 					var elementDOM = document.getElementById(element.id);
 					elementDOM.value = element.value;
-					this.originalText = element.value;
+					this['originalText-' + element.id] = element.value;
 					if (element.selectionRange) {
 						elementDOM.setSelectionRange(element.selectionRange[0], element.selectionRange[1]);
 					}

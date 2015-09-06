@@ -562,7 +562,7 @@ define(function(require, exports, module) {
 				this._eventOutput.emit('new-entry', resp);
 			}.bind(this));
 			return;
-		} else if ((this.originalText == newText) && (entry.repeatType == repeatTypeId) && (entry.repeatEnd == repeatEnd)) {
+		} else if ((this['originalText-entry-description'] == newText) && (entry.repeatType == repeatTypeId) && (entry.repeatEnd == repeatEnd)) {
 			console.log("EntryFormView: No changes made");
 			this.blur();
 			this.trackView.killEntryForm(null);
