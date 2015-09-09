@@ -14,8 +14,8 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			this.CONTINUOUS_BIT = 0x100;
 			this.GHOST_BIT = 0x200;
 			this.CONCRETEGHOST_BIT = 0x400;
-			this.TIMED_BIT = 0x1 | 0x2 | 0x4;
 			this.DURATION_BIT = 0x0800;
+			this.REPEAT_BIT = this. DAILY_BIT | this.WEEKLY_BIT | this.HOURLY_BIT | this.MONTHLY_BIT | this.YEARLY_BIT;
 			this.DAILYGHOST = this.DAILY_BIT | this.GHOST_BIT;
 			this.WEEKLYGHOST = this.WEEKLY_BIT | this.GHOST_BIT;
 			this.REMINDDAILY = this.REMIND_BIT | this.DAILY_BIT;
@@ -59,9 +59,6 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			isRepeat: function() {
 				return (this.get('repeatType') & (RepeatType.DAILY_BIT | RepeatType.WEEKLY_BIT | RepeatType.REMIND_BIT | RepeatType.CONTINUOUS_BIT)) != 0;
 			},
-			isTimed: function() {
-				return (this.get('repeatType') & (RepeatType.DAILY_BIT | RepeatType.WEEKLY_BIT | RepeatType.REMIND_BIT)) != 0;
-			},
 			isHourly: function() {
 				return (this.get('repeatType') & RepeatType.HOURLY_BIT) != 0
 			},
@@ -94,9 +91,6 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				}
 				if (this.isContinuous(repeatType)) {
 					classes.push('continuous');
-				}
-				if (this.isTimed(repeatType)) {
-					classes.push('timedrepeat');
 				}
 				if (this.isRemind(repeatType)) {
 					classes.push('remind');
@@ -300,7 +294,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			},
 			delete: function(callback) {
 				var collectionCache = window.App.collectionCache;
-				if (this.isTimed() || this.isGhost()) {
+				if (this.isGhost()) {
 					if (this.isContinuous() || this.isTodayOrLater()) {
 						this.deleteGhost(true, callback);
 					} else {
