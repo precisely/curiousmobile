@@ -171,6 +171,10 @@ define(function(require, exports, module) {
 					});
 				} else if (_.contains(classList, 'submit-comment')) {
 					this.postComment();
+				} else if (_.contains(classList, 'share-button') || _.contains(e.srcElement.parentElement.classList, 'share-button')) {
+					if (window.plugins) {
+						window.plugins.socialsharing.share(null, 'Curious Discussions', null, App.serverUrl + '/home/social/discussion/' + this.discussionHash);
+					}
 				}
 			}
 		}.bind(this));

@@ -64,7 +64,7 @@
 		<div class="participants-wrapper">
 			<p id="sprint-participants">
 				{{ _.each(participants, function(participant) { }}
-					{{= participant.username }}
+					{{= participant.name || participant.username }}
 					<br>
 				{{ }); }}
 			</p>
