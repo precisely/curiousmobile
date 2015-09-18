@@ -62,11 +62,11 @@ define(function(require, exports, module) {
 		}
 		this.hash = state.hash;
 		this.parentPage = state.parentPage || 'SprintListView';
-		this.refresh();
+		this.loadData();
 		return true;
 	};
 
-	SprintFormView.prototype.refresh = function() {
+	SprintFormView.prototype.loadData = function() {
 		this.participantsOffset = 10;
 		Sprint.show(this.hash, function(sprintDetails) {
 			this.totalParticipants = sprintDetails.totalParticipants;
@@ -115,6 +115,9 @@ define(function(require, exports, module) {
 					} else if (_.contains(classList, 'add-participants') || _.contains(e.srcElement.parentElement.classList, 'add-participants')) {
 						this.addSprintParticipantsView = new AddSprintParticipantsView(this);
 						this.showOverlayContent(this.addSprintParticipantsView);
+					} else {
+						document.activeElement.blur();
+						cordova.plugins.Keyboard.close();
 					}
 				}
 			}.bind(this));
