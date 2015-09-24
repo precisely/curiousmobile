@@ -399,7 +399,7 @@ button.close {
 .not-loggedin .form-control {
 	height: 50px;
 	border: 1px solid #FC3F28;
-	color: #FC3F28; 
+	color: #FC3F28;
 }
 
 .not-loggedin {
@@ -521,7 +521,7 @@ button.close {
 .people-wrapper .user-details-header .follow {
 	background-color: transparent;
 	color: #ff935f;
-} 
+}
 
 .people-wrapper .user-details-header .following {
 	background-color: #ff935f;
@@ -820,7 +820,7 @@ button.close {
 	color: #a4a4a4;
 }
 
-.post-comment input::-webkit-input-placeholder, .post-comment input::-moz-placeholder, .post-comment input:-moz-placeholder, 
+.post-comment input::-webkit-input-placeholder, .post-comment input::-moz-placeholder, .post-comment input:-moz-placeholder,
 .post-comment input:-ms-input-placeholder {
 	color: #a4a4a4;
 }
@@ -1129,7 +1129,7 @@ button.close {
 	margin: 0px 0px 10px 0px;
 }
 
-.sprint-details p, .people-detail p {
+.sprint-details p, .people-detail p, .edit-people-detail p {
 	font-style: normal;
 	font-weight: 500;
 }
@@ -1150,7 +1150,7 @@ button.close {
 	resize: none;
 }
 
-.sprint-details button, .sprint-activity button, .people-detail button {
+.sprint-details button, .sprint-activity button, .people-detail button, .edit-people-detail button {
 	background-color: transparent;
 	border: 1px solid #979797;
 	border-radius: 2px;
@@ -1158,8 +1158,15 @@ button.close {
 }
 
 .upper-body button {
-	padding: 2px 20px;
-	color: #5d5d5d;
+	color: #ffffff;
+	float: right;
+	margin-top: -42px;
+	margin-right: 13px;
+	height: 33px;
+	width: 64px;
+	border-color: #ffffff;
+	font-size: 15px;
+	display: inline-block;
 }
 
 .tags-div button, .entry-button {
@@ -1202,24 +1209,31 @@ button.close {
 }
 
 .people-detail .fa-4x {
-	font-size: 70px;
+	font-size: 106px;
+	margin-bottom: 5px;
+}
+
+.people-detail .upper-body img {
+	margin-bottom: 12px;
+	border-radius: 127px;
+	width: 90px;
 }
 
 .people-detail .upper-body {
 	text-align: center;
-	background-color: #efefef;
 	padding: 15px 0px;
 }
 
 .people-detail .lower-body {
 	padding: 15px;
-	background-color: #fff;
 }
 
 .people-detail p {
-	color: #696969;
+	color: #ffffff;
 	display: inline;
 	font-weight: 300;
+	font-size: 16px;
+	font-weight: 500;
 }
 
 .people-detail h4 {
@@ -1227,8 +1241,10 @@ button.close {
 }
 
 .people-detail h2 {
-	color: #5d5d5d;
+	color: #ffffff;
 	font-size: 22px;
+	margin-bottom: 16px;
+	font-weight: 500;
 }
 
 .people-detail .media {
@@ -1238,6 +1254,8 @@ button.close {
 .people-detail .media-body {
 	padding-left: 10px;
 	padding-top: 5px;
+	text-align: center;
+	margin-bottom: 25px;
 }
 
 .public-interests, .public-groups, .public-sprints {
@@ -1257,10 +1275,13 @@ button.close {
 }
 
 .people-label {
-	color: #b6b6b6;
+	color: #fee49f;
 	font-weight: 500;
-	font-size: 15px;
+	font-size: 13px;
 	display: block;
+	text-align: center;
+	margin-bottom: -3px;
+	font-weight: 500;
 }
 
 #participant-username {
@@ -1286,7 +1307,7 @@ button.close {
 	height: 23px;
 }
 
-@media only screen 
+@media only screen
 and (max-device-height: 480px) {
 	.help-wizard .questions {
 		margin: 0px 0px 10px 0px;
@@ -1301,7 +1322,7 @@ and (max-device-height: 480px) {
 	}
 }
 
-@media only screen 
+@media only screen
 and (max-device-height: 568px) {
 	.exercise-questions .questions {
 		margin-top: 0px;
@@ -1311,4 +1332,150 @@ and (max-device-height: 568px) {
 	.exercise-questions label {
 		margin: 15px 0px 5px 0px;
 	}
+}
+
+.people-detail h1 {
+	color: #ffffff;
+	font-size: 18px;
+	margin-top: 9px;
+	margin-bottom: 13px;
+	font-weight: 500;
+}
+
+.people-detail, .edit-people-detail {
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#df3501+0,ff6131+100 */
+	background: #df3501; /* Old browsers */
+	background: -moz-linear-gradient(top,  #f14d43 0%, #f48157 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f14d43), color-stop(100%,#f48157)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #f14d43 0%,#f48157 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #f14d43 0%,#f48157 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #f14d43 0%,#f48157 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #f14d43 0%,#f48157 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#df3501', endColorstr='#f48157',GradientType=0 ); /* IE6-9 */
+
+}
+
+#public-interest-tags p {
+	line-height: 231%;
+}
+
+.edit-people-detail h1 {
+	color: #ffffff;
+	font-size: 18px;
+	margin-top: 9px;
+	margin-bottom: 13px;
+	font-weight: 500;
+}
+
+.edit-people-detail .heading {
+	text-align: center;
+	padding: 15px 0px;
+}
+
+.edit-image, .edit-body {
+	margin-left: 21px;
+}
+
+.edit-image p {
+	font-size: 13px;
+	color: #fe9985;
+	font-weight: 500;
+
+}
+
+.edit-image .fa-4x {
+	font-size: 84px;
+	margin-bottom: -6px;
+}
+
+.edit-label {
+	color: #fee49f;
+	font-weight: 500;
+	font-size: 13px;
+	display: block;
+	margin-bottom: -3px;
+	margin-top: 14px;
+}
+
+.edit-image button {
+	color: #ffffff;
+	float: right;
+	margin-top: 20px;
+	margin-right: 96px;
+	height: 35px;
+	width: 114px;
+	border-color: #ffffff;
+	font-size: 14px;
+	display: inline-block;
+	font-weight: 500;
+	border-radius: 2px;
+}
+
+.edit-body input[type="text"] {
+	background-color: transparent;
+	color: #ffffff;
+	font-size: 14px;
+	border-color: #ffffff;
+	border-width: 1px;
+	border-style: solid;
+	-webkit-appearance: initial;
+	border-radius: 2px;
+	width: 284px;
+	height: 40px;
+	padding: 18px 14px 18px 14px;
+	font-weight: 500;
+}
+
+.radio-public-private {
+	background-color: transparent;
+	color: #ffffff;
+	font-size: 14px;
+	border-radius: 2pxs;
+	border-color: #ffffff;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 2px;
+	width: 284px;
+	height: 40px;
+	padding: 9px 11px 20px 13px;
+	font-weight: 500;
+	border-top: 0px;
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+	border-top-width: 0px;
+}
+
+.edit-body textarea {
+	background-color: transparent;
+	color: #ffffff;
+	font-size: 14px;
+	border-color: #ffffff;
+	border-width: 1px;
+	border-style: solid;
+	-webkit-appearance: initial;
+	border-radius: 2px;
+	padding: 18px 14px 18px 14px;
+	font-weight: 500;
+	width: 284px;
+	height: 102px;
+	resize: none;
+	margin-bottom: -6px;
+}
+
+.edit-interests p {
+	color: #ffffff;
+	display: inline;
+	font-weight: 300;
+	font-size: 14px;
+	font-weight: 500;
+}
+
+.edit-interests hr {
+	height: 1px;
+	border-color: #f69e81;
+}
+
+.add-interest-tag {
+	height: 253px;
+	background-color: #ffffff;
 }

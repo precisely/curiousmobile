@@ -100,6 +100,14 @@ define(function(require, exports, module) {
 		return user.id;
 	}
 
+	User.getCurrentUserHash = function() {
+		var user = store.get('user');
+		if (typeof user == 'undefined') {
+			return false;
+		}
+		return user.hash;
+	}
+
 	User.getCurrentUser = function() {
 		var user = store.get('user');
 		if (typeof user == 'undefined') {
@@ -114,7 +122,7 @@ define(function(require, exports, module) {
 		window.App.stateCache.clear();
 		u.callLogoutCallbacks();
 		if (typeof callback != 'undefined') {
-			callback(userData);	
+			callback(userData);
 		}
 		store.set('mobileSessionId', false);
 		store.set('user', false);
@@ -128,7 +136,7 @@ define(function(require, exports, module) {
 			offset: args.offset?args.offset:0,
 			type: 'people'
 		});
-		u.queueJSON("loading feeds", u.makeGetUrl('indexData', 'search'), 
+		u.queueJSON("loading feeds", u.makeGetUrl('indexData', 'search'),
 		u.makeGetArgs(argsToSend), function(data) {
 			if (u.checkData(data)) {
 				callback(data.listItems);
@@ -137,7 +145,7 @@ define(function(require, exports, module) {
 	};
 
 	User.show = function(hash, successCallback, failCallback) {
-		u.queueJSON('Getting user data', App.serverUrl + '/api/user/' + hash + '?callback=?', 
+		u.queueJSON('Getting user data', App.serverUrl + '/api/user/' + hash + '?callback=?',
 		u.getCSRFPreventionObject('getUserData'),
 		function(data) {
 			if (u.checkData(data)) {

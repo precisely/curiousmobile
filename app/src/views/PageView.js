@@ -93,7 +93,11 @@ define(function(require, exports, module) {
 			if (e.clearHistory) {
 				this.history = [];
 			}
-			this.changePage(e.data);
+			var state = new Object();
+			if(e.data == "PeopleDetailView") {
+				state.hash = User.getCurrentUserHash();
+			}
+			this.changePage(e.data, state);
 		}.bind(this));
 	}
 
@@ -156,7 +160,7 @@ define(function(require, exports, module) {
 
 		var continueChangePage = view.preShow(state);
 		if (!continueChangePage && (state && !state.onLoad)) {
-			return false;	
+			return false;
 		} else if (state && state.onLoad) {
 			if (view.parentPage) {
 				this.goBack(view.parentPage, {new: true});
@@ -229,7 +233,7 @@ define(function(require, exports, module) {
 	};
 
 	/**
-	 * Clears navigation history. Useful when going to a top-level page from the footer or 
+	 * Clears navigation history. Useful when going to a top-level page from the footer or
 	 * slide menu.
 	 */
 	PageView.prototype.clearHistory = function() {

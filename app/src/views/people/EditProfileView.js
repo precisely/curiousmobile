@@ -14,47 +14,39 @@ define(function(require, exports, module) {
 	var RenderController = require('famous/views/RenderController');
 	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var Draggable = require("famous/modifiers/Draggable");
-	var PeopleDetailsTemplate = require('text!templates/people-details.html');
+	var EditUserProfileTemplate = require('text!templates/edit-user-profile.html');
+	var AddInterestTagView = require('views/people/AddInterestTagView');
 	var User = require('models/User');
 	var u = require('util/Utils');
-	var EditUserView = require('views/people/EditProfileView');
 
-	function PeopleDetailView() {
+	function EditProfileView() {
 		BaseView.apply(this, arguments);
 		this.parentPage = 'FeedView';
-
-		this.backgroundSurface = new Surface({
-			size: [undefined, undefined],
-			properties: {
-				backgroundColor: '#fff',
-				zIndex: 5
-			}
-		});
-		this.setBody(this.backgroundSurface);
+		this.addInterestTagView = new AddInterestTagView(this);
 
 		this.renderController = new RenderController();
 		var mod = new StateModifier({
 			size: [App.width, App.height - 120],
-			transform: Transform.translate(0, 64, 16)
+			transform: Transform.translate(0, 64, App.zIndex.readView)
 		});
 
 		this.add(mod).add(this.renderController);
 	}
 
-	PeopleDetailView.prototype = Object.create(BaseView.prototype);
-	PeopleDetailView.prototype.constructor = PeopleDetailView;
+	EditProfileView.prototype = Object.create(BaseView.prototype);
+	EditProfileView.prototype.constructor = EditProfileView;
 
-	PeopleDetailView.DEFAULT_OPTIONS = {
+	EditProfileView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
 		activeMenu: 'feed'
 	};
 
-	PeopleDetailView.prototype.onShow = function(state) {
+	EditProfileView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 	};
 
-	PeopleDetailView.prototype.preShow = function(state) {
+	EditProfileView.prototype.preShow = function(state) {
 		if (!state || !state.hash) {
 			return false;
 		}
@@ -63,30 +55,40 @@ define(function(require, exports, module) {
 		return true;
 	};
 
-	PeopleDetailView.prototype.refresh = function() {
+	EditProfileView.prototype.showAddInterestTagForm = function() {
+		this.editPeopleSurface.setProperties({
+			webkitFilter: 'blur(20px)',
+			filter: 'blur(20px)'
+		});
+		this.showBackButton();
+		this.setHeaderLabel('');
+		this.showOverlayContent(this.addInterestTagView, function() {
+			console.log('overlay successfully created');
+		}.bind(this.entryFormView));
+	}
+
+	EditProfileView.prototype.refresh = function() {
 		User.show(this.hash, function(peopleDetails) {
 
 			this.setHeaderLabel(peopleDetails.user.name);
 			peopleDetails.user.userID = User.getCurrentUserId();
-			var peopleSurface = new Surface({
+			var editPeopleSurface = new Surface({
 				size: [undefined, undefined],
-				content: _.template(PeopleDetailsTemplate, peopleDetails, templateSettings),
+				content: _.template(EditUserProfileTemplate, peopleDetails, templateSettings),
 				properties: {
 
 				}
 			});
 
-			peopleSurface.on('click', function(e) {
-				var classList;
-				if (u.isAndroid() || (e instanceof CustomEvent)) {
-					classList = e.srcElement.classList;
-					if (_.contains(classList, 'edit-button')) {
-						var state = {
-							hash: this.hash
-						};
-						App.pageView.changePage('EditProfileView', state);
-					}
-				}
+			editPeopleSurface.on('click', function(e) {
+                var classList;
+                if (u.isAndroid() || (e instanceof CustomEvent)) {
+                    classList = e.srcElement.classList;
+                    if (_.contains(classList, 'new-tag')) {
+                        this.editPeopleSurface = editPeopleSurface;
+                        this.showAddInterestTagForm();
+                    }
+                }
 			}.bind(this));
 
 			var yRange = Math.max(0, (800 - App.height));
@@ -97,11 +99,11 @@ define(function(require, exports, module) {
 				yRange: [-1500, 0]
 			});
 
-			draggable.subscribe(peopleSurface);
+			draggable.subscribe(editPeopleSurface);
 
 			draggable.on('end', function(e) {
 				console.log(e);
-				var newYRange = Math.max(0, (document.getElementsByClassName('people-detail')[0].offsetHeight - (App.height - 114)));
+				var newYRange = Math.max(0, (document.getElementsByClassName('edit-people-detail')[0].offsetHeight - (App.height - 114)));
 				if (e.position[1] < lastDraggablePosition) {
 					this.setPosition([0, -newYRange, 0], {
 						duration: 300
@@ -118,13 +120,13 @@ define(function(require, exports, module) {
 			});
 
 			var nodePlayer = new RenderNode();
-			nodePlayer.add(draggable).add(peopleSurface);
+			nodePlayer.add(draggable).add(editPeopleSurface);
 			this.renderController.show(nodePlayer);
 		}.bind(this), function() {
 			App.pageView.goBack();
 		}.bind(this));
 	};
 
-	App.pages['PeopleDetailView'] = PeopleDetailView;
-	module.exports = PeopleDetailView;
+	App.pages['EditProfileView'] = EditProfileView;
+	module.exports = EditProfileView;
 });

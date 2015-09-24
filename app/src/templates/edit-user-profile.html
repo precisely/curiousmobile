@@ -1,0 +1,131 @@
+<div class="edit-people-detail">
+	<div class="heading">
+		<h1>EDIT PROFILE</h1>
+	</div>
+	<div class="edit-image">
+		<p>PROFILE PICTURE</p>
+		<i class="fa fa-circle fa-4x"></i>
+		<button class="choose-image">Choose Image</button>
+	</div>
+	<div class="edit-body">
+		<div class="edit-name">
+			<label class="edit-label">
+				NAME
+			</label>
+			<div class="media">
+				<div class="media-body">
+					<input type="text" name="user-name" value="{{= user.name }}"/>
+					<div class="radio-public-private">
+						public
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="edit-bio">
+			<label class="edit-label">
+				BIO
+			</label>
+			<div class="media">
+				<div class="media-body">
+					{{ if (user.bio === "") { }}
+					<textarea></textarea>
+					{{ } else { }}
+					<textarea>{{= user.bio }}</textarea>
+					{{ } }}
+					<div class="radio-public-private">
+						bio
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="edit-username">
+			<label class="edit-label">
+				USERNAME
+			</label>
+			<div class="media">
+				<div class="media-body">
+					<input type="text" value="{{= user.username }}"/>
+				</div>
+			</div>
+		</div>
+
+		<div class="edit-email">
+			<label class="edit-label">
+				EMAIL
+			</label>
+			<div class="media">
+				<div class="media-body">
+					<input type="text" value="{{= user.email }}"/>
+				</div>
+			</div>
+		</div>
+
+		<div class="edit-password">
+			<label class="edit-label">
+				PASSWORD
+			</label>
+			<div class="media">
+				<div class="media-body">
+					<input type="password"  value="{{= user.password }}"/>
+				</div>
+			</div>
+		</div>
+
+		<div class="edit-password">
+			<label class="edit-label">
+				VERIFY PASSWORD
+			</label>
+			<div class="media">
+				<div class="media-body">
+					<input type="password" value="{{= user.password }}"/>
+				</div>
+			</div>
+		</div>
+
+		<div class="edit-email-notifications">
+			<label class="edit-label">
+				EMAIL NOTIFICATION
+			</label>
+			<div class="media">
+				<div class="media-body">
+					<input type="radio" name="email-notifications" checked>Email me when someone comments
+					<br>
+					<input type="radio" name="email-notifications">Don't email me when someone comments
+				</div>
+			</div>
+		</div>
+
+		<div class="edit-external-accounts">
+			<label class="edit-label">
+				EXTERNAL ACCOUNTS
+			</label>
+			<div class="media">
+				<div class="media-body">
+					<p>Unlink Fitbit Account</p>
+				</div>
+			</div>
+		</div>
+
+		<div class="edit-interests">
+			<label class="edit-label">
+				PUBLIC INTEREST TAGS
+			</label>
+			<button type="button" class="btn btn-default new-tag">+ CREATE NEW TAG</button>
+			<div class="media">
+				{{ if (user.interestTags.length == 0) { }}
+				<div class="media-body">
+					<p>No Tags</p>
+				</div>
+				{{ } else { }}
+				<div class="media-body" id="public-interest-tags">
+					{{ _.each(user.interestTags, function(interestTags) { }}
+					<p> {{= interestTags }}</p><hr><br>
+					{{ }) }}
+				</div>
+				{{ } }}
+			</div>
+		</div>
+	</div>
+</div>
