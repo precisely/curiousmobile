@@ -125,6 +125,7 @@ define(function(require, exports, module) {
 
 		entryListContainer.add(this.renderController);
 
+		this.formContainerSurface = formContainerSurface;
 		this.setBody(formContainerSurface);
 		this.entryListContainer = entryListContainer;
 		this.addContent(entryListModifier, entryListContainer);
@@ -185,6 +186,9 @@ define(function(require, exports, module) {
 			webkitFilter: 'blur(0px)',
 			filter: 'blur(0px)'
 		});
+		this.formContainerSurface.setProperties({
+			visibility: 'visible'
+		});
 		BaseView.prototype.killOverlayContent.call(this);
 		this.showMenuButton();
 		this.setHeaderSurface(this.calendarView);
@@ -230,8 +234,11 @@ define(function(require, exports, module) {
 	TrackView.prototype.showEntryFormView = function(state) {
 		this.entryFormView.preShow(state);
 		this.entryListContainer.setProperties({
-			webkitFilter: 'blur(20px)',
-			filter: 'blur(20px)'
+			webkitFilter: 'blur(5px)',
+			filter: 'blur(5px)'
+		});
+		this.formContainerSurface.setProperties({
+			visibility: 'hidden'
 		});
 		this.showBackButton();
 		this.setHeaderLabel('');

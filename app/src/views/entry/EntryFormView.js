@@ -2,19 +2,18 @@ define(function(require, exports, module) {
 	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
 	var Timer = require('famous/utilities/Timer');
-	var ImageSurface = require('famous/surfaces/ImageSurface');
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var InputSurface = require('famous/surfaces/InputSurface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
 	var Transitionable = require('famous/transitions/Transitionable');
-	var Easing = require("famous/transitions/Easing");
 	var RenderController = require("famous/views/RenderController");
 	var StateView = require('views/StateView');
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var AutocompleteView = require("views/AutocompleteView");
 	var Autocomplete = require('models/Autocomplete');
+	var DraggableView = require("views/widgets/DraggableView");
 	var u = require('util/Utils');
 	var store = require('store');
 	var Entry = require('models/Entry');
@@ -40,7 +39,8 @@ define(function(require, exports, module) {
 	var enteredKey;
 
 	function _zIndex(argument) {
-		return window.App.zIndex.formView;
+		// zIndex calculated on top of the containing surface hence returning 0 will use zIndex of the form container
+		return 0;
 	}
 
 	function _setListeners() {
@@ -177,7 +177,8 @@ define(function(require, exports, module) {
 		this.clazz = 'EntryFormView';
 
 		var formContainerSurface = new ContainerSurface({
-			classes: ['entry-form'],
+			size: [undefined, App.height - 30],
+			classes: ['entry-form', 'draggable-container'],
 			properties: {
 				background: 'rgba(123, 120, 120, 0.48)'
 			}
@@ -232,7 +233,7 @@ define(function(require, exports, module) {
 			} else {
 				offset += (firstOffset < 0) ? 0 : firstOffset;
 			}
-			var transform = Transform.translate(offset, 80, _zIndex() + 1);
+			var transform = Transform.translate(offset, 80, _zIndex());
 			return {
 				transform: transform,
 				target: input.render()
@@ -279,15 +280,16 @@ define(function(require, exports, module) {
 		});
 
 		var mod = new StateModifier({
-			size: [App.width, App.height - 220],
-			transform: Transform.translate(0, 130, 16)
+			size: [App.width, undefined],
+			transform: Transform.translate(0, 130, 0)
 		});
 		var dateGridRenderControllerMod = new StateModifier({
-			transform: Transform.translate(0, 160, 16)
+			transform: Transform.translate(18, 200, 16)
 		});
 		this.formContainerSurface.add(mod).add(this.renderController);
 		this.formContainerSurface.add(dateGridRenderControllerMod).add(this.dateGridRenderController);
-		this.add(this.formContainerSurface);
+		this.draggableEntryFormView = new DraggableView(this.formContainerSurface);
+		this.add(this.draggableEntryFormView);
 	}
 	
 	EntryFormView.prototype.preShow = function(state) {
@@ -366,8 +368,8 @@ define(function(require, exports, module) {
 		if (radioSelector || this.setRemind) {
 			this.isUpdating = true;
 			var setDate = function (entry) {
-				if (entry.attributes.repeatEnd) {
-					var repeatEnd = new Date(entry.attributes.repeatEnd);
+				if (entry.get("repeatEnd")) {
+					var repeatEnd = new Date(entry.get("repeatEnd"));
 					this.selectedDate = repeatEnd;
 					this.setSelectedDate(repeatEnd);
 				}
@@ -408,6 +410,7 @@ define(function(require, exports, module) {
 			if ((tagStatsMap && tagStatsMap.typicallyNoAmount) || tag.indexOf('start') > -1 ||
 				tag.indexOf('begin') > -1 || tag.indexOf('stop') > -1 || tag.indexOf('end') > -1) {
 				directlyCreateEntry = true;
+				this.setPinned = this.setRemind = this.setRepeat = false;
 			}
 		}
 		var entryText = entry.toString();
@@ -515,6 +518,8 @@ define(function(require, exports, module) {
 			entry = e;
 			this.entry = entry;
 			newText = this.removeSuffix(entry.toString());
+
+			// Checking if entry is ghost but not pinned
 			if (entry.isGhost() && !entry.isContinuous()) {
 				this.entry.setText(newText);
 				this.saveEntry(false);
@@ -524,7 +529,7 @@ define(function(require, exports, module) {
 			entry = this.entry;
 
 			newText = document.getElementById("entry-description").value;
-			if (newText === '') {
+			if (!newText) {
 				return false;
 			}
 		}
@@ -546,13 +551,12 @@ define(function(require, exports, module) {
 
 		if (!entry || !entry.get('id') || entry.isContinuous()) {
 			var newEntry = new Entry();
-			newEntry.set('date', DateUtil.getMidnightDate(this.selectedDate || App.selectedDate));
 			newEntry.setText(newText);
 			if (repeatTypeId) {
-				newEntry.repeatTypeId = repeatTypeId;
+				newEntry.set("repeatType", repeatTypeId);
 			}
-			if (repeatEnd && repeatEnd != '') {
-				newEntry.repeatEnd = repeatEnd;
+			if (repeatEnd) {
+				newEntry.set("repeatEnd", repeatEnd);
 			} 
 			newEntry.create(function(resp) {
 				if (this.setRepeat || this.setRemind || this.setPinned) {
@@ -562,7 +566,7 @@ define(function(require, exports, module) {
 				this._eventOutput.emit('new-entry', resp);
 			}.bind(this));
 			return;
-		} else if ((this['originalText-entry-description'] == newText) && (entry.repeatType == repeatTypeId) && (entry.repeatEnd == repeatEnd)) {
+		} else if ((this['originalText-entry-description'] == newText) && (entry.get("repeatType") == repeatTypeId) && (entry.get("repeatEnd") == repeatEnd)) {
 			console.log("EntryFormView: No changes made");
 			this.blur();
 			this.trackView.killEntryForm(null);
@@ -570,10 +574,10 @@ define(function(require, exports, module) {
 		} else {
 			entry.setText(newText);
 			if (repeatTypeId) {
-				entry.repeatTypeId = repeatTypeId;
+				entry.set("repeatType", repeatTypeId);
 			}
 			if (repeatEnd) {
-				entry.repeatEnd = repeatEnd;
+				entry.set("repeatEnd", repeatEnd);
 			} 
 		}
 

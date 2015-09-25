@@ -15,7 +15,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			this.GHOST_BIT = 0x200;
 			this.CONCRETEGHOST_BIT = 0x400;
 			this.DURATION_BIT = 0x0800;
-			this.REPEAT_BIT = this. DAILY_BIT | this.WEEKLY_BIT | this.HOURLY_BIT | this.MONTHLY_BIT | this.YEARLY_BIT;
+			this.REPEAT_BIT = this.DAILY_BIT | this.WEEKLY_BIT | this.HOURLY_BIT | this.MONTHLY_BIT | this.YEARLY_BIT;
 			this.DAILYGHOST = this.DAILY_BIT | this.GHOST_BIT;
 			this.WEEKLYGHOST = this.WEEKLY_BIT | this.GHOST_BIT;
 			this.REMINDDAILY = this.REMIND_BIT | this.DAILY_BIT;
@@ -57,7 +57,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				return (this.get('repeatType') & RepeatType.REMIND_BIT) != 0;
 			},
 			isRepeat: function() {
-				return (this.get('repeatType') & (RepeatType.DAILY_BIT | RepeatType.WEEKLY_BIT | RepeatType.REMIND_BIT | RepeatType.CONTINUOUS_BIT)) != 0;
+				return (this.get('repeatType') & RepeatType.REPEAT_BIT) != 0;
 			},
 			isHourly: function() {
 				return (this.get('repeatType') & RepeatType.HOURLY_BIT) != 0
@@ -203,11 +203,11 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					timeZoneName: u.getTimezone(),
 					defaultToNow: '1'
 				});
-				if (this.repeatTypeId) {
-					argsToSend.repeatTypeId = this.repeatTypeId;
+				if (this.get("repeatType")) {
+					argsToSend.repeatTypeId = this.get("repeatType");
 				}
-				if (this.repeatEnd) {
-					argsToSend.repeatEnd = this.repeatEnd;
+				if (this.get("repeatEnd")) {
+					argsToSend.repeatEnd = this.get("repeatEnd");
 				}
 
 				argsToSend.text = argsToSend.text.replace('Repeat', 'repeat');
@@ -252,11 +252,11 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					allFuture: allFuture ? '1' : '0'
 				});
 
-				if (this.repeatTypeId || this.get('repeatType')) {
-					argsToSend.repeatTypeId = this.repeatTypeId || this.get('repeatType');
+				if (this.get("repeatType")) {
+					argsToSend.repeatTypeId = this.get('repeatType');
 				}
-				if (this.repeatEnd || this.get('repeatEnd')) {
-					argsToSend.repeatEnd = this.repeatEnd || new Date(this.get('repeatEnd')).toUTCString();
+				if (this.get("repeatEnd")) {
+					argsToSend.repeatEnd = this.get('repeatEnd') ? new Date(this.get('repeatEnd')).toUTCString() : null;
 				}
 
 				u.queueJSON("saving entry", u.makeGetUrl("updateEntrySData"), u.makeGetArgs(argsToSend),

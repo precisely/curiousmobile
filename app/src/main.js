@@ -22,6 +22,7 @@ define(function(require, exports, module) {
 		autocomplete: 99,
 		alertView: 999,
 		contextMenu: 30,
+		overlay: 20
 	};
 	var Engine = require('famous/core/Engine');
 	var Cache = require('jscache');
@@ -55,6 +56,7 @@ define(function(require, exports, module) {
 	//App.serverUrl = "http://192.168.0.108:8080";
 	//App.serverUrl = "http://192.168.0.102:8080";
 	//App.serverUrl = "http://192.168.1.141:8080";
+	//App.serverUrl = "http://114.143.237.123:8080";
 	Engine.setOptions({
 		containerClass: 'app-container'
 	});

@@ -8,14 +8,13 @@ define(function(require, exports, module) {
 	var Surface = require('famous/core/Surface');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
-	var Draggable = require("famous/modifiers/Draggable");
+	var DraggableView = require("views/widgets/DraggableView");
 	var StateView = require('views/StateView');
 	var AddSprintTagsView = require('views/sprint/AddSprintTagsView');
 	var AddSprintParticipantsView = require('views/sprint/AddSprintParticipantsView');
 	var RenderNode = require("famous/core/RenderNode");
 	var RenderController = require('famous/views/RenderController');
 	var ContainerSurface = require("famous/surfaces/ContainerSurface");
-	var Draggable = require("famous/modifiers/Draggable");
 	var SprintEditTemplate = require('text!templates/sprint-details.html');
 	var Sprint = require('models/Sprint');
 	var u = require('util/Utils');
@@ -119,37 +118,8 @@ define(function(require, exports, module) {
 				}
 			}.bind(this));
 
-			var yRange = Math.max(0, (800 - App.height));
-			var lastDraggablePosition = 0;
-
-			var draggable = new Draggable({
-				xRange: [0, 0],
-				yRange: [-1500, 0]
-			});
-
-			draggable.subscribe(this.sprintSurface);
-
-			draggable.on('end', function(e) {
-				console.log(e);
-				var newYRange = Math.max(0, (document.getElementsByClassName('sprint-details')[0].offsetHeight - (App.height - 114)));
-				if (e.position[1] < lastDraggablePosition) {
-					this.setPosition([0, -newYRange, 0], {
-						duration: 300
-					}, function() {
-						lastDraggablePosition = this.getPosition()[1];
-					}.bind(this));
-				} else if (e.position[1] != lastDraggablePosition) {
-					this.setPosition([0, 0, 0], {
-						duration: 300
-					}, function() {
-						lastDraggablePosition = this.getPosition()[1];
-					}.bind(this));
-				}
-			});
-
-			var nodePlayer = new RenderNode();
-			nodePlayer.add(draggable).add(this.sprintSurface);
-			this.renderController.show(nodePlayer);
+			this.draggableFormView = new DraggableView(this.sprintSurface);
+			this.renderController.show(this.draggableFormView);
 		}.bind(this), function() {
 			App.pageView.goBack();
 		}.bind(this));
