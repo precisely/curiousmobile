@@ -9,6 +9,7 @@ define(function(require, exports, module) {
 	var FastClick = require('famous/inputs/FastClick');
 	var StateView = require('views/StateView');
 	var GraphTemplate = require('text!templates/chart-canvas.html');
+	var PillsView = require('views/PillsView');
 	var User = require('models/User');
 	var Tags = require('models/Tags');
 	var u = require('util/Utils');
@@ -17,6 +18,8 @@ define(function(require, exports, module) {
 		StateView.apply(this, arguments);
 		this.tags = tagsToPlot;
 		this.init();
+		this.createTagsPill();
+		//this.drawDateFooter();
 	}
 
 	GraphView.prototype = Object.create(StateView.prototype);
@@ -31,22 +34,44 @@ define(function(require, exports, module) {
 			content: _.template(GraphTemplate, templateSettings)
 		});
 
-		this.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(this.graphSurface);
+		this.add(new StateModifier({transform: Transform.translate(0, 50, 0)})).add(this.graphSurface);
 		if (this.tags) {
-			this.plot = new Plot(Tags.tagsList, User.getCurrentUserId(), User.getCurrentUser().username, "#plotArea", true, false, new PlotProperties({
-				'startDate':'#startdatepicker1',
-				'startDateInit':'start date and/or tag',
-				'endDate':'#enddatepicker1',
-				'endDateInit':'end date and/or tag',
-				'cycleTag':'#cycleTag1',
-				'zoomControl':'#zoomcontrol1',
-				'username':'#queryUsername',
-				'name':'#queryTitle',
-				'rename':'#queryTitleEdit',
-				'logout':'#logoutLink'
-			}));
-			this.plot.initiateAddLine(this.tags[0]);
+			this.graphSurface.on('deploy', function() {
+				this.plot = new Plot(Tags.tagsList, User.getCurrentUserId(), User.getCurrentUser().username, "#plotArea", true, false, new PlotProperties({
+					'startDate':'#startdatepicker1',
+					'startDateInit':'start date and/or tag',
+					'endDate':'#enddatepicker1',
+					'endDateInit':'end date and/or tag',
+					'cycleTag':'#cycleTag1',
+					'zoomControl':'#zoomcontrol1',
+					'username':'#queryUsername',
+					'name':'#queryTitle',
+					'rename':'#queryTitleEdit',
+					'logout':'#logoutLink'
+				}));
+				this.plot.initiateAddLine(this.tags);
+			}.bind(this));
 		}
+	};
+
+	GraphView.prototype.createTagsPill = function() {
+		var pillsSurfaceList = [];
+		_.each(this.tags, function(tag) {
+			var pillSurface = new Surface({
+				content: '<button class="tag-pill btn' + '" id="' + tag.id + '">' + tag.description + '</button>',
+				size: [true, 50],
+				properties: {
+					backgroundColor: '#efefef',
+					textAlign: 'center',
+				}
+			});
+			pillsSurfaceList.push(pillSurface);
+		});
+		this.pillsView = new PillsView(pillsSurfaceList);
+		var pillsViewMod = new StateModifier({
+			transform: Transform.translate(0, 0, App.zIndex.readView + 1)
+		});
+		this.add(pillsViewMod).add(this.pillsView);
 	};
 
 	//assumes propertyClosure has the following methods:

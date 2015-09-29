@@ -74,7 +74,7 @@ define(function(require, exports, module) {
 
     ChartView.prototype.init = function() {
 		this.graphView = new GraphView(this.tagsToPlot);
-        this.add(new StateModifier({transform: Transform.translate(0, 125, 16)})).add(this.graphView);
+        this.add(new StateModifier({transform: Transform.translate(0, 65, 16)})).add(this.graphView);
     };
 
 	ChartView.prototype.preShow = function(state) {

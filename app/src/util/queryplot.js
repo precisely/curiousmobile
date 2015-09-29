@@ -1145,18 +1145,19 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		
 		return null;
 	}
-	this.initiateAddLine = function(tagListItem) {
+	this.initiateAddLine = function(tagList) {
 		var plot = this;
-
-		if (tagListItem instanceof TagGroup) {
-			tagListItem.fetchAll(function() { plot.addLine(tagListItem); });
-		} else {
-			var Tags = require('models/Tags');
-			Tags.getTagProperties(tagListItem.id, function(tagProperties){
-				console.log("import tag properties");
-				plot.addLine(tagListItem);
-			});
-		}
+		_.each(tagList, function(tagListItem) {
+			if (tagListItem instanceof TagGroup) {
+				tagListItem.fetchAll(function() { plot.addLine(tagListItem); });
+			} else {
+				var Tags = require('models/Tags');
+				Tags.getTagProperties(tagListItem.id, function(tagProperties){
+					console.log("import tag properties");
+					plot.addLine(tagListItem);
+				});
+			}
+		});
 	}
 
 	this.drawLine = function($elt) {

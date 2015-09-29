@@ -468,13 +468,21 @@ button.close {
 	-webkit-touch-callout: none !important;
 }
 
-.feed-pill {
-	background-color: transparent;
+.feed-pill, .tag-pill {
 	height: 30px;
 	color: #797979;
 	border-radius: 2px;
 	text-align: center;
 	margin: 10px;
+}
+
+.feed-pill {
+	background-color: transparent;
+}
+
+.tag-pill {
+	background-color: #fff;
+	border-left: 2px solid #c04f7f;
 }
 
 .feed-pill:active, .feed-pill.active-pill {
@@ -1354,4 +1362,8 @@ and (max-device-height: 568px) {
 .tag-search-input {
 	width: 100%;
 	padding: 5px;
+}
+
+#plotArea {
+	min-height: 250px;
 }
