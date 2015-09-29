@@ -399,7 +399,7 @@ button.close {
 .not-loggedin .form-control {
 	height: 50px;
 	border: 1px solid #FC3F28;
-	color: #FC3F28; 
+	color: #FC3F28;
 }
 
 .not-loggedin {
@@ -439,14 +439,13 @@ button.close {
 /*Context Menu*/
 .context-menu {
 	list-style: none;
-	margin: 120px auto !important;
 	min-width: 150px;
-	max-width: 290px;
 	-webkit-margin-before: 0;
 	-webkit-padding-start: 0;
 	background: white;
 	text-align: center;
 	color: rgb(232, 56, 56);
+  margin-top: 50%;
 }
 
 .context-menu li {
@@ -521,7 +520,7 @@ button.close {
 .people-wrapper .user-details-header .follow {
 	background-color: transparent;
 	color: #ff935f;
-} 
+}
 
 .people-wrapper .user-details-header .following {
 	background-color: #ff935f;
@@ -820,7 +819,7 @@ button.close {
 	color: #a4a4a4;
 }
 
-.post-comment input::-webkit-input-placeholder, .post-comment input::-moz-placeholder, .post-comment input:-moz-placeholder, 
+.post-comment input::-webkit-input-placeholder, .post-comment input::-moz-placeholder, .post-comment input:-moz-placeholder,
 .post-comment input:-ms-input-placeholder {
 	color: #a4a4a4;
 }
@@ -1286,7 +1285,7 @@ button.close {
 	height: 23px;
 }
 
-@media only screen 
+@media only screen
 and (max-device-height: 480px) {
 	.help-wizard .questions {
 		margin: 0px 0px 10px 0px;
@@ -1301,7 +1300,7 @@ and (max-device-height: 480px) {
 	}
 }
 
-@media only screen 
+@media only screen
 and (max-device-height: 568px) {
 	.exercise-questions .questions {
 		margin-top: 0px;
@@ -1311,4 +1310,48 @@ and (max-device-height: 568px) {
 	.exercise-questions label {
 		margin: 15px 0px 5px 0px;
 	}
+}
+
+.table {
+    display: table;
+    max-width: 100%;
+}
+
+.align-middle {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.querycontrols {
+    margin: 0px;
+}
+
+.calendarRange {
+    padding-left: 0px;
+    background-color: #EBEBEB;
+}
+
+.startDate {
+  display: inline-block;
+}
+
+.tagList {
+  height: 40px;
+  padding: 8px;
+  font-size: 15px;
+  color: #878785;
+  border-bottom: 1px solid #DBDBDB;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tagList .fa {
+  color: #FC3F28;
+  margin-right: 10px;
+}
+
+.tag-search-input {
+	width: 100%;
+	padding: 5px;
 }

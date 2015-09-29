@@ -77,7 +77,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				// store first amount for post-selection highlighting
 				this.selectStart = this.get('description').length + 1 + (formattedAmount.length == 0 ? 1 : 0);
 				this.selectEnd = this.selectStart + formattedAmount.length - 1;
-				return [this.selectStart, this.selectEnd, this.get('amountPrecision') < 0 && this.get('amount') != null]; 
+				return [this.selectStart, this.selectEnd, this.get('amountPrecision') < 0 && this.get('amount') != null];
 				// if third item is true, insert extra space at cursor
 			},
 			needExtraSpace: function() {
@@ -242,7 +242,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					}
 				}.bind(this), function (data) {
 					//callback({fail: true});
-					console.log('Entry update failed for entry: ' + this.toString());		
+					console.log('Entry update failed for entry: ' + this.toString());
 				}.bind(this), 0, false, false);
 
 			},
@@ -344,7 +344,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				var day = ("0" + date.getDate()).slice(-2);
 				dateStr = month + '/' + day + '/' + (date.getYear() + 1900);
 			} else if (typeof date == 'string' && date.indexOf('/') < 0) {
-				dateStr = Entry.getCacheKey(new Date(date));	
+				dateStr = Entry.getCacheKey(new Date(date));
 			} else {
 				dateStr = date;
 			}

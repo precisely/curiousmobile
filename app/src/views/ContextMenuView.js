@@ -20,13 +20,16 @@ define(function(require, exports, module) {
 
 	ContextMenuView.DEFAULT_OPTIONS = {
 		entry: [
-			{ class: 'select-entry', label: 'Edit Tag' },  
+			{ class: 'select-entry', label: 'Edit Tag' },
 			{ class: 'trigger-delete-entry', label: 'Delete Tag' },
 		],
 		pinnedEntry: [
 			{ class: 'trigger-delete-entry', label: 'Delete Tag' },
 		],
-		chart: {},
+		chart: [{class: 'load-snapshot', label: 'Load Snapshot'},
+            {class: 'save-snapshot', label: 'Save Snapshot'},
+            {class: 'create-chart', label: 'Create New Chart'}
+        ],
 		discussion: {},
 	};
 
@@ -39,10 +42,12 @@ define(function(require, exports, module) {
 		this.contextMenuContainer = new ContainerSurface({});
 		var backdropSurface = new Surface({
 			size: [undefined, undefined],
+            align: [0, 1],
+            origin: [0, 1],
 			properties: {
 				opacity: '0.2',
 				backgroundColor: '#000000',
-			}	
+			}
 		});
 
 		var backdropModifer = new Modifier({
@@ -59,9 +64,9 @@ define(function(require, exports, module) {
 				if (_.contains(classList, 'menu-item')) {
 					var arg = this.eventArg;
 					var target = this.target;
-					target._eventOutput.emit(classList[1], arg);	
+					target._eventOutput.emit(classList[1], arg);
 				}
-				this.hide();	
+				this.hide();
 			}
 		}.bind(this));
 
@@ -70,7 +75,7 @@ define(function(require, exports, module) {
 	};
 
 	ContextMenuView.prototype.show = function(e) {
-		this.target = e.target;	
+		this.target = e.target;
 		this.eventArg = e.eventArg;
 		var template = ContextMenuTemplate;
 		this.contextMenu.setContent(_.template(template, { buttons: this.options[e.menu] }, templateSettings));
@@ -78,7 +83,7 @@ define(function(require, exports, module) {
 	};
 
 	ContextMenuView.prototype.hide = function() {
-		this.renderController.hide({duration:0});	
+		this.renderController.hide({duration:0});
 		this.target = null;
 	};
 	module.exports = ContextMenuView;

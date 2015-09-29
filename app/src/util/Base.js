@@ -374,3 +374,18 @@ function shorten(text, maxLength, includeLastWord) {
 		return trimmedText.substring(0, Math.min(trimmedText.length, trimmedText.lastIndexOf(" "))) + '...';
 	}
 }
+
+
+function DateUtil() {
+	this.now = new Date();
+}
+
+DateUtil.prototype.getDateRangeForToday = function() {
+	var now = this.now;
+	var start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+	var end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999);
+	return {
+		start: start,
+		end: end
+	}
+}

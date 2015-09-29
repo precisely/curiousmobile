@@ -161,7 +161,9 @@ define(function(require, exports, module) {
 					this._eventOutput.emit('change-page', e);
 				} else if ( e.data == 'SprintListView') {
 					App.pageView.changePage('SprintListView');
-				}
+				} else if (e.data == 'ChartView') {
+                    App.pageView.changePage('ChartView');
+                }
 			}
 		}.bind(this));
 

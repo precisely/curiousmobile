@@ -13,6 +13,7 @@ define(function(require, exports, module) {
 	var RegisterView = require('views/RegisterView');
 	var ForgotPasswordView = require('views/ForgotPasswordView');
 	var FeedView = require('views/community/FeedView');
+	var ChartView = require('views/graph/ChartView');
 	var SprintListView = require('views/sprint/SprintListView');
 	var EntryFormView = require('views/entry/EntryFormView');
 	var ContextMenuView = require('views/ContextMenuView');
@@ -156,7 +157,7 @@ define(function(require, exports, module) {
 
 		var continueChangePage = view.preShow(state);
 		if (!continueChangePage && (state && !state.onLoad)) {
-			return false;	
+			return false;
 		} else if (state && state.onLoad) {
 			if (view.parentPage) {
 				this.goBack(view.parentPage, {new: true});
@@ -229,7 +230,7 @@ define(function(require, exports, module) {
 	};
 
 	/**
-	 * Clears navigation history. Useful when going to a top-level page from the footer or 
+	 * Clears navigation history. Useful when going to a top-level page from the footer or
 	 * slide menu.
 	 */
 	PageView.prototype.clearHistory = function() {
