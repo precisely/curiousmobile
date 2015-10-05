@@ -23,6 +23,7 @@ define(function(require, exports, module) {
 	var EventHandler = require('famous/core/EventHandler');
 	var inputSurfaceTemplate = require('text!templates/input-surface.html');
 	var repeatModifierTemplate = require('text!templates/repeat-input-modifier.html');
+	var Engine = require('famous/core/Engine');
 
 	function EntryFormView(trackView) {
 		StateView.apply(this, arguments);
@@ -160,6 +161,16 @@ define(function(require, exports, module) {
 			}
 			this.trackView.killEntryForm(state);
 		}.bind(this));
+
+		this.formContainerSurface.on('click', function(e) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				if (_.contains(e.srcElement.classList, 'form-control')) {
+					document.getElementById('entry-description').focus();
+				} else {
+					document.getElementById('entry-description').blur();
+				}
+			}
+		});
 	}
 
 	EntryFormView.prototype.setSelectedDate = function(date) {
@@ -233,7 +244,7 @@ define(function(require, exports, module) {
 			} else {
 				offset += (firstOffset < 0) ? 0 : firstOffset;
 			}
-			var transform = Transform.translate(offset, 80, _zIndex());
+			var transform = Transform.translate(offset, 0, _zIndex());
 			return {
 				transform: transform,
 				target: input.render()
@@ -266,7 +277,7 @@ define(function(require, exports, module) {
 		});
 		this.buttonsAndHelp.add(sequentialLayout);
 
-		this.formContainerSurface.add(this.buttonsAndHelp);
+		this.formContainerSurface.add(new StateModifier({transform: Transform.translate(0, 80, _zIndex())})).add(this.buttonsAndHelp);
 
 		this.renderController = new RenderController();
 		this.dateGridRenderController = new RenderController();
