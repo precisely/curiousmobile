@@ -80,11 +80,12 @@ define(function(require, exports, module) {
 			size: [100, this.options.entryHeight],
 			content: 'Delete',
 			properties: {
-				padding: '8px 26px',
+				padding: '5px 0px',
 				backgroundColor: '#dc6059',
 				fontSize: '16px',
 				lineHeight: '45px',
 				color: 'white',
+				textAlign: 'center'
 			}
 		});
 

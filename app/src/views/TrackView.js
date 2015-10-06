@@ -232,19 +232,21 @@ define(function(require, exports, module) {
 	}
 
 	TrackView.prototype.showEntryFormView = function(state) {
-		this.entryFormView.preShow(state);
-		this.entryListContainer.setProperties({
-			webkitFilter: 'blur(5px)',
-			filter: 'blur(5px)'
-		});
-		this.formContainerSurface.setProperties({
-			visibility: 'hidden'
-		});
-		this.showBackButton();
-		this.setHeaderLabel('');
-		this.showOverlayContent(this.entryFormView, function() {
-			this.onShow(state);
-		}.bind(this.entryFormView));
+		var continueShowForm = this.entryFormView.preShow(state);
+		if (continueShowForm) {
+			this.entryListContainer.setProperties({
+				webkitFilter: 'blur(5px)',
+				filter: 'blur(5px)'
+			});
+			this.formContainerSurface.setProperties({
+				visibility: 'hidden'
+			});
+			this.showBackButton();
+			this.setHeaderLabel('');
+			this.showOverlayContent(this.entryFormView, function() {
+				this.onShow(state);
+			}.bind(this.entryFormView));
+		}
 	}
 
 	TrackView.prototype.buildStateFromEntry = function(entry) {
