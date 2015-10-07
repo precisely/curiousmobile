@@ -13,9 +13,11 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 
 	Transitionable.registerMethod('spring', SpringTransition);
-	function DraggableView(targetSurface) {
+	function DraggableView(targetSurface, nonStickyEdges, minYRange) {
 		View.apply(this, arguments);
 		this.targetSurface = targetSurface;
+		this.nonStickyEdges = nonStickyEdges;
+		this.minYRange = minYRange
 		_createDraggableSurface.call(this);
 	}
 
@@ -26,12 +28,12 @@ define(function(require, exports, module) {
 	};
 
 	function _createDraggableSurface() {
-		var yRange = Math.max(0, (800 - App.height));
+		this.minYRange = this.minYRange || 1500;
 		var lastDraggablePosition = 0;
 
 		var draggable = new Draggable({
 			xRange: [0, 0],
-			yRange: [-1500, 0]
+			yRange: [-this.minYRange, 0]
 		});
 
 		draggable.subscribe(this.targetSurface);
@@ -42,19 +44,25 @@ define(function(require, exports, module) {
 			dampingRatio: 0.4
 		};
 
-		draggable.on('end', function(e) {
-			console.log(e);
-			var newYRange = Math.max(0, (document.getElementsByClassName('draggable-container')[0].offsetHeight - (App.height - 114)));
-			if (e.position[1] < lastDraggablePosition) {
-				this.setPosition([0, -newYRange, 0], spring, function() {
-					lastDraggablePosition = this.getPosition()[1];
-				}.bind(this));
-			} else if (e.position[1] != lastDraggablePosition) {
-				this.setPosition([0, 0, 0], spring, function() {
-					lastDraggablePosition = this.getPosition()[1];
-				}.bind(this));
-			}
-		});
+		if (!this.nonStickyEdges) {
+			draggable.on('end', function(e) {
+				console.log(e);
+				var newYRange = Math.max(0, (document.getElementsByClassName('draggable-container')[0].offsetHeight - (App.height - 114)));
+				if (e.position[1] < lastDraggablePosition) {
+					this.setPosition([0, -newYRange, 0], spring, function() {
+						lastDraggablePosition = this.getPosition()[1];
+					}.bind(this));
+				} else if (e.position[1] != lastDraggablePosition) {
+					this.setPosition([0, 0, 0], spring, function() {
+						lastDraggablePosition = this.getPosition()[1];
+					}.bind(this));
+				}
+			});
+		} else {
+			draggable.on('update', function(e) {
+				
+			});
+		}
 
 		var nodePlayer = new RenderNode();
 		nodePlayer.add(draggable).add(this.targetSurface);
