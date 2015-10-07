@@ -87,11 +87,13 @@ define(function(require, exports, module) {
 		if (movementY > 80) {
 			console.log('main.js: ', ' movementy: ', movementY);
 			var currentView = App.pageView.getCurrentView();
-			if (currentView && currentView.refresh) {
-				if (currentView.getScrollPosition && currentView.getScrollPosition() > 0) {
-					return;
+			if (!currentView.currentOverlay) {
+				if (currentView && currentView.refresh) {
+					if (currentView.getScrollPosition && currentView.getScrollPosition() > 0) {
+						return;
+					}
+					currentView.refresh();
 				}
-				currentView.refresh();
 			}
 		}
 	});
