@@ -177,6 +177,10 @@ define(function(require, exports, module) {
 		return true;
 	};
 
+	TrackView.prototype.getScrollPosition = function() {
+		return this.currentListView.scrollView.getPosition();
+	};
+
 	TrackView.prototype.killOverlayContent = function () {
 		this.killEntryForm();
 	};

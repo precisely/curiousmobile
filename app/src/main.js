@@ -84,7 +84,7 @@ define(function(require, exports, module) {
 	touchSync.on('end', function(data) {
 		var movementY = data.position[1];
 		// Don't show context menu if there is intent to move something
-		if (movementY > 80) {
+		if (movementY > 100) {
 			console.log('main.js: ', ' movementy: ', movementY);
 			var currentView = App.pageView.getCurrentView();
 			if (!currentView.currentOverlay) {

@@ -29,6 +29,13 @@ define(function(require, exports, module) {
 		StateView.apply(this, arguments);
 		this.trackView = trackView;
 		this.dateGridOpen = false;
+		var backgroundSurface = new Surface({
+			size: [undefined, undefined],
+			properties: {
+				background: 'rgba(123, 120, 120, 0.48)'
+			}
+		});
+		this.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(backgroundSurface);
 		_createForm.call(this);
 		_setListeners.call(this);
 	}
@@ -185,10 +192,9 @@ define(function(require, exports, module) {
 		this.clazz = 'EntryFormView';
 
 		var formContainerSurface = new ContainerSurface({
-			size: [undefined, App.height - 30],
+			size: [undefined, true],
 			classes: ['entry-form', 'draggable-container'],
 			properties: {
-				background: 'rgba(123, 120, 120, 0.48)'
 			}
 		});
 
@@ -414,6 +420,7 @@ define(function(require, exports, module) {
 
 	EntryFormView.prototype.buildStateFromEntry = function(entry) {
 		console.log('entry selected with id: ' + entry.id);
+		this.setPinned = this.setRemind = this.setRepeat = false;
 		this.entry = entry;
 		var directlyCreateEntry = false;
 		if (entry.isContinuous() || ((entry.isRemind() || entry.isRepeat()) && entry.isGhost())) {
@@ -422,7 +429,6 @@ define(function(require, exports, module) {
 			if ((tagStatsMap && tagStatsMap.typicallyNoAmount) || tag.indexOf('start') > -1 ||
 				tag.indexOf('begin') > -1 || tag.indexOf('stop') > -1 || tag.indexOf('end') > -1) {
 				directlyCreateEntry = true;
-				this.setPinned = this.setRemind = this.setRepeat = false;
 			}
 		}
 		var entryText = entry.toString();

@@ -7,8 +7,8 @@ define(function(require, exports, module) {
 	var ImageSurface = require('famous/surfaces/ImageSurface');
 	var Surface = require('famous/core/Surface');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var DraggableView = require("views/widgets/DraggableView");
 	var Modifier = require('famous/core/Modifier');
-	var Draggable = require("famous/modifiers/Draggable");
 	var StateView = require('views/StateView');
 	var RenderNode = require("famous/core/RenderNode");
 	var RenderController = require('famous/views/RenderController');
@@ -74,37 +74,8 @@ define(function(require, exports, module) {
 				}
 			});
 
-			var yRange = Math.max(0, (800 - App.height));
-			var lastDraggablePosition = 0;
-
-			var draggable = new Draggable({
-				xRange: [0, 0],
-				yRange: [-1500, 0]
-			});
-
-			draggable.subscribe(peopleSurface);
-
-			draggable.on('end', function(e) {
-				console.log(e);
-				var newYRange = Math.max(0, (document.getElementsByClassName('people-detail')[0].offsetHeight - (App.height - 114)));
-				if (e.position[1] < lastDraggablePosition) {
-					this.setPosition([0, -newYRange, 0], {
-						duration: 300
-					}, function() {
-						lastDraggablePosition = this.getPosition()[1];
-					}.bind(this));
-				} else if (e.position[1] != lastDraggablePosition) {
-					this.setPosition([0, 0, 0], {
-						duration: 300
-					}, function() {
-						lastDraggablePosition = this.getPosition()[1];
-					}.bind(this));
-				}
-			});
-
-			var nodePlayer = new RenderNode();
-			nodePlayer.add(draggable).add(peopleSurface);
-			this.renderController.show(nodePlayer);
+			this.draggableDetailsView = new DraggableView(peopleSurface);
+			this.renderController.show(this.draggableDetailsView);
 		}.bind(this), function() {
 			App.pageView.goBack();
 		}.bind(this));

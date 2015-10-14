@@ -30,10 +30,11 @@ define(function(require, exports, module) {
 	function _createDraggableSurface() {
 		this.minYRange = this.minYRange || 1500;
 		var lastDraggablePosition = 0;
+		var dragToRefresh = this.nonStickyEdges ? 0 : 100;
 
 		var draggable = new Draggable({
 			xRange: [0, 0],
-			yRange: [-this.minYRange, 0]
+			yRange: [-this.minYRange, dragToRefresh]
 		});
 
 		draggable.subscribe(this.targetSurface);
