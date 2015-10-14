@@ -105,6 +105,7 @@ define(function(require, exports, module) {
 				this.highlightSelector(this.pinSurface);
 				this.submit();
 				this.renderController.hide();
+				this.dateGridRenderController.hide();
 			}
 		}.bind(this));
 
@@ -115,7 +116,11 @@ define(function(require, exports, module) {
 						_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {
 					var repeatEachCheckbox = document.getElementById('confirm-each-repeat');
 					repeatEachCheckbox.checked = !repeatEachCheckbox.checked;
-				} else if (_.contains(classList, 'input-group')) {
+				} else if (_.contains(classList, 'date-picker-field')) {
+					if (cordova) {
+						cordova.plugins.Keyboard.close();
+					}
+					document.getElementById('entry-description').blur();
 					if(this.dateGridOpen) {
 						this.dateGridRenderController.hide();
 					} else {
@@ -130,6 +135,8 @@ define(function(require, exports, module) {
 						}.bind(this));
 					}
 					this.dateGridOpen = !this.dateGridOpen;
+				} else if (_.contains(e.srcElement.classList, 'create-entry-button')) {
+					this.submit();
 				}
 			}
 		}.bind(this));
@@ -161,16 +168,6 @@ define(function(require, exports, module) {
 			}
 			this.trackView.killEntryForm(state);
 		}.bind(this));
-
-		this.formContainerSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				if (_.contains(e.srcElement.classList, 'form-control')) {
-					document.getElementById('entry-description').focus();
-				} else {
-					document.getElementById('entry-description').blur();
-				}
-			}
-		});
 	}
 
 	EntryFormView.prototype.setSelectedDate = function(date) {
@@ -211,6 +208,10 @@ define(function(require, exports, module) {
 			content: _.template(inputSurfaceTemplate, {
 				tag: ''
 			}, templateSettings),
+		});
+
+		this.inputSurface.on('click', function(e) {
+			document.getElementById('entry-description').focus();
 		});
 
 		this.inputSurface.on('keyup', function(e) {
@@ -299,7 +300,7 @@ define(function(require, exports, module) {
 		});
 		this.formContainerSurface.add(mod).add(this.renderController);
 		this.formContainerSurface.add(dateGridRenderControllerMod).add(this.dateGridRenderController);
-		this.draggableEntryFormView = new DraggableView(this.formContainerSurface);
+		this.draggableEntryFormView = new DraggableView(this.formContainerSurface, true, 300);
 		this.add(this.draggableEntryFormView);
 	}
 	

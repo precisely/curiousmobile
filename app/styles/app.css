@@ -1499,11 +1499,16 @@ button.close {
 	resize: none;
 }
 
-.sprint-details button, .sprint-activity button, .people-detail button {
+.sprint-details button, .sprint-activity button, .people-detail button , .create-entry-button {
 	background-color: transparent;
 	border: 1px solid #979797;
 	border-radius: 2px;
 	font-weight: 500;
+}
+
+.create-entry-button {
+	border: 1px solid #fff;
+	color: #fff;
 }
 
 .upper-body button {
