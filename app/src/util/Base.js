@@ -41,13 +41,13 @@ String.prototype.endsWith = function(str) {
 	return this.length >= str.length && this.substr(this.length - str.length) == str;
 }
 
-/**                                                                                                                      
- * Universal indexOf method to get index by passing regex as argument                                                    
- */                                                                                                                      
-String.prototype.indexOfRegex = function(regex){                                                                         
-	var match = this.match(regex);                                                                                       
-	return match ? this.indexOf(match[0]) : -1;                                                                          
-}  
+/**
+ * Universal indexOf method to get index by passing regex as argument
+ */
+String.prototype.indexOfRegex = function(regex){
+	var match = this.match(regex);
+	return match ? this.indexOf(match[0]) : -1;
+}
 /*
  * Simple, clean Javascript inheritance scheme
  *
@@ -76,6 +76,13 @@ function inherit(subclass, superclass) {
 	var newSubPrototype = new TempClass();
 	newSubPrototype.constructor = subclass;
 	subclass.prototype = newSubPrototype;
+}
+
+/*
+ * HTML escape utility methods
+ */
+function escapehtml(str) {
+    return (''+str).replace(/&/g,'&amp;').replace(/>/g,'&gt;').replace(/</g,'&lt;').replace(/"/g,'&quot;').replace(/  /g,'&nbsp;&nbsp;');
 }
 
 /*
@@ -342,23 +349,23 @@ function checkData(data, status, errorMessage, successMessage) {
  * A method used to trim a given text upto the given length including or excluding the last word at boundary.
  * For example: Trimming a string "The quick brown fox jumps over the lazy dog" with following max length should result
  * something (consider includeLastWord = false}
- * 
+ *
  * Max 1:function""
  * Max 2:function""
  * Max 5:function"The"
  * Max 15:function"The quick brown"
  * Max 21:function"The quick brown fox"
  * Max 70:function"The quick brown fox jumps over the lazy dog"
- * 
+ *
  * (Now consider includeLastWord = true}
- * 
+ *
  * Max 1:function"The"
  * Max 2:function"The"
  * Max 5:function"The quick"
  * Max 15:function"The quick brown"
  * Max 21:function"The quick brown fox jumps"
  * Max 70:function"The quick brown fox jumps over the lazy dog"
- * 
+ *
  * http://stackoverflow.com/questions/5454235/javascript-shorten-string-without-cutting-words
  */
 function shorten(text, maxLength, includeLastWord) {

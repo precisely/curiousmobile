@@ -483,6 +483,7 @@ button.close {
 .tag-pill {
 	background-color: #fff;
 	border-left: 2px solid #c04f7f;
+  white-space: nowrap;
 }
 
 .feed-pill:active, .feed-pill.active-pill {
@@ -1366,4 +1367,11 @@ and (max-device-height: 568px) {
 
 #plotArea {
 	min-height: 250px;
+  height: 100%;
+}
+
+.start-date-picker .fa, .end-date-picker .fa {
+  color: #6f6f6f;
+  font-size: 20px;
+  vertical-align: bottom;
 }

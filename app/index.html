@@ -27,8 +27,7 @@
 
 		<!-- build:js(app/) src/polyfills.js -->
 		<script type="text/javascript" src="src/util/Base.js"></script>
-        <script type="text/javascript" src="src/util/treeview.js"></script>
-        <script type="text/javascript" src="src/util/taglist.js"></script>
+
 		<script type="text/javascript" src="lib/famous-polyfills/functionPrototypeBind.js"></script>
 		<script type="text/javascript" src="lib/famous-polyfills/classList.js"></script>
 		<script type="text/javascript" src="lib/famous-polyfills/requestAnimationFrame.js"></script>
@@ -38,15 +37,12 @@
 		<!-- process:remove:dist -->
 		<script type="text/javascript" src="lib/requirejs/require.js" data-main="src/requireConfig"></script>
 		<!-- /process -->
-		<script src="lib/angular/angular.js"></script>
-		<script src="lib/angular-resource/angular-resource.js"></script>
 		<!-- process:remove:dev -->
 		<!-- /process -->
 		<script type="text/javascript">
 			require.config({
 				baseUrl: './src/'
 			});
-			require(['main']);
 		</script>
 		<script type="text/javascript">
 			function onLoad() {
@@ -75,9 +71,8 @@
 		</script>
 		<script type="text/javascript" src="cordova.js"></script>
 		<script type="text/javascript" charset="utf-8" src="PushNotification.js"></script>
-		<script type="text/javascript" src="lib/jquery/dist/jquery.min.js"></script>
-        <script type="text/javascript" src="src/util/jquery.flot.js"></script>
-        <script type="text/javascript" src="src/util/queryplot.js"></script>
+        <script type="text/javascript" src="src/util/treeview.js"></script>
+        <script type="text/javascript" src="src/util/taglist.js"></script>
 	</head>
 
 	<body onload="onLoad()" >

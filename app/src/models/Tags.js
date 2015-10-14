@@ -101,14 +101,12 @@ define(function(require, exports, module) {
 
 	Tags.getTagProperties = function(id, callback) {
 		u.backgroundJSON("loading tag information", App.serverUrl + "/tag/getTagPropertiesData?callback=?",
-			getCSRFPreventionObject("getTagPropertiesCSRF", {id : id}),
+            u.makeGetArgs(u.getCSRFPreventionObject("getTagPropertiesCSRF", {id : id})),
 			function(data) {
 				if (!u.checkData(data))
 					return;
 
-				this.isContinuous = data.isContinuous;
-				this.showPoints = data.showPoints;
-				callback(this);
+				callback(data);
 			}.bind(this));
 	}
 

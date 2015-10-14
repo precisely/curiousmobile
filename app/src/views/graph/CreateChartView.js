@@ -68,7 +68,7 @@ define(function(require, exports, module) {
 		});
 
 		Engine.on('keyup', function (event) {
-			console.log(event);	
+			console.log(event);
 			if (_.contains(event.srcElement.classList, 'tag-search-input')) {
 				if (event.which != 13) {
 					var searchTerm = document.getElementsByClassName('tag-search-input')[0].value;
@@ -163,7 +163,6 @@ define(function(require, exports, module) {
 			direction: 1
 		});
 		Tags.fetch(function (data) {
-			console.log(data);
 			_renderTagsList.call(this, data);
 		}.bind(this));
 
