@@ -110,7 +110,7 @@ define(function(require, exports, module) {
 		var time = u.formatAMPM(date);
 		var displayText = this.entry.removeSuffix();
 		if (this.entry.isRemind()) {
-			return '<div class="help"><i class="fa fa-bell"></i> Reminder set </div>' + displayText;
+			return '<div class="help"><i class="fa fa-bell"></i> Alert set </div>' + displayText;
 		} else if (this.entry.isDaily()) {
 			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every day</div>' + displayText;
 		} else if (this.entry.isWeekly()) {
