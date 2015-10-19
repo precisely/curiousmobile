@@ -37,7 +37,7 @@ define(function(require, exports, module) {
 
 	GraphView.prototype.init = function() {
 		this.graphSurface = new Surface({
-			size: [undefined, App.height - 300],
+			size: [undefined, App.height - 250],
 			content: _.template(GraphTemplate, templateSettings)
 		});
 
@@ -110,9 +110,10 @@ define(function(require, exports, module) {
             }
         }.bind(this));
 
+        this.endDateString = this.startDateString = '-';
         this.dateLabelSurface = new Surface({
             size: [158, 28],
-            content: '01/11/14 - 01/16/14',
+            content: ' - ',
             properties: {
                 border: '1px solid #C3C3C3',
                 borderRadius: '2px',
@@ -138,7 +139,7 @@ define(function(require, exports, module) {
             this.dateGridRenderController.show(this.dateGrid);
             this.dateGrid.on('select-date', function(date) {
                 console.log('CalenderView: Date selected');
-                this.setSelectedDate(date);
+                this.setSelectedDate(date, dateType);
                 this.dateGridRenderController.hide();
                 this.dateGridOpen = false;
             }.bind(this));
@@ -146,13 +147,18 @@ define(function(require, exports, module) {
         this.dateGridOpen = !this.dateGridOpen;
     }
 
-    GraphView.prototype.setSelectedDate = function(date) {
+    GraphView.prototype.setSelectedDate = function(date, dateType) {
         var App = window.App;
         this.selectedDate = date;
         var year = date.getFullYear().toString();
-
-        this.dateLabelSurface.setContent(('0' + date.getDate()).slice(-2) + '/'  + ('0' + (date.getMonth()+1)).slice(-2) + '/'
-            + year.substring(2));
+        if (dateType == 'startDate') {
+            this.startDateString = ('0' + date.getDate()).slice(-2) + '/'  + ('0' + (date.getMonth()+1)).slice(-2) + '/'
+                + year.substring(2);
+        } else {
+            this.endDateString = ('0' + date.getDate()).slice(-2) + '/'  + ('0' + (date.getMonth()+1)).slice(-2) + '/'
+                + year.substring(2);
+        }
+        this.dateLabelSurface.setContent(this.startDateString + ' - ' + this.endDateString);
     }
 
 	GraphView.prototype.createTagsPill = function() {
@@ -213,7 +219,7 @@ define(function(require, exports, module) {
 		}
 		this.setName = function(name) {
 			if (this.nameField)
-				this.nameField.text(name);
+				this.nameField.text(shorten(name, 100, false));
 		}
 		this.setUsername = function(name) {
 			if (this.usernameField)

@@ -70,9 +70,18 @@ define(function(require, exports, module) {
         return [start, end];
     }
 
+    PlotMobile.prototype.clearGraphs = function () {
+        for (var i in this.lines) {
+            var line = this.lines[i];
+            console.log('Plot ID: ' + this.id);
+            console.log('Line ID: ' + line.id);
+            this.removePlotLine(this.id, line.id);
+        }
+    };
 
     PlotMobile.prototype.initiateAddLine = function (tagList) {
         var plot = this;
+        this.clearGraphs();
         _.each(tagList, function (tagListItem) {
             if (tagListItem instanceof TagGroup) {
                 tagListItem.fetchAll(function () { plot.addLine(tagListItem); });

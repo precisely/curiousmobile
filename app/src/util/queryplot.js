@@ -58,7 +58,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
         plot.clearStorage();
     });
 
-
     this.nextLineId = 0;
     this.lines = [];
 
@@ -171,16 +170,7 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
             plotLine.loadPlotData();
         }
     }
-    this.clearGraphs = function () {
-        if (confirm("Are you sure you want to clear the graph and start over?")) {
-            for (var i in this.lines) {
-                var line = this.lines[i];
-                console.log('Plot ID: ' + this.id);
-                console.log('Line ID: ' + line.id);
-                removePlotLine(this.id, line.id);
-            }
-        }
-    }
+
     this.store = function() {
         var plotData = [];
         localStorage['plotUserId' + this.id] = this.userId;
@@ -260,7 +250,11 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
         this.queuePostJSON("sharing graph", this.makePostUrl("saveSnapshotData"), { name: this.getName() + ' (snapshot)', snapshotData: plotDataStr },
             function(data) {
                 if (this.checkData(data, '', "Error while saving snapshot")) {
-                    window.location = this.makePlainUrl('discuss?plotIdMessage=' + data['plotDataId']);
+                    if (data.success) {
+                        window.location = this.makePlainUrl('social#discussions/' + data.discussionHash);
+                    } else {
+                        this.showAlert(data.message);
+                    }
                 }
             });
     }
@@ -793,8 +787,8 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
                 plot.activeLineId = undefined;
             }
         });
-        plotArea.off("plotclick");
-        plotArea.on("plotclick", function(event, pos, item) {
+        plotArea.off("plothover");
+        plotArea.on("plothover", function(event, pos, item) {
             if (item) {
                 var now = new Date().getTime();
                 //if (plot.lastItemClicked == null) {
@@ -826,7 +820,7 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
                 }
                 if (!plotLine.isSmoothLine()) {	// If current line clicked is a actual line (parent line)
                     console.log('plotclick: parent of a smoot line with line id: ' + plotLine.id);
-                    dialogDiv.html(plot.plotData[item.seriesIndex].popuplabel + ': <a href="' + plot.properties.showDataUrl(plot.userId, plot.userName, item.datapoint[0])
+                    dialogDiv.html(item.series.data[item.dataIndex][2].t + ': <a href="' + plot.properties.showDataUrl(plot.userId, plot.userName, item.datapoint[0])
                         + '">' + $.datepicker.formatDate('M d', new Date(item.datapoint[0])) + "</a>"
                         + ' (' + item.datapoint[1] + ')');
                     dialogDiv.dialog({ position: { my: "left+3 bottom-5", at: "left+" + pos.pageX + " top+" + pos.pageY, of: ".container", collision: "fit"}, width: 140, height: 62});
@@ -1049,6 +1043,10 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
     this.setEndDate = function(date) {
         return this.properties.setEndDate(date);
     }
+
+    this.removePlotLine = function (plotId, lineId) {
+        queryPlots[plotId].removeLine(lineId);
+    }
 }
 
 function parseISO8601(str) {
@@ -1092,10 +1090,6 @@ function renamePlotLine(plotId, lineId) {
     }
 }
 
-function removePlotLine(plotId, lineId) {
-    queryPlots[plotId].removeLine(lineId);
-}
-
 function removeTagNameFromLine(plotId, lineId, tagName) {
     queryPlots[plotId].removeTagNameFromLine(lineId, tagName);
 }
@@ -1130,8 +1124,7 @@ function PlotLine(p) {
     this.freqDataWidth = p.freqDataWidth ? p.freqDataWidth : 0;
     this.freqLine = p.freqData ? 1 : null;
     this.fill = p.fill == undefined ? true : (p.fill ? true : false);
-    this.isCycle = p.isCycle ? true : false; // true if this line is used as
-
+    this.isCycle = p.isCycle ? true : false; // true if this line is used as cyclic data
 
     if (this.isCycle) {
         this.minRange = p.minRange ? p.minRange : 0;
@@ -1224,6 +1217,7 @@ function PlotLine(p) {
         return save;
     }
 
+    // TODO: Not reuired in mobile graph
     this.handleDropTag = function(event, ui) {
         var plotLine = this;
         var $sourceElement = $(ui.draggable[0]);
@@ -1335,7 +1329,7 @@ function PlotLine(p) {
         if (this.isContinuous != val) {
             this.isContinuous = val;
             var plotLine = this;
-            this.queueJSON("saving setting", this.makeGetUrl("setTagPropertiesData"), this.plot.getCSRFPreventionObject("setTagPropertiesDataCSRF",
+            this.queueJSON("saving setting", this.makeGetUrl("setTagPropertiesData"), getCSRFPreventionObject("setTagPropertiesDataCSRF",
                     { tags:$.toJSON(this.getTags()), isContinuous:val ? 'true' : 'false' }),
                 function(result){
                     if (this.checkData(result)) {
@@ -1348,7 +1342,7 @@ function PlotLine(p) {
         if (this.showPoints != val) {
             this.showPoints = val;
             var plotLine = this;
-            this.plot.queueJSON("saving setting", this.plot.makeGetUrl("setTagPropertiesData"), this.plot.getCSRFPreventionObject("setTagPropertiesDataCSRF",
+            this.plot.queueJSON("saving setting", this.plot.makeGetUrl("setTagPropertiesData"), getCSRFPreventionObject("setTagPropertiesDataCSRF",
                     { tags:$.toJSON(this.getTags()), showPoints:val ? 'true' : 'false' }),
                 function(result){
                     if (this.checkData(result)) {
@@ -1397,7 +1391,7 @@ function PlotLine(p) {
 			<h3><div class="plotGroup"><span id="plotline' + idSuffix + '" class="description">'
             + escapehtml(this.name) + '</span> <span class="plotGroup">'
             + (this.snapshot ? '' : '<img class="edit" onclick="renamePlotLine(\'' + this.plot.id
-            + "','" + this.id + '\')" src="/images/edit.gif"/><span class="delete" onclick="removePlotLine(\'' +
+            + "','" + this.id + '\')" src="/images/edit.gif"/><span class="delete" onclick="this.removePlotLine(\'' +
             this.plot.id + "','" + this.id + '\')" >x</span>')
             + '</span></div></h3><div class="plotlineinfo hide"><div id="editplotline'
             + idSuffix + '" style="position:absolute;left:15px;top:15px"></div>';
@@ -1617,7 +1611,7 @@ function PlotLine(p) {
         var method = this.sumData ? "getSumPlotDescData" : "getPlotDescData";
         var plotLine = this;
 
-        this.plot.queueJSON("loading graph data", this.plot.makeGetUrl(method), this.plot.getCSRFPreventionObject(method + "CSRF", {tags: $.toJSON(this.getTags()),
+        this.plot.queueJSON("loading graph data", this.plot.makeGetUrl(method), getCSRFPreventionObject(method + "CSRF", {tags: $.toJSON(this.getTags()),
                 startDate:startDate == null ? "" : startDate.toUTCString(),
                 endDate:endDate == null ? "" : endDate.toUTCString(),
                 timeZoneName:timeZoneName }),
@@ -2013,7 +2007,7 @@ function PlotLine(p) {
             if (maxTime == undefined || time > maxTime) maxTime = time;
             if (minVal == undefined || entry[1] < minVal) minVal = entry[1];
             if (maxVal == undefined || entry[1] > maxVal) maxVal = entry[1];
-            d1Data.push([entry[0], plotLine.flatten ? (entry[1] > 0.0 ? 1.0 : (entry[1] < 0 ? -1.0 : 0)) : entry[1]]);
+            d1Data.push([entry[0], plotLine.flatten ? (entry[1] > 0.0 ? 1.0 : (entry[1] < 0 ? -1.0 : 0)) : entry[1], {t:entry[2] ? entry[2] : this.name}]);
             if (plotLine.name == null)
                 plotLine.name = entry['description'];
 

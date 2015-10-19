@@ -1365,6 +1365,10 @@ and (max-device-height: 568px) {
 	padding: 5px;
 }
 
+.graphData {
+ height: 100%;
+}
+
 #plotArea {
 	min-height: 250px;
   height: 100%;
