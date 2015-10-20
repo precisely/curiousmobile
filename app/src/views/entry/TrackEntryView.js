@@ -12,7 +12,7 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 	var Entry = require('models/Entry');
 
-	function EntryReadView(entry, properties) {
+	function EntryReadView(entry) {
 		EntryView.apply(this, arguments);
 		this.menu = 'entry';
 		_addSurface.call(this);
@@ -100,10 +100,6 @@ define(function(require, exports, module) {
 		this.add(entryModifier).add(this.entrySurface);
 	}
 
-	EntryReadView.prototype.setEntry = function(entry) {
-		this.entry = entry;
-		this.entrySurface.setContent(this.entry.toString());
-	}
 
 	EntryReadView.prototype.getDisplayText = function() {
 		var date = new Date(this.entry.date);

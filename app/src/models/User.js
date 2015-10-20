@@ -161,5 +161,80 @@ define(function(require, exports, module) {
 		});
 	};
 
-	module.exports = User;
+	User.update = function(updatedData, successCallback, failCallback) {
+		u.queueJSONAll('Updating user details', App.serverUrl + '/api/user/' + updatedData.id, JSON.stringify(updatedData),
+			function(data) {
+				if (u.checkData(data)) {
+					if (data.success) {
+						successCallback({hash: data.hash});
+					} else {
+						u.showAlert(data.message);
+						if (failCallback) {
+							failCallback();
+						}
+					}
+				}
+			}, function(error) {
+				console.log('error: ', error);
+			}, null, 'PUT');
+	};
+
+	User.addInterestTags = function(tags, userHash, successCallback, failCallback) {
+        u.queueJSONAll('Adding interest tags', App.serverUrl + '/api/data/action/addInterestTagData', tags,
+            function(data) {
+                if (u.checkData(data)) {
+                    if (data.interestTags) {
+                        successCallback({hash: userHash});
+                    } else {
+                        u.showAlert(data.message);
+                        if (failCallback) {
+                            failCallback();
+                        }
+                    }
+                }
+            }, function(error) {
+                console.log('error: ', error);
+            }, null, 'POST');
+    };
+
+    User.deleteInterestTags = function(tags, userHash, successCallback, failCallback) {
+        u.queueJSONAll('Deleting interest tags', App.serverUrl + '/api/data/action/deleteInterestTagData', tags,
+            function(data) {
+                if (u.checkData(data)) {
+                    if (data.interestTags) {
+                        successCallback();
+                    } else {
+                        u.showAlert(data.message);
+                        if (failCallback) {
+                            failCallback();
+                        }
+                    }
+                }
+            }, function(error) {
+                console.log('error: ', error);
+            }, null, 'POST');
+    };
+
+    User.saveAvatar = function(updatedData, successCallback, failCallback) {
+        console.log("here", updatedData);
+        var httpArgs = { processData: false, contentType: false, requestMethod:'POST' };
+        console.log("here1 " +  JSON.stringify(updatedData) );
+        u.queueJSONAll('Updating user avatar', App.serverUrl + '/api/user/action/saveAvatar', updatedData,
+            function(data) {
+                if (u.checkData(data)) {
+                    if (data.success) {
+                        successCallback();
+                    } else {
+                        u.showAlert(data.message);
+                        if (failCallback) {
+                            failCallback();
+                        }
+                    }
+                }
+            }, function(error) {
+                console.log('error: ', error);
+            }, null, httpArgs);
+    };
+
+    module.exports = User;
 });

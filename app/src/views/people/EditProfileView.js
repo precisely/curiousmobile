@@ -1,6 +1,7 @@
 define(function(require, exports, module) {
 	'use strict';
 	var BaseView = require('views/BaseView');
+    var Engine = require('famous/core/Engine');
 	var View = require('famous/core/View');
 	var Transitionable = require('famous/transitions/Transitionable');
 	var Transform = require('famous/core/Transform');
@@ -16,6 +17,8 @@ define(function(require, exports, module) {
 	var Draggable = require("famous/modifiers/Draggable");
 	var EditUserProfileTemplate = require('text!templates/edit-user-profile.html');
 	var AddInterestTagView = require('views/people/AddInterestTagView');
+    var UpdateAvatarView = require('views/people/UpdateAvatarView');
+    var InterestTagView = require('views/people/InterestTagView');
 	var User = require('models/User');
 	var u = require('util/Utils');
 
@@ -23,6 +26,9 @@ define(function(require, exports, module) {
 		BaseView.apply(this, arguments);
 		this.parentPage = 'FeedView';
 		this.addInterestTagView = new AddInterestTagView(this);
+        this.UpdateAvatarView = new UpdateAvatarView(this);
+        this.InterestTagView = new InterestTagView(this);
+        Engine.on('click', onTap.bind(this));
 
 		this.renderController = new RenderController();
 		var mod = new StateModifier({
@@ -57,17 +63,53 @@ define(function(require, exports, module) {
 
 	EditProfileView.prototype.showAddInterestTagForm = function() {
 		this.editPeopleSurface.setProperties({
-			webkitFilter: 'blur(20px)',
-			filter: 'blur(20px)'
+			webkitFilter: 'blur(0px)',
+			filter: 'blur(0px)'
 		});
 		this.showBackButton();
 		this.setHeaderLabel('');
+        //this.setRightIcon('SAVE');
 		this.showOverlayContent(this.addInterestTagView, function() {
 			console.log('overlay successfully created');
-		}.bind(this.entryFormView));
+		}.bind(this.addInterestTagView));
 	}
 
-	EditProfileView.prototype.refresh = function() {
+    EditProfileView.prototype.killOverlayContent = function () {
+        this.killEntryForm();
+    };
+
+    EditProfileView.prototype.killEntryForm = function(state) {
+        this.editPeopleSurface.setProperties({
+            webkitFilter: 'blur(0px)',
+            filter: 'blur(0px)'
+        });
+        BaseView.prototype.killOverlayContent.call(this);
+        console.log("overlay killed");
+        this.showMenuButton();
+        this.showBackButton();
+        this.setHeaderLabel('EDIT PROFILE');
+        //this.setRightIcon('SAVE');
+        this.preShow(state);
+    }
+
+    EditProfileView.prototype.showProfileUpdateForm = function() {
+        this.editPeopleSurface.setProperties({
+            webkitFilter: 'blur(0px)',
+            filter: 'blur(0px)'
+        });
+        this.showBackButton();
+        this.setHeaderLabel('');
+        this.setRightIcon('');
+        this.showOverlayContent(this.UpdateAvatarView, function() {
+            console.log('overlay successfully created');
+        }.bind(this.UpdateAvatarView));
+    }
+
+    EditProfileView.prototype.addInterestTagSurface = function(tag) {
+        var tagView = new InterestTagView(tag);
+    }
+
+    EditProfileView.prototype.refresh = function() {
 		User.show(this.hash, function(peopleDetails) {
 
 			this.setHeaderLabel(peopleDetails.user.name);
@@ -80,16 +122,62 @@ define(function(require, exports, module) {
 				}
 			});
 
-			editPeopleSurface.on('click', function(e) {
+            this.saveSurface = new Surface({
+                size: [window.innerWidth - 250, 64],
+                content: 'SAVE',
+                properties: {
+                    fontSize: '15px',
+                    fontWeight: 'normal',
+                    color: '#F14A42',
+                    textAlign: 'center',
+                    padding: '21px 0'
+                }
+            });
+
+            this.setHeaderLabel('EDIT PROFILE');
+            this.setRightIcon(this.saveSurface);
+
+            this.saveSurface.on('click', function(e) {
+                if (u.isAndroid() || (e instanceof CustomEvent)) {
+                    if (this.currentOverlay) {
+                        var tagName = $('#tagName').serializeObject();
+                        var userHash = peopleDetails.user.hash;
+                        User.addInterestTags(tagName, userHash, function (state) {
+                            App.pages.EditProfileView.prototype.killOverlayContent();
+                            App.pageView.changePage('EditProfileView', state);
+                        });
+                    } else {
+                        var formData = $('#userDetailsEdit').serializeObject();
+                        formData.id = peopleDetails.user.hash;
+                        User.update(formData, function (state) {
+                            App.pageView.changePage('PeopleDetailView', state);
+                        });
+                    }
+                }
+            }.bind(this));
+
+            editPeopleSurface.on('click', function(e) {
                 var classList;
                 if (u.isAndroid() || (e instanceof CustomEvent)) {
                     classList = e.srcElement.classList;
                     if (_.contains(classList, 'new-tag')) {
                         this.editPeopleSurface = editPeopleSurface;
                         this.showAddInterestTagForm();
-                    }
-                }
+                    } else if (_.contains(classList, 'delete-tag')) {
+                        var tagName = $('#tagName').serializeObject();
+                        var userHash = peopleDetails.user.hash;
+                        User.addInterestTags(tagName, userHash, function (state) {
+                          App.pages.EditProfileView.prototype.killOverlayContent();
+                         App.pageView.changePage('EditProfileView', state);
+                        });
+                    } else if (_.contains(classList, 'choose-image')) {
+                      this.editPeopleSurface = editPeopleSurface;
+                      this.showProfileUpdateForm();
+                 }
+            }
 			}.bind(this));
+
+            //interestTagSurface(peopleDetails.user.interestTags);
 
 			var yRange = Math.max(0, (800 - App.height));
 			var lastDraggablePosition = 0;
@@ -127,6 +215,22 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	App.pages['EditProfileView'] = EditProfileView;
+/*    function interestTagSurface(interestTags) {
+        _.forEach(interestTags, function (tag) {
+            this.addInterestTagSurface(tag);
+        }.bind(this));
+    }*/
+
+    function onTap(event) {
+        var inputType;
+        if (u.isAndroid() || (event instanceof CustomEvent)) {
+            inputType = event.srcElement.type;
+            if (inputType === 'text' || inputType === 'textarea' || inputType === 'password' || inputType === "radio") {
+                event.srcElement.focus();
+            }
+        }
+    }
+
+    App.pages['EditProfileView'] = EditProfileView;
 	module.exports = EditProfileView;
 });

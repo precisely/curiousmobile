@@ -12,25 +12,27 @@ define(function(require, exports, module) {
     var ContainerSurface = require('famous/surfaces/ContainerSurface');
     var Surface = require('famous/core/Surface');
     var InterestTagTemplate = require('text!templates/interest-tag.html');
+    var User = require('models/User');
     var u = require('util/Utils');
 
-    function AddInterestTagView() {
+    function InterestTagView(tag) {
         StateView.apply(this, arguments);
-        _createNewTags.call(this);
+        _createTagListSurface.call(this);
     }
 
-    AddInterestTagView.prototype = Object.create(StateView.prototype);
-    AddInterestTagView.prototype.constructor = AddInterestTagView;
+    InterestTagView.prototype = Object.create(StateView.prototype);
+    InterestTagView.prototype.constructor = InterestTagView;
 
-    AddInterestTagView.DEFAULT_OPTIONS = {
+    InterestTagView.DEFAULT_OPTIONS = {
     };
 
-    function _createNewTags() {
-        var formContainerSurface = new Surface({
-            size: [undefined, App.height-114],
-            content: _.template(InterestTagTemplate, templateSettings),
+    function _createTagListSurface() {
+        var tagSurface = new Surface({
+            size: [undefined, App.height - 114],
+            /*content: _.template(InterestTagTemplate,peopleDetails, templateSettings),*/
+            content: this.tag,
             properties: {
-                background: 'rgba(123, 120, 120, 0.48)'
+                background: ''
             }
         });
 
@@ -38,8 +40,7 @@ define(function(require, exports, module) {
             transform: Transform.translate(0, 0, 99)
         });
 
-        this.add(mod).add(formContainerSurface);
+        this.add(mod).add(tagSurface);
     }
-
-    module.exports = AddInterestTagView;
+    module.exports = InterestTagView;
 });

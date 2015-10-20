@@ -208,10 +208,26 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			u.queueJSONAll(description, url, args, successCallback, failCallback, delay, post ? 'POST' : 'GET', background);
 		}
 
-		Utils.queueJSONAll = function(description, url, args, successCallback, failCallback, delay, requestMethod, background) {
+		Utils.queueJSONAll = function(description, url, args, successCallback, failCallback, delay, httpArgs, background) {
 			var currentLoginSession = u._loginSessionNumber; // cache current login session
 			var stillRunning = true;
 			var alertShown = false;
+            var requestMethod = (httpArgs.requestMethod || 'get').toUpperCase();
+            var contentType;
+            var processData;
+
+            if (httpArgs.contentType == false) {
+                contentType = httpArgs.contentType;
+            } else {
+                contentType = (requestMethod == 'PUT') ? 'application/json; charset=UTF-8' : 'application/x-www-form-urlencoded; charset=UTF-8'
+            }
+
+            if (httpArgs.processData == false) {
+                processData = httpArgs.processData;
+            } else {
+                processData = true;
+            }
+
 			window.setTimeout(function() {
 				if (stillRunning) {
 					stillRunning = false;
@@ -278,7 +294,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 					$.ajax({
 						type: requestMethod,
 						dataType: "json",
-						contentType: (requestMethod == 'PUT') ? 'application/json; charset=UTF-8' : 'application/x-www-form-urlencoded; charset=UTF-8', 
+						contentType: (requestMethod == 'PUT') ? 'application/json; charset=UTF-8' : 'application/x-www-form-urlencoded; charset=UTF-8',
 						url: url,
 						data: args,
 						timeout: 20000 + (delay > 0 ? delay : 0)
@@ -291,13 +307,15 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			} else { // first call
 				if (!background) {
 					++u.numJSONCalls;
-					u.spinnerStart();	
+					u.spinnerStart();
 				}
 
 				$.ajax({
 					type: requestMethod,
 					dataType: "json",
-					contentType: (requestMethod == 'PUT') ? 'application/json; charset=UTF-8' : 'application/x-www-form-urlencoded; charset=UTF-8', 
+                    contentType: contentType,
+                    processData: processData,
+					//contentType: (requestMethod == 'PUT') ? 'application/json; charset=UTF-8' : 'application/x-www-form-urlencoded; charset=UTF-8',
 					url: url,
 					data: args,
 					timeout: 20000 + (delay > 0 ? delay : 0)
@@ -419,14 +437,14 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			var spinnerDialog = window.plugins? window.plugins.spinnerDialog : false;
 			if (window.plugins && spinnerDialog) {
 				spinnerDialog.show(null, null, true);
-			}	
+			}
 		}
 
 		Utils.spinnerStop = function () {
 			var spinnerDialog = window.plugins? window.plugins.spinnerDialog : false;
 			if (window.plugins && spinnerDialog) {
 				spinnerDialog.hide();
-			}	
+			}
 		}
 
 		Utils.makeGetArgs = function(args) {
