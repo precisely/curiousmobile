@@ -251,7 +251,7 @@ define(function(require, exports, module) {
 			} else {
 				offset += (firstOffset < 0) ? 0 : firstOffset;
 			}
-			var transform = Transform.translate(offset, 0, -1);
+			var transform = Transform.translate(offset, 0, 0);
 			return {
 				transform: transform,
 				target: input.render()
