@@ -29,8 +29,7 @@
 						<img src="content/images/follow.png" alt="follow">Follow
 					</button>
 					{{ if (isAdmin) {  }}
-						<button class="share-button" data-toggle="popover" title="Share:" data-placement="top" 
-								data-content="<input class='share-link' type='text' value='{{ location.protocol+'//'+location.hostname+(location.port ? ':' + location.port : '') }}/discussion/show/\'>">
+					<button class="share-button">
 							<img src="content/images/share.png" alt="share">Share
 						</button>
 					{{ } }}

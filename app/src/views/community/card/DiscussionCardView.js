@@ -71,6 +71,10 @@ define(function(require, exports, module) {
 							u.closeAlerts;
 						}.bind(this),
 					});
+				} else if (_.contains(classList, 'share-button') || _.contains(e.srcElement.classList, 'share-button')) {
+					if (window.plugins) {
+						window.plugins.socialsharing.share(null, 'Curious Discussions', null, App.serverUrl + '/home/social/discussion/' + this.discussion.hash);
+					}
 				} else {
 					var state = {
 						discussionHash: this.discussion.hash,

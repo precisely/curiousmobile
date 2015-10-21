@@ -16,6 +16,10 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		};
 
 		Utils.showAlert = function(options) {
+			if (!options || options == '') {
+				return false;
+			}
+
 			if (_.isString(options)) {
 				options = {
 					message: options
