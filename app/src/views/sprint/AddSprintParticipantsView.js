@@ -161,7 +161,7 @@ define(function(require, exports, module) {
 	};
 
 	AddSprintParticipantsView.prototype.submit = function(participantUsername) {
-		queuePostJSON('Adding members', App.serverUrl + '/api/sprint/action/addMember', u.getCSRFPreventionObject('addMemberCSRF',
+		u.queuePostJSON('Adding members', App.serverUrl + '/api/sprint/action/addMember', u.getCSRFPreventionObject('addMemberCSRF',
 				{username: participantUsername, sprintHash: this.parentView.hash}), function (data) {
 			if (!u.checkData(data)) {
 				return;
@@ -169,9 +169,11 @@ define(function(require, exports, module) {
 
 			if (data.success) {
 				this._eventOutput.emit('new-sprint-participant', participantUsername);
+			} else if (data.error) {
+				u.showAlert(data.errorMessage);
 			}
 		}.bind(this), function(data) {
-			u.showAlert(data.message);
+			u.showAlert(data.errorMessage);
 		});
 	};
 

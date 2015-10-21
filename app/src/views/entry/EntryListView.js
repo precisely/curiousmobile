@@ -157,7 +157,7 @@ define(function(require, exports, module) {
 			direction: 0,
 		});
 
-		this.pinnedSequentialLayout.nextYOffset = 36;
+		this.pinnedSequentialLayout.nextYOffset = 40;
 
 		this.pinnedSequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
@@ -184,7 +184,7 @@ define(function(require, exports, module) {
 				xOffset = 8;
 				//console.log('EntryListView: heightOfPins: ' + this.heightOfPins());
 				//console.log('EntryListView this.pinnedSequentialLayout index: ' + index);
-				this.pinnedSequentialLayout.nextYOffset += 34;
+				this.pinnedSequentialLayout.nextYOffset += 40;
 				//console.log('EntryListView: Adding a pinned row: ' + this.pinnedSequentialLayout.nextYOffset);
 			} else {
 				xOffset += this.pinnedSequentialLayout.lastXOffset;	
@@ -279,9 +279,11 @@ define(function(require, exports, module) {
 		this.pinnedSequentialLayout.sequenceFrom(this.pinnedViews);
 
 		var pinnedContainerSurface = new ContainerSurface({
+			size: [true, true],
 			classes: ['pin-container'],
 			properties: {
 				backgroundColor: '#ebebeb',
+				padding: '10px'
 			}	
 		});
 
@@ -295,21 +297,22 @@ define(function(require, exports, module) {
 			}
 		});
 		var pinnedHelpModifier = new Modifier({
-			transform: Transform.translate(14, 0, 0)
+			transform: Transform.translate(10, 0, 0)
 		});
 		pinnedContainerSurface.add(pinnedHelpModifier).add(pinnedHelp);
 
 		pinnedContainerSurface.on('deploy', function() {
 			Timer.every(function() {
-				pinnedContainerSurface.setSize([undefined, this.heightOfPins()]);
+				pinnedContainerSurface.setSize([undefined, this.heightOfPins() + 10]);
 			}.bind(this), 2);
 		}.bind(this));
 
 		scrollModifier.transformFrom(function() {
-			return Transform.translate(0, this.heightOfPins(), App.zIndex.readView); 	
+			return Transform.translate(0, this.heightOfPins() + 10, App.zIndex.readView); 	
 		}.bind(this));
+
 		var pinnedEntriesModifier = new Modifier({
-			transform: Transform.translate(0, 11, App.zIndex.pinned)
+			transform: Transform.translate(0, 10, App.zIndex.pinned)
 		});
 		pinnedContainerSurface.add(pinnedEntriesModifier).add(this.pinnedSequentialLayout);
 
@@ -331,24 +334,21 @@ define(function(require, exports, module) {
 
 	EntryListView.prototype.heightOfPins = function () {
 		var numberOfRows = this.numberOfPinRows();
-		return (numberOfRows * 34) + 19;
+		return (numberOfRows * 40) + 25;
 	}
 
 	EntryListView.prototype.numberOfPinRows = function () {
 		var numberOfRows = 1;	
-		var rowWidthSoFar = 16;
+		var rowWidthSoFar = 20;
 		this.pinnedEdgeIndex = [];
 		_.each(this.pinnedViews, function (pinnedView, index) {
 			rowWidthSoFar = rowWidthSoFar + pinnedView.getSize()[0] + 8; //adding padding after the tags
-			//console.log('rowWidthSoFar: ' + rowWidthSoFar);
-			if (rowWidthSoFar > 312) {
+			if (rowWidthSoFar > (App.width - 30)) {
 				numberOfRows ++;
-				rowWidthSoFar = 16;
-				//console.log('Edge Index: ' + index);
+				rowWidthSoFar = 20;
 				this.pinnedEdgeIndex.push(index);
 			}
 		}.bind(this));
-		//console.log('EntryListView: number of pin rows' + numberOfRows);
 		return numberOfRows;
 	}
 

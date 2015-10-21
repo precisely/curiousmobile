@@ -2,31 +2,42 @@ define(function(require, exports, module) {
 	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
 	var Timer = require('famous/utilities/Timer');
-	var ImageSurface = require('famous/surfaces/ImageSurface');
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var InputSurface = require('famous/surfaces/InputSurface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
 	var Transitionable = require('famous/transitions/Transitionable');
-	var Easing = require("famous/transitions/Easing");
 	var RenderController = require("famous/views/RenderController");
 	var StateView = require('views/StateView');
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var AutocompleteView = require("views/AutocompleteView");
 	var Autocomplete = require('models/Autocomplete');
+	var DraggableView = require("views/widgets/DraggableView");
 	var u = require('util/Utils');
 	var store = require('store');
 	var Entry = require('models/Entry');
+	var DateUtil = require('util/DateUtil');
+	var DateGridView = require('views/calendar/DateGridView');
 	var EntryCollection = require('models/EntryCollection');
 	var EventHandler = require('famous/core/EventHandler');
 	var inputSurfaceTemplate = require('text!templates/input-surface.html');
+	var repeatModifierTemplate = require('text!templates/repeat-input-modifier.html');
+	var Engine = require('famous/core/Engine');
 
 	function EntryFormView(trackView) {
 		StateView.apply(this, arguments);
 		this.trackView = trackView;
-		_setListeners.call(this);
+		this.dateGridOpen = false;
+		var backgroundSurface = new Surface({
+			size: [undefined, undefined],
+			properties: {
+				background: 'rgba(123, 120, 120, 0.48)'
+			}
+		});
+		this.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(backgroundSurface);
 		_createForm.call(this);
+		_setListeners.call(this);
 	}
 
 	EntryFormView.prototype = Object.create(StateView.prototype);
@@ -36,7 +47,8 @@ define(function(require, exports, module) {
 	var enteredKey;
 
 	function _zIndex(argument) {
-		return window.App.zIndex.formView;
+		// zIndex calculated on top of the containing surface hence returning 0 will use zIndex of the form container
+		return 0;
 	}
 
 	function _setListeners() {
@@ -47,8 +59,99 @@ define(function(require, exports, module) {
 			console.log('update the Input Surface');
 		}.bind(this));
 
+		//update input field
+		this.autoCompleteView.onSelect(function(inputLabel) {
+			console.log(inputLabel);
+			Timer.setTimeout(function() {
+				var inputElement = document.getElementById("entry-description");
+				inputElement.value = inputLabel;
+				inputElement.focus();
+			}.bind(this), 500);
+		}.bind(this));
+
+		this.repeatSurface.on('click', function(e) {
+			console.log("repeatSurface event");
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				this.removeSuffix();
+				this.setRemind = false;
+				this.setRepeat = true;
+				this.setPinned = false;
+				if (!this.isUpdating) {
+					this.resetRepeatModifierForm();
+				}
+				this.highlightSelector(this.repeatSurface);
+				this.renderController.show(this.repeatModifierSurface);
+			}
+		}.bind(this));
+
+		this.remindSurface.on('click', function(e) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				this.removeSuffix();
+				this.setRemind = true;
+				this.setRepeat = false;
+				this.setPinned = false;
+				if (!this.isUpdating) {
+					this.resetRepeatModifierForm();
+					this.renderController.show(this.repeatModifierSurface, null, function() {
+						document.getElementById('daily').checked = false;
+						document.getElementById('confirm-each-repeat').checked = true;
+					}.bind(this));
+				} else {
+					this.renderController.show(this.repeatModifierSurface);
+				}
+				this.highlightSelector(this.remindSurface);
+			}
+		}.bind(this));
+
+		this.pinSurface.on('click', function(e) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				this.removeSuffix();
+				this.setRemind = false;
+				this.setRepeat = false;
+				this.setPinned = true;
+				this.highlightSelector(this.pinSurface);
+				this.submit();
+				this.renderController.hide();
+				this.dateGridRenderController.hide();
+			}
+		}.bind(this));
+
+		this.repeatModifierSurface.on('click', function(e) {
+			var classList = e.srcElement.parentElement.classList;
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				if (_.contains(classList, 'entry-checkbox') || 
+						_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {
+					var repeatEachCheckbox = document.getElementById('confirm-each-repeat');
+					repeatEachCheckbox.checked = !repeatEachCheckbox.checked;
+				} else if (_.contains(classList, 'date-picker-field')) {
+					if (cordova) {
+						cordova.plugins.Keyboard.close();
+					}
+					document.getElementById('entry-description').blur();
+					if(this.dateGridOpen) {
+						this.dateGridRenderController.hide();
+					} else {
+						var dateGridView = new DateGridView(this.selectedDate || new Date());
+						this.dateGrid = dateGridView;
+						this.dateGridRenderController.show(this.dateGrid);
+						this.dateGrid.on('select-date', function(date) {
+							console.log('CalenderView: Date selected');
+							this.setSelectedDate(date);
+							this.dateGridRenderController.hide();
+							this.dateGridOpen = false;
+						}.bind(this));
+					}
+					this.dateGridOpen = !this.dateGridOpen;
+				} else if (_.contains(e.srcElement.classList, 'create-entry-button')) {
+					this.submit();
+				}
+			}
+		}.bind(this));
+
 		this.on('new-entry', function(resp) {
 			console.log("New Entry - TrackView event");
+			this.resetRepeatModifierForm();
+			this.renderController.hide();
 			var currentListView = this.trackView.currentListView;
 			currentListView.refreshEntries(resp.entries, resp.glowEntry);
 			this.trackView.killEntryForm({ entryDate: resp.glowEntry.date });
@@ -56,6 +159,8 @@ define(function(require, exports, module) {
 
 		this.on('update-entry', function(resp) {
 			console.log('EntryListView: Updating an entry');
+			this.resetRepeatModifierForm();
+			this.renderController.hide();
 			var currentListView = this.trackView.currentListView;
 			currentListView.refreshEntries(resp.entries, resp.glowEntry);
 			var state = {};
@@ -72,13 +177,24 @@ define(function(require, exports, module) {
 		}.bind(this));
 	}
 
+	EntryFormView.prototype.setSelectedDate = function(date) {
+		var App = window.App;
+		this.selectedDate = date;
+
+		var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 
+				'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		var monthName = months[date.getMonth()];
+		document.getElementsByClassName('choose-date-input')[0].value = date.getDate() + ' '  + monthName 
+				+ ' ' + date.getFullYear();
+	}
+
 	function _createForm() {
 		this.clazz = 'EntryFormView';
 
 		var formContainerSurface = new ContainerSurface({
-			classes: ['entry-form'],
+			size: [undefined, true],
+			classes: ['entry-form', 'draggable-container'],
 			properties: {
-				background: 'rgba(123, 120, 120, 0.48)'
 			}
 		});
 
@@ -100,13 +216,17 @@ define(function(require, exports, module) {
 			}, templateSettings),
 		});
 
+		this.inputSurface.on('click', function(e) {
+			document.getElementById('entry-description').focus();
+		});
+
 		this.inputSurface.on('keyup', function(e) {
 			//on enter
 			if (e.keyCode == 13) {
 				this.submit(e);
 			} else if (e.keyCode == 27) {
 				this.blur(e);
-				this.goBack();
+				this.trackView.killEntryForm(null);
 			} else {
 				enteredKey = e.srcElement.value;
 				this.autoCompleteView.getAutocompletes(enteredKey);
@@ -114,34 +234,24 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		//update input field
-		this.autoCompleteView.onSelect(function(inputLabel) {
-			console.log(inputLabel);
-			Timer.setTimeout(function() {
-				var inputElement = document.getElementById("entry-description");
-				inputElement.value = inputLabel;
-				inputElement.focus();
-			}.bind(this), 500);
-		}.bind(this));
-
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
 		this.formContainerSurface = formContainerSurface;
 
 		var sequentialLayout = new SequentialLayout({
 			direction: 0,
-			itemSpacing: 80,
-			defaultItemSize: [100, 24],
+			itemSpacing: 30,
+			defaultItemSize: [80, 24],
 		});
 
-		var firstOffset = (App.width / 2) - 140;
+		var firstOffset = (App.width / 2) - 175;
 		sequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
 			if (index === 0) {
-				offset = firstOffset;
+				offset = (firstOffset < 0) ? 10 : firstOffset;
 			} else {
-				offset += firstOffset;
+				offset += (firstOffset < 0) ? 0 : firstOffset;
 			}
-			var transform = Transform.translate(offset, 200, _zIndex() + 1);
+			var transform = Transform.translate(offset, 0, _zIndex());
 			return {
 				transform: transform,
 				target: input.render()
@@ -149,45 +259,21 @@ define(function(require, exports, module) {
 		});
 
 		this.repeatSurface = new Surface({
-			content: '<i class="fa fa-repeat"></i> <br/> Repeat',
-			size: [34, 24],
+			content: '<div class="text-center"><i class="fa fa-repeat"></i> <br/> Set Repeat</div>',
+			size: [84, 24],
 		});
-
-		this.repeatSurface.on('click', function(e) {
-			console.log("repeatSurface event");
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				this.removeSuffix();
-				this.toggleSuffix('repeat');
-				this.submit();
-			}
-		}.bind(this));
 
 		this.remindSurface = new Surface({
-			content: '<i class="fa fa-bell"></i> <br/> Remind',
-			size: [34, 24],
+			content: '<div class="text-center"><i class="fa fa-bell"></i> <br/> Set Alarm</div>',
+			size: [84, 24],
 		});
-
-		this.remindSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				this.removeSuffix();
-				this.toggleSuffix('remind');
-				this.submit();
-			}
-		}.bind(this));
 
 		this.pinSurface = new Surface({
-			content: '<i class="fa fa-thumb-tack"></i><br/> Pin It',
-			size: [37, 24],
+			content: '<div class="text-center"><i class="fa fa-plus-square-o"></i><br/> Make Button</div>',
+			size: [84, 24],
 		});
 
-		this.pinSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				this.removeSuffix();
-				this.toggleSuffix('pinned');
-				this.submit();
-			}
-		}.bind(this));
-		sequentialLayout.sequenceFrom([this.repeatSurface, this.pinSurface, this.remindSurface]);
+		sequentialLayout.sequenceFrom([this.repeatSurface, this.remindSurface, this.pinSurface]);
 		this.buttonsAndHelp = new ContainerSurface({
 			size: [undefined, undefined],
 			classes: ['entry-form-buttons'],
@@ -197,26 +283,31 @@ define(function(require, exports, module) {
 			}
 		});
 		this.buttonsAndHelp.add(sequentialLayout);
-		var helpSurface = new Surface({
-			size: [window.innerWidth - 40, undefined],
-			content: 'You can repeat the tag, make a button out of it (for instant access), or remind yourself later.<hr>',
+
+		this.formContainerSurface.add(new StateModifier({transform: Transform.translate(0, 80, _zIndex())})).add(this.buttonsAndHelp);
+
+		this.renderController = new RenderController();
+		this.dateGridRenderController = new RenderController();
+		this.repeatModifierSurface = new Surface({
+			content: _.template(repeatModifierTemplate, templateSettings),
+			size: [undefined, undefined],
 			properties: {
-				fontStyle: 'italic',
-				color: '#DDDDDD',
-				margin: '30px 20px',
-				padding: '12px 10px',
-				textAlign: 'center',
+				backgroundColor: 'transparent',
+				padding: '30px'
 			}
 		});
 
-		var helpModifier = new Modifier({
-			transform: Transform.translate(0, 50, 0)
+		var mod = new StateModifier({
+			size: [App.width, undefined],
+			transform: Transform.translate(0, 130, 0)
 		});
-		this.buttonsAndHelp.add(helpModifier).add(helpSurface);
-
-		this.formContainerSurface.add(this.buttonsAndHelp);
-		this.add(this.formContainerSurface);
-		//this.setBody(formContainerSurface);
+		var dateGridRenderControllerMod = new StateModifier({
+			transform: Transform.translate(18, 200, 16)
+		});
+		this.formContainerSurface.add(mod).add(this.renderController);
+		this.formContainerSurface.add(dateGridRenderControllerMod).add(this.dateGridRenderController);
+		this.draggableEntryFormView = new DraggableView(this.formContainerSurface, true, 300);
+		this.add(this.draggableEntryFormView);
 	}
 	
 	EntryFormView.prototype.preShow = function(state) {
@@ -264,12 +355,75 @@ define(function(require, exports, module) {
 		}
 		return text;
 	};
+	
+	/**
+	 * If form loads in edit mode, this will initialize
+	 * entry modifier form according to properties of current entry
+	 */
+	EntryFormView.prototype.showEntryModifiers = function(arguments) {
+		this.resetRepeatModifierForm();
+		this.renderController.hide();
+		this.selectedDate = null;
+		var entry = this.entry;
+		if (entry.isContinuous()) {
+			this.setRepeat = false;
+			this.setRemind = false;
+			return;
+		}
+
+		var radioSelector;
+		if (entry.isWeekly()) {
+			radioSelector = 'weekly';
+		} else if (entry.isMonthly()) {
+			radioSelector = 'monthly';
+		} else if (entry.isDaily()) {
+			radioSelector = 'daily';
+		}
+
+		this.isUpdating = false;
+		this.setRepeat = entry.isRepeat();
+		this.setRemind = entry.isRemind();
+		if (radioSelector || this.setRemind) {
+			this.isUpdating = true;
+			var setDate = function (entry) {
+				if (entry.get("repeatEnd")) {
+					var repeatEnd = new Date(entry.get("repeatEnd"));
+					this.selectedDate = repeatEnd;
+					this.setSelectedDate(repeatEnd);
+				}
+			}.bind(this);
+			this.renderController.show(this.repeatModifierSurface, null, function () {
+				if (radioSelector) {
+					document.getElementById(radioSelector).checked = true;
+				}
+				if (entry.isGhost()) {
+					document.getElementById('confirm-each-repeat').checked = true;
+				}
+				setDate(entry);
+				if (this.setRemind) {
+					this.highlightSelector(this.remindSurface);
+				} else {
+					this.highlightSelector(this.repeatSurface);
+				}
+			}.bind(this));
+		}
+	};
+
+	EntryFormView.prototype.highlightSelector = function(selectorSurface) {
+		this.pinSurface.removeClass('highlight-surface');
+		this.repeatSurface.removeClass('highlight-surface');
+		this.remindSurface.removeClass('highlight-surface');
+		if (selectorSurface) {
+			selectorSurface.addClass('highlight-surface');
+		}
+	}
 
 	EntryFormView.prototype.buildStateFromEntry = function(entry) {
 		console.log('entry selected with id: ' + entry.id);
+		this.setPinned = this.setRemind = this.setRepeat = false;
 		this.entry = entry;
 		var directlyCreateEntry = false;
-		if (entry.isContinuous() || (entry.isRemind() && entry.isGhost())) {
+		if (entry.isContinuous() || ((entry.isRemind() || entry.isRepeat()) && entry.isGhost())) {
 			var tag = entry.get('description');
 			var tagStatsMap = autocompleteCache.tagStatsMap.get(tag);
 			if ((tagStatsMap && tagStatsMap.typicallyNoAmount) || tag.indexOf('start') > -1 ||
@@ -302,7 +456,11 @@ define(function(require, exports, module) {
 				selectionRange: selectionRange,
 				elementType: ElementType.domElement,
 				focus: true,
-			}]
+			}],
+			postLoadAction: {
+				name: 'showEntryModifiers',
+				args: {entry: entry}
+			}
 		};
 
 		if (directlyCreateEntry) {
@@ -365,58 +523,85 @@ define(function(require, exports, module) {
 	};
 
 	EntryFormView.prototype.setEntryText = function(text) {
-		document.getElementById("entry-description").value = '';
+		if (document.getElementById('entry-description')) {
+			document.getElementById('entry-description').value = '';
+		}
 	};
 
 	EntryFormView.prototype.submit = function(e, directlyCreateEntry) {
 		var entry = null;
-		var newText = document.getElementById("entry-description").value;
+		var newText;
 
 		if (e instanceof Entry && directlyCreateEntry) {
 			entry = e;
 			this.entry = entry;
 			newText = this.removeSuffix(entry.toString());
+
+			// Checking if entry is ghost but not pinned
+			if (entry.isGhost() && !entry.isContinuous()) {
+				this.entry.setText(newText);
+				this.saveEntry(false);
+				return;
+			}
 		} else {
 			entry = this.entry;
+
+			newText = document.getElementById("entry-description").value;
+			if (!newText) {
+				return false;
+			}
 		}
 
 		if (!u.isOnline()) {
 			u.showAlert("You don't seem to be connected. Please wait until you are online to add an entry.");
 			return;
 		}
+
+		var repeatTypeId, repeatEnd;
+
+		if (this.setRepeat || this.setRemind) {
+			var repeatParams = Entry.getRepeatParams(this.setRepeat, this.setRemind, this.selectedDate);
+			repeatTypeId = repeatParams.repeatTypeId;
+			repeatEnd = repeatParams.repeatEnd;
+		} else if (this.setPinned) {
+			repeatTypeId = Entry.RepeatType.CONTINUOUSGHOST;
+		}
+
 		if (!entry || !entry.get('id') || entry.isContinuous()) {
 			var newEntry = new Entry();
-			newEntry.set('date', window.App.selectedDate);
 			newEntry.setText(newText);
+			if (repeatTypeId) {
+				newEntry.set("repeatType", repeatTypeId);
+			}
+			if (repeatEnd) {
+				newEntry.set("repeatEnd", repeatEnd);
+			} 
 			newEntry.create(function(resp) {
-				if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1 ||
-					newText.indexOf('pinned') > -1) {
+				if (this.setRepeat || this.setRemind || this.setPinned) {
 					window.App.collectionCache.clear();
 				}
 				this.blur();
 				this._eventOutput.emit('new-entry', resp);
 			}.bind(this));
 			return;
-		} else if (this.originalText == newText) {
+		} else if ((this['originalText-entry-description'] == newText) && (entry.get("repeatType") == repeatTypeId) && (entry.get("repeatEnd") == repeatEnd)) {
 			console.log("EntryFormView: No changes made");
-			if (entry.isRemind()) {
-				entry.setText(newText);
-				this.saveEntry(false);
-				return;
-			}
 			this.blur();
-			this.goBack();
+			this.trackView.killEntryForm(null);
 			return;
 		} else {
 			entry.setText(newText);
+			if (repeatTypeId) {
+				entry.set("repeatType", repeatTypeId);
+			}
+			if (repeatEnd) {
+				entry.set("repeatEnd", repeatEnd);
+			} 
 		}
 
-		if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1 ||
-			newText.indexOf('pinned') > -1) {
+		if (this.setRepeat || this.setRemind || this.setPinned) {
 			window.App.collectionCache.clear();
 		}
-
-
 
 		if (this.hasFuture()) {
 			this.alert = u.showAlert({
@@ -455,6 +640,13 @@ define(function(require, exports, module) {
 	EntryFormView.prototype.hasFuture = function() {
 		var entry = this.entry;
 		return ((entry.isRepeat() && !entry.isRemind()) || entry.isGhost()) && !entry.isTodayOrLater();
+	};
+
+	EntryFormView.prototype.resetRepeatModifierForm = function() {
+		this.highlightSelector(null);
+		if (document.getElementById('repeat-modifier-form')) {
+			document.getElementById('repeat-modifier-form').reset();
+		}
 	};
 
 	App.pages[EntryFormView.name] = EntryFormView;

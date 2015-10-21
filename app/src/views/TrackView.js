@@ -22,6 +22,7 @@ define(function(require, exports, module) {
 	var EntryCollection = require('models/EntryCollection');
 	var User = require('models/User');
 	var u = require('util/Utils');
+	var DateUtil = require('util/DateUtil');
 	var inputSurfaceTemplate = require('text!templates/input-surface-dummy.html');
 
 
@@ -57,7 +58,7 @@ define(function(require, exports, module) {
 
 	function _createBody() {
 		var formContainerSurface = new ContainerSurface({
-			size: [undefined, 70],
+			size: [undefined, 60],
 			properties: {
 				backgroundColor: '#eaeaea',
 			}
@@ -114,16 +115,17 @@ define(function(require, exports, module) {
 		});
 
 		var entryListModifier = new Modifier({
-			transform: Transform.translate(0, 70, 1),
+			transform: Transform.translate(0, 55, 1),
 		});
 
 		entryListModifier.sizeFrom(function() {
 			var size = [App.width, App.height];
-			return [undefined, size[1] - 185];
+			return [undefined, size[1] - 170];
 		});
 
 		entryListContainer.add(this.renderController);
 
+		this.formContainerSurface = formContainerSurface;
 		this.setBody(formContainerSurface);
 		this.entryListContainer = entryListContainer;
 		this.addContent(entryListModifier, entryListContainer);
@@ -151,6 +153,7 @@ define(function(require, exports, module) {
 		this.calendarView.on('manual-date-change', function(e) {
 			this.changeDate(e.date);
 		}.bind(this));
+		App.selectedDate = DateUtil.getMidnightDate(this.calendarView.selectedDate);
 		this.setHeaderSurface(this.calendarView);
 
 	}
@@ -174,6 +177,10 @@ define(function(require, exports, module) {
 		return true;
 	};
 
+	TrackView.prototype.getScrollPosition = function() {
+		return this.currentListView.scrollView.getPosition();
+	};
+
 	TrackView.prototype.killOverlayContent = function () {
 		this.killEntryForm();
 	};
@@ -183,15 +190,19 @@ define(function(require, exports, module) {
 			webkitFilter: 'blur(0px)',
 			filter: 'blur(0px)'
 		});
+		this.formContainerSurface.setProperties({
+			visibility: 'visible'
+		});
 		BaseView.prototype.killOverlayContent.call(this);
 		this.showMenuButton();
-		_createCalendar.call(this);
+		this.setHeaderSurface(this.calendarView);
 		this.preShow(state);
 	}
 
 	TrackView.prototype.changeDate = function(date, callback) {
 		date = u.getMidnightDate(date);
 
+		App.selectedDate = date;
 		EntryCollection.fetchEntries(_getDefaultDates(date), function(entries) {
 			//5 days before and 5 days after today
 			this.currentListView = new EntryListView(entries);
@@ -225,15 +236,21 @@ define(function(require, exports, module) {
 	}
 
 	TrackView.prototype.showEntryFormView = function(state) {
-		this.entryListContainer.setProperties({
-			webkitFilter: 'blur(20px)',
-			filter: 'blur(20px)'
-		});
-		this.showBackButton();
-		this.setHeaderLabel('');
-		this.showOverlayContent(this.entryFormView, function() {
-			this.onShow(state);
-		}.bind(this.entryFormView));
+		var continueShowForm = this.entryFormView.preShow(state);
+		if (continueShowForm) {
+			this.entryListContainer.setProperties({
+				webkitFilter: 'blur(5px)',
+				filter: 'blur(5px)'
+			});
+			this.formContainerSurface.setProperties({
+				visibility: 'hidden'
+			});
+			this.showBackButton();
+			this.setHeaderLabel('');
+			this.showOverlayContent(this.entryFormView, function() {
+				this.onShow(state);
+			}.bind(this.entryFormView));
+		}
 	}
 
 	TrackView.prototype.buildStateFromEntry = function(entry) {

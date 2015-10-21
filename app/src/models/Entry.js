@@ -4,14 +4,31 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 
 		var User = require('models/User');
 		// Singleton Class function.
-		var RepeatType = {
-			CONTINUOUS_BIT: 0x100,
-			GHOST_BIT: 0x200,
-			CONCRETEGHOST_BIT: 0x400,
-			TIMED_BIT: 0x1 | 0x2 | 0x4,
-			REPEAT_BIT: 0x1 | 0x2,
-			REMIND_BIT: 0x4,
-
+		var RepeatType = new function() {
+			this.DAILY_BIT = 1;
+			this.WEEKLY_BIT = 2;
+			this.REMIND_BIT = 4;
+			this.HOURLY_BIT = 8;
+			this.MONTHLY_BIT = 0x0010;
+			this.YEARLY_BIT = 0x0020;
+			this.CONTINUOUS_BIT = 0x100;
+			this.GHOST_BIT = 0x200;
+			this.CONCRETEGHOST_BIT = 0x400;
+			this.DURATION_BIT = 0x0800;
+			this.REPEAT_BIT = this.DAILY_BIT | this.WEEKLY_BIT | this.HOURLY_BIT | this.MONTHLY_BIT | this.YEARLY_BIT;
+			this.DAILYGHOST = this.DAILY_BIT | this.GHOST_BIT;
+			this.WEEKLYGHOST = this.WEEKLY_BIT | this.GHOST_BIT;
+			this.REMINDDAILY = this.REMIND_BIT | this.DAILY_BIT;
+			this.REMINDWEEKLY = this.REMIND_BIT | this.WEEKLY_BIT;
+			this.REMINDDAILYGHOST = this.REMIND_BIT | this.DAILY_BIT | this.GHOST_BIT;
+			this.REMINDWEEKLYGHOST = this.REMIND_BIT | this.WEEKLY_BIT | this.GHOST_BIT;
+			this.CONTINUOUSGHOST = this.CONTINUOUS_BIT|  this.GHOST_BIT;
+			this.DAILYCONCRETEGHOST = this.CONCRETEGHOST_BIT | this.DAILY_BIT;
+			this.DAILYCONCRETEGHOSTGHOST = this.CONCRETEGHOST_BIT | this.GHOST_BIT | this.DAILY_BIT;
+			this.WEEKLYCONCRETEGHOST = this.CONCRETEGHOST_BIT | this.WEEKLY_BIT;
+			this.MONTHLYCONCRETEGHOST = this.CONCRETEGHOST_BIT | this.WEEKLY_BIT;
+			this.WEEKLYCONCRETEGHOSTGHOST = this.CONCRETEGHOST_BIT | this.GHOST_BIT | this.WEEKLY_BIT;
+			this.DURATIONGHOST = this.GHOST_BIT | this.DURATION_BIT;
 		};
 
 		var Entry = Backbone.Model.extend({
@@ -27,6 +44,9 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			isConcreteGhost: function() {
 				return (this.get('repeatType') & RepeatType.CONCRETEGHOST_BIT) != 0;
 			},
+			isAnyGhost: function() {
+				return (this.get('repeatType') & (RepeatType.GHOST_BIT | RepeatType.CONCRETEGHOST_BIT)) != 0
+			},
 			isContinuous: function() {
 				return (this.get('repeatType') & RepeatType.CONTINUOUS_BIT) != 0;
 			},
@@ -39,9 +59,25 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			isRepeat: function() {
 				return (this.get('repeatType') & RepeatType.REPEAT_BIT) != 0;
 			},
-			isTimed: function() {
-				return (this.get('repeatType') & RepeatType.TIMED_BIT) != 0;
+			isHourly: function() {
+				return (this.get('repeatType') & RepeatType.HOURLY_BIT) != 0
 			},
+			isDaily: function() {
+				return (this.get('repeatType') & RepeatType.DAILY_BIT) != 0
+			},
+			isHourlyOrDaily: function() {
+				return (this.get('repeatType') & (RepeatType.HOURLY_BIT | RepeatType.DAILY_BIT)) != 0
+			},
+			isWeekly: function() {
+				return (this.get('repeatType') & RepeatType.WEEKLY_BIT) != 0
+			},
+			isMonthly: function() {
+				return (this.get('repeatType') & RepeatType.MONTHLY_BIT) != 0
+			},
+			isYearly: function() {
+				return (this.get('repeatType') & RepeatType.YEARLY_BIT) != 0
+			},
+
 			repeatTypeAsClass: function() {
 				var repeatType = this.get('repeatType');
 				var classes = ['entry'];
@@ -56,14 +92,11 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				if (this.isContinuous(repeatType)) {
 					classes.push('continuous');
 				}
-				if (this.isTimed(repeatType)) {
-					classes.push('timedrepeat');
-				}
 				if (this.isRemind(repeatType)) {
 					classes.push('remind');
 					return classes;
 				}
-				if (this.isRepeat(repeatType)) {
+				if (this.isRepeat(repeatType) || this.isDaily() || this.isWeekly() || this.isMonthly()) {
 					classes.push('repeat');
 				}
 				return classes;
@@ -170,6 +203,12 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					timeZoneName: u.getTimezone(),
 					defaultToNow: '1'
 				});
+				if (this.get("repeatType")) {
+					argsToSend.repeatTypeId = this.get("repeatType");
+				}
+				if (this.get("repeatEnd")) {
+					argsToSend.repeatEnd = this.get("repeatEnd");
+				}
 
 				argsToSend.text = argsToSend.text.replace('Repeat', 'repeat');
 				argsToSend.text = argsToSend.text.replace('Remind', 'remind');
@@ -213,6 +252,13 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					allFuture: allFuture ? '1' : '0'
 				});
 
+				if (this.get("repeatType")) {
+					argsToSend.repeatTypeId = this.get('repeatType');
+				}
+				if (this.get("repeatEnd")) {
+					argsToSend.repeatEnd = this.get('repeatEnd') ? new Date(this.get('repeatEnd')).toUTCString() : null;
+				}
+
 				u.queueJSON("saving entry", u.makeGetUrl("updateEntrySData"), u.makeGetArgs(argsToSend),
 				function(entries) {
 					if (entries == "") {
@@ -248,7 +294,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			},
 			delete: function(callback) {
 				var collectionCache = window.App.collectionCache;
-				if (this.isTimed() || this.isGhost()) {
+				if (this.isGhost()) {
 					if (this.isContinuous() || this.isTodayOrLater()) {
 						this.deleteGhost(true, callback);
 					} else {
@@ -356,6 +402,55 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			var key;
 			key = Entry.getCacheKey(date);
 			collectionCache.setItem(key, entries);
+		}
+
+		Entry.getRepeatParams = function getRepeatParams(isRepeat, isRemind, repeatEnd) {
+			var repeatTypeId = getRepeatTypeId(isRepeat, isRemind, repeatEnd);
+			if (repeatEnd) {
+				repeatEnd = repeatEnd.setHours(23, 59, 59, 0);
+				var now = new Date();
+				if(new Date(repeatEnd) < now) {
+					now.setHours(23,59,59,0);
+					repeatEnd = now;
+				}
+				repeatEnd = new Date(repeatEnd).toUTCString();
+			}
+			return {repeatTypeId: repeatTypeId, repeatEnd: repeatEnd};
+		}
+
+		function getRepeatTypeId(isRepeat, isRemind, repeatEnd) {
+			var confirmRepeat = document.getElementById('confirm-each-repeat').checked;
+			var frequencyBit, repeatTypeBit;
+
+			if (document.getElementById('daily').checked) {
+				frequencyBit = RepeatType.DAILY_BIT;
+			} else if (document.getElementById('weekly').checked) {
+				frequencyBit = RepeatType.WEEKLY_BIT;
+			} else if (document.getElementById('monthly').checked) {
+				frequencyBit = RepeatType.MONTHLY_BIT;
+			}
+			if (!isRepeat && (frequencyBit || repeatEnd || confirmRepeat)) {
+				isRepeat = true;
+			}
+			if (isRepeat) {
+				if (frequencyBit) {
+					repeatTypeBit = (RepeatType.CONCRETEGHOST_BIT | frequencyBit);
+				} else {
+					repeatTypeBit = (RepeatType.CONCRETEGHOST_BIT);
+				}
+			}
+			if (isRemind) {
+				if (repeatTypeBit) {
+					repeatTypeBit = (RepeatType.REMIND_BIT | repeatTypeBit);
+				} else {
+					repeatTypeBit = RepeatType.REMIND_BIT;
+				}
+			}
+
+			if (confirmRepeat) {
+				return (repeatTypeBit | RepeatType.GHOST_BIT);
+			}
+			return (repeatTypeBit);
 		}
 
 		module.exports = Entry;

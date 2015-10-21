@@ -36,7 +36,6 @@ define(function(require, exports, module) {
 		var properties = {
 			padding: '15px 45px 15px 15px',
 			fontSize: this.options.lineHeight + 'px',
-			fontWeight: 'lighter',
 			lineHeight: this.options.lineHeight + 'px',
 			textOverflow: 'ellipsis',
 			whiteSpace: 'nowrap',
@@ -62,7 +61,7 @@ define(function(require, exports, module) {
 
 		this.entrySurface.pipe(this._eventOutput);
 		this.showMoreSurface = new ImageSurface({
-			content: 'content/images/show-more.png',
+			content: 'content/images/show-more-' + (this.entry.isRemind() ? 'remind' : this.entry.isRepeat() ? 'repeat' : 'default') + '.png',
 			size: [24, 24],
 		});
 		var showMoreModifier = new StateModifier({
@@ -81,11 +80,12 @@ define(function(require, exports, module) {
 			size: [100, this.options.entryHeight],
 			content: 'Delete',
 			properties: {
-				padding: '8px 26px',
+				padding: '5px 0px',
 				backgroundColor: '#dc6059',
 				fontSize: '16px',
 				lineHeight: '45px',
 				color: 'white',
+				textAlign: 'center'
 			}
 		});
 
@@ -110,9 +110,15 @@ define(function(require, exports, module) {
 		var time = u.formatAMPM(date);
 		var displayText = this.entry.removeSuffix();
 		if (this.entry.isRemind()) {
-			return '<div class="help"><i class="fa fa-bell"></i> Reminder set </div>' + displayText;
-		} else if (this.entry.isRepeat()) {
+			return '<div class="help"><i class="fa fa-bell"></i> Alert set </div>' + displayText;
+		} else if (this.entry.isDaily()) {
 			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every day</div>' + displayText;
+		} else if (this.entry.isWeekly()) {
+			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every week</div>' + displayText;
+		} else if (this.entry.isMonthly()) {
+			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every month</div>' + displayText;
+		} else if (this.entry.isRepeat()) {
+			return '<div class="help"><i class="fa fa-repeat"></i> Repeat</div>' + displayText;
 		}
 		return displayText;
 	}

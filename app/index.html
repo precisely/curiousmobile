@@ -65,14 +65,15 @@
 			}
 
 			function onAppResume() {
-				console.log('App has resumed from background');
-				console.log(device.platform);
-				App.coreEventHandler.emit('app-resume');
+				$(document).ready(function() {
+					console.log('App has resumed from background');
+					console.log(device.platform);
+					App.coreEventHandler.emit('app-resume');
+				});
 			}
 
 		</script>
 		<script type="text/javascript" src="cordova.js"></script>
-		<script type="text/javascript" charset="utf-8" src="PushNotification.js"></script>
 	</head>
 
 	<body onload="onLoad()" >

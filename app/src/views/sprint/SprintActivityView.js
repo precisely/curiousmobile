@@ -14,7 +14,6 @@ define(function(require, exports, module) {
 	var RenderNode = require("famous/core/RenderNode");
 	var RenderController = require('famous/views/RenderController');
 	var ContainerSurface = require("famous/surfaces/ContainerSurface");
-	var Draggable = require("famous/modifiers/Draggable");
 	var SprintActivityTitleTemplate = require('text!templates/sprint-activity-title.html');
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var DiscussionCardView = require('views/community/card/DiscussionCardView')

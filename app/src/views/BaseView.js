@@ -82,7 +82,7 @@ define(function(require, exports, module) {
 		});
 
 		var headerBackgroundModifier = new Modifier({
-			transform: Transform.translate(0, 0, App.zIndex.header - 1)
+			transform: Transform.translate(0, 0, App.zIndex.header)
 		});
 
 		this.headerContainer.add(headerBackgroundModifier).add(backgroundSurface);
@@ -260,7 +260,7 @@ define(function(require, exports, module) {
 	BaseView.prototype.showOverlayContent = function(renderable, callback) {
 		var overlayModifier = new StateModifier({
 			origin: [0, 0],
-			transform: Transform.translate(0, 0, 25)
+			transform: Transform.translate(0, 0, App.zIndex.overlay)
 		});
 		this.layout.content.add(overlayModifier).add(this.overlayController);
 		this.overlayController.show(renderable, null, callback);
