@@ -6,9 +6,9 @@
 		<div class="edit-image">
 			<p>PROFILE PICTURE</p>
 			{{ if (user.avatarURL == null) { }}
-			<i class="fa fa-circle fa-4x"></i>
+				<i class="fa fa-circle fa-4x"></i>
 			{{ } else { }}
-			<img src="{{= user.avatarURL }}">
+				<img src="{{= user.avatarURL }}">
 			{{ } }}
 			<button type="button" class="choose-image">Choose Image</button>
 		</div>
@@ -36,9 +36,9 @@
 				<div class="media">
 					<div class="media-body">
 						{{ if (user.bio === "") { }}
-						<textarea></textarea>
+							<textarea name="bio"></textarea>
 						{{ } else { }}
-						<textarea>{{= user.bio }}</textarea>
+							<textarea name="bio">{{= user.bio }}</textarea>
 						{{ } }}
 						<div class="radio-public-private">
 							<input type="radio" class="bio-radio-public" name="bio-radio" id="bio-public-id" value="public" checked>
@@ -55,7 +55,7 @@
 				</label>
 				<div class="media">
 					<div class="media-body">
-						<input type="text" value="{{= user.username }}"/>
+						<input type="text" name="username" value="{{= user.username }}"/>
 					</div>
 				</div>
 			</div>
@@ -72,11 +72,21 @@
 			</div>
 			<div class="edit-password">
 				<label class="edit-label">
-					PASSWORD
+					OLD PASSWORD
 				</label>
 				<div class="media">
 					<div class="media-body">
-						<input type="password"  value="{{= user.password }}"/>
+						<input type="password" name="oldPassword"/>
+					</div>
+				</div>
+			</div>
+			<div class="edit-password">
+				<label class="edit-label">
+					NEW PASSWORD
+				</label>
+				<div class="media">
+					<div class="media-body">
+						<input type="password" name="password"/>
 					</div>
 				</div>
 			</div>
@@ -87,7 +97,7 @@
 				</label>
 				<div class="media">
 					<div class="media-body">
-						<input type="password" value="{{= user.password }}"/>
+						<input type="password" name="verify_password"/>
 					</div>
 				</div>
 			</div>
@@ -98,7 +108,7 @@
 				<div class="media">
 					<div class="media-body">
 						<input type="radio" class="email-notifications-yes" name="email-notifications" id="email-notifications-yes" value="public" checked>
-						<label for="email-notifications-yes" class="email-notifications-yes-label">Email me when someone comments</label> <br>
+						<label for="email-notifications-yes" class="email-notifications-yes-label">Email me when someone comments</label> <br><br>
 						<input type="radio" class="email-notifications-no" name="email-notifications" id="email-notifications-no" value="private">
 						<label for="email-notifications-no" class="email-notifications-no-label">Don't email me when someone comments</label>
 					</div>
@@ -110,7 +120,31 @@
 				</label>
 				<div class="media">
 					<div class="media-body">
-						<p>Unlink Fitbit Account</p>
+						{{ if (user.linkedToWithings) { }}
+							<p class="unlink-withings">Unlink Withings Account</p>
+						{{ } else { }}
+							<p class="link-withings">Link Withings Account</p>
+						{{ } }}
+						{{ if (!user.linkedToFitbit) { }}
+							<p class="link-fitbit">Link Fitbit Account</p>
+						{{ } else { }}
+							<p class="unlink-fitbit">Unlink Fitbit Account</p>
+						{{ } }}
+						{{ if (!user.linkedToMoves) { }}
+							<p class="link-moves">Link Moves Account</p>
+						{{ } else { }}
+							<p class="unlink-moves">Unlink moves Account</p>
+						{{ } }}
+						{{ if (!user.linkedToJawbone) { }}
+							<p class="link-jawbone">Link Jawbone Account</p>
+						{{ } else { }}
+							<p class="unlink-jawbone">Unlink Jawbone Account</p>
+						{{ } }}
+						{{ if (!user.linkedToTwenty3andMe) { }}
+							<p class="link-twenty3andMe">Link 23&Me Account</p>
+						{{ } else { }}
+							<p class="link-twenty3andMe">Re-import from 23&Me Account</p>
+						{{ } }}
 					</div>
 				</div>
 			</div>

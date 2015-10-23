@@ -499,6 +499,10 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			return mainContext.getSize();
 		}
 
+		Utils.getMobileSessionId = function() {
+			return store.get('mobileSessionId');
+		};
+
 		Utils.prettyDate = function prettyDate(time) {
 			var date = time,
 				diff = (((new Date()).getTime() - date.getTime()) / 1000),

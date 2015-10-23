@@ -1352,7 +1352,7 @@ and (max-device-height: 568px) {
 	background: -ms-linear-gradient(top,  #f14d43 0%,#f48157 100%); /* IE10+ */
 	background: linear-gradient(to bottom,  #f14d43 0%,#f48157 100%); /* W3C */
 	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#df3501', endColorstr='#f48157',GradientType=0 ); /* IE6-9 */
-
+	height: 1500px;
 }
 
 #public-interest-tags p {
@@ -1400,8 +1400,8 @@ and (max-device-height: 568px) {
 .edit-image button {
 	color: #ffffff;
 	float: right;
-  margin-top: 23px;
-  margin-right: 76px;
+	margin-top: 23px;
+	margin-right: 76px;
 	height: 35px;
 	width: 114px;
 	border-color: #ffffff;
@@ -1454,8 +1454,8 @@ and (max-device-height: 568px) {
 .edit-interests hr {
 	height: 1px;
 	border-color: #f69e81;
-  margin-top: -5px;
-  margin-bottom: -18px;
+	margin-top: -5px;
+	margin-bottom: -18px;
 }
 
 .add-interest-tag {
@@ -1464,220 +1464,216 @@ and (max-device-height: 568px) {
 }
 
 .radio-public-private {
-  background-color: transparent;
-  color: #ffffff;
-  font-size: 14px;
-  border-color: #ffffff;
-  border-width: 1px;
-  border-style: solid;
-  border-radius: 2px;
-  width: 284px;
-  height: 40px;
-  padding: 9px 11px 20px 13px;
-  font-weight: 500;
-  border-top: 0px;
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
-  border-top-width: 0px;
+	background-color: transparent;
+	color: #ffffff;
+	font-size: 14px;
+	border-color: #ffffff;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 2px;
+	width: 284px;
+	height: 40px;
+	padding: 9px 11px 20px 13px;
+	font-weight: 500;
+	border-top: 0px;
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+	border-top-width: 0px;
 }
 
 .edit-email-notifications .media input[type="radio"] {
-  position: absolute;
-  /* display: none; */
-  -webkit-appearance: none;
-  height: 16px;
-  width: 16px;
-  border-radius: 21px;
-  /* background: #6F565A; */
-  margin-top: 3px;
-  margin-left: 34px;
-  background: transparent;
-  border-color: #ffffff;
-  border-width: 1px;
-  border-style: solid;
+	position: absolute;
+	/* display: none; */
+	-webkit-appearance: none;
+	height: 16px;
+	width: 16px;
+	border-radius: 21px;
+	/* background: #6F565A; */
+	margin-top: 3px;
+	margin-left: 34px;
+	background: transparent;
+	border-color: #ffffff;
+	border-width: 1px;
+	border-style: solid;
 }
 
 .edit-email-notifications .media input[type="radio"]:checked {
-  height: 16px;
-  width: 16px;
-  border-radius: 21px;
-  margin-top: 3px;
-  margin-left: 34px;
-  background-color: #ffffff;
+	height: 16px;
+	width: 16px;
+	border-radius: 21px;
+	margin-top: 3px;
+	margin-left: 34px;
+	background-color: #ffffff;
 }
 
 .edit-email-notifications .email-notifications-yes {
-  left: -14px;
-  top: 888px;
+	left: -13px;
 }
 
 .edit-email-notifications .email-notifications-no {
-  left: -13px;
-  top: 914px;
+	left: -13px;
 }
 
 .edit-email-notifications .email-notifications-yes-label {
-  left: 55px;
-  top: 888px;
+	left: 55px;
 }
 
 .edit-email-notifications .email-notifications-no-label {
-  left: 55px;
-  top: 916px;
+	left: 55px;
 }
 
 .radio-public-private input[type="radio"] {
-  position: absolute;
-  /* display: none; */
-  -webkit-appearance: none;
-  height: 16px;
-  width: 16px;
-  border-radius: 21px;
-  /* background: #6F565A; */
-  margin-top: 3px;
-  margin-left: 34px;
-  background: transparent;
-  border-color: #ffffff;
-  border-width: 1px;
-  border-style: solid;
+	position: absolute;
+	/* display: none; */
+	-webkit-appearance: none;
+	height: 16px;
+	width: 16px;
+	border-radius: 21px;
+	/* background: #6F565A; */
+	margin-top: 3px;
+	margin-left: 34px;
+	background: transparent;
+	border-color: #ffffff;
+	border-width: 1px;
+	border-style: solid;
 }
 
 .radio-public-private input[type="radio"]:checked {
-  height: 16px;
-  width: 16px;
-  border-radius: 21px;
-  /* background: #6F565A; */
-  margin-top: 3px;
-  margin-left: 34px;
-  background-color: #ffffff;
+	height: 16px;
+	width: 16px;
+	border-radius: 21px;
+	/* background: #6F565A; */
+	margin-top: 3px;
+	margin-left: 34px;
+	background-color: #ffffff;
 }
 
 .radio-public-private .name-radio-public {
-  left: 38px;
-  top: 294px;
+	left: 38px;
+	top: 294px;
 }
 
 .radio-public-private .name-radio-private {
-  left: 115px;
-  top: 294px;
+	left: 115px;
+	top: 294px;
 }
 
 .radio-public-private .bio-radio-public {
-  left: 38px;
-  top: 478px;
+	left: 38px;
+	top: 478px;
 }
 
 .radio-public-private .bio-radio-private {
-  left: 115px;
-  top: 478px;
+	left: 115px;
+	top: 478px;
 }
 
 .radio-public-private label {
-  position: absolute;
-  font-size: 11px;
-  color: #fc9c81;
-  font-weight: 500;
-  margin-left: 21px;
+	position: absolute;
+	font-size: 11px;
+	color: #fc9c81;
+	font-weight: 500;
+	margin-left: 21px;
 }
 
 .radio-public-private .name-public-label {
-  left: 14px;
-  top: 296px;
+	left: 14px;
+	top: 296px;
 }
 
 .radio-public-private .name-private-label {
-  left: 83px;
-  top: 296px;
+	left: 83px;
+	top: 296px;
 }
 
 .radio-public-private .bio-public-label {
-  left: 14px;
-  top: 480px;
+	left: 14px;
+	top: 480px;
 }
 
 .radio-public-private .bio-private-label {
-  left: 82px;
-  top: 481px;
+	left: 82px;
+	top: 481px;
 }
 
 .edit-interests .new-tag {
-  width: 130px;
-  height: 28px;
-  margin-top: 16px;
-  background: #f15747;
-  border: 0px;
-  border-radius: 4px;
-  margin-bottom: -3px;
-  color: #ffffff;
-  font-size: 12px;
+	width: 130px;
+	height: 28px;
+	margin-top: 16px;
+	background: #f15747;
+	border: 0px;
+	border-radius: 4px;
+	margin-bottom: -3px;
+	color: #ffffff;
+	font-size: 12px;
 }
 
 .edit-email-notifications .media label {
-  position: absolute;
-  color: #ffffff;
-  font-size: 14px;
-  -webkit-appearance: initial;
-  font-weight: 500;
+	position: absolute;
+	color: #ffffff;
+	font-size: 14px;
+	-webkit-appearance: initial;
+	font-weight: 500;
 }
 
 .create-tags {
-  background-color: transparent;
-  color: #676767;
-  font-size: 12px;
-  border-color: #676767;
-  border-width: 2px;
-  border-style: solid;
-  border-radius: 4px;
-  width: 290px;
-  height: 42px;
-  padding: 20px 50px 20px 50px;
-  font-weight: 500;
-  margin-left: 15px;
-  font-weight: bold;
-  border-bottom-left-radius: 0px;
-  border-bottom-right-radius: 0px;
+	background-color: transparent;
+	color: #676767;
+	font-size: 12px;
+	border-color: #676767;
+	border-width: 2px;
+	border-style: solid;
+	border-radius: 4px;
+	width: 290px;
+	height: 42px;
+	padding: 20px 50px 20px 50px;
+	font-weight: 500;
+	margin-left: 15px;
+	font-weight: bold;
+	border-bottom-left-radius: 0px;
+	border-bottom-right-radius: 0px;
 }
 
 .add-interest-tag textarea, textarea:focus {
-  background-color: transparent;
-  color: #EC0F0F;
-  font-size: 14px;
-  border-color: #676767;
-  border-width: 2px;
-  border-style: solid;
-  -webkit-appearance: initial;
-  border-radius: 4px;
-  padding: 18px 14px 18px 14px;
-  font-weight: 500;
-  resize: none;
-  margin-left: 15px;
-  width: 290px;
-  height: 42px;
-  border-top: 0px;
-  height: 210px;
-  border-top-left-radius: 0px;
-  border-top-right-radius: 0px;
-  outline: none;
+	background-color: transparent;
+	color: #EC0F0F;
+	font-size: 14px;
+	border-color: #676767;
+	border-width: 2px;
+	border-style: solid;
+	-webkit-appearance: initial;
+	border-radius: 4px;
+	padding: 18px 14px 18px 14px;
+	font-weight: 500;
+	resize: none;
+	margin-left: 15px;
+	width: 290px;
+	height: 42px;
+	border-top: 0px;
+	height: 210px;
+	border-top-left-radius: 0px;
+	border-top-right-radius: 0px;
+	outline: none;
 }
 
 .cropit-image-preview {
-  /* You can specify preview size in CSS */
-/*  width: 960px;
-  height: 200px;*/
-  background-color: #f8f8f8;
-  border-radius: 3px;
-  height: 250px;
-  /*width: 250px;*/
-  cursor: move;
-  margin: auto;
-  width: 80%;
+	/* You can specify preview size in CSS */
+	/*  width: 960px;
+	  height: 200px;*/
+	background-color: #f8f8f8;
+	border-radius: 3px;
+	height: 250px;
+	/*width: 250px;*/
+	cursor: move;
+	margin: auto;
+	width: 80%;
 }
 
 /* Translucent background image */
 .cropit-image-background {
-  opacity: .2;
-  margin: auto;
-  width: 90%;
+	opacity: .2;
+	margin: auto;
+	width: 90%;
 }
 
 /*
@@ -1685,14 +1681,18 @@ and (max-device-height: 568px) {
  * use relative or absolute position on it
  */
 input.cropit-image-zoom-input {
-  position: relative;
+	position: relative;
 }
 
 /* Limit the background image by adding overflow: hidden */
 #image-cropper {
-  overflow: hidden;
+	overflow: hidden;
 }
 
 .edit-external-accounts #external-accounts {
-  margin-top: 61px;
+	margin-top: 61px;
+}
+
+.edit-external-accounts p {
+	color: #fff;
 }

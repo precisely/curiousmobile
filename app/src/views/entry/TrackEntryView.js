@@ -8,20 +8,20 @@ define(function(require, exports, module) {
 	var Modifier = require('famous/core/Modifier');
 	var RenderController = require("famous/views/RenderController");
 	var EventHandler = require('famous/core/EventHandler');
-	var EntryView = require('views/entry/EntryView');
+	var EntryReadView = require('views/entry/EntryReadView');
 	var u = require('util/Utils');
 	var Entry = require('models/Entry');
 
-	function EntryReadView(entry) {
-		EntryView.apply(this, arguments);
+	function TrackEntryView(entry) {
+		EntryReadView.apply(this, arguments);
 		this.menu = 'entry';
 		_addSurface.call(this);
 	}
 
-	EntryReadView.prototype = Object.create(EntryView.prototype);
-	EntryReadView.prototype.constructor = EntryReadView;
+	TrackEntryView.prototype = Object.create(EntryReadView.prototype);
+	TrackEntryView.prototype.constructor = TrackEntryView;
 
-	EntryReadView.DEFAULT_OPTIONS = {
+	TrackEntryView.DEFAULT_OPTIONS = {
 		entryHeight: 55,
 		lineHeight: 16,
 	};
@@ -77,31 +77,18 @@ define(function(require, exports, module) {
 		}.bind(this));
 		this.add(showMoreModifier).add(this.showMoreSurface);
 
-		this.deleteSurface = new Surface({
-			size: [100, this.options.entryHeight],
-			content: 'Delete',
-			properties: {
-				padding: '8px 26px',
-				backgroundColor: '#dc6059',
-				fontSize: '16px',
-				lineHeight: '45px',
-				color: 'white',
-			}
-		});
-
-		this.deleteSurface.on('click', this.delete.bind(this));
-		deleteModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView + 2)
-		});
-		this.add(deleteModifier).add(this.deleteSurface);
 		var entryModifier = new Modifier({
 			transform: Transform.translate(0, 0, window.App.zIndex.readView)
 		});
 		this.add(entryModifier).add(this.entrySurface);
 	}
 
+	TrackEntryView.prototype.setEntry = function(entry) {
+		this.entry = entry;
+		this.entrySurface.setContent(this.entry.toString());
+	}
 
-	EntryReadView.prototype.getDisplayText = function() {
+	TrackEntryView.prototype.getDisplayText = function() {
 		var date = new Date(this.entry.date);
 		var time = u.formatAMPM(date);
 		var displayText = this.entry.removeSuffix();
@@ -113,5 +100,5 @@ define(function(require, exports, module) {
 		return displayText;
 	}
 
-	module.exports = EntryReadView;
+	module.exports = TrackEntryView;
 });
