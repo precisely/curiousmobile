@@ -173,6 +173,7 @@ define(function(require, exports, module) {
 	function _renderTagsList(tagsList) {
 		this.tagsSurfaceList = [];
 		_.each(tagsList, function(tag) {
+			tag = new Tag(tag);
 			var tagSurface = new Surface({
 				size: [undefined, 40],
 				content: '<div data-value="' + tag.id + '" class="tagList"><i class="fa fa-check invisible"></i>' + tag.description + '</div>'

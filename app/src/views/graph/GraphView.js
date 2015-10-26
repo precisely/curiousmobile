@@ -218,8 +218,8 @@ define(function(require, exports, module) {
 			return '';
 		}
 		this.setName = function(name) {
-			if (this.nameField)
-				this.nameField.text(shorten(name, 100, false));
+			if (this.nameField);
+				//this.nameField.text(shorten(name, 100, false));
 		}
 		this.setUsername = function(name) {
 			if (this.usernameField)
