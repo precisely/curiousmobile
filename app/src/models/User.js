@@ -179,26 +179,26 @@ define(function(require, exports, module) {
 				}, null, {requestMethod: 'PUT'});
 	};
 
-	User.addInterestTags = function(tags, userHash, successCallback, failCallback) {
-		u.queueJSONAll('Adding interest tags', App.serverUrl + '/api/data/action/addInterestTagData', tags,
+	User.addInterestTags = function(tags, successCallback, failCallback) {
+		u.queuePostJSON('Adding interest tags', App.serverUrl + '/api/data/action/addInterestTagData', tags,
 				function(data) {
-					if (u.checkData(data)) {
-						if (data.interestTags) {
-							successCallback({hash: userHash});
-						} else {
-							u.showAlert(data.message);
-							if (failCallback) {
-								failCallback();
-							}
+				if (u.checkData(data)) {
+					if (data.interestTags) {
+						successCallback();
+					} else {
+						u.showAlert(data.message);
+						if (failCallback) {
+							failCallback();
 						}
 					}
-				}, function(error) {
-					console.log('error: ', error);
-				}, null, 'POST');
+				}
+			}, function(error) {
+				console.log('error: ', error);
+			});
 	};
 
-	User.deleteInterestTags = function(tags, userHash, successCallback, failCallback) {
-		u.queueJSONAll('Deleting interest tags', App.serverUrl + '/api/data/action/deleteInterestTagData', tags,
+	User.deleteInterestTags = function(tags, successCallback, failCallback) {
+		u.queuePostJSON('Deleting interest tags', App.serverUrl + '/api/data/action/deleteInterestTagData', tags,
 				function(data) {
 					if (u.checkData(data)) {
 						if (data.interestTags) {
@@ -212,7 +212,7 @@ define(function(require, exports, module) {
 					}
 				}, function(error) {
 					console.log('error: ', error);
-				}, null, 'POST');
+				});
 	};
 
 	User.saveAvatar = function(updatedData, successCallback, failCallback) {

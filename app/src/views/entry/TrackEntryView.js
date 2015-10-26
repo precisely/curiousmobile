@@ -77,6 +77,11 @@ define(function(require, exports, module) {
 		}.bind(this));
 		this.add(showMoreModifier).add(this.showMoreSurface);
 
+		deleteModifier = new StateModifier({
+			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView + 2)
+		});
+		this.add(deleteModifier).add(this.deleteSurface);
+
 		var entryModifier = new Modifier({
 			transform: Transform.translate(0, 0, window.App.zIndex.readView)
 		});

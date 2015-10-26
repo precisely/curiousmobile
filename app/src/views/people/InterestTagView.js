@@ -25,13 +25,13 @@ define(function(require, exports, module) {
 	InterestTagView.prototype.constructor = InterestTagView;
 
 	InterestTagView.DEFAULT_OPTIONS = {
-		entryHeight: 55,
+		entryHeight: 45,
 		lineHeight: 16,
 	};
 
 	function _createTagSurface() {
 		var properties = {
-			padding: '15px 45px 15px 15px',
+			padding: '15px 45px 0px 15px',
 			fontSize: this.options.lineHeight + 'px',
 			fontWeight: 'lighter',
 			lineHeight: this.options.lineHeight + 'px',
@@ -51,10 +51,22 @@ define(function(require, exports, module) {
 		};
 
 		this.entrySurface.setOptions(readSurfaceOptions);
-		var mod = new StateModifier({
-			transform: Transform.translate(0, 0, 99)
-		});
 
+		var deleteModifier = new StateModifier({
+			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView + 2)
+		});
+		this.add(deleteModifier).add(this.deleteSurface);
+		var entryModifier = new Modifier({
+			transform: Transform.translate(0, 0, 0)
+		});
+		this.add(entryModifier).add(this.entrySurface);
 	}
+
+	InterestTagView.prototype.delete = function() {
+		User.deleteInterestTags(this.entry, function() {
+			App.pageView.getCurrentView().refresh();
+		}.bind(this));
+	};
+
 	module.exports = InterestTagView;
 });

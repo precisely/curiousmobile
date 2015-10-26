@@ -26,11 +26,9 @@ define(function(require, exports, module) {
 		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
-				backgroundColor: '#fff',
-				zIndex: 5
+				background: '-webkit-linear-gradient(top,  #f14d43 0%, #f48157 100%)',
 			}
 		});
-		this.setBody(this.backgroundSurface);
 
 		this.renderController = new RenderController();
 		var mod = new StateModifier({
@@ -39,6 +37,7 @@ define(function(require, exports, module) {
 		});
 
 		this.add(mod).add(this.renderController);
+		this.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(this.backgroundSurface);
 	}
 
 	PeopleDetailView.prototype = Object.create(BaseView.prototype);

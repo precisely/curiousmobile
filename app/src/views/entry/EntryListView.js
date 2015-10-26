@@ -8,7 +8,7 @@ define(function(require, exports, module) {
 	RenderController = require("famous/views/RenderController"),
 	EntryCollection = require('models/EntryCollection'),
 	Entry = require('models/Entry'),
-	EntryReadView = require('views/entry/EntryReadView'),
+	TrackEntryView = require('views/entry/TrackEntryView'),
 	PinnedView = require('views/entry/PinnedView');
 	var Scrollview = require("famous/views/Scrollview");
 	var SequentialLayout = require("famous/views/SequentialLayout");
@@ -28,7 +28,7 @@ define(function(require, exports, module) {
 
 	function EntryListView(collection) {
 		View.apply(this, arguments);
-		this.entryReadViews = [];
+		this.trackEntryViews = [];
 		this.entries = collection;
 		this.renderController = new RenderController();
 		this.pinnedEntriesController = new RenderController();
@@ -75,13 +75,13 @@ define(function(require, exports, module) {
 		});
 
 		var draggableNode = new FixedRenderNode(draggable);
-		var entryReadView = new EntryReadView(entry);
-		entryReadView.pipe(draggable);
-		draggableNode.add(entryReadView);
-		entryReadView.pipe(this.scrollView);
-		this.entryReadViews.push(entryReadView);
+		var trackEntryView = new TrackEntryView(entry);
+		trackEntryView.pipe(draggable);
+		draggableNode.add(trackEntryView);
+		trackEntryView.pipe(this.scrollView);
+		this.trackEntryViews.push(trackEntryView);
 		this.draggableList.push(draggableNode);
-		//entryReadView.pipe(this.scrollView);
+		//trackEntryView.pipe(this.scrollView);
 
 		var snapTransition = {
 			method: 'snap',
@@ -89,16 +89,16 @@ define(function(require, exports, module) {
 			dampingRatio: 0.3,
 			velocity: 0
 		};
-		entryReadView.on('touchend', function(e) {
-			console.log('EventHandler: entryReadView event: mouseup');
+		trackEntryView.on('touchend', function(e) {
+			console.log('EventHandler: trackEntryView event: mouseup');
 			var distance = Math.abs(draggable.getPosition()[0]);
 			if (distance < 85) {
 				draggable.setPosition([0,0,0], snapTransition);
 			}
-		}.bind(entryReadView));
+		}.bind(trackEntryView));
 
-		this.entryEventListeners(entryReadView);
-		return entryReadView;
+		this.entryEventListeners(trackEntryView);
+		return trackEntryView;
 	}
 
 	EntryListView.prototype.addPinnedEntry = function (entry) {
@@ -125,7 +125,7 @@ define(function(require, exports, module) {
 	}
 
 	EntryListView.prototype.refreshEntries = function(entries, glowEntry) {
-		this.entryReadViews = [];
+		this.trackEntryViews = [];
 		this.pinnedViews = [];
 		this.draggableList = [];
 		this.glowEntry = glowEntry;

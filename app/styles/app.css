@@ -1344,15 +1344,15 @@ and (max-device-height: 568px) {
 
 .people-detail, .edit-people-detail {
 	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#df3501+0,ff6131+100 */
-	background: #df3501; /* Old browsers */
-	background: -moz-linear-gradient(top,  #f14d43 0%, #f48157 100%); /* FF3.6+ */
-	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f14d43), color-stop(100%,#f48157)); /* Chrome,Safari4+ */
-	background: -webkit-linear-gradient(top,  #f14d43 0%,#f48157 100%); /* Chrome10+,Safari5.1+ */
-	background: -o-linear-gradient(top,  #f14d43 0%,#f48157 100%); /* Opera 11.10+ */
-	background: -ms-linear-gradient(top,  #f14d43 0%,#f48157 100%); /* IE10+ */
-	background: linear-gradient(to bottom,  #f14d43 0%,#f48157 100%); /* W3C */
-	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#df3501', endColorstr='#f48157',GradientType=0 ); /* IE6-9 */
-	height: 1500px;
+	/*background: #df3501; /!* Old browsers *!/
+	background: -moz-linear-gradient(top,  #f14d43 0%, #f48157 100%); /!* FF3.6+ *!/
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f14d43), color-stop(100%,#f48157)); /!* Chrome,Safari4+ *!/
+	background: -webkit-linear-gradient(top,  #f14d43 0%,#f48157 100%); /!* Chrome10+,Safari5.1+ *!/
+	background: -o-linear-gradient(top,  #f14d43 0%,#f48157 100%); /!* Opera 11.10+ *!/
+	background: -ms-linear-gradient(top,  #f14d43 0%,#f48157 100%); /!* IE10+ *!/
+	background: linear-gradient(to bottom,  #f14d43 0%,#f48157 100%); /!* W3C *!/
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#df3501', endColorstr='#f48157',GradientType=0 ); /!* IE6-9 *!/
+	height: 1500px;*/
 }
 
 #public-interest-tags p {
@@ -1634,11 +1634,10 @@ and (max-device-height: 568px) {
 	border-bottom-right-radius: 0px;
 }
 
-.add-interest-tag textarea, textarea:focus {
+.add-interest-tag textarea {
 	background-color: transparent;
 	color: #EC0F0F;
 	font-size: 14px;
-	border-color: #676767;
 	border-width: 2px;
 	border-style: solid;
 	-webkit-appearance: initial;
@@ -1650,9 +1649,6 @@ and (max-device-height: 568px) {
 	width: 290px;
 	height: 42px;
 	border-top: 0px;
-	height: 210px;
-	border-top-left-radius: 0px;
-	border-top-right-radius: 0px;
 	outline: none;
 }
 
