@@ -2,31 +2,31 @@ define(function(require, exports, module) {
 	'use strict';
 	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
-    var ContainerSurface = require('famous/surfaces/ContainerSurface');
+	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
 	var StateView = require('views/StateView');
 	var GraphTemplate = require('text!templates/chart-canvas.html');
-    var DateUtil = require('util/DateUtil');
-    var DateGridView = require('views/calendar/DateGridView');
-    var RenderController = require("famous/views/RenderController");
+	var DateUtil = require('util/DateUtil');
+	var DateGridView = require('views/calendar/DateGridView');
+	var RenderController = require("famous/views/RenderController");
 	var PillsView = require('views/PillsView');
 	var User = require('models/User');
 	var Tags = require('models/Tags');
 	var u = require('util/Utils');
-    var jqFlot = require('util/jquery.flot');
-    var jueryJson = require('util/jquery.json');
-    var PlotMobile = require('util/plot.mobile');
+	var jqFlot = require('util/jquery.flot');
+	var jueryJson = require('util/jquery.json');
+	var PlotMobile = require('util/plot.mobile');
 
 	function GraphView(tagsToPlot) {
 		StateView.apply(this, arguments);
 		this.tags = tagsToPlot;
 		this.init();
 		this.createTagsPill();
-        if (tagsToPlot && tagsToPlot.length > 0) {
-            this.drawDateFooter();
-        }
+		if (tagsToPlot && tagsToPlot.length > 0) {
+			this.drawDateFooter();
+		}
 	}
 
 	GraphView.prototype = Object.create(StateView.prototype);
@@ -44,7 +44,7 @@ define(function(require, exports, module) {
 		this.add(new StateModifier({transform: Transform.translate(0, 50, 0)})).add(this.graphSurface);
 		if (this.tags) {
 			this.graphSurface.on('deploy', function() {
-				this.plot = new PlotMobile(this.tags, User.getCurrentUserId(), User.getCurrentUser().username, "#plotArea", true, false, new PlotProperties({
+				this.plot = new PlotMobile(Tags.tagsList, User.getCurrentUserId(), User.getCurrentUser().get("username"), "#plotArea", true, false, new PlotProperties({
 					'startDate':'#startdatepicker1',
 					'startDateInit':'start date and/or tag',
 					'endDate':'#enddatepicker1',
@@ -61,105 +61,105 @@ define(function(require, exports, module) {
 		}
 	};
 
-    GraphView.prototype.drawDateFooter = function() {
-        var dateContainerSurface = new ContainerSurface({
-            size: [undefined, 58],
-            properties: {
-                backgroundColor: '#efefef',
-                border: '1px solid #c3c3c3'
-            }
-        });
+	GraphView.prototype.drawDateFooter = function() {
+		var dateContainerSurface = new ContainerSurface({
+			size: [undefined, 58],
+			properties: {
+				backgroundColor: '#efefef',
+				border: '1px solid #c3c3c3'
+			}
+		});
 
-        this.dateGridRenderController = new RenderController();
-        var dateGridRenderControllerMod = new StateModifier({
-            transform: Transform.translate(18, 100, 16)
-        });
-        this.add(dateGridRenderControllerMod).add(this.dateGridRenderController);
+		this.dateGridRenderController = new RenderController();
+		var dateGridRenderControllerMod = new StateModifier({
+			transform: Transform.translate(18, 100, 16)
+		});
+		this.add(dateGridRenderControllerMod).add(this.dateGridRenderController);
 
-        var datePickerButtonProperties = {
-            borderRadius: '50%',
-            backgroundColor: '#fff',
-            textAlign: 'center',
-            margin: '16px 15px',
-            padding: '4px',
-            border: '1px solid #c3c3c3'
-        };
+		var datePickerButtonProperties = {
+			borderRadius: '50%',
+			backgroundColor: '#fff',
+			textAlign: 'center',
+			margin: '16px 15px',
+			padding: '4px',
+			border: '1px solid #c3c3c3'
+		};
 
-        this.startDatePickerSurface = new Surface({
-            classes: ['start-date-picker'],
-            size: [27, 27],
-            content: '<i class="fa fa-chevron-left"></i>',
-            properties: datePickerButtonProperties
-        });
-        this.endDatePickerSurface = new Surface({
-            classes: ['end-date-picker'],
-            size: [27, 27],
-            content: '<i class="fa fa-chevron-right"></i>',
-            properties: datePickerButtonProperties
-        });
+		this.startDatePickerSurface = new Surface({
+			classes: ['start-date-picker'],
+			size: [27, 27],
+			content: '<i class="fa fa-chevron-left"></i>',
+			properties: datePickerButtonProperties
+		});
+		this.endDatePickerSurface = new Surface({
+			classes: ['end-date-picker'],
+			size: [27, 27],
+			content: '<i class="fa fa-chevron-right"></i>',
+			properties: datePickerButtonProperties
+		});
 
-        this.startDatePickerSurface.on('click', function(e) {
-            if (u.isAndroid() || (e instanceof CustomEvent)) {
-                showDatePicker.call(this, 'startDate');
-            }
-        }.bind(this));
+		this.startDatePickerSurface.on('click', function(e) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				showDatePicker.call(this, 'startDate');
+			}
+		}.bind(this));
 
-        this.endDatePickerSurface.on('click', function(e) {
-            if (u.isAndroid() || (e instanceof CustomEvent)) {
-                showDatePicker.call(this, 'endDate');
-            }
-        }.bind(this));
+		this.endDatePickerSurface.on('click', function(e) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				showDatePicker.call(this, 'endDate');
+			}
+		}.bind(this));
 
-        this.endDateString = this.startDateString = '-';
-        this.dateLabelSurface = new Surface({
-            size: [158, 28],
-            content: ' - ',
-            properties: {
-                border: '1px solid #C3C3C3',
-                borderRadius: '2px',
-                padding: '3px',
-                color: '#6f6f6f',
-                textAlign: 'center',
-                whiteSpace: 'no-wrap',
-                backgroundColor: '#fff'
-            }
-        });
-        dateContainerSurface.add(new StateModifier({transform: Transform.translate(0, 0, 2)})).add(this.startDatePickerSurface);
-        dateContainerSurface.add(new StateModifier({align:[1, 0], origin: [1, 0], transform: Transform.translate(-30, 0, 2)})).add(this.endDatePickerSurface);
-        dateContainerSurface.add(new StateModifier({align:[0.5, 0.5], origin: [0.5, 0.5], transform: Transform.translate(0, 0, 2)})).add(this.dateLabelSurface);
-        this.add(new StateModifier({align: [0, 1], origin: [0, 1], transform: Transform.translate(0, -115, App.zIndex.feedItem + 5)})).add(dateContainerSurface);
-    };
+		this.endDateString = this.startDateString = '-';
+		this.dateLabelSurface = new Surface({
+			size: [158, 28],
+			content: ' - ',
+			properties: {
+				border: '1px solid #C3C3C3',
+				borderRadius: '2px',
+				padding: '3px',
+				color: '#6f6f6f',
+				textAlign: 'center',
+				whiteSpace: 'no-wrap',
+				backgroundColor: '#fff'
+			}
+		});
+		dateContainerSurface.add(new StateModifier({transform: Transform.translate(0, 0, 2)})).add(this.startDatePickerSurface);
+		dateContainerSurface.add(new StateModifier({align:[1, 0], origin: [1, 0], transform: Transform.translate(-30, 0, 2)})).add(this.endDatePickerSurface);
+		dateContainerSurface.add(new StateModifier({align:[0.5, 0.5], origin: [0.5, 0.5], transform: Transform.translate(0, 0, 2)})).add(this.dateLabelSurface);
+		this.add(new StateModifier({align: [0, 1], origin: [0, 1], transform: Transform.translate(0, -115, App.zIndex.feedItem + 5)})).add(dateContainerSurface);
+	};
 
-    function showDatePicker(dateType) {
-        if(this.dateGridOpen) {
-            this.dateGridRenderController.hide();
-        } else {
-            var dateGridView = new DateGridView(this.selectedDate || new Date());
-            this.dateGrid = dateGridView;
-            this.dateGridRenderController.show(this.dateGrid);
-            this.dateGrid.on('select-date', function(date) {
-                console.log('CalenderView: Date selected');
-                this.setSelectedDate(date, dateType);
-                this.dateGridRenderController.hide();
-                this.dateGridOpen = false;
-            }.bind(this));
-        }
-        this.dateGridOpen = !this.dateGridOpen;
-    }
+	function showDatePicker(dateType) {
+		if(this.dateGridOpen) {
+			this.dateGridRenderController.hide();
+		} else {
+			var dateGridView = new DateGridView(this.selectedDate || new Date());
+			this.dateGrid = dateGridView;
+			this.dateGridRenderController.show(this.dateGrid);
+			this.dateGrid.on('select-date', function(date) {
+				console.log('CalenderView: Date selected');
+				this.setSelectedDate(date, dateType);
+				this.dateGridRenderController.hide();
+				this.dateGridOpen = false;
+			}.bind(this));
+		}
+		this.dateGridOpen = !this.dateGridOpen;
+	}
 
-    GraphView.prototype.setSelectedDate = function(date, dateType) {
-        var App = window.App;
-        this.selectedDate = date;
-        var year = date.getFullYear().toString();
-        if (dateType == 'startDate') {
-            this.startDateString = ('0' + date.getDate()).slice(-2) + '/'  + ('0' + (date.getMonth()+1)).slice(-2) + '/'
-                + year.substring(2);
-        } else {
-            this.endDateString = ('0' + date.getDate()).slice(-2) + '/'  + ('0' + (date.getMonth()+1)).slice(-2) + '/'
-                + year.substring(2);
-        }
-        this.dateLabelSurface.setContent(this.startDateString + ' - ' + this.endDateString);
-    }
+	GraphView.prototype.setSelectedDate = function(date, dateType) {
+		var App = window.App;
+		this.selectedDate = date;
+		var year = date.getFullYear().toString();
+		if (dateType == 'startDate') {
+			this.startDateString = ('0' + date.getDate()).slice(-2) + '/'  + ('0' + (date.getMonth()+1)).slice(-2) + '/'
+					+ year.substring(2);
+		} else {
+			this.endDateString = ('0' + date.getDate()).slice(-2) + '/'  + ('0' + (date.getMonth()+1)).slice(-2) + '/'
+					+ year.substring(2);
+		}
+		this.dateLabelSurface.setContent(this.startDateString + ' - ' + this.endDateString);
+	}
 
 	GraphView.prototype.createTagsPill = function() {
 		var pillsSurfaceList = [];
@@ -176,7 +176,7 @@ define(function(require, exports, module) {
 		});
 		this.pillsView = new PillsView(pillsSurfaceList);
 		var pillsViewMod = new StateModifier({
-			transform: Transform.translate(0, 0, App.zIndex.readView + 1)
+			transform: Transform.translate(0, 0, 0)
 		});
 		this.add(pillsViewMod).add(this.pillsView);
 	};
@@ -192,34 +192,33 @@ define(function(require, exports, module) {
 			this.usernameField = $(divIdArray['username']);
 		else
 			this.usernameField = null;
-		this.nameField = $(divIdArray['name']);
+		this.nameField = '';
 		this.renameField = $(divIdArray['rename']);
 		/* if (divIdArray['zoomControl'])
-			this.zoomControl = $(divIdArray['zoomControl']);
-		this.cycleTagDiv = $(divIdArray['cycleTag']);
+		 this.zoomControl = $(divIdArray['zoomControl']);
+		 this.cycleTagDiv = $(divIdArray['cycleTag']);
 
-		this.startDateInit = divIdArray['startDateInit'];
-		this.initStartDate = function() {
-			this.startDatePicker.datepicker("setDate", null);
-			initTextField(this.startDatePicker, this.startDateInit);
-		}
-		this.endDateInit = divIdArray['endDateInit'];
-		this.initEndDate = function() {
-			this.endDatePicker.datepicker("setDate", null);
-			initTextField(this.endDatePicker, this.endDateInit);
-		}
-		this.initStartDate();
-		this.initEndDate();*/
+		 this.startDateInit = divIdArray['startDateInit'];
+		 this.initStartDate = function() {
+		 this.startDatePicker.datepicker("setDate", null);
+		 initTextField(this.startDatePicker, this.startDateInit);
+		 }
+		 this.endDateInit = divIdArray['endDateInit'];
+		 this.initEndDate = function() {
+		 this.endDatePicker.datepicker("setDate", null);
+		 initTextField(this.endDatePicker, this.endDateInit);
+		 }
+		 this.initStartDate();
+		 this.initEndDate();*/
 
 		this.getName = function() {
 			if (this.nameField) {
-				return this.nameField.text();
+				return this.nameField;
 			}
 			return '';
 		}
 		this.setName = function(name) {
-			if (this.nameField);
-				//this.nameField.text(shorten(name, 100, false));
+			this.nameField = name;
 		}
 		this.setUsername = function(name) {
 			if (this.usernameField)
@@ -227,16 +226,16 @@ define(function(require, exports, module) {
 		}
 		this.getStartDate = function() {
 			/*if (this.startDatePicker.data('textFieldAlreadyReset')) {
-				return this.startDatePicker.datepicker('getDate');
-			}*/
+			 return this.startDatePicker.datepicker('getDate');
+			 }*/
 			return null;
 		}
 		this.getStartTime = function() {
 			/*var startDate = this.getStartDate();
-			if (!startDate) return 0;
+			 if (!startDate) return 0;
 
-			return startDate.getTime();
-			*/
+			 return startDate.getTime();
+			 */
 			return null;
 		}
 		this.setStartDate = function(date) {
@@ -244,8 +243,8 @@ define(function(require, exports, module) {
 		}
 		this.getEndDate = function() {
 			/*if (this.endDatePicker.data('textFieldAlreadyReset')) {
-				return this.endDatePicker.datepicker('getDate');
-			}*/
+			 return this.endDatePicker.datepicker('getDate');
+			 }*/
 			return null;
 		}
 		this.getEndTime = function() {

@@ -199,19 +199,7 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
         }
         return plotDataStr;
     }
-    this.save = function() {
-        var first = true;
-        var plotDataStr = this.store();
-        if (plotDataStr == null) {
-            this.showAlert("No plotted data to save");
-            return;
-        }
 
-        this.queuePostJSON("saving graph", this.makePostUrl("savePlotData"), { name: this.getName(), plotData: plotDataStr },
-            function(data) {
-                this.checkData(data[0], '', "Error while saving live graph", "Graph saved");
-            });
-    }
     this.storeSnapshot = function() {
         var plotData = [];
         localStorage['plotUserId' + this.id] = this.userId;
@@ -249,14 +237,14 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 
         this.queuePostJSON("sharing graph", this.makePostUrl("saveSnapshotData"), { name: this.getName() + ' (snapshot)', snapshotData: plotDataStr },
             function(data) {
-                if (this.checkData(data, '', "Error while saving snapshot")) {
+                if (this.checkData(data)) {
                     if (data.success) {
-                        window.location = this.makePlainUrl('social#discussions/' + data.discussionHash);
+                        App.pageView.changePage('DiscussionDetailView', {discussionHash: data.discussionHash});
                     } else {
                         this.showAlert(data.message);
                     }
                 }
-            });
+			}.bind(this));
     }
     this.load = function(plotData) {
         $(document).trigger(beforeLinePlotEvent);
@@ -1611,11 +1599,11 @@ function PlotLine(p) {
         var method = this.sumData ? "getSumPlotDescData" : "getPlotDescData";
         var plotLine = this;
 
-        this.plot.queueJSON("loading graph data", this.plot.makeGetUrl(method), getCSRFPreventionObject(method + "CSRF", {tags: $.toJSON(this.getTags()),
+        this.plot.queueJSON("loading graph data", this.plot.makeGetUrl(method), this.plot.getCSRFPreventionObject(method + "CSRF", {tags: $.toJSON(this.getTags()),
                 startDate:startDate == null ? "" : startDate.toUTCString(),
                 endDate:endDate == null ? "" : endDate.toUTCString(),
                 timeZoneName:timeZoneName }),
-            function(plotDesc){
+            function(plotDesc) {
                 if (this.checkData(plotDesc)) {
                     plotLine.loadEntries(plotDesc);
                     if (plotLine.smoothLine && plotLine.smoothDataWidth > 0 && plot.interactive)

@@ -36,7 +36,7 @@ define(function(require, exports, module) {
 		this.renderController = new RenderController();
 		var mod = new StateModifier({
 			size: [App.width, App.height - 250],
-			transform: Transform.translate(0, 164, 16)
+			transform: Transform.translate(0, 164, 13)
 		});
 
 		this.add(mod).add(this.renderController);
@@ -167,7 +167,6 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.renderController.show((this.tagsScrollView));
-
 	};
 
 	function _renderTagsList(tagsList) {
