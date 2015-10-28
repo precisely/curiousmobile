@@ -11,7 +11,6 @@ define(function(require, exports, module) {
 	var StateView = require('views/StateView');
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var Surface = require('famous/core/Surface');
-	var InterestTagTemplate = require('text!templates/interest-tag.html');
 	var EntryReadView = require('views/entry/EntryReadView');
 	var User = require('models/User');
 	var u = require('util/Utils');
