@@ -19,16 +19,16 @@ define(function(require, exports, module) {
 
 	MenuView.DEFAULT_OPTIONS = {
 		menuData: {},
-        angle: -0.2,
-        menuItemWidth: 320,
-        menuItemHeight: 54,
-        topOffset: 0,
+		angle: -0.2,
+		menuItemWidth: 320,
+		menuItemHeight: 54,
+		topOffset: 0,
 		menuItemOffset: 58,
-        staggerDelay: 35,
-        transition: {
-            duration: 700,
-            curve: 'easeOut'
-        }
+		staggerDelay: 35,
+		transition: {
+			duration: 700,
+			curve: 'easeOut'
+		}
 	};
 
 	MenuView.prototype = Object.create(View.prototype);

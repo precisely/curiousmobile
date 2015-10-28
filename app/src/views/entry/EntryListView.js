@@ -8,7 +8,7 @@ define(function(require, exports, module) {
 	RenderController = require("famous/views/RenderController"),
 	EntryCollection = require('models/EntryCollection'),
 	Entry = require('models/Entry'),
-	EntryReadView = require('views/entry/EntryReadView'),
+	TrackEntryView = require('views/entry/TrackEntryView'),
 	PinnedView = require('views/entry/PinnedView');
 	var Scrollview = require("famous/views/Scrollview");
 	var SequentialLayout = require("famous/views/SequentialLayout");
@@ -28,13 +28,13 @@ define(function(require, exports, module) {
 
 	function EntryListView(collection) {
 		View.apply(this, arguments);
-		this.entryReadViews = [];
+		this.trackEntryViews = [];
 		this.entries = collection;
 		this.renderController = new RenderController();
 		this.pinnedEntriesController = new RenderController();
 
 		this.spinnerSurface = new Surface({
-			content: '<i class="fa fa-spinner fa-spin"> </i>',	
+			content: '<i class="fa fa-spinner fa-spin"> </i>',
 			size: [320, 40],
 			properties: {
 				textAlign: 'center',
@@ -70,18 +70,18 @@ define(function(require, exports, module) {
 
 	EntryListView.prototype.addEntry = function(entry) {
 		var draggable = new Draggable( {
-			xRange: [-100, 0],
+			xRange: [-90, 0],
 			yRange: [0, 0],
 		});
 
 		var draggableNode = new FixedRenderNode(draggable);
-		var entryReadView = new EntryReadView(entry);
-		entryReadView.pipe(draggable);
-		draggableNode.add(entryReadView);
-		entryReadView.pipe(this.scrollView);
-		this.entryReadViews.push(entryReadView);
+		var trackEntryView = new TrackEntryView(entry);
+		trackEntryView.pipe(draggable);
+		draggableNode.add(trackEntryView);
+		trackEntryView.pipe(this.scrollView);
+		this.trackEntryViews.push(trackEntryView);
 		this.draggableList.push(draggableNode);
-		//entryReadView.pipe(this.scrollView);
+		//trackEntryView.pipe(this.scrollView);
 
 		var snapTransition = {
 			method: 'snap',
@@ -89,16 +89,16 @@ define(function(require, exports, module) {
 			dampingRatio: 0.3,
 			velocity: 0
 		};
-		entryReadView.on('touchend', function(e) {
-			console.log('EventHandler: entryReadView event: mouseup');
+		trackEntryView.on('touchend', function(e) {
+			console.log('EventHandler: trackEntryView event: mouseup');
 			var distance = Math.abs(draggable.getPosition()[0]);
 			if (distance < 85) {
 				draggable.setPosition([0,0,0], snapTransition);
 			}
-		}.bind(entryReadView));
+		}.bind(trackEntryView));
 
-		this.entryEventListeners(entryReadView);
-		return entryReadView;
+		this.entryEventListeners(trackEntryView);
+		return trackEntryView;
 	}
 
 	EntryListView.prototype.addPinnedEntry = function (entry) {
@@ -125,7 +125,7 @@ define(function(require, exports, module) {
 	}
 
 	EntryListView.prototype.refreshEntries = function(entries, glowEntry) {
-		this.entryReadViews = [];
+		this.trackEntryViews = [];
 		this.pinnedViews = [];
 		this.draggableList = [];
 		this.glowEntry = glowEntry;
@@ -135,7 +135,7 @@ define(function(require, exports, module) {
 		}
 
 		if (entries instanceof EntryCollection) {
-			this.entries = entries;	
+			this.entries = entries;
 		} else if (entries instanceof Array){
 			this.entries = new EntryCollection(entries);
 		} else {
@@ -161,14 +161,14 @@ define(function(require, exports, module) {
 
 		this.pinnedSequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
-			var lastView = this.pinnedSequentialLayout._items._.getValue(index-1);	
+			var lastView = this.pinnedSequentialLayout._items._.getValue(index-1);
 			var size = [0,0];
 			if (lastView) {
 				size = lastView.getSize();
 			}
 
 			if (!size || !size[0]) {
-				size = [0, 0];	
+				size = [0, 0];
 			}
 
 			var xOffset;
@@ -176,7 +176,7 @@ define(function(require, exports, module) {
 			if (index == 0) {
 				this.pinnedSequentialLayout.lastXOffset = 0;
 				this.pinnedSequentialLayout.nextYOffset = 8;
-			} 
+			}
 			xOffset = size[0] + 8;
 			//console.log(this.pinnedSequentialLayout.lastXOffset + ':' + currentSize);
 			if (_.contains(this.pinnedEdgeIndex, index)) {
@@ -187,7 +187,7 @@ define(function(require, exports, module) {
 				this.pinnedSequentialLayout.nextYOffset += 40;
 				//console.log('EntryListView: Adding a pinned row: ' + this.pinnedSequentialLayout.nextYOffset);
 			} else {
-				xOffset += this.pinnedSequentialLayout.lastXOffset;	
+				xOffset += this.pinnedSequentialLayout.lastXOffset;
 			}
 			var transform = Transform.translate(xOffset, this.pinnedSequentialLayout.nextYOffset, App.zIndex.readView);
 			this.pinnedSequentialLayout.lastXOffset = xOffset;
@@ -207,8 +207,8 @@ define(function(require, exports, module) {
 		}.bind(this));
 		var scrollWrapperSurface = new ContainerSurface({
 			properties: {
-				overflow: 'hidden',	
-			}	
+				overflow: 'hidden',
+			}
 		});
 
 		var scrollNode = new RenderNode(scrollModifier);
@@ -271,7 +271,7 @@ define(function(require, exports, module) {
 			}
 
 			if (this.glowEntry && entry.id == this.glowEntry.id) {
-				this.glowView = addedView;	
+				this.glowView = addedView;
 			}
 		}.bind(this));
 
@@ -289,7 +289,7 @@ define(function(require, exports, module) {
 
 
 		var pinnedHelp = new Surface({
-			content: 'PINNED TAGS: (tap to add tag to your list below)',	
+			content: 'PINNED TAGS: (tap to add tag to your list below)',
 			size: [undefined, 11],
 			properties: {
 				color: '#aeaeae',
@@ -308,7 +308,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		scrollModifier.transformFrom(function() {
-			return Transform.translate(0, this.heightOfPins() + 10, App.zIndex.readView); 	
+			return Transform.translate(0, this.heightOfPins() + 10, App.zIndex.readView);
 		}.bind(this));
 
 		var pinnedEntriesModifier = new Modifier({
@@ -317,11 +317,11 @@ define(function(require, exports, module) {
 		pinnedContainerSurface.add(pinnedEntriesModifier).add(this.pinnedSequentialLayout);
 
 		this.pinnedEntriesController.inTransformFrom(function() {
-			return Transform.translate(0, 0, App.zIndex.pinned);	
+			return Transform.translate(0, 0, App.zIndex.pinned);
 		});
 
 		this.renderController.inTransformFrom(function() {
-			return Transform.translate(0, 0, App.zIndex.readView);	
+			return Transform.translate(0, 0, App.zIndex.readView);
 		});
 
 		this.pinnedEntriesController.show(pinnedContainerSurface, {duration: 0});
@@ -338,7 +338,7 @@ define(function(require, exports, module) {
 	}
 
 	EntryListView.prototype.numberOfPinRows = function () {
-		var numberOfRows = 1;	
+		var numberOfRows = 1;
 		var rowWidthSoFar = 20;
 		this.pinnedEdgeIndex = [];
 		_.each(this.pinnedViews, function (pinnedView, index) {

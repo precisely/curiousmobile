@@ -1,0 +1,13 @@
+<div class="list-interests-tags">
+    <div class="media">
+        {{ if (user.interestTags.length == 0) { }}
+        <div class="media-body">
+            <p>No Tags</p>
+        </div>
+        {{ } else { }}
+        <div class="media-body" id="public-interest-tags">
+            <p> </p><hr><br>
+        </div>
+        {{ } }}
+    </div>
+</div>

@@ -41,13 +41,13 @@ String.prototype.endsWith = function(str) {
 	return this.length >= str.length && this.substr(this.length - str.length) == str;
 }
 
-/**                                                                                                                      
- * Universal indexOf method to get index by passing regex as argument                                                    
- */                                                                                                                      
-String.prototype.indexOfRegex = function(regex){                                                                         
-	var match = this.match(regex);                                                                                       
-	return match ? this.indexOf(match[0]) : -1;                                                                          
-}  
+/**
+ * Universal indexOf method to get index by passing regex as argument
+ */
+String.prototype.indexOfRegex = function(regex){
+	var match = this.match(regex);
+	return match ? this.indexOf(match[0]) : -1;
+}
 /*
  * Simple, clean Javascript inheritance scheme
  *
@@ -342,23 +342,23 @@ function checkData(data, status, errorMessage, successMessage) {
  * A method used to trim a given text upto the given length including or excluding the last word at boundary.
  * For example: Trimming a string "The quick brown fox jumps over the lazy dog" with following max length should result
  * something (consider includeLastWord = false}
- * 
+ *
  * Max 1:function""
  * Max 2:function""
  * Max 5:function"The"
  * Max 15:function"The quick brown"
  * Max 21:function"The quick brown fox"
  * Max 70:function"The quick brown fox jumps over the lazy dog"
- * 
+ *
  * (Now consider includeLastWord = true}
- * 
+ *
  * Max 1:function"The"
  * Max 2:function"The"
  * Max 5:function"The quick"
  * Max 15:function"The quick brown"
  * Max 21:function"The quick brown fox jumps"
  * Max 70:function"The quick brown fox jumps over the lazy dog"
- * 
+ *
  * http://stackoverflow.com/questions/5454235/javascript-shorten-string-without-cutting-words
  */
 function shorten(text, maxLength, includeLastWord) {
@@ -373,4 +373,31 @@ function shorten(text, maxLength, includeLastWord) {
 		var trimmedText = text.substring(0, maxLength + 1);
 		return trimmedText.substring(0, Math.min(trimmedText.length, trimmedText.lastIndexOf(" "))) + '...';
 	}
+}
+
+/*
+ * This method will return javascript object by mapping form input fields as name: value
+ * See this for reference: http://stackoverflow.com/a/17784656/4395233
+ */
+
+function dataURItoBlob(dataURI) {
+	if (!dataURI) {
+		return false;
+	}
+	// convert base64/URLEncoded data component to raw binary data held in a string
+	var byteString;
+	if (dataURI.split(',')[0].indexOf('base64') >= 0) {
+		byteString = atob(dataURI.split(',')[1]);
+	} else {
+		byteString = unescape(dataURI.split(',')[1]);
+	}
+	// separate out the mime component
+	var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+	// write the bytes of the string to a typed array
+	var ia = new Uint8Array(byteString.length);
+	for (var i = 0; i < byteString.length; i++) {
+		ia[i] = byteString.charCodeAt(i);
+	}
+	return new Blob([ia], {type:mimeString});
 }

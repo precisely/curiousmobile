@@ -154,7 +154,7 @@ define(function(require, exports, module) {
 			this.renderController.hide();
 			var currentListView = this.trackView.currentListView;
 			currentListView.refreshEntries(resp.entries, resp.glowEntry);
-			this.trackView.killEntryForm({ entryDate: resp.glowEntry.date });
+			this.trackView.killInterestTagsForm({ entryDate: resp.glowEntry.date });
 		}.bind(this));
 
 		this.on('update-entry', function(resp) {
@@ -173,7 +173,7 @@ define(function(require, exports, module) {
 					new: false
 				}
 			}
-			this.trackView.killEntryForm(state);
+			this.trackView.killInterestTagsForm(state);
 		}.bind(this));
 	}
 

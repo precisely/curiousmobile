@@ -47,6 +47,40 @@
 			require(['main']);
 		</script>
 		<script type="text/javascript">
+
+			function parseQueryString(url) {
+				var params = {}, queries, temp, i, l;
+
+				var queryString = url.split('?');
+				if (!queryString[1]) {
+					return false;
+				}
+
+				// Split into key/value pairs
+				queries = queryString[1].split("&");
+
+				// Convert the array of strings into an object
+				for ( i = 0, l = queries.length; i < l; i++ ) {
+					temp = queries[i].split('=');
+					params[temp[0]] = temp[1];
+				}
+
+				return params;
+			}
+			function handleOpenURL(url) {
+				console.log("received url: " + url);
+				var responseParameters = parseQueryString(url);
+				if (responseParameters) {
+					var message;
+					if (responseParameters['message']) {
+						message = decodeURIComponent(responseParameters['message'])
+					}
+					App.pageView.changePage('EditProfileView', {
+						hash: responseParameters['hash'],
+						message: message
+					});
+				}
+			}
 			function onLoad() {
 				document.addEventListener("deviceready", onDeviceReady, false);
 				document.addEventListener("resume", onAppResume, false);
@@ -62,6 +96,7 @@
 				console.log('index.html:56 Device Ready');
 				StatusBar.hide();
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
+
 			}
 
 			function onAppResume() {

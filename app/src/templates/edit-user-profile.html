@@ -1,0 +1,172 @@
+<form id="userDetailsEdit">
+	<div class="edit-people-detail">
+		<div class="heading">
+			<h1>EDIT PROFILE</h1>
+		</div>
+		<div class="edit-image">
+			<p>PROFILE PICTURE</p>
+			{{ if (user.avatarURL == null) { }}
+				<i class="fa fa-circle fa-4x"></i>
+			{{ } else { }}
+				<img src="{{= user.avatarURL }}">
+			{{ } }}
+			<button type="button" class="choose-image">Choose Image</button>
+		</div>
+		<div class="edit-body">
+			<div class="edit-name">
+				<label class="edit-label">
+					NAME
+				</label>
+				<div class="media">
+					<div class="media-body">
+						<input type="text" name="name" id= "user-name" value="{{= user.name }}"/>
+						<div class="radio-public-private">
+							<input type="radio" class="name-radio-public" name="name-radio" id="name-public-id" value="public" checked>
+							<label for="name-public-id" class="name-public-label">Public</label>
+							<input type="radio" class="name-radio-private" name="name-radio" id="name-private-id" value="private">
+							<label for="name-private-id" class="name-private-label">Private</label>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="edit-bio">
+				<label class="edit-label">
+					BIO
+				</label>
+				<div class="media">
+					<div class="media-body">
+						{{ if (user.bio === "") { }}
+							<textarea name="bio"></textarea>
+						{{ } else { }}
+							<textarea name="bio">{{= user.bio }}</textarea>
+						{{ } }}
+						<div class="radio-public-private">
+							<input type="radio" class="bio-radio-public" name="bio-radio" id="bio-public-id" value="public" checked>
+							<label for="bio-public-id" class="bio-public-label">Public</label>
+							<input type="radio" class="bio-radio-private" name="bio-radio" id="bio-private-id" value="private">
+							<label for="bio-private-id" class="bio-private-label">Private</label>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="edit-username">
+				<label class="edit-label">
+					USERNAME
+				</label>
+				<div class="media">
+					<div class="media-body">
+						<input type="text" name="username" value="{{= user.username }}"/>
+					</div>
+				</div>
+			</div>
+
+			<div class="edit-email">
+				<label class="edit-label">
+					EMAIL
+				</label>
+				<div class="media">
+					<div class="media-body">
+						<input type="text" name="email" value="{{= user.email }}"/>
+					</div>
+				</div>
+			</div>
+			<div class="edit-password">
+				<label class="edit-label">
+					OLD PASSWORD
+				</label>
+				<div class="media">
+					<div class="media-body">
+						<input type="password" name="oldPassword"/>
+					</div>
+				</div>
+			</div>
+			<div class="edit-password">
+				<label class="edit-label">
+					NEW PASSWORD
+				</label>
+				<div class="media">
+					<div class="media-body">
+						<input type="password" name="password"/>
+					</div>
+				</div>
+			</div>
+
+			<div class="edit-password">
+				<label class="edit-label">
+					VERIFY PASSWORD
+				</label>
+				<div class="media">
+					<div class="media-body">
+						<input type="password" name="verify_password"/>
+					</div>
+				</div>
+			</div>
+			<div class="edit-email-notifications">
+				<label class="edit-label">
+					EMAIL NOTIFICATION
+				</label>
+				<div class="media">
+					<div class="media-body">
+						<input type="radio" class="email-notifications-yes" name="email-notifications" id="email-notifications-yes" value="public" checked>
+						<label for="email-notifications-yes" class="email-notifications-yes-label">Email me when someone comments</label> <br><br>
+						<input type="radio" class="email-notifications-no" name="email-notifications" id="email-notifications-no" value="private">
+						<label for="email-notifications-no" class="email-notifications-no-label">Don't email me when someone comments</label>
+					</div>
+				</div>
+			</div>
+			<div class="edit-external-accounts">
+				<label class="edit-label" id="external-accounts">
+					EXTERNAL ACCOUNTS
+				</label>
+				<div class="media">
+					<div class="media-body">
+						{{ if (user.linkedToWithings) { }}
+							<p class="unlink-withings">Unlink Withings Account</p>
+						{{ } else { }}
+							<p class="link-withings">Link Withings Account</p>
+						{{ } }}
+						{{ if (!user.linkedToFitbit) { }}
+							<p class="link-fitbit">Link Fitbit Account</p>
+						{{ } else { }}
+							<p class="unlink-fitbit">Unlink Fitbit Account</p>
+						{{ } }}
+						{{ if (!user.linkedToMoves) { }}
+							<p class="link-moves">Link Moves Account</p>
+						{{ } else { }}
+							<p class="unlink-moves">Unlink moves Account</p>
+						{{ } }}
+						{{ if (!user.linkedToJawbone) { }}
+							<p class="link-jawbone">Link Jawbone Account</p>
+						{{ } else { }}
+							<p class="unlink-jawbone">Unlink Jawbone Account</p>
+						{{ } }}
+						{{ if (!user.linkedToTwenty3andMe) { }}
+							<p class="link-twenty3andMe">Link 23&Me Account</p>
+						{{ } else { }}
+							<p class="link-twenty3andMe">Re-import from 23&Me Account</p>
+						{{ } }}
+					</div>
+				</div>
+			</div>
+			<div class="edit-interests">
+				<label class="edit-label">
+					PUBLIC INTEREST TAGS
+				</label>
+				<button type="button" class="btn btn-default new-tag">+ CREATE NEW TAG</button>
+<!--				<div class="media">
+					{{ if (user.interestTags.length == 0) { }}
+					<div class="media-body">
+						<p>No Tags</p>
+					</div>
+					{{ } else { }}
+					<div class="media-body" id="public-interest-tags">
+						{{ _.each(user.interestTags, function(interestTags) { }}
+						<p> {{= interestTags }}</p><hr><br>
+						{{ }) }}
+					</div>
+					{{ } }}
+				</div>-->
+			</div>
+        </div>
+	</div>
+</form>
