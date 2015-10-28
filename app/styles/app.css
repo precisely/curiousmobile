@@ -1113,7 +1113,7 @@ button.close {
 	color: #787878;
 }
 
-.sprint-default-label {
+.sprint-default-label, .people-default-label {
 	background-color: white;
 	text-align: center;
 	padding: 7px 10px;
@@ -1134,7 +1134,7 @@ button.close {
 	font-weight: 500;
 }
 
-.sprint-details input, .sprint-details textarea {
+.sprint-details input, .sprint-details textarea, .add-interest-tag input {
 	background-color: #fff;
 	width: 100%;
 	display: block;
@@ -1459,8 +1459,9 @@ and (max-device-height: 568px) {
 }
 
 .add-interest-tag {
-	height: 271px;
-	background-color: #ffffff;
+	height: 100%;
+	background-color: #EFEFEF;
+	padding: 10px;
 }
 
 .radio-public-private {
