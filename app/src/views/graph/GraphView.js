@@ -1,3 +1,4 @@
+var endDate, startDate;
 define(function(require, exports, module) {
 	'use strict';
 	var View = require('famous/core/View');
@@ -159,13 +160,17 @@ define(function(require, exports, module) {
 		this.selectedDate = date;
 		var year = date.getFullYear().toString();
 		if (dateType == 'startDate') {
+			startDate = date;
 			this.startDateString = ('0' + date.getDate()).slice(-2) + '/'  + ('0' + (date.getMonth()+1)).slice(-2) + '/'
 					+ year.substring(2);
 		} else {
+			endDate = date;
 			this.endDateString = ('0' + date.getDate()).slice(-2) + '/'  + ('0' + (date.getMonth()+1)).slice(-2) + '/'
 					+ year.substring(2);
 		}
 		this.dateLabelSurface.setContent(this.startDateString + ' - ' + this.endDateString);
+		this.plot.loadAllData();
+
 	}
 
 	GraphView.prototype.createTagsPill = function() {
@@ -232,36 +237,30 @@ define(function(require, exports, module) {
 				this.usernameField.text(name);
 		}
 		this.getStartDate = function() {
-			/*if (this.startDatePicker.data('textFieldAlreadyReset')) {
-			 return this.startDatePicker.datepicker('getDate');
-			 }*/
+			if (startDate) {
+				return startDate;
+			 }
 			return null;
 		}
 		this.getStartTime = function() {
-			/*var startDate = this.getStartDate();
-			 if (!startDate) return 0;
-
-			 return startDate.getTime();
-			 */
-			return null;
+			if (!startDate) return 0;
+			return startDate.getTime();
 		}
 		this.setStartDate = function(date) {
-			setDateField(this.startDatePicker, date, this.startDateInit);
+			//setDateField(this.startDatePicker, date, this.startDateInit);
 		}
 		this.getEndDate = function() {
-			/*if (this.endDatePicker.data('textFieldAlreadyReset')) {
-			 return this.endDatePicker.datepicker('getDate');
-			 }*/
+			if (endDate) {
+				return endDate;
+			}
 			return null;
 		}
 		this.getEndTime = function() {
-			//var endDate = this.getEndDate();
-			//if (!endDate) return 0;
-
-			return null;
+			if (!endDate) return 0;
+			return endDate.getTime();
 		}
 		this.setEndDate = function(date) {
-			setDateField(this.endDatePicker, date, this.endDateInit);
+			//setDateField(this.endDatePicker, date, this.endDateInit);
 		}
 		this.getZoomControl = function() {
 			return this.zoomControl;

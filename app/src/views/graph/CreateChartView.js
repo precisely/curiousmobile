@@ -110,6 +110,14 @@ define(function(require, exports, module) {
 					var tagList = Tags.sortTags(App.tagListWidget.list.listItems.list, this.listAscending);
 					_renderTagsList.call(this, tagList);
 					this.listAscending = !this.listAscending;
+				} else if (pillFor === 'UNCHECK_ALL') {
+					this.selectedTags = [];
+					var checkIconList = document.getElementsByClassName('fa-check');
+					if (checkIconList.length > 0) {
+						_.each(checkIconList, function(checkIcon) {
+							checkIcon.classList.add('invisible');
+						});
+					}
 				}
 			}
 		}.bind(this));
