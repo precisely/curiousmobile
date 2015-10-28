@@ -180,6 +180,12 @@ define(function(require, exports, module, store) {
 						cordova.InAppBrowser.open(App.serverUrl + '/home/register23andme?mobileSessionId=' + u.getMobileSessionId(), '_system');
 					} else if (_.contains(classList, 'unlink-moves')) {
 						cordova.InAppBrowser.open(App.serverUrl + '/home/unregistermoves?mobileSessionId=' + u.getMobileSessionId(), '_system');
+					} else if (_.contains(classList, 'unlink-withings')) {
+						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterwithings?mobileSessionId=' + u.getMobileSessionId(), '_system');
+					} else if (_.contains(classList, 'unlink-fitbit')) {
+						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterfitbit?mobileSessionId=' + u.getMobileSessionId(), '_system');
+					} else if (_.contains(classList, 'unlink-jawbone')) {
+						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterjawbone?mobileSessionId=' + u.getMobileSessionId(), '_system');
 					}
 				}
 			}.bind(this));
