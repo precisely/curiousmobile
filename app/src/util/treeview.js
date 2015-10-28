@@ -331,7 +331,7 @@ function TreeItemList(options) {
 	this.listItems = new SortedList(equalsClosure, options.orderingClosure);
 	this.store = options.store;
 
-	this.load = function() {
+	this.load = function(successCallback) {
 		// get top-level list of items, add new or changed ones to list
 		backgroundJSON("loading list of tags", this.options.url, getCSRFPreventionObject("listTagsAndTagGroupsCSRF", {sort: this.options.sort}), function(data) {
 			if (!checkData(data))
@@ -358,6 +358,9 @@ function TreeItemList(options) {
 				return false;
 			}.bind(this));
 			this.callback(function(widget) { widget.notifyDoneLoading(); });
+			if (successCallback) {
+				successCallback(this.listItems.list);
+			}
 		}.bind(this));
 	}
 

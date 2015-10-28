@@ -22,11 +22,10 @@ define(function(require, exports, module) {
 	function GraphView(tagsToPlot) {
 		StateView.apply(this, arguments);
 		this.tags = tagsToPlot;
+		this.renderController = new RenderController();
+		this.add(new StateModifier({transform: Transform.translate(0, 50, 0)})).add(this.renderController);
 		this.init();
-		this.createTagsPill();
-		if (tagsToPlot && tagsToPlot.length > 0) {
-			this.drawDateFooter();
-		}
+
 	}
 
 	GraphView.prototype = Object.create(StateView.prototype);
@@ -41,23 +40,31 @@ define(function(require, exports, module) {
 			content: _.template(GraphTemplate, templateSettings)
 		});
 
-		this.add(new StateModifier({transform: Transform.translate(0, 50, 0)})).add(this.graphSurface);
+		this.renderController.show(this.graphSurface, function() {
+			this.plot = new PlotMobile(App.tagListWidget.list, User.getCurrentUserId(), User.getCurrentUser().get("username"), "#plotArea", true, false, new PlotProperties({
+				'startDate':'#startdatepicker1',
+				'startDateInit':'start date and/or tag',
+				'endDate':'#enddatepicker1',
+				'endDateInit':'end date and/or tag',
+				'cycleTag':'#cycleTag1',
+				'zoomControl':'#zoomcontrol1',
+				'username':'#queryUsername',
+				'name':'#queryTitle',
+				'rename':'#queryTitleEdit',
+				'logout':'#logoutLink'
+			}));
+		}.bind(this));
+
+	};
+
+	GraphView.prototype.drawGraph = function(tags, isAreaChart) {
+		this.tags = tags;
 		if (this.tags) {
-			this.graphSurface.on('deploy', function() {
-				this.plot = new PlotMobile(Tags.tagsList, User.getCurrentUserId(), User.getCurrentUser().get("username"), "#plotArea", true, false, new PlotProperties({
-					'startDate':'#startdatepicker1',
-					'startDateInit':'start date and/or tag',
-					'endDate':'#enddatepicker1',
-					'endDateInit':'end date and/or tag',
-					'cycleTag':'#cycleTag1',
-					'zoomControl':'#zoomcontrol1',
-					'username':'#queryUsername',
-					'name':'#queryTitle',
-					'rename':'#queryTitleEdit',
-					'logout':'#logoutLink'
-				}));
-				this.plot.initiateAddLine(this.tags);
-			}.bind(this));
+			this.plot.initiateAddLine(this.tags, isAreaChart);
+		}
+		this.createTagsPill();
+		if (this.tags && this.tags.length > 0) {
+			this.drawDateFooter();
 		}
 	};
 
@@ -72,7 +79,7 @@ define(function(require, exports, module) {
 
 		this.dateGridRenderController = new RenderController();
 		var dateGridRenderControllerMod = new StateModifier({
-			transform: Transform.translate(18, 100, 16)
+			transform: Transform.translate(18, 100, 0)
 		});
 		this.add(dateGridRenderControllerMod).add(this.dateGridRenderController);
 
@@ -279,10 +286,10 @@ define(function(require, exports, module) {
 		}
 		// show data for a given userId at a given timestamp
 		this.showDataUrl = function(userId, userName, timestamp) {
-			if (currentUserId != userId) return;
-			if (currentUserName != userName) return;
-			if (currentUserId < 0) return; // disallow showData for anonymous users
-			return "/home/index?showTime=" + timestamp;
+			if (User.getCurrentUserId() != userId) return;
+			if (User.getCurrentUser().get('username') != userName) return;
+			if (User.getCurrentUserId() < 0) return; // disallow showData for anonymous users
+			//return "/home/index?showTime=" + timestamp;
 		}
 		// show data for a given userId at a given timestamp
 		this.showData = function(userId, userName, timestamp) {

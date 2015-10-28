@@ -1,4 +1,4 @@
-define(function(require, exports, module) {
+define(function (require, exports, module) {
 	'use strict';
 	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
@@ -20,30 +20,31 @@ define(function(require, exports, module) {
 
 	ContextMenuView.DEFAULT_OPTIONS = {
 		entry: [
-			{ class: 'select-entry', label: 'Edit Tag' },
-			{ class: 'trigger-delete-entry', label: 'Delete Tag' },
+			{class: 'select-entry', label: 'Edit Tag'},
+			{class: 'trigger-delete-entry', label: 'Delete Tag'},
 		],
 		pinnedEntry: [
-			{ class: 'trigger-delete-entry', label: 'Delete Tag' },
+			{class: 'trigger-delete-entry', label: 'Delete Tag'},
 		],
 		chart: [{class: 'load-snapshot', label: 'Load Snapshot'},
-            {class: 'save-snapshot', label: 'Save Snapshot'},
-            {class: 'create-chart', label: 'Create New Chart'}
-        ],
+			{class: 'save-snapshot', label: 'Save Snapshot'},
+			{class: 'share-snapshot', label: 'Share Snapshot'},
+			{class: 'create-chart', label: 'Create New Chart'}
+		],
 		discussion: {},
 	};
 
-	function _createView () {
+	function _createView() {
 		this.renderController = new RenderController();
-		this.renderController.inTransformFrom(function() {
+		this.renderController.inTransformFrom(function () {
 			return Transform.translate(0, 0, App.zIndex.contextMenu);
 		});
 
 		this.contextMenuContainer = new ContainerSurface({});
 		var backdropSurface = new Surface({
 			size: [undefined, undefined],
-            align: [0, 1],
-            origin: [0, 1],
+			align: [0, 1],
+			origin: [0, 1],
 			properties: {
 				opacity: '0.2',
 				backgroundColor: '#000000',
@@ -54,10 +55,9 @@ define(function(require, exports, module) {
 			opacity: 0.5,
 		});
 
-		this.contextMenu = new Surface({
-		});
+		this.contextMenu = new Surface({});
 
-		this.contextMenu.on('click', function(e) {
+		this.contextMenu.on('click', function (e) {
 			console.log('EventHandler: this.contextMenu event: click');
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				var classList = e.srcElement.classList;
@@ -74,16 +74,16 @@ define(function(require, exports, module) {
 		this.contextMenuContainer.add(this.contextMenu);
 	};
 
-	ContextMenuView.prototype.show = function(e) {
+	ContextMenuView.prototype.show = function (e) {
 		this.target = e.target;
 		this.eventArg = e.eventArg;
 		var template = ContextMenuTemplate;
-		this.contextMenu.setContent(_.template(template, { buttons: this.options[e.menu] }, templateSettings));
+		this.contextMenu.setContent(_.template(template, {buttons: this.options[e.menu]}, templateSettings));
 		this.renderController.show(this.contextMenuContainer);
 	};
 
-	ContextMenuView.prototype.hide = function() {
-		this.renderController.hide({duration:0});
+	ContextMenuView.prototype.hide = function () {
+		this.renderController.hide({duration: 0});
 		this.target = null;
 	};
 	module.exports = ContextMenuView;

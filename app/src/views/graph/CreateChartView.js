@@ -20,9 +20,12 @@ define(function(require, exports, module) {
 	var PeopleDetailsTemplate = require('text!templates/people-details.html');
 	var Tags = require('models/Tags');
 	var u = require('util/Utils');
+	var treeView = require('util/treeview');
+	var tagList = require('util/taglist');
 
 	function CreateChartView() {
 		BaseView.apply(this, arguments);
+		this.parentPage = 'ChartView';
 		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
@@ -104,7 +107,7 @@ define(function(require, exports, module) {
 		pillSurface.on('click', function(e) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				if (pillFor === 'A_Z') {
-					var tagList = Tags.sortTags(this.listAscending);
+					var tagList = Tags.sortTags(App.tagListWidget.list.listItems.list, this.listAscending);
 					_renderTagsList.call(this, tagList);
 					this.listAscending = !this.listAscending;
 				}
@@ -143,7 +146,21 @@ define(function(require, exports, module) {
 
 		createLineChartSurface.on('click', function(e) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				App.pageView.changePage('ChartView', {tagsToPlot: this.selectedTags});
+				if (!this.selectedTags || this.selectedTags.length < 1) {
+					u.showAlert('No Tags Selected to plot');
+				} else {
+					App.pageView.changePage('ChartView', {tagsToPlot: this.selectedTags});
+				}
+			}
+		}.bind(this));
+
+		createAreaChartSurface.on('click', function(e) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				if (!this.selectedTags || this.selectedTags.length < 1) {
+					u.showAlert('No Tags Selected to plot');
+				} else {
+					App.pageView.changePage('ChartView', {tagsToPlot: this.selectedTags, areaChart: true});
+				}
 			}
 		}.bind(this));
 
@@ -162,9 +179,11 @@ define(function(require, exports, module) {
 		this.tagsScrollView = new Scrollview({
 			direction: 1
 		});
-		Tags.fetch(function (data) {
-			_renderTagsList.call(this, data);
-		}.bind(this));
+		if (!App.tagListWidget) {
+			App.tagListWidget = initTagListWidget(_renderTagsList.bind(this));
+		} else {
+			_renderTagsList.call(this, App.tagListWidget.list.listItems.list);
+		}
 
 		this.renderController.show((this.tagsScrollView));
 	};
@@ -172,7 +191,6 @@ define(function(require, exports, module) {
 	function _renderTagsList(tagsList) {
 		this.tagsSurfaceList = [];
 		_.each(tagsList, function(tag) {
-			tag = new Tag(tag);
 			var tagSurface = new Surface({
 				size: [undefined, 40],
 				content: '<div data-value="' + tag.id + '" class="tagList"><i class="fa fa-check invisible"></i>' + tag.description + '</div>'

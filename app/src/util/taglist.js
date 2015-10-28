@@ -1016,17 +1016,17 @@ function initTagListOnly(load) {
 }
 
 //must be called from within $(document).ready()
-function initTagListWidget() {
+function initTagListWidget(postLoadCallback) {
 	var tagStore = new TagStore(); 
 	tagList = new TagList({store:tagStore});
 	var tagListWidget = new TagListWidget({list:tagList});
 	tagListWidget.bindClickOnTreeItemGroupView();
 	tagListWidget.bindClickOnAllItems();
-	tagList.load();
+	tagList.load(postLoadCallback);
 	var tagSearchInput = $("#tagSearch");
-	$("#tagNav").droppable({
+	/*$("#tagNav").droppable({
 		drop : tagListWidget.dropWildcardTagGroup.bind(tagListWidget)
-	});
+	});*/
 	$(tagSearchInput).click(function(e) {
 		tagListSetInputText(tagSearchInput, '');
 	}.bind(this));
@@ -1051,7 +1051,7 @@ function initTagListWidget() {
 		});
 	});
 	
-	var $editDialog = $("#tagGroupEditDialog").dialog({
+	/*var $editDialog = $("#tagGroupEditDialog").dialog({
 		autoOpen: false,
 		dialogClass:'tagGroupDialog',
 		buttons: {
@@ -1062,7 +1062,7 @@ function initTagListWidget() {
 
 	var $editTagGroupElement = $("input", $editDialog);
 	
-	$editTagGroupElement.attr("id", "tagGroupEditDialogInputControl")
+	$editTagGroupElement.attr("id", "tagGroupEditDialogInputControl")*/
 
 	function renameTagGroup() {
 		var tagGroupItem = $editTagGroupElement.data(DATA_KEY_FOR_TAGLIST_ITEM);

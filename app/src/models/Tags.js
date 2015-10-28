@@ -29,7 +29,7 @@ define(function(require, exports, module) {
 	}
 
 	Tags.eachSearchMatches = function(term, matchClosure, noMatchClosure, skipSet, additionalWordsCharLimit) {
-		var list = this.tagsList;
+		var list = App.tagListWidget.list.listItems.list;
 		var i, j, result = [];
 
 		var terms = term.split(' ');
@@ -77,9 +77,9 @@ define(function(require, exports, module) {
 		}
 	};
 
-	Tags.sortTags = function(sortAscending) {
+	Tags.sortTags = function(tagsList, sortAscending) {
 		if (sortAscending) {
-			this.tagsList.sort(function(a, b) {
+			tagsList.sort(function(a, b) {
 				if (a.description < b.description)
 					return -1;
 				if (a.description > b.description)
@@ -87,7 +87,7 @@ define(function(require, exports, module) {
 				return 0;
 			});
 		} else {
-			this.tagsList.sort(function(a, b) {
+			tagsList.sort(function(a, b) {
 				if (a.description < b.description)
 					return 1;
 				if (a.description > b.description)
@@ -96,7 +96,7 @@ define(function(require, exports, module) {
 			});
 		}
 
-		return this.tagsList;
+		return tagsList;
 	};
 
 	Tags.getTagProperties = function(id, callback) {

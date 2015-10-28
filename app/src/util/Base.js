@@ -1,5 +1,46 @@
 // Base Javascript library extensions
 
+/*requirejs(['Utils'], function(u) {
+	showAlert = function (alertMessage) {
+		u.showAlert(alertMessage);
+	};
+
+	queuePostJSON = function (description, url, args, successCallback, failCallback, delay) {
+		u.queuePostJSON(description, url, args, successCallback, failCallback, delay);
+	};
+
+	queueJSON = function (description, url, args, successCallback, failCallback, delay, post, background) {
+		u.queueJSON(description, url, args, successCallback, failCallback, delay, post, background);
+	}
+
+	makeGetUrl = function (url) {
+		return u.makeGetUrl(url);
+	}
+
+	getCSRFPreventionObject = function (key, data) {
+		return u.getCSRFPreventionObject(key, data);
+	}
+
+	makePlainUrl = function (url) {
+		return u.makePlainUrl(url);
+	}
+
+	makePostUrl = function (url) {
+		return u.makePostUrl(url);
+	}
+
+	checkData = function (data, status, errorMessage, successMessage) {
+		return u.checkData(data, status, errorMessage, successMessage);
+	}
+
+	makeGetArgs = function (args) {
+		return u.makeGetArgs(args);
+	}
+
+	backgroundJSON = function(description, url, args, successCallback, failCallback, delay, post) {
+		u.backgroundJSON(description, url, args, successCallback, failCallback, delay, post)
+	}
+});*/
 function isOnline() {
 	return window.navigator.onLine;
 }
@@ -150,163 +191,12 @@ function dateToTimeStr(d, shortForm) {
 var numJSONCalls = 0;
 var pendingJSONCalls = [];
 
-function backgroundPostJSON(description, url, args, successCallback, failCallback, delay) {
-	queueJSON(description, url, args, successCallback, failCallback, delay, true, true);
-}
-
-function queuePostJSON(description, url, args, successCallback, failCallback, delay) {
-	queueJSON(description, url, args, successCallback, failCallback, delay, true, false);
-}
-
-function queueJSON(description, url, args, successCallback, failCallback, delay, post, background) {
-	var currentLoginSession = _loginSessionNumber; // cache current login session
-	var stillRunning = true;
-	var alertShown = false;
-	window.setTimeout(function() {
-		if (stillRunning) {
-			alertShown = true;
-			showAlert(description + ": in progress");
-		}
-	}, 4000);
-	if (typeof args == "function") {
-		delay = failCallback;
-		failCallback = successCallback
-		successCallback = args;
-		args = undefined;
-	}
-	if (args == undefined || args == null) {
-		args = {
-			dateToken: new Date().getTime()
-		};
-	} else if (!args['dateToken']) {
-		args['dateToken'] = new Date().getTime();
-	}
-	var wrapSuccessCallback = function(data, msg) {
-		stillRunning = false;
-		if (alertShown)
-			closeAlert();
-		if (currentLoginSession != _loginSessionNumber)
-			return; // if current login session is over, cancel callbacks
-		if (successCallback)
-			successCallback(data);
-		if (!background) {
-			--numJSONCalls;
-			if (numJSONCalls < 0)
-				numJSONCalls = 0;
-			if (pendingJSONCalls.length > 0) {
-				var nextCall = pendingJSONCalls.shift();
-				nextCall();
-			}
-		}
-	};
-	var wrapFailCallback = function(data, msg) {
-		stillRunning = false;
-		if (alertShown)
-			closeAlert();
-		if (currentLoginSession != _loginSessionNumber)
-			return; // if current login session is over, cancel callbacks
-		if (failCallback)
-			failCallback(data);
-		if (!background) {
-			--numJSONCalls;
-			if (numJSONCalls < 0)
-				numJSONCalls = 0;
-			if (pendingJSONCalls.length > 0) {
-				var nextCall = pendingJSONCalls.shift();
-				nextCall();
-			}
-		}
-		if (msg == "timeout") {
-			if (delay * 2 > 1000000) { // stop retrying after delay too large
-				showAlert("Server down... giving up");
-				return;
-			}
-			if (!(delay > 0))
-				showAlert("Server not responding... retrying " + description);
-			delay = (delay > 0 ? delay * 2 : 5000);
-			window.setTimeout(function() {
-				queueJSON(description, url, args, successCallback, failCallback, delay, background);
-			}, delay);
-		}
-	};
-	if ((!background) && (numJSONCalls > 0)) { // json call in progress
-		var jsonCall = function() {
-			$.ajax({
-				type: (post ? "post" : "get"),
-				dataType: "json",
-				url: url,
-				data: args,
-				timeout: 20000 + (delay > 0 ? delay : 0)
-			})
-				.done(wrapSuccessCallback)
-				.fail(wrapFailCallback);
-		};
-		++numJSONCalls;
-		pendingJSONCalls.push(jsonCall);
-	} else { // first call
-		if (!background)
-		++numJSONCalls;
-		$.ajax({
-			type: (post ? "post" : "get"),
-			dataType: "json",
-			url: url,
-			data: args,
-			timeout: 20000 + (delay > 0 ? delay : 0)
-		})
-			.done(wrapSuccessCallback)
-			.fail(wrapFailCallback);
-	}
-}
-
-function backgroundJSON(description, url, args, successCallback, failCallback, delay, post) {
-	queueJSON(description, url, args, successCallback, failCallback, delay, post, true);
-}
-
-function clearJSONQueue() {
-	numJSONCalls = 0;
-	pendingJSONCalls = [];
-}
 
 var App = {};
 App.CSRF = {};
 window.App = App;
 App.CSRF.SyncTokenKeyName = "SYNCHRONIZER_TOKEN"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_KEY
 App.CSRF.SyncTokenUriName = "SYNCHRONIZER_URI"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_URI
-
-/**
- * A method which returns an string representation of an url containing parameters
- * related to CSRF prevention. This is useful to concate url in any url string of ajax call,
- * @param key unique string which is passed in jqCSRFToken tag to create token.
- * @param prefix any string to append before generated url like: <b>&</b>.
- * @returns string representation of CSRF parameters.
- */
-function getCSRFPreventionURI(key) {
-	var preventionURI = App.CSRF.SyncTokenKeyName + "=" + App.CSRF[key] + "&" + App.CSRF.SyncTokenUriName + "=" + key;
-	if (App.CSRF[key] == undefined) {
-		console.error("Missing csrf prevention token for key", key);
-	}
-	return preventionURI;
-}
-
-/**
- * A method which returns an object containing key & its token based on given key.
- * This is useful to be easily passed in some jQuery methods like <b>getJSON</b>,
- * which accepts parameters to be passed as Object.
- * @param key unique string which is passed in jqCSRFToken tag to create token.
- * @param data optional object to attach to new object using jQuery's extend method.
- * @returns the object containing parameters for CSRF prevention.
- */
-function getCSRFPreventionObject(key, data) {
-	var CSRFPreventionObject = new Object();
-	if (App.CSRF[key]) {
-		CSRFPreventionObject[App.CSRF.SyncTokenKeyName] = App.CSRF[key];
-	} else {
-		console.error("Missing csrf prevention token for key", key);
-	}
-	CSRFPreventionObject[App.CSRF.SyncTokenUriName] = key;
-
-	return $.extend(CSRFPreventionObject, data);
-}
 
 /*
  * Curious data json return value check
