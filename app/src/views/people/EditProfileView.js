@@ -70,7 +70,7 @@ define(function(require, exports, module, store) {
 			return false;
 		}
 		this.hash = state.hash;
-		this.refresh();
+		this.showUserDetailsForm();
 		if (state.message) {
 			u.showAlert(state.message);
 		}
@@ -109,7 +109,7 @@ define(function(require, exports, module, store) {
 		}.bind(this.UpdateAvatarView));
 	}
 
-	EditProfileView.prototype.refresh = function() {
+	EditProfileView.prototype.showUserDetailsForm = function() {
 		User.show(this.hash, function(peopleDetails) {
 			this.setHeaderLabel(peopleDetails.user.name);
 			peopleDetails.user.userID = User.getCurrentUserId();
@@ -198,7 +198,7 @@ define(function(require, exports, module, store) {
 					yRange: [0, 0],
 				});
 
-				draggableTag.subscribe(tagView);
+				draggableTag.subscribe(tagView.entrySurface);
 				var draggableNode = new RenderNode();
 				draggableNode.add(draggableTag).add(tagView);
 				this.tagList.push(draggableNode);
@@ -220,29 +220,7 @@ define(function(require, exports, module, store) {
 
 			draggable.on('end', function(e) {
 				console.log(e);
-				/*var newYRange = Math.max(0, (document.getElementsByClassName('edit-people-detail')[0].offsetHeight - (App.height - 114)));
-				if (e.position[1] < lastDraggablePosition) {
-					this.setPosition([0, -newYRange, 0], {
-						duration: 300
-					}, function() {
-						lastDraggablePosition = this.getPosition()[1];
-					}.bind(this));
-				} else if (e.position[1] != lastDraggablePosition) {
-					this.setPosition([0, 0, 0], {
-						duration: 300
-					}, function() {
-						lastDraggablePosition = this.getPosition()[1];
-					}.bind(this));
-				}*/
 			});
-
-			/*this.editProfileContainerSurface.on('deploy', function(e) {
-				console.log(e);
-				draggable.setOptions({
-					xRange: [0, 0],
-					yRange: [-100, 0]
-				});
-			}.bind(this));*/
 
 			var nodePlayer = new RenderNode();
 			nodePlayer.add(draggable).add(this.editProfileContainerSurface);
@@ -251,12 +229,6 @@ define(function(require, exports, module, store) {
 			App.pageView.goBack();
 		}.bind(this));
 	};
-
-	/*    function interestTagSurface(interestTags) {
-	 _.forEach(interestTags, function (tag) {
-	 this.addInterestTagSurface(tag);
-	 }.bind(this));
-	 }*/
 
 	function onTap(event) {
 		var inputType;

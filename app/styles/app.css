@@ -1569,8 +1569,8 @@ button.close {
 
 .people-detail .upper-body img, .edit-people-detail .edit-image img {
 	margin-bottom: 12px;
-	border-radius: 127px;
 	width: 90px;
+	height: 90px;
 }
 
 .people-detail .upper-body {

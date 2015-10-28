@@ -53,7 +53,7 @@ define(function(require, exports, module) {
 		this.entrySurface.setOptions(readSurfaceOptions);
 
 		var deleteModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView + 2)
+			transform: Transform.translate(window.innerWidth, -3, window.App.zIndex.readView + 2)
 		});
 		this.add(deleteModifier).add(this.deleteSurface);
 		var entryModifier = new Modifier({
@@ -64,7 +64,7 @@ define(function(require, exports, module) {
 
 	InterestTagView.prototype.delete = function() {
 		User.deleteInterestTags(this.entry, function() {
-			App.pageView.getCurrentView().refresh();
+			App.pageView.getCurrentView().showUserDetailsForm();
 		}.bind(this));
 	};
 

@@ -7,7 +7,7 @@
 		{{ if (user.avatarURL == null) { }}
 			<i class="fa fa-circle fa-4x"></i>
 		{{ } else { }}
-			<img src="{{= user.avatarURL }}">
+			<img src="{{= user.avatarURL }}" class="img-circle">
 		{{ } }}
 		<h2>{{= user.username }}</h2>
 		<p>{{= user.description }}</p>

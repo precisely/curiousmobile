@@ -197,8 +197,8 @@ define(function(require, exports, module) {
 			});
 	};
 
-	User.deleteInterestTags = function(tags, successCallback, failCallback) {
-		u.queuePostJSON('Deleting interest tags', App.serverUrl + '/api/data/action/deleteInterestTagData', tags,
+	User.deleteInterestTags = function(tag, successCallback, failCallback) {
+		u.queuePostJSON('Deleting interest tags', App.serverUrl + '/api/data/action/deleteInterestTagData', {userId: this.getCurrentUserId(), tagName: tag},
 				function(data) {
 					if (u.checkData(data)) {
 						if (data.interestTags) {
