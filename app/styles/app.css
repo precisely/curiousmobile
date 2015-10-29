@@ -1339,6 +1339,7 @@ and (max-device-height: 568px) {
 
 .querycontrols {
 	margin: 0px;
+	visibility: hidden;
 }
 
 .calendarRange {
@@ -1378,6 +1379,7 @@ and (max-device-height: 568px) {
 #plotArea {
 	min-height: 250px;
 	height: 100%;
+	background-color: #fff;
 }
 
 .start-date-picker .fa, .end-date-picker .fa {

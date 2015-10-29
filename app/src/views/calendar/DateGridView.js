@@ -53,7 +53,7 @@ define(function(require, exports, module) {
 		});
 
 		this.backgroundSurface.state.sizeFrom(function() {
-			return [285, this.backgroundSurface.transitionable.get()];	
+			return [285, this.backgroundSurface.transitionable.get()];
 		}.bind(this));
 		this.add(this.backgroundSurface.state).add(backgroundSurface);
 		var leftSurface = new Surface({
@@ -77,6 +77,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		var monthSurface = new Surface({
+			size: [undefined, true],
 			content: DateUtil.getMonth(date) + ' ' + date.getFullYear(),
 			properties: {
 				fontSize: '20px',

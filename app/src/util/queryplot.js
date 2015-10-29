@@ -36,7 +36,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 	// this Plot object
 
 	// clear plot line data if this plot is for a different user
-	console.log('Plot: 39, plot constructor called');
 	this.clearStorage = function() {
 		localStorage['plotUserId' + this.id] = null;
 		localStorage['plotData' + this.id] = '';
@@ -73,7 +72,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 	}
 
 	this.refreshName = function() {
-		console.log('Plot: 76, refreshName()');
 		var i, empty = true;
 		for (i in this.lines) {
 			empty = false;
@@ -111,24 +109,20 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 	}
 
 	this.getNextLineId = function() {
-		console.log('Plot: 114, getNextLineId()');
 		return this.nextLineId++;
 	}
 	this.getName = function() {
-		console.log('Plot: 118, getName()');
 		return this.properties.getName();
 	}
 	this.setName = function(name) {
 		this.properties.setName(name);
 	}
 	this.getLine = function(plotLineId) {
-		console.log('Plot: 125, getLine');
 		if (plotLineId == 'cycle')
 			return this.cycleTagLine;
 		return this.lines['id' + plotLineId];
 	}
 	this.doRemoveLine = function(plotLineId) {
-		console.log('Plot: 131, doRemoveLine');
 		// remove line but don't refresh interface
 		if (plot.activeLineId == plotLineId)
 			plot.activeLineId = null;
@@ -154,7 +148,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		}
 	}
 	this.removeLine = function(plotLineId) {
-		console.log('Plot: 157, removeLine');
 		this.doRemoveLine(plotLineId);
 		this.refreshName();
 		this.refreshAll();
@@ -178,7 +171,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		}
 	}
 	this.store = function() {
-		console.log('Plot: 190, store()');
 		var plotData = [];
 		localStorage['plotUserId' + this.id] = this.userId;
 		for (var i in this.lines) {
@@ -207,7 +199,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		return plotDataStr;
 	}
 	this.storeSnapshot = function() {
-		console.log('Plot: 234, storeSnapShot()');
 		var plotData = [];
 		localStorage['plotUserId' + this.id] = this.userId;
 		for (var i in this.lines) {
@@ -234,7 +225,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		return plotDataStr;
 	}
 	this.saveSnapshot = function() {
-		console.log('Plot: 261, saveSnapshot()');
 		var first = true;
 		var plotDataStr = this.storeSnapshot();
 		if (plotDataStr == null) {
@@ -255,7 +245,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 				});
 	}
 	this.load = function(plotData) {
-		console.log('Plot: 282, load()');
 		$(document).trigger(beforeLinePlotEvent);
 		var version = plotData.version;
 		if (plotData.startTime) {
@@ -288,7 +277,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 	}
 
 	this.loadLine = function(save,version) {
-		console.log('Plot: 315, loadLine()');
 		var parentLine = null;
 		this.minSeriesVal = save.min;
 		this.maxSeriesVal = save.max;
@@ -357,7 +345,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 	}
 
 	this.createPlotLine = function(save, parentLine) {
-		console.log('Plot: 384, createPlotLine()');
 		var plotLine = new PlotLine(save);
 		if (parentLine) {
 			if (save.isFreqLineFlag)
@@ -385,7 +372,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 	}
 
 	this.restoreTag = function(tag) {
-		console.log('Plot: 412, restoreTag()');
 		tag = new Tag({
 			id:tag.id,
 			type: "Tag",
@@ -397,7 +383,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 	}
 
 	this.restoreTagGroup = function(tagGroup) {
-		console.log('Plot: 424, restoreTagGroup()');
 		/**
 		 * tagGroup is a generic object using which we create an Instance of type TagGroup called tagGroupInstance
 		 */
@@ -427,7 +412,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 	}
 
 	this.restore = function() {
-		console.log('Plot: 454, restore()');
 		if (this.doStore && supportsLocalStorage() && localStorage['plotData' + this.id]) {
 			if (localStorage['plotUserId' + this.id] != this.userId) {
 				this.clearStorage();
@@ -437,7 +421,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		}
 	}
 	this.restoreSnapshot = function() {
-		console.log('Plot: 39, restoreSnapshot');
 		if (this.doStore && supportsLocalStorage() && localStorage['plotSnapshotData' + this.id]) {
 			if (localStorage['plotUserId'] != this.userId) {
 				this.clearStorage();
@@ -447,7 +430,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		}
 	}
 	this.loadSnapshot = function(plotData) {
-		console.log('Plot: 474, loadSnapshot()');
 		var version = plotData.version;
 		if (plotData.startTime) {
 			this.properties.setStartDate(new Date(plotData.startTime));
@@ -482,7 +464,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		this.store();
 	}
 	this.loadId = function(id) {
-		console.log('Plot: 509, loadId()');
 		var plot = this;
 		this.queueJSON("loading graph", this.makeGetUrl("loadPlotDataId"), this.makeGetArgs({ id:id }), function(plotData) {
 			if (this.checkData(plotData)) {
@@ -492,7 +473,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		});
 	}
 	this.loadSnapshotId = function(id) {
-		console.log('Plot: 519, loadSnapshotId()');
 		var plot = this;
 		this.queueJSON("loading graph", this.makeGetUrl("loadSnapshotDataId"), this.makeGetArgs({ id:id }), function(plotData) {
 			if (this.checkData(plotData)) {
@@ -504,7 +484,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		});
 	}
 	this.loadAllData = function() {
-		console.log('Plot: 531, loadAllData()');
 		// redraw left nav
 		for (var i in this.lines) {
 			this.lines[i].loadPlotData();
@@ -517,7 +496,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		}
 	}
 	this.refreshAll = function() {
-		console.log('Plot: 544, refreshAll()');
 		this.refreshNav();
 		this.refreshPlot();
 	}
@@ -526,13 +504,15 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		$("#plotLines" + this.id).html('');
 		this.plotArea.html('');
 		for (var i in this.lines) {
-			this.lines[i].appendHTML();
+			if (this.lines[i].appendHTML) {
+				this.lines[i].appendHTML();
+			}
 		}
 		// TODO: move these styles out into main.css
 		var cycleTagDiv = this.getCycleTagDiv();
-		if (this.cycleTagLine) {
-			this.cycleTagLine.appendHTML();
-		} else {
+		if (this.cycleTagLine && this.cycleTagLine.appendHTML) {
+				this.cycleTagLine.appendHTML();
+		} else if (cycleTagDiv) {
 			cycleTagDiv.html('drag relative tag here');
 			cycleTagDiv.css('padding-top','7px');
 			cycleTagDiv.css('height','23px');
@@ -540,7 +520,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 	}
 	// redraw plot but don't recompute it, only change min/max if needed
 	this.redrawPlot = function() {
-		console.log('Plot: 567, redrawPlot()');
 		if (this.plotData == null || this.plotData[0] == undefined)
 			this.refreshPlot();
 
@@ -560,7 +539,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 	}
 
 	this.refreshPlot = function() {
-		console.log('Plot: 587, refreshPlot()');
 		var minTime = undefined, maxTime = undefined;
 
 		for (var i in this.lines) {
@@ -802,7 +780,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		}
 	}
 	this.removePendingLoad = function() {
-		console.log('Plot: 897, removePendingLoad()');
 		if (!--this.pendingLoads) {
 			this.refreshPlot();
 			this.setupSlider();
@@ -891,7 +868,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 	}
 
 	this.drawLine = function($elt) {
-		console.log('Plot: 986, drawLine()');
 		var tagListItem = $elt.data(DATA_KEY_FOR_ITEM_VIEW).getData();
 		var plot = this;
 
@@ -906,7 +882,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 	}
 
 	this.addLine = function(initialTag) {
-		console.log('Plot: 1001, addLine()');
 		// prevent adding duplicate lines
 		if (this.getLineByTag(initialTag))
 			return;
@@ -1043,7 +1018,6 @@ function removeTagNameFromLine(plotId, lineId, tagName) {
 var DAYTICKS = 1000*60*60*24;
 
 function PlotLine(p) {
-	console.log('Plot: 1138, PlotLine constructor called');
 	this.plot = p.plot;
 	if (p.isCycle) {
 		this.id = "cycle"
@@ -1087,7 +1061,6 @@ function PlotLine(p) {
 	}
 
 	this.getTags = function () {
-		console.log('Plot: 1182, getTags()');
 		if (this.snapshot && this.version <= 4) {
 			// lecacy snapshots that do not have instances of Tag or TagGroup as references
 			return this.tags;
@@ -1148,7 +1121,6 @@ function PlotLine(p) {
 		return tags.length;
 	}
 	this.getSavePlotData = function() {
-		console.log('PlotLine: 1243, getSavePlotData()');
 		var data = {name:this.name,color:this.color,sumData:this.sumData,
 			tag:this.tag,showYAxis:this.showYAxis,hidden:this.hidden,showLines:this.showLines,isCycle:this.isCycle,
 			isContinuous:this.isContinuous,isFreqLineFlag:this.isFreqLineFlag,showPoints:this.showPoints,fill:this.fill,smoothDataWidth:this.smoothDataWidth,
@@ -1198,7 +1170,6 @@ function PlotLine(p) {
 	}
 
 	this.addTag = function(tag) {
-		console.log('PlotLine: 1293, addTag()');
 		if (this.isSmoothLine() || this.isFreqLine()) return; // cannot add or remove tags from
 
 		// this.tag is the plotline's tag group to which another instance is being dropped on
@@ -1320,7 +1291,6 @@ function PlotLine(p) {
 		}
 	}
 	this.yAxisVisible = function() {
-		console.log('PlotLine: 1415, yAxisVisible()');
 		//if (this.parentLine) return (this.parentLine.hidden || this.parentLine.activated) && this.parentLine.showYAxis;
 		if (this.smoothLine) {
 			if (this.smoothDataWidth == 0 && this.showYAxis) {
@@ -1350,7 +1320,6 @@ function PlotLine(p) {
 		return this.plotData;
 	}
 	this.loadPlotData = function() {
-		console.log('PlotLine: 1445, loadPlotData()');
 		if (this.snapshot) {
 			this.parseEntries();
 			this.prepEntries();
@@ -1388,7 +1357,6 @@ function PlotLine(p) {
 				});
 	}
 	this.calculateSmoothEntries = function() {
-		console.log('PlotLine: 1483, calculateSmoothEntries()');
 		var parentLine = this.parentLine;
 		var parentEntries = parentLine.entries;
 
@@ -1685,7 +1653,6 @@ function PlotLine(p) {
 		}
 	}
 	this.loadEntries = function(plotDesc) {
-		console.log('PlotLine: 1780, loadEntries()');
 		this.entries = plotDesc.entries;
 		this.minSeriesVal = plotDesc.min;
 		this.maxSeriesVal = plotDesc.max;
@@ -1695,7 +1662,6 @@ function PlotLine(p) {
 		this.prepEntries();
 	}
 	this.makePlotData = function(name, data) {
-		console.log('PlotLine: 1790, makePlotData()');
 		if (this.intervals || (!this.fill)) {
 			return {
 				popuplabel: name,
@@ -1729,7 +1695,6 @@ function PlotLine(p) {
 		}
 	}
 	this.prepEntries = function() {
-		console.log('PlotLine: 1824, prepEntries()');
 		var d1Data = [];
 
 		var entries = this.entries;
@@ -1867,7 +1832,7 @@ function PlotLine(p) {
 	if (this.tag && this.tag instanceof TagGroup) {
 		this.refreshTagList();
 	}
-
+	$(document).trigger('postLineDetails', this);
 	if ((!this.isSmoothLine()) && (!this.isFreqLine()) && (!this.getTags()))
 		this.addTagName(p.name);
 	if (this.entries)

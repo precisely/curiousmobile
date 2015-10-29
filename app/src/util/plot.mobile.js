@@ -112,7 +112,7 @@ define(function(require, exports, module) {
 			var line = this.lines[i];
 			console.log('Plot ID: ' + this.id);
 			console.log('Line ID: ' + line.id);
-			this.removePlotLine(this.id, line.id);
+			removePlotLine(this.id, line.id);
 		}
 	};
 
@@ -193,4 +193,8 @@ define(function(require, exports, module) {
 	};
 
 	module.exports = PlotMobile;
+});
+
+$(document).on('postLineDetails', function(e, tagLine) {
+	App.pageView.getPage('ChartView').graphView.createTagsPill(tagLine.tag, tagLine.color);
 });

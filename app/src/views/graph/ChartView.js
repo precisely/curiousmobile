@@ -44,6 +44,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.setRightIcon(this.optionsSurface);
+
 		this.graphView = new GraphView();
 		this.add(new StateModifier({transform: Transform.translate(0, 65, App.zIndex.readView)})).add(this.graphView);
 		_setHandlers.call(this);
@@ -56,7 +57,8 @@ define(function(require, exports, module) {
 	ChartView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
-		activeMenu: 'chart'
+		activeMenu: 'chart',
+		noBackButton: true
 	};
 
 	ChartView.prototype.init = function(isAreaChart) {
@@ -70,7 +72,6 @@ define(function(require, exports, module) {
 				this.init(state.areaChart);
 			}
 		}
-		this.showMenuButton();
 		return true;
 	};
 

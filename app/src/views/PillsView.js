@@ -22,6 +22,10 @@ define(function(require, exports, module) {
 	PillsView.DEFAULT_OPTIONS = {
 	};
 
+	PillsView.prototype.updatePillsSurfaceList = function(pillsSurfaceList) {
+		this.pillsSurfaceList = pillsSurfaceList;
+	};
+
 	function _createPillsContainer() {
 		this.pillsScrollView = new Scrollview({
 			direction: Utility.Direction.X,
@@ -40,16 +44,16 @@ define(function(require, exports, module) {
 			align: [0.5, 0]
 		});
 		this.pillsScrollView.sequenceFrom(this.pillsSurfaceList);
-		this.setScrollView();
+		_.each(this.pillsSurfaceList, function(pillsSurface) {
+			this.setScrollView(pillsSurface);
+		}.bind(this));
 
 		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
 		this.add(pillsScrollViewContainer);
 	}
 
- 	PillsView.prototype.setScrollView = function () {
-		_.each(this.pillsSurfaceList, function(pillSurface) {
-			pillSurface.pipe(this.pillsScrollView);
-		}.bind(this));
+ 	PillsView.prototype.setScrollView = function (pillSurface) {
+		pillSurface.pipe(this.pillsScrollView);
  	}
 
 	module.exports = PillsView;

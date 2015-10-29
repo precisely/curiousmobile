@@ -1,46 +1,5 @@
 // Base Javascript library extensions
 
-/*requirejs(['Utils'], function(u) {
-	showAlert = function (alertMessage) {
-		u.showAlert(alertMessage);
-	};
-
-	queuePostJSON = function (description, url, args, successCallback, failCallback, delay) {
-		u.queuePostJSON(description, url, args, successCallback, failCallback, delay);
-	};
-
-	queueJSON = function (description, url, args, successCallback, failCallback, delay, post, background) {
-		u.queueJSON(description, url, args, successCallback, failCallback, delay, post, background);
-	}
-
-	makeGetUrl = function (url) {
-		return u.makeGetUrl(url);
-	}
-
-	getCSRFPreventionObject = function (key, data) {
-		return u.getCSRFPreventionObject(key, data);
-	}
-
-	makePlainUrl = function (url) {
-		return u.makePlainUrl(url);
-	}
-
-	makePostUrl = function (url) {
-		return u.makePostUrl(url);
-	}
-
-	checkData = function (data, status, errorMessage, successMessage) {
-		return u.checkData(data, status, errorMessage, successMessage);
-	}
-
-	makeGetArgs = function (args) {
-		return u.makeGetArgs(args);
-	}
-
-	backgroundJSON = function(description, url, args, successCallback, failCallback, delay, post) {
-		u.backgroundJSON(description, url, args, successCallback, failCallback, delay, post)
-	}
-});*/
 function isOnline() {
 	return window.navigator.onLine;
 }
