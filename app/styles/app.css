@@ -334,6 +334,8 @@
 	src: local('Open Sans Bold Italic'), local('OpenSans-BoldItalic'), url(https://fonts.gstatic.com/s/opensans/v13/PRmiXeptR36kaC0GEAetxv79_ZuUxCigM2DespTnFaw.woff2) format('woff2');
 	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
 }
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,700italic,300,400,700);
+
 body {
 	font-family: 'Open Sans', sans-serif;
 }
@@ -342,6 +344,7 @@ body p {
 	font-style: italic;
 	font-weight: 300; /* You specify the number you see next to the fonts to change from light to bold ie you would put 700 etc. etc. */
 }
+
 html {
 	background: #fff;
 }
@@ -686,14 +689,14 @@ button.close {
 	background: #ffffff;
 	border-color: #ffffff;
 	border-right: 0px;
-	color:    #C04F7F;
+	color: #C04F7F;
 	padding-right: 0px;
 }
 
 .entry-input-surface.input-group input, .entry-input-surface.input-group .form-control {
 	height: 40px;
 	border-left: 0;
-	color:    #C04F7F;
+	color: #C04F7F;
 	-webkit-box-shadow: inset 0 0 0 0 !important;
 	box-shadow: inset 0 0 0 0 !important;
 	border-bottom-right-radius: 4px;
@@ -704,10 +707,14 @@ button.close {
 }
 
 /* individual: webkit */
-#entry-description::-webkit-input-placeholder { color:#C04F7F !important; }
+#entry-description::-webkit-input-placeholder {
+	color: #C04F7F !important;
+}
 
 /* individual: mozilla */
-#entry-description::-moz-placeholder { color:#C04F7F !important;}
+#entry-description::-moz-placeholder {
+	color: #C04F7F !important;
+}
 
 /*HOME*/
 
@@ -716,7 +723,7 @@ button.close {
 	text-align: right;
 }
 
-.home .text  {
+.home .text {
 	padding-top: 0;
 }
 
@@ -748,7 +755,7 @@ button.close {
 .not-loggedin .form-control {
 	height: 50px;
 	border: 1px solid #FC3F28;
-	color: #FC3F28; 
+	color: #FC3F28;
 }
 
 .not-loggedin {
@@ -788,14 +795,13 @@ button.close {
 /*Context Menu*/
 .context-menu {
 	list-style: none;
-	margin: 120px auto !important;
 	min-width: 150px;
-	max-width: 290px;
 	-webkit-margin-before: 0;
 	-webkit-padding-start: 0;
 	background: white;
 	text-align: center;
 	color: rgb(232, 56, 56);
+	margin-top: 50%;
 }
 
 .context-menu li {
@@ -818,13 +824,22 @@ button.close {
 	-webkit-touch-callout: none !important;
 }
 
-.feed-pill {
-	background-color: transparent;
+.feed-pill, .tag-pill {
 	height: 30px;
 	color: #797979;
 	border-radius: 2px;
 	text-align: center;
 	margin: 10px;
+}
+
+.feed-pill {
+	background-color: transparent;
+}
+
+.tag-pill {
+	background-color: #fff;
+	border-left: 2px solid #c04f7f;
+	white-space: nowrap;
 }
 
 .feed-pill:active, .feed-pill.active-pill {
@@ -848,7 +863,7 @@ button.close {
 	width: 42px;
 }
 
-.people-wrapper .user-details-header a .user-name{
+.people-wrapper .user-details-header a .user-name {
 	font-size: 14px;
 	font-weight: 500;
 	color: #474747;
@@ -870,7 +885,7 @@ button.close {
 .people-wrapper .user-details-header .follow {
 	background-color: transparent;
 	color: #ff935f;
-} 
+}
 
 .people-wrapper .user-details-header .following {
 	background-color: #ff935f;
@@ -950,6 +965,7 @@ button.close {
 .discussion-header .open {
 	width: 92px;
 }
+
 .discussion-header li a b {
 	margin: 10px 12px;
 	color: #c8c8c8;
@@ -1102,7 +1118,7 @@ button.close {
 	padding: 4px;
 }
 
-.discussion-topic button img{
+.discussion-topic button img {
 	height: 24px;
 	width: auto;
 	margin-right: 5px;
@@ -1112,13 +1128,13 @@ button.close {
 	margin-bottom: 10px;
 	padding: 5px;
 }
+
 .feed-item .discussion .discussion-comment {
 	background-color: #eeeeee;
 	color: #5d5d5d;
 	padding: 25px 20px;
 	font-size: 14px;
 }
-
 
 .feed-item .discussion .multiple-comments {
 	padding: 1px 20px;
@@ -1155,7 +1171,7 @@ button.close {
 }
 
 .discussion-comment .posting-time {
-	margin:12px 0px 0px 10px;
+	margin: 12px 0px 0px 10px;
 	font-size: 11px;
 	color: #a8a8a8;
 }
@@ -1169,12 +1185,10 @@ button.close {
 	color: #a4a4a4;
 }
 
-.post-comment input::-webkit-input-placeholder, .post-comment input::-moz-placeholder, .post-comment input:-moz-placeholder, 
+.post-comment input::-webkit-input-placeholder, .post-comment input::-moz-placeholder, .post-comment input:-moz-placeholder,
 .post-comment input:-ms-input-placeholder {
 	color: #a4a4a4;
 }
-
-
 
 .feed-item .discussion .discussion-comment .avatar {
 	height: 25px;
@@ -1215,7 +1229,7 @@ button.close {
 	font-size: 13px;
 }
 
-.feed-item .discussion-post .user-name, .discussion-comment .user-name{
+.feed-item .discussion-post .user-name, .discussion-comment .user-name {
 	vertical-align: super;
 }
 
@@ -1229,7 +1243,6 @@ button.close {
 	padding: 25px 20px;
 	font-size: 14px;
 }
-
 
 .multiple-comments {
 	padding: 1px 30px;
@@ -1265,7 +1278,7 @@ button.close {
 }
 
 .discussion-comment .posting-time {
-	margin:12px 0px 0px 10px;
+	margin: 12px 0px 0px 10px;
 	font-size: 11px;
 	color: #a8a8a8;
 }
@@ -1390,11 +1403,12 @@ button.close {
 	width: 100%;
 }
 
-#sleep-hour, #mood-box{
+#sleep-hour, #mood-box {
 	padding: 10px;
 	height: 50px;
 	width: 100%;
 }
+
 .help-wizard .left-carousel-control {
 	float: left;
 	color: #fff;
@@ -1640,7 +1654,7 @@ button.close {
 	height: 23px;
 }
 
-@media only screen 
+@media only screen
 and (max-device-height: 480px) {
 	.help-wizard .questions {
 		margin: 0px 0px 10px 0px;
@@ -1655,7 +1669,7 @@ and (max-device-height: 480px) {
 	}
 }
 
-@media only screen 
+@media only screen
 and (max-device-height: 568px) {
 	.exercise-questions .questions {
 		margin-top: 0px;
@@ -1796,4 +1810,86 @@ and (max-device-height: 568px) {
 
 .entry-checkbox input[type="checkbox"] {
 	display: none;
+}
+
+.table {
+	display: table;
+	max-width: 100%;
+}
+
+.align-middle {
+	text-align: center;
+	vertical-align: middle;
+}
+
+.querycontrols {
+	margin: 0px;
+	visibility: hidden;
+}
+
+.calendarRange {
+	padding-left: 0px;
+	background-color: #EBEBEB;
+}
+
+.startDate {
+	display: inline-block;
+}
+
+.tagList {
+	height: 40px;
+	padding: 8px;
+	font-size: 15px;
+	color: #878785;
+	border-bottom: 1px solid #DBDBDB;
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.tagList .fa {
+	color: #FC3F28;
+	margin-right: 10px;
+}
+
+.tag-search-input {
+	width: 100%;
+	padding: 5px;
+}
+
+.graphData {
+	height: 100%;
+}
+
+.plotArea {
+	min-height: 250px;
+	height: 100%;
+	background-color: #fff;
+}
+
+.start-date-picker .fa, .end-date-picker .fa {
+	color: #6f6f6f;
+	font-size: 20px;
+	vertical-align: bottom;
+}
+
+.graph-item-bar {
+	padding: 12px;
+}
+
+.graph-item-bar p {
+	width: 80%;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	font-style: normal;
+	font-size: 16px;
+	color: #fff;
+	display: inline-block;
+}
+
+.delete-graph {
+	float: right;
+	color: #fff;
+	font-weight: 600;
 }

@@ -19,7 +19,6 @@
 		backbone: '../lib/backbone/backbone',
 		underscore: '../lib/underscore/underscore',
 		exoskeleton: '../lib/exoskeleton/exoskeleton',
-		jquery: '../lib/jquery/dist/jquery',
 		fontawesome: '../lib/fontawesome/fonts/*',
 		store: '../lib/store.js/store',
 		text: '../lib/text/text',
