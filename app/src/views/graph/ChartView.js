@@ -16,6 +16,7 @@ define(function(require, exports, module) {
 	var Draggable = require("famous/modifiers/Draggable");
 	var Utility = require('famous/utilities/Utility');
 	var User = require('models/User');
+	var jqFlot = require('util/jquery.flot.min');
 	var u = require('util/Utils');
 	var CreateChartView = require('views/graph/CreateChartView');
 	var treeView = require('util/treeview');

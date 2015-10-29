@@ -162,8 +162,8 @@ define(function(require, exports, module) {
 				} else if ( e.data == 'SprintListView') {
 					App.pageView.changePage('SprintListView');
 				} else if (e.data == 'ChartView') {
-                    App.pageView.changePage('ChartView');
-                }
+					App.pageView.changePage('ChartView');
+				}
 			}
 		}.bind(this));
 

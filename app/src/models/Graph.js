@@ -22,22 +22,22 @@ define(function(require, exports, module) {
 		});
 		u.queueJSON("loading saved graphs", u.makeGetUrl('listPlotData'),
 				u.makeGetArgs(argsToSend), function(data) {
-					if (u.checkData(data)) {
-						if (callback) {
-							callback(data);
-						}
+				if (u.checkData(data)) {
+					if (callback) {
+						callback(data);
 					}
-				});
+				}
+			});
 	};
 
 	Graph.delete = function(id, callback) {
 		u.backgroundJSON("deleting saved graph", "/home/deletePlotDataId?id=" + escape(id) + "&callback=?",
 				function(entries) {
-					if (checkData(entries)) {
-						if (callback)
-							callback();
-					}
-				});
+				if (checkData(entries)) {
+					if (callback)
+						callback();
+				}
+			});
 	}
 
 	module.exports = Graph;
