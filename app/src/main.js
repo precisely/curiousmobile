@@ -1,3 +1,4 @@
+App.CSRF.SyncTokenKeyName = "SYNCHRONIZER_TOKEN"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_KEY
 /*** main.js ***/
 
 //main.js
@@ -5,10 +6,52 @@
 var App = {};
 App.pages = {};
 App.CSRF = {};
+var showAlert, queuePostJSON, queueJSON, makeGetUrl, getCSRFPreventionObject, makePlainUrl, makePostUrl, checkData,
+		makeGetArgs, backgroundJSON;
 
 define(function(require, exports, module) {
+	var u = require('util/Utils');
+	showAlert = function (alertMessage) {
+		u.showAlert(alertMessage);
+	};
+
+	queuePostJSON = function (description, url, args, successCallback, failCallback, delay) {
+		u.queuePostJSON(description, url, args, successCallback, failCallback, delay);
+	};
+
+	queueJSON = function (description, url, args, successCallback, failCallback, delay, post, background) {
+		u.queueJSON(description, url, args, successCallback, failCallback, delay, post, background);
+	}
+
+	makeGetUrl = function (url) {
+		return u.makeGetUrl(url);
+	}
+
+	getCSRFPreventionObject = function (key, data) {
+		return u.getCSRFPreventionObject(key, data);
+	}
+
+	makePlainUrl = function (url) {
+		return u.makePlainUrl(url);
+	}
+
+	makePostUrl = function (url) {
+		return u.makePostUrl(url);
+	}
+
+	checkData = function (data, status, errorMessage, successMessage) {
+		return u.checkData(data, status, errorMessage, successMessage);
+	}
+
+	makeGetArgs = function (args) {
+		return u.makeGetArgs(args);
+	}
+
+	backgroundJSON = function(description, url, args, successCallback, failCallback, delay, post) {
+		u.backgroundJSON(description, url, args, successCallback, failCallback, delay, post)
+	}
+
 	var App = window.App;
-	App.CSRF.SyncTokenKeyName = "SYNCHRONIZER_TOKEN"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_KEY
 	App.CSRF.SyncTokenUriName = "SYNCHRONIZER_URI"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_URI
 	App.zIndex = {
 		menu: 12,
@@ -28,7 +71,6 @@ define(function(require, exports, module) {
 	var Cache = require('jscache');
 	var TouchSync = require("famous/inputs/TouchSync");
 	var FastClick = require('famous/inputs/FastClick');
-	var u = require('util/Utils');
 	var AppView = require('views/AppView');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
@@ -49,6 +91,7 @@ define(function(require, exports, module) {
 	App.collectionCache = collectionCache;
 	App.pinnedCache = pinnedCache;
 	App.stateCache = stateCache;
+
 	//App.serverUrl = "http://192.168.0.31:8080";
 	//App.serverUrl = "http://192.168.1.123:8080";
 	App.serverUrl = "https://dev.wearecurio.us";
@@ -57,6 +100,8 @@ define(function(require, exports, module) {
 	//App.serverUrl = "http://192.168.0.102:8080";
 	//App.serverUrl = "http://192.168.1.141:8080";
 	//App.serverUrl = "http://114.143.237.123:8080";
+	//App.serverUrl = "http://192.168.1.141:8080";
+
 	Engine.setOptions({
 		containerClass: 'app-container'
 	});

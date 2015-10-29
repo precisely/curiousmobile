@@ -9,7 +9,7 @@ require.config({
 		},
 		underscore: {
 			exports: '_',
-			init: function() {
+			init: function () {
 				this._.extend(this._.templateSettings, {
 					interpolate: /\{\{(.+?)\}\}/g
 				});
@@ -18,6 +18,7 @@ require.config({
 		}
 	},
 	paths: {
+		jquery: '../lib/jquery/dist/jquery',
 		famous: '../lib/famous/src',
 		requirejs: '../lib/requirejs/require',
 		almond: '../lib/almond/almond',
@@ -26,7 +27,6 @@ require.config({
 		backbone: '../lib/backbone/backbone',
 		underscore: '../lib/underscore/underscore',
 		exoskeleton: '../lib/exoskeleton/exoskeleton',
-		jquery: '../lib/jquery/dist/jquery',
 		fontawesome: '../lib/fontawesome/fonts/*',
 		store: '../lib/store.js/store',
 		text: '../lib/text/text',
@@ -34,10 +34,8 @@ require.config({
 		jscache: '../lib/jscache/cache',
 		'exoskeleton.localStorage': '../lib/exoskeleton.localStorage/backbone.localStorage',
 		bootstrap: '../lib/bootstrap/dist/js/bootstrap',
-		'Entry': './models/Entry',
+		'Entry': './models/Entry'
 	},
-	packages: [
-
-	]
+	packages: []
 });
-require(['main']);
+require(['jquery', 'main']);
