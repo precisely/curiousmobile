@@ -45,7 +45,7 @@ define(function(require, exports, module) {
 
 		this.setRightIcon(this.optionsSurface);
 
-		this.graphView = new GraphView();
+		this.graphView = new GraphView(null, 'plotArea');
 		this.add(new StateModifier({transform: Transform.translate(0, 65, App.zIndex.readView)})).add(this.graphView);
 		_setHandlers.call(this);
 	}

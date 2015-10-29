@@ -21,9 +21,10 @@ define(function(require, exports, module) {
 	var PlotMobile = require('util/plot.mobile');
 	var plotProperties = require('util/plot.properties');
 
-	function GraphView(tagsToPlot) {
+	function GraphView(tagsToPlot, plotAreaId) {
 		StateView.apply(this, arguments);
 		this.tags = tagsToPlot;
+		this.plotAreaId = plotAreaId || 'plotArea'
 		this.renderController = new RenderController();
 		this.add(new StateModifier({transform: Transform.translate(0, 50, 0)})).add(this.renderController);
 		this.init();
@@ -39,11 +40,11 @@ define(function(require, exports, module) {
 	GraphView.prototype.init = function() {
 		this.graphSurface = new Surface({
 			size: [undefined, App.height - 220],
-			content: _.template(GraphTemplate, templateSettings)
+			content: _.template(GraphTemplate, {plotAreaId: this.plotAreaId}, templateSettings)
 		});
 
 		this.renderController.show(this.graphSurface, function() {
-			this.plot = new PlotMobile(App.tagListWidget.list, User.getCurrentUserId(), User.getCurrentUser().get("username"), "#plotArea", true, false, new PlotProperties({
+			this.plot = new PlotMobile(App.tagListWidget.list, User.getCurrentUserId(), User.getCurrentUser().get("username"), '#' + this.plotAreaId, true, false, new PlotProperties({
 				'startDate':'#startdatepicker1',
 				'startDateInit':'start date and/or tag',
 				'endDate':'#enddatepicker1',

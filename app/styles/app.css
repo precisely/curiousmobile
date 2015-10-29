@@ -1376,7 +1376,7 @@ and (max-device-height: 568px) {
 	height: 100%;
 }
 
-#plotArea {
+.plotArea {
 	min-height: 250px;
 	height: 100%;
 	background-color: #fff;
