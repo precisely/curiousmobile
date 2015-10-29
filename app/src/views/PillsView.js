@@ -22,7 +22,7 @@ define(function(require, exports, module) {
 	PillsView.DEFAULT_OPTIONS = {
 	};
 
-	PillsView.prototype.updatePillsSurfaceList = function(pillsSurfaceList) {
+	PillsView.prototype.setPillsSurfaceList = function(pillsSurfaceList) {
 		this.pillsSurfaceList = pillsSurfaceList;
 	};
 
@@ -44,6 +44,7 @@ define(function(require, exports, module) {
 			align: [0.5, 0]
 		});
 		this.pillsScrollView.sequenceFrom(this.pillsSurfaceList);
+
 		_.each(this.pillsSurfaceList, function(pillsSurface) {
 			this.setScrollView(pillsSurface);
 		}.bind(this));

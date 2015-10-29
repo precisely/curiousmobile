@@ -1832,7 +1832,9 @@ function PlotLine(p) {
 	if (this.tag && this.tag instanceof TagGroup) {
 		this.refreshTagList();
 	}
+
 	$(document).trigger('postLineDetails', this);
+
 	if ((!this.isSmoothLine()) && (!this.isFreqLine()) && (!this.getTags()))
 		this.addTagName(p.name);
 	if (this.entries)

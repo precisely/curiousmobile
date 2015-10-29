@@ -66,9 +66,14 @@ define(function(require, exports, module) {
 		this.drawDateFooter();
 	};
 
+	GraphView.prototype.clearPillsSurfaceList = function() {
+		// Splicing instead of initializing with [] to retrieve the original reference
+		this.pillsSurfaceList.splice(0, this.pillsSurfaceList.length);
+	};
+
 	GraphView.prototype.drawGraph = function(tags, isAreaChart) {
 		this.tags = tags;
-
+		this.clearPillsSurfaceList();
 		if (this.tags) {
 			this.plot.initiateAddLine(this.tags, isAreaChart);
 		}
@@ -189,7 +194,7 @@ define(function(require, exports, module) {
 			}
 		});
 		this.pillsSurfaceList.push(pillSurface);
-		this.pillsView.updatePillsSurfaceList(this.pillsSurfaceList);
+		this.pillsView.setPillsSurfaceList(this.pillsSurfaceList);
 		this.pillsView.setScrollView(pillSurface);
 	};
 
