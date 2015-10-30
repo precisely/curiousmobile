@@ -1478,7 +1478,7 @@ button.close {
 	margin: 0px 0px 10px 0px;
 }
 
-.sprint-details p, .people-detail p, .edit-people-detail p {
+.sprint-details p, .profile-detail p, .edit-people-detail p, .people-detail p {
 	font-style: normal;
 	font-weight: 500;
 }
@@ -1499,7 +1499,7 @@ button.close {
 	resize: none;
 }
 
-.sprint-details button, .sprint-activity button, .people-detail button, .edit-people-detail button, .create-entry-button {
+.sprint-details button, .sprint-activity button, .people-detail button, .profile-detail button, .edit-people-detail button, .create-entry-button {
 	background-color: transparent;
 	border: 1px solid #979797;
 	border-radius: 2px;
@@ -1511,7 +1511,7 @@ button.close {
 	color: #fff;
 }
 
-.upper-body button {
+.profile-detail .upper-body button {
 	color: #ffffff;
 	float: right;
 	margin-top: -42px;
@@ -1521,6 +1521,11 @@ button.close {
 	border-color: #ffffff;
 	font-size: 15px;
 	display: inline-block;
+}
+
+.people-detail .upper-body button {
+	padding: 2px 20px;
+	color: #5d5d5d;
 }
 
 .tags-div button, .entry-button {
@@ -1548,7 +1553,7 @@ button.close {
 	background-color: #efefef;
 }
 
-.sprint-activity h2, .people-detail h2 {
+.sprint-activity h2, .people-detail h2, .profile-detail h2 {
 	margin: 0px 0px 15px 0px;
 }
 
@@ -1562,27 +1567,27 @@ button.close {
 	height: 40px;
 }
 
-.people-detail .fa-4x {
+.profile-detail .fa-4x {
 	font-size: 106px;
 	margin-bottom: 5px;
 }
 
-.people-detail .upper-body img, .edit-people-detail .edit-image img {
+.profile-detail .upper-body img, .edit-people-detail .edit-image img {
 	margin-bottom: 12px;
 	width: 90px;
 	height: 90px;
 }
 
-.people-detail .upper-body {
+.profile-detail .upper-body {
 	text-align: center;
 	padding: 15px 0px;
 }
 
-.people-detail .lower-body {
+.profile-detail .lower-body {
 	padding: 15px;
 }
 
-.people-detail p {
+.profile-detail p {
 	color: #ffffff;
 	display: inline;
 	font-weight: 300;
@@ -1590,22 +1595,22 @@ button.close {
 	font-weight: 500;
 }
 
-.people-detail h4 {
+.profile-detail h4 {
 	color: #696969;
 }
 
-.people-detail h2 {
+.profile-detail h2 {
 	color: #ffffff;
 	font-size: 22px;
 	margin-bottom: 16px;
 	font-weight: 500;
 }
 
-.people-detail .media {
+.profile-detail .media {
 	margin-top: 10px;
 }
 
-.people-detail .media-body {
+.profile-detail .media-body {
 	padding-left: 10px;
 	padding-top: 5px;
 	text-align: center;
@@ -1629,6 +1634,13 @@ button.close {
 }
 
 .people-label {
+	color: #b6b6b6;
+	font-weight: 500;
+	font-size: 15px;
+	display: block;
+}
+
+.profile-people-label {
 	color: #fee49f;
 	font-weight: 500;
 	font-size: 13px;
@@ -1819,7 +1831,7 @@ and (max-device-height: 568px) {
 	display: none;
 }
 
-.people-detail h1 {
+.profile-detail h1 {
 	color: #ffffff;
 	font-size: 18px;
 	margin-top: 9px;
@@ -1827,7 +1839,7 @@ and (max-device-height: 568px) {
 	font-weight: 500;
 }
 
-.people-detail, .edit-people-detail {
+.profile-detail, .edit-people-detail {
 	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#df3501+0,ff6131+100 */
 	/*background: #df3501; /!* Old browsers *!/
 	background: -moz-linear-gradient(top,  #f14d43 0%, #f48157 100%); /!* FF3.6+ *!/
@@ -2177,4 +2189,43 @@ input.cropit-image-zoom-input {
 
 .edit-external-accounts p {
 	color: #fff;
+}
+
+.people-detail .fa-4x {
+	font-size: 70px;
+}
+
+.people-detail .upper-body {
+	text-align: center;
+	background-color: #efefef;
+	padding: 15px 0px;
+}
+
+.people-detail .lower-body {
+	padding: 15px;
+	background-color: #fff;
+}
+
+.people-detail p {
+	color: #696969;
+	display: inline;
+	font-weight: 300;
+}
+
+.people-detail h4 {
+	color: #696969;
+}
+
+.people-detail h2 {
+	color: #5d5d5d;
+	font-size: 22px;
+}
+
+.people-detail .media {
+	margin-top: 10px;
+}
+
+.people-detail .media-body {
+	padding-left: 10px;
+	padding-top: 5px;
 }

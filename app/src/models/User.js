@@ -136,7 +136,7 @@ define(function(require, exports, module) {
 			offset: args.offset?args.offset:0,
 			type: 'people'
 		});
-		u.queueJSON("loading feeds", u.makeGetUrl('indexData', 'search'),
+		u.queueJSON("loading feeds", u.makeGetUrl('getPeopleSocialData', 'search'),
 				u.makeGetArgs(argsToSend), function(data) {
 					if (u.checkData(data)) {
 						callback(data.listItems);

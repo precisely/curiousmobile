@@ -11,6 +11,7 @@ define(function(require, exports, module, store) {
 	var Modifier = require('famous/core/Modifier');
 	var Draggable = require("famous/modifiers/Draggable");
 	var StateView = require('views/StateView');
+	var DraggableView = require("views/widgets/DraggableView");
 	var RenderNode = require("famous/core/RenderNode");
 	var RenderController = require('famous/views/RenderController');
 	var ContainerSurface = require("famous/surfaces/ContainerSurface");
@@ -214,23 +215,8 @@ define(function(require, exports, module, store) {
 			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 1330, 0)})).add(this.tagSequentialLayout);
 
 			// Calculating draggable container height according to the taglist height
-			var yRange = 900 + (this.tagList.length * 50);
-			var lastDraggablePosition = 0;
-
-			var draggable = new Draggable({
-				xRange: [0, 0],
-				yRange: [-yRange, 0]
-			});
-
-			draggable.subscribe(this.editProfileContainerSurface);
-
-			draggable.on('end', function(e) {
-				console.log(e);
-			});
-
-			var nodePlayer = new RenderNode();
-			nodePlayer.add(draggable).add(this.editProfileContainerSurface);
-			this.renderController.show(nodePlayer);
+			var draggableView = new DraggableView(this.editProfileContainerSurface, true, 900 + (this.tagList.length * 50));
+			this.renderController.show(draggableView);
 		}.bind(this), function() {
 			App.pageView.goBack();
 		}.bind(this));

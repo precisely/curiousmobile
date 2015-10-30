@@ -54,9 +54,13 @@ define(function(require, exports, module) {
 		var deleteModifier = new StateModifier({
 			transform: Transform.translate(window.innerWidth, -3, window.App.zIndex.readView + 2)
 		});
+		this.deleteSurface.setProperties({
+			padding: '3px',
+		});
+		this.deleteSurface.setSize([100, 50]);
 		this.add(deleteModifier).add(this.deleteSurface);
 		var entryModifier = new Modifier({
-			transform: Transform.translate(0, 0, 0)
+			transform: Transform.translate(0, 2, 0)
 		});
 		this.add(entryModifier).add(this.entrySurface);
 	}

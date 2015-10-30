@@ -30,7 +30,7 @@ define(function(require, exports, module) {
 			offset: args.offset?args.offset:0,
 			type: 'sprints'
 		});
-		u.queueJSON('loading feeds', u.makeGetUrl('indexData', 'search'), 
+		u.queueJSON('loading feeds', u.makeGetUrl('getAllSprintData', 'search'),
 		u.makeGetArgs(argsToSend), function(data) {
 			if (u.checkData(data)) {
 				callback(data.listItems.sprintList);

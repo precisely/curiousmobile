@@ -14,6 +14,7 @@ define(function(require, exports, module) {
 	var RenderController = require('famous/views/RenderController');
 	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var Draggable = require("famous/modifiers/Draggable");
+	var ProfileDetailsTemplate = require('text!templates/user-profile.html');
 	var PeopleDetailsTemplate = require('text!templates/people-details.html');
 	var User = require('models/User');
 	var u = require('util/Utils');
@@ -25,9 +26,6 @@ define(function(require, exports, module) {
 
 		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
-			properties: {
-				background: '-webkit-linear-gradient(top,  #f14d43 0%, #f48157 100%)',
-			}
 		});
 
 		this.renderController = new RenderController();
@@ -65,10 +63,19 @@ define(function(require, exports, module) {
 	PeopleDetailView.prototype.refresh = function() {
 		User.show(this.hash, function(peopleDetails) {
 			this.setHeaderLabel(peopleDetails.user.name);
-			peopleDetails.user.userID = User.getCurrentUserId();
+			var profileTemplate = PeopleDetailsTemplate;
+			this.backgroundSurface.setProperties({
+				background: '#fff'
+			});
+			if (peopleDetails.user.id == User.getCurrentUserId()) {
+				profileTemplate = ProfileDetailsTemplate;
+				this.backgroundSurface.setProperties({
+					background: '-webkit-linear-gradient(top,  #f14d43 0%, #f48157 100%)'
+				});
+			}
 			var peopleSurface = new Surface({
 				size: [undefined, undefined],
-				content: _.template(PeopleDetailsTemplate, peopleDetails, templateSettings),
+				content: _.template(profileTemplate, peopleDetails, templateSettings),
 				properties: {
 				}
 			});
@@ -86,7 +93,7 @@ define(function(require, exports, module) {
 				}
 			}.bind(this));
 
-			this.draggableDetailsView = new DraggableView(peopleSurface);
+			this.draggableDetailsView = new DraggableView(peopleSurface, true);
 			this.renderController.show(this.draggableDetailsView);
 		}.bind(this), function() {
 			App.pageView.goBack();
