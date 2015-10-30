@@ -380,8 +380,6 @@ define(function(require, exports, module) {
 			window.App.collectionCache.clear();
 		}
 
-
-
 		if (this.hasFuture()) {
 			this.alert = u.showAlert({
 				message: 'Update just this one event or also future events?',

@@ -18,19 +18,19 @@ define(function(require, exports, module) {
 		},
 		login: function(username, password, callback) {
 			this.u.queueJSON("logging in",
-				this.u.makeGetUrl('dologinData'),
-				this.u.makeGetArgs({
-					username: username,
-					password: password
-				}),
-				function(data) {
-					if (data['success']) {
-						callback(this.getUserData(data));
-					} else {
-						console.log('username or password not correct....')
-						this.u.showAlert('Username or password not correct, please try again');
-					}
-				}.bind(this));
+					this.u.makeGetUrl('dologinData'),
+					this.u.makeGetArgs({
+						username: username,
+						password: password
+					}),
+					function(data) {
+						if (data['success']) {
+							callback(this.getUserData(data));
+						} else {
+							console.log('username or password not correct....')
+							this.u.showAlert('Username or password not correct, please try again');
+						}
+					}.bind(this));
 
 		},
 		isLoggedIn: function() {
@@ -38,22 +38,22 @@ define(function(require, exports, module) {
 		},
 		register: function(email, confirmEmail, username, password, callback) {
 			this.u.queuePostJSON("creating account",
-				this.u.makePostUrl('doregisterData'),
-				this.u.makePostArgs({
-					email: email,
-					confirm_email: confirmEmail,
-					username: username,
-					password: password,
-					groups: "['announce','curious','curious announce']"
-				}),
-				function(data) {
-					if (data['success']) {
-						this.getUserData(data);
-						this.u.addDataReadyCallback(callback);
-					} else {
-						this.u.showAlert(data.message + ' Please try again or hit Cancel to return to the login screen.');
-					}
-				}.bind(this)
+					this.u.makePostUrl('doregisterData'),
+					this.u.makePostArgs({
+						email: email,
+						confirm_email: confirmEmail,
+						username: username,
+						password: password,
+						groups: "['announce','curious','curious announce']"
+					}),
+					function(data) {
+						if (data['success']) {
+							this.getUserData(data);
+							this.u.addDataReadyCallback(callback);
+						} else {
+							this.u.showAlert(data.message + ' Please try again or hit Cancel to return to the login screen.');
+						}
+					}.bind(this)
 			);
 
 		},
@@ -63,11 +63,11 @@ define(function(require, exports, module) {
 				return this.cache(data.user);
 			} else {
 				this.u.queueJSON("loading login data",
-					this.u.makeGetUrl("getPeopleData"),
-					this.u.makeGetArgs(this.u.getCSRFPreventionObject("getPeopleDataCSRF")),
-					function(data) {
-						this.cache(data[0]);
-					}.bind(this)
+						this.u.makeGetUrl("getPeopleData"),
+						this.u.makeGetArgs(this.u.getCSRFPreventionObject("getPeopleDataCSRF")),
+						function(data) {
+							this.cache(data[0]);
+						}.bind(this)
 				);
 
 			}
@@ -100,6 +100,14 @@ define(function(require, exports, module) {
 		return user.id;
 	}
 
+	User.getCurrentUserHash = function() {
+		var user = store.get('user');
+		if (typeof user == 'undefined') {
+			return false;
+		}
+		return user.hash;
+	}
+
 	User.getCurrentUser = function() {
 		var user = store.get('user');
 		if (typeof user == 'undefined') {
@@ -114,7 +122,7 @@ define(function(require, exports, module) {
 		window.App.stateCache.clear();
 		u.callLogoutCallbacks();
 		if (typeof callback != 'undefined') {
-			callback(userData);	
+			callback(userData);
 		}
 		store.set('mobileSessionId', false);
 		store.set('user', false);
@@ -128,30 +136,102 @@ define(function(require, exports, module) {
 			offset: args.offset?args.offset:0,
 			type: 'people'
 		});
-		u.queueJSON("loading feeds", u.makeGetUrl('indexData', 'search'), 
-		u.makeGetArgs(argsToSend), function(data) {
-			if (u.checkData(data)) {
-				callback(data.listItems);
-			}
-		});
+		u.queueJSON("loading feeds", u.makeGetUrl('getPeopleSocialData', 'search'),
+				u.makeGetArgs(argsToSend), function(data) {
+					if (u.checkData(data)) {
+						callback(data.listItems);
+					}
+				});
 	};
 
 	User.show = function(hash, successCallback, failCallback) {
-		u.queueJSON('Getting user data', App.serverUrl + '/api/user/' + hash + '?callback=?', 
-		u.getCSRFPreventionObject('getUserData'),
-		function(data) {
-			if (u.checkData(data)) {
-				if (data.success) {
-					successCallback({user: data.user});
-				} else {
-					u.showAlert(data.message);
-					failCallback();
-				}
-			}
-		}, function(error) {
-			console.log('error: ', error);
-		});
+		u.queueJSON('Getting user data', App.serverUrl + '/api/user/' + hash + '?callback=?',
+				u.getCSRFPreventionObject('getUserData'),
+				function(data) {
+					if (u.checkData(data)) {
+						if (data.success) {
+							successCallback({user: data.user});
+						} else {
+							u.showAlert(data.message);
+							failCallback();
+						}
+					}
+				}, function(error) {
+					console.log('error: ', error);
+				});
 	};
 
+	User.update = function(updatedData, successCallback, failCallback) {
+		u.queueJSONAll('Updating user details', App.serverUrl + '/api/user/' + updatedData.id, JSON.stringify(updatedData),
+				function(data) {
+					if (u.checkData(data)) {
+						if (data.success) {
+							successCallback({hash: data.hash});
+						} else {
+							u.showAlert(data.message);
+							if (failCallback) {
+								failCallback();
+							}
+						}
+					}
+				}, function(error) {
+					console.log('error: ', error);
+				}, null, {requestMethod: 'PUT'});
+	};
+
+	User.addInterestTags = function(tags, successCallback, failCallback) {
+		u.queuePostJSON('Adding interest tags', App.serverUrl + '/api/data/action/addInterestTagData', tags,
+				function(data) {
+				if (u.checkData(data)) {
+					if (data.interestTags) {
+						successCallback();
+					} else {
+						u.showAlert(data.message);
+						if (failCallback) {
+							failCallback();
+						}
+					}
+				}
+			}, function(error) {
+				console.log('error: ', error);
+			});
+	};
+
+	User.deleteInterestTags = function(tag, successCallback, failCallback) {
+		u.queuePostJSON('Deleting interest tags', App.serverUrl + '/api/data/action/deleteInterestTagData', {userId: this.getCurrentUserId(), tagName: tag},
+				function(data) {
+					if (u.checkData(data)) {
+						if (data.interestTags) {
+							successCallback();
+						} else {
+							u.showAlert(data.message);
+							if (failCallback) {
+								failCallback();
+							}
+						}
+					}
+				}, function(error) {
+					console.log('error: ', error);
+				});
+	};
+
+	User.saveAvatar = function(updatedData, successCallback, failCallback) {
+		var httpArgs = { processData: false, contentType: false, requestMethod:'POST' };
+		u.queueJSONAll('Updating user avatar', App.serverUrl + '/api/user/action/saveAvatar', updatedData,
+				function(data) {
+					if (u.checkData(data)) {
+						if (data.success) {
+							successCallback();
+						} else {
+							u.showAlert(data.message);
+							if (failCallback) {
+								failCallback();
+							}
+						}
+					}
+				}, function(error) {
+					console.log('error: ', error);
+				}, null, httpArgs);
+	};
 	module.exports = User;
 });

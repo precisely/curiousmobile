@@ -69,7 +69,7 @@ define(function(require, exports, module) {
 	};
 	var Engine = require('famous/core/Engine');
 	var Cache = require('jscache');
-	var TouchSync = require("famous/inputs/TouchSync");
+	var TouchSync = require('famous/inputs/TouchSync');
 	var FastClick = require('famous/inputs/FastClick');
 	var AppView = require('views/AppView');
 	var StateModifier = require('famous/modifiers/StateModifier');
@@ -95,6 +95,8 @@ define(function(require, exports, module) {
 	//App.serverUrl = "http://192.168.0.31:8080";
 	//App.serverUrl = "http://192.168.1.123:8080";
 	App.serverUrl = "https://dev.wearecurio.us";
+	//App.serverUrl = "http://192.168.0.111:8080";
+	//App.serverUrl = "http://localhost:8080";
 	//App.serverUrl = "http://127.0.0.1:8080";
 	//App.serverUrl = "http://192.168.0.108:8080";
 	//App.serverUrl = "http://192.168.0.102:8080";

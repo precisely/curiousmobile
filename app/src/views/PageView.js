@@ -94,7 +94,11 @@ define(function(require, exports, module) {
 			if (e.clearHistory) {
 				this.history = [];
 			}
-			this.changePage(e.data);
+			var state = new Object();
+			if(e.data == "PeopleDetailView") {
+				state.hash = User.getCurrentUserHash();
+			}
+			this.changePage(e.data, state);
 		}.bind(this));
 	}
 

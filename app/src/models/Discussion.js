@@ -34,10 +34,10 @@ define(function(require, exports, module) {
 			offset: args.offset ? args.offset : 0,
 			type: 'discussions'
 		});
-		u.queueJSON("loading discussion list", u.makeGetUrl('indexData', 'search'),
+		u.queueJSON("loading discussion list", u.makeGetUrl('getDiscussionSocialData', 'search'),
 			u.makeGetArgs(argsToSend),
 			function(data) {
-				callback(data.listItems.discussionList);
+				callback(data.listItems);
 			});
 	};
 
