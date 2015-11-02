@@ -48,7 +48,7 @@ define(function(require, exports, module) {
 
 	function _zIndex(argument) {
 		// zIndex calculated on top of the containing surface hence returning 0 will use zIndex of the form container
-		return 0;
+		return 1;
 	}
 
 	function _setListeners() {
@@ -251,7 +251,7 @@ define(function(require, exports, module) {
 			} else {
 				offset += (firstOffset < 0) ? 0 : firstOffset;
 			}
-			var transform = Transform.translate(offset, 0, _zIndex());
+			var transform = Transform.translate(offset, 0, 0);
 			return {
 				transform: transform,
 				target: input.render()
@@ -299,7 +299,7 @@ define(function(require, exports, module) {
 
 		var mod = new StateModifier({
 			size: [App.width, undefined],
-			transform: Transform.translate(0, 130, 0)
+			transform: Transform.translate(0, 130, _zIndex())
 		});
 		var dateGridRenderControllerMod = new StateModifier({
 			transform: Transform.translate(18, 200, 16)
@@ -307,7 +307,7 @@ define(function(require, exports, module) {
 		this.formContainerSurface.add(mod).add(this.renderController);
 		this.formContainerSurface.add(dateGridRenderControllerMod).add(this.dateGridRenderController);
 		this.draggableEntryFormView = new DraggableView(this.formContainerSurface, true, 300);
-		this.add(this.draggableEntryFormView);
+		this.add(new StateModifier({transform: Transform.translate(0, 0, _zIndex() + 1)})).add(this.draggableEntryFormView);
 	}
 	
 	EntryFormView.prototype.preShow = function(state) {
