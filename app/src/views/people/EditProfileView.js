@@ -26,6 +26,9 @@ define(function(require, exports, module, store) {
 
 	function EditProfileView() {
 		BaseView.apply(this, arguments);
+		this.headerBackgroundSurface.setProperties({
+			background: '#f15847'
+		});
 		this.parentPage = 'FeedView';
 		this.addInterestTagView = new AddInterestTagView(this);
 		this.UpdateAvatarView = new UpdateAvatarView(this);
@@ -81,7 +84,6 @@ define(function(require, exports, module, store) {
 	EditProfileView.prototype.showAddInterestTagForm = function() {
 		this.showBackButton();
 		this.setHeaderLabel('');
-		//this.setRightIcon('SAVE');
 		this.showOverlayContent(this.addInterestTagView, function() {
 			console.log('overlay successfully created');
 		}.bind(this.addInterestTagView));
@@ -96,8 +98,7 @@ define(function(require, exports, module, store) {
 		console.log("overlay killed");
 		this.showMenuButton();
 		this.showBackButton();
-		this.setHeaderLabel('EDIT PROFILE');
-		//this.setRightIcon('SAVE');
+		this.setHeaderLabel('EDIT PROFILE', '#fff');
 		this.preShow(state);
 	}
 
@@ -112,7 +113,6 @@ define(function(require, exports, module, store) {
 
 	EditProfileView.prototype.showUserDetailsForm = function() {
 		User.show(this.hash, function(peopleDetails) {
-			this.setHeaderLabel(peopleDetails.user.name);
 			peopleDetails.user.userID = User.getCurrentUserId();
 
 			this.editProfileContainerSurface = new ContainerSurface({
@@ -129,13 +129,13 @@ define(function(require, exports, module, store) {
 				properties: {
 					fontSize: '15px',
 					fontWeight: 'normal',
-					color: '#F14A42',
+					color: '#FFF',
 					textAlign: 'center',
 					padding: '21px 0'
 				}
 			});
 
-			this.setHeaderLabel('EDIT PROFILE');
+			this.setHeaderLabel('EDIT PROFILE', '#FFF');
 			this.setRightIcon(this.saveSurface);
 
 			this.saveSurface.on('click', function(e) {
@@ -195,7 +195,7 @@ define(function(require, exports, module, store) {
 			this.tagList = [];
 			this.tagSequentialLayout = new SequentialLayout({
 				direction: 1,
-				itemSpacing: 50,
+				itemSpacing: 40,
 				defaultItemSize: [undefined, 24],
 			});
 			_.each(peopleDetails.user.interestTags, function(tag) {
@@ -212,10 +212,10 @@ define(function(require, exports, module, store) {
 			}.bind(this));
 			this.tagSequentialLayout.sequenceFrom(this.tagList);
 			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(editPeopleSurface);
-			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 1330, 0)})).add(this.tagSequentialLayout);
+			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 1280, 0)})).add(this.tagSequentialLayout);
 
 			// Calculating draggable container height according to the taglist height
-			var draggableView = new DraggableView(this.editProfileContainerSurface, true, 900 + (this.tagList.length * 50));
+			var draggableView = new DraggableView(this.editProfileContainerSurface, true, 930 + (this.tagList.length * 50));
 			this.renderController.show(draggableView);
 		}.bind(this), function() {
 			App.pageView.goBack();

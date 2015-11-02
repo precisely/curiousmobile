@@ -30,7 +30,7 @@ define(function(require, exports, module) {
 
 	function _createTagSurface() {
 		var properties = {
-			padding: '15px 45px 0px 15px',
+			padding: '11px 45px 0px 15px',
 			fontSize: this.options.lineHeight + 'px',
 			fontWeight: 'lighter',
 			lineHeight: this.options.lineHeight + 'px',
@@ -41,7 +41,7 @@ define(function(require, exports, module) {
 			borderBottom: '1px solid #f6a583'
 		};
 
-		var size = [window.innerWidth, this.options.entryHeight];
+		var size = [window.innerWidth, 36];
 
 		var readSurfaceOptions = {
 			size: size,
@@ -52,12 +52,13 @@ define(function(require, exports, module) {
 		this.entrySurface.setOptions(readSurfaceOptions);
 
 		var deleteModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth, -3, window.App.zIndex.readView + 2)
+			transform: Transform.translate(window.innerWidth, -2, window.App.zIndex.readView + 2)
 		});
 		this.deleteSurface.setProperties({
-			padding: '3px',
+			padding: '0px',
+			borderBottom: '1px solid #f6a583'
 		});
-		this.deleteSurface.setSize([100, 50]);
+		this.deleteSurface.setSize([100, 40]);
 		this.add(deleteModifier).add(this.deleteSurface);
 		var entryModifier = new Modifier({
 			transform: Transform.translate(0, 2, 0)

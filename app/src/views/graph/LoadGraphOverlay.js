@@ -47,10 +47,9 @@ define(function(require, exports, module) {
 			_.each(graphList, function(graphItem) {
 				var graphItemSurface = new Surface({
 					size: [undefined, 50],
-					content: '<div class="graph-item-bar"><p>' + graphItem.name + '</p><span class="delete-graph">X</span></div>',
+					content: '<div class="graph-item-bar"><p>' + graphItem.name + '</p><i class="delete-graph fa fa-times-circle-o fa-2x"></i></div>',
 					properties: {
-						backgroundColor: 'rgb(192, 79, 127)',
-						borderBottom: '1px solid #fff'
+						backgroundColor: '#fff',
 					}
 				});
 				graphItemSurface.on('click', function(e) {

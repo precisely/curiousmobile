@@ -13,6 +13,7 @@ define(function(require, exports, module) {
 	var RegisterView = require('views/RegisterView');
 	var ForgotPasswordView = require('views/ForgotPasswordView');
 	var FeedView = require('views/community/FeedView');
+	var SearchView = require('views/community/SearchView');
 	var ChartView = require('views/graph/ChartView');
 	var SprintListView = require('views/sprint/SprintListView');
 	var EntryFormView = require('views/entry/EntryFormView');
@@ -177,6 +178,12 @@ define(function(require, exports, module) {
 			}
 		}
 		this.setCurrentPage(view.constructor.name);
+		if (view.constructor.name === 'TrackView' || view.constructor.name === 'EditProfileView'
+				|| view.constructor.name === 'CreateChartView') {
+			view.hideSearchIcon();
+		} else {
+			view.showSearchIcon();
+		}
 		this.renderController.show(view, {
 			duration: 200
 		}, function() {

@@ -7,7 +7,6 @@ define(function(require, exports, module) {
 	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var Timer = require('famous/utilities/Timer');
 	var Transform = require('famous/core/Transform');
-	var Transitionable = require('famous/transitions/Transitionable');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var FastClick = require('famous/inputs/FastClick');
 	var RenderController = require('famous/views/RenderController');
@@ -18,14 +17,13 @@ define(function(require, exports, module) {
 	var User = require('models/User');
 	var TrueSurface = require('surfaces/TrueSurface');
 	var u = require('util/Utils');
-	var SequentialLayout = require("famous/views/SequentialLayout");
 	var DiscussionDetailView = require("views/community/DiscussionDetailView");
 	var CreatePostView = require('views/community/CreatePostView');
 	var SprintCardView = require('views/community/card/SprintCardView')
 	var PeopleCardView = require('views/community/card/PeopleCardView')
 	var DiscussionCardView = require('views/community/card/DiscussionCardView')
 
-	function FeedView() {
+	function FeedView(showSearchView) {
 		BaseView.apply(this, arguments);
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.Y,
@@ -36,6 +34,9 @@ define(function(require, exports, module) {
 		this.max = 10;
 		this.currentPill = 'ALL';
 		init.call(this);
+		if (this.constructor.name === 'FeedView') {
+			this.initFeedSpecificContents();
+		}
 	}
 
 	FeedView.prototype = Object.create(BaseView.prototype);
@@ -50,11 +51,6 @@ define(function(require, exports, module) {
 
 	function init() {
 		this.deck = [];
-		this.pencilSurface = new ImageSurface({
-			size: [44, 64],
-			content: 'content/images/edit-pencil.png',
-		});
-
 		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
@@ -63,6 +59,48 @@ define(function(require, exports, module) {
 		});
 
 		this.setBody(this.backgroundSurface);
+
+		this.scrollView.sync.on('start', function() {
+			if (this.itemsAvailable) {
+				this.loadMoreItems = true;
+			}
+		}.bind(this));
+
+		this.scrollView._eventOutput.on('onEdge', function() {
+			var currentIndex = this.scrollView.getCurrentIndex();
+
+			// Check if end of the page is reached
+			if ((this.scrollView._scroller._onEdge != -1) && this.loadMoreItems && this.itemsAvailable) {
+				this.loadMoreItems = false;
+				this.offset += this.max;
+				var args = {
+					offset: this.offset,
+					max: this.max
+				}
+
+				if (this.constructor.name === 'FeedView') {
+					this.fetchFeedItems(this.currentPill, args);
+				} else {
+					this.fetchSearchResults(args);
+				}
+			}
+		}.bind(this));
+
+		this.renderController = new RenderController();
+		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
+		var mod = new StateModifier({
+			size: [undefined, App.height - 130],
+			transform: Transform.translate(0, 110, App.zIndex.feedItem)
+		});
+		this.add(mod).add(this.renderController);
+		this.initScrollView();
+	};
+
+	FeedView.prototype.initFeedSpecificContents = function() {
+		this.pencilSurface = new ImageSurface({
+			size: [44, 64],
+			content: 'content/images/edit-pencil.png',
+		});
 		this.setRightIcon(this.headerSurface);
 		this.setHeaderLabel('SOCIAL');
 
@@ -99,38 +137,6 @@ define(function(require, exports, module) {
 		navPills.push(this.createPillsSurface('DISCUSSIONS'));
 
 		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
-
-
-		this.scrollView.sync.on('start', function() {
-			if (this.itemsAvailable) {
-				this.loadMoreItems = true;
-			}
-		}.bind(this));
-
-		this.scrollView._eventOutput.on('onEdge', function() {
-			var currentIndex = this.scrollView.getCurrentIndex();
-
-			// Check if end of the page is reached
-			if ((this.scrollView._scroller._onEdge != -1) && this.loadMoreItems && this.itemsAvailable) {
-				this.loadMoreItems = false;
-				this.offset += this.max;
-				var args = {
-					offset: this.offset,
-					max: this.max
-				}
-
-				this.fetchFeedItems(this.currentPill, args);
-			}
-		}.bind(this));
-
-		this.renderController = new RenderController();
-		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
-		var mod = new StateModifier({
-			size: [undefined, App.height - 130],
-			transform: Transform.translate(0, 110, App.zIndex.feedItem)
-		});
-		this.add(mod).add(this.renderController);
-		this.initScrollView();
 		this.fetchFeedItems(this.currentPill || 'ALL');
 	};
 
@@ -210,17 +216,17 @@ define(function(require, exports, module) {
 						return;
 					}
 
-					addListItemsToScrollView.call(this, data.listItems);
+					this.addListItemsToScrollView(data.listItems);
 				}.bind(this));
 		} else if (lable === 'PEOPLE') {
-			User.fetch(params, addListItemsToScrollView.bind(this));
+			User.fetch(params, this.addListItemsToScrollView.bind(this));
 		} else if (lable === 'DISCUSSIONS') {
 			this.setRightIcon(this.pencilSurface);
-			Discussion.fetch(params, addListItemsToScrollView.bind(this));
+			Discussion.fetch(params, this.addListItemsToScrollView.bind(this));
 		}
 	};
 
-	function addListItemsToScrollView(listItems) {
+	FeedView.prototype.addListItemsToScrollView = function(listItems) {
 		if (!listItems) {
 			this.itemsAvailable = false;
 			console.log('no more items available');

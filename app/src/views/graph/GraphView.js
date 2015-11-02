@@ -61,7 +61,7 @@ define(function(require, exports, module) {
 		this.pillsSurfaceList = [];
 		this.pillsView = new PillsView(this.pillsSurfaceList);
 		var pillsViewMod = new StateModifier({
-			transform: Transform.translate(0, 0, 0)
+			transform: Transform.translate(0, -1, 0)
 		});
 		this.add(pillsViewMod).add(this.pillsView)
 		this.drawDateFooter();

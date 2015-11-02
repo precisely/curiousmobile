@@ -1,8 +1,5 @@
 <form id="userDetailsEdit">
 	<div class="edit-people-detail">
-		<div class="heading">
-			<h1>EDIT PROFILE</h1>
-		</div>
 		<div class="edit-image">
 			<p>PROFILE PICTURE</p>
 			{{ if (user.avatarURL == null) { }}
@@ -136,12 +133,12 @@
 							<p class="unlink-moves">Unlink moves Account</p>
 						{{ } }}
 						{{ if (!user.linkedToJawbone) { }}
-							<p class="link-jawbone">Link Jawbone Account</p>
+							<p class="link-jawbone">Link Jawbone UP Account</p>
 						{{ } else { }}
-							<p class="unlink-jawbone">Unlink Jawbone Account</p>
+							<p class="unlink-jawbone">Unlink Jawbone UP Account</p>
 						{{ } }}
 						{{ if (!user.linkedToTwenty3andMe) { }}
-							<p class="link-twenty3andMe">Link 23&Me Account</p>
+							<p class="link-twenty3andMe">Import from 23&Me Account</p>
 						{{ } else { }}
 							<p class="link-twenty3andMe">Re-import from 23&Me Account</p>
 						{{ } }}
