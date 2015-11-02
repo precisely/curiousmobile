@@ -186,17 +186,19 @@ define(function(require, exports, module) {
 	}
 
 	GraphView.prototype.createTagsPill = function(tag, color) {
-		var pillSurface = new Surface({
-			content: '<button class="tag-pill btn' + '" id="' + tag.id + '" style="border-left: 2px solid' + color + '; color: ' + color + ';">' + tag.description + '</button>',
-			size: [true, 50],
-			properties: {
-				backgroundColor: '#efefef',
-				textAlign: 'center',
-			}
-		});
-		this.pillsSurfaceList.push(pillSurface);
-		this.pillsView.setPillsSurfaceList(this.pillsSurfaceList);
-		this.pillsView.setScrollView(pillSurface);
+		if (tag) {
+			var pillSurface = new Surface({
+				content: '<button class="tag-pill btn' + '" id="' + tag.id + '" style="border-left: 2px solid' + color + '; color: ' + color + ';">' + tag.description + '</button>',
+				size: [true, 50],
+				properties: {
+					backgroundColor: '#efefef',
+					textAlign: 'center',
+				}
+			});
+			this.pillsSurfaceList.push(pillSurface);
+			this.pillsView.setPillsSurfaceList(this.pillsSurfaceList);
+			this.pillsView.setScrollView(pillSurface);
+		}
 	};
 
 	GraphView.prototype.setScrollView = function (scrollView) {
