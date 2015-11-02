@@ -25,7 +25,7 @@ define(function(require, exports, module) {
 	}
 
 	Sprint.fetch = function(args, callback) {
-		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
+		var argsToSend = u.getCSRFPreventionObject('getAllSprintData', {
 			max : Sprint.max,
 			offset: args.offset?args.offset:0,
 			type: 'sprints'
@@ -33,7 +33,7 @@ define(function(require, exports, module) {
 		u.queueJSON('loading feeds', u.makeGetUrl('getAllSprintData', 'search'),
 		u.makeGetArgs(argsToSend), function(data) {
 			if (u.checkData(data)) {
-				callback(data.listItems.sprintList);
+				callback(data.listItems);
 			}
 		});
 	};
