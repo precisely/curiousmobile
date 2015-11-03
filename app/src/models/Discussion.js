@@ -41,6 +41,18 @@ define(function(require, exports, module) {
 			});
 	};
 
+	Discussion.fetchOwned = function(args, callback) {
+		var argsToSend = u.getCSRFPreventionObject('getOwnedSocialData', {
+			max: Discussion.max,
+			offset: args.offset ? args.offset : 0,
+		});
+		u.queueJSON("loading discussion list", u.makeGetUrl('getOwnedSocialData', 'search'),
+				u.makeGetArgs(argsToSend),
+				function(data) {
+					callback(data.listItems);
+				});
+	};
+
 	Discussion.deleteDiscussion = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			userId: User.getCurrentUserId(),
@@ -52,7 +64,7 @@ define(function(require, exports, module) {
 			}.bind(this), 
 			function(xhr) {
 				u.showAlert('Internal server error occurred');
-			}, null, 'DELETE'
+			}, null, {requestMethod: 'DELETE'}
 		);
 	};
 

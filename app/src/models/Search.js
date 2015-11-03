@@ -28,5 +28,62 @@ define(function(require, exports, module) {
 			}
 		});
 	};
+
+	Search.fetchDiscussions = function(args, callback) {
+		var argsToSend = u.getCSRFPreventionObject('searchDiscussionDataCSRF', {
+			max : Search.max,
+			offset: args.offset ? args.offset : 0,
+			q: args.searchTerm
+		});
+		u.queueJSON("loading Searchs", u.makeGetUrl('searchDiscussionData', 'search'),
+				u.makeGetArgs(argsToSend), function(data) {
+					if (u.checkData(data)) {
+						callback(data.listItems);
+					}
+				});
+	};
+
+	Search.fetchSprints = function(args, callback) {
+		var argsToSend = u.getCSRFPreventionObject('searchSprintDataCSRF', {
+			max : Search.max,
+			offset: args.offset ? args.offset : 0,
+			q: args.searchTerm
+		});
+		u.queueJSON("loading Searchs", u.makeGetUrl('searchSprintData', 'search'),
+				u.makeGetArgs(argsToSend), function(data) {
+					if (u.checkData(data)) {
+						callback(data.listItems);
+					}
+				});
+	};
+
+	Search.fetchPeople = function(args, callback) {
+		var argsToSend = u.getCSRFPreventionObject('searchPeopleDataCSRF', {
+			max : Search.max,
+			offset: args.offset ? args.offset : 0,
+			q: args.searchTerm
+		});
+		u.queueJSON("loading Searchs", u.makeGetUrl('searchPeopleData', 'search'),
+				u.makeGetArgs(argsToSend), function(data) {
+					if (u.checkData(data)) {
+						callback(data.listItems);
+					}
+				});
+	};
+
+	Search.fetchOwned = function(args, callback) {
+		var argsToSend = u.getCSRFPreventionObject('searchAllOwnedDataCSRF', {
+			max : Search.max,
+			offset: args.offset ? args.offset : 0,
+			q: args.searchTerm
+		});
+		u.queueJSON("loading Searchs", u.makeGetUrl('searchAllOwnedData', 'search'),
+				u.makeGetArgs(argsToSend), function(data) {
+					if (u.checkData(data)) {
+						callback(data.listItems);
+					}
+				});
+	};
+
 	module.exports = Search;
 });

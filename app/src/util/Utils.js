@@ -209,7 +209,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		}
 
 		Utils.queueJSON = function(description, url, args, successCallback, failCallback, delay, post, background) {
-			u.queueJSONAll(description, url, args, successCallback, failCallback, delay, post ? 'POST' : 'GET', background);
+			u.queueJSONAll(description, url, args, successCallback, failCallback, delay, post ? {requestMethod: 'POST'} : {requestMethod: 'GET'}, background);
 		}
 
 		Utils.queueJSONAll = function(description, url, args, successCallback, failCallback, delay, httpArgs, background) {

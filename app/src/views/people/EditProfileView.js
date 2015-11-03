@@ -27,7 +27,7 @@ define(function(require, exports, module, store) {
 	function EditProfileView() {
 		BaseView.apply(this, arguments);
 		this.headerBackgroundSurface.setProperties({
-			background: '#f15847'
+			background: 'rgb(241, 83, 69)'
 		});
 		this.parentPage = 'FeedView';
 		this.addInterestTagView = new AddInterestTagView(this);
@@ -136,7 +136,7 @@ define(function(require, exports, module, store) {
 			});
 
 			this.setHeaderLabel('EDIT PROFILE', '#FFF');
-			this.setRightIcon(this.saveSurface);
+			this.add(new Modifier({align: [1, 0], origin: [1, 0], transform: Transform.translate(0, 0, App.zIndex.header + 1)})).add(this.saveSurface);
 
 			this.saveSurface.on('click', function(e) {
 				if (u.isAndroid() || (e instanceof CustomEvent)) {

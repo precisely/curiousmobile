@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 	var InputSurface = require('famous/surfaces/InputSurface');
 	var FastClick = require('famous/inputs/FastClick');
 	var StateView = require('views/StateView');
+	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var FeedView = require('views/community/FeedView');
 	var Search = require('models/Search');
 	var u = require('util/Utils');
@@ -15,6 +16,7 @@ define(function(require, exports, module) {
 	function SearchView() {
 		FeedView.apply(this, arguments);
 		this.createSearchHeader();
+		this.createSearchPills();
 	}
 
 	SearchView.prototype = Object.create(FeedView.prototype);
@@ -36,14 +38,13 @@ define(function(require, exports, module) {
 		});
 
 		this.searchBar.on('deploy', function() {
-			/*document.getElementById('search-input').value = this.originalSearchTerm;*/
 			document.getElementById('search-input').focus();
 			document.getElementById('search-input').onkeyup = function(e) {
 				if (e.which == 13) {
 					var searchTerm = document.getElementById('search-input').value;
 					if (searchTerm && searchTerm != this.originalSearchTerm) {
 						this.deck.splice(0, this.deck.length);
-						this.fetchSearchResults({searchTerm: searchTerm});
+						this.fetchFeedItems(this.currentPill);
 						this.originalSearchTerm = searchTerm;
 					} else if (!searchTerm) {
 						if (cordova) {
@@ -58,21 +59,62 @@ define(function(require, exports, module) {
 			}.bind(this);
 		}.bind(this));
 
-		var lowerHelpLabel = new Surface({
-			size: [undefined, true],
-			content: 'You can search for users. discussions, sprints, and groups',
-			properties: {
-				textAlign: 'center',
-				color: '#bcbcbc',
-				fontSize: '15px',
-				fontWeight: '400',
-				padding: '15px 5px 15px 5px',
-				backgroundColor: '#efefef'
-			}
-		});
-		this.add(new StateModifier({transform: Transform.translate(0, 65, App.zIndex.header)})).add(lowerHelpLabel);
 		this.add(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.header)})).add(this.searchBar);
 	}
+
+	SearchView.prototype.createSearchPills= function() {
+		this.pillsScrollViewContainerModifier = new StateModifier({
+			origin: [0, 0],
+			align: [0, 0],
+			transform: Transform.translate(0, 64, App.zIndex.header)
+		});
+
+		var pillsScrollViewContainer = new ContainerSurface({
+			size: [undefined, 50],
+			properties: {
+				backgroundColor: '#efefef',
+				textAlign: 'center'
+			}
+		});
+		this.add(this.pillsScrollViewContainerModifier).add(pillsScrollViewContainer);
+
+		this.pillsScrollViewModifier = new StateModifier({
+			origin: [0.5, 0],
+			align: [0.5, 0]
+		});
+		var navPills = [];
+		this.pillsScrollView.sequenceFrom(navPills);
+
+		// Adding navigation pills below header
+		navPills.push(this.createPillsSurface('ALL', true));
+		navPills.push(this.createPillsSurface('PEOPLE'));
+		navPills.push(this.createPillsSurface('DISCUSSIONS'));
+		navPills.push(this.createPillsSurface('SPRINTS'));
+		navPills.push(this.createPillsSurface('OWNED'));
+
+		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
+	};
+
+	SearchView.prototype.fetchFeedItems = function(lable, args) {
+		this.currentPill = lable;
+		var searchTerm = document.getElementById('search-input').value;
+		var args = args || {
+					offset: 0,
+					max: this.max
+				};
+		args.searchTerm = searchTerm || this.originalSearchTerm;
+		if (lable === 'ALL') {
+			Search.fetch(args, this.addListItemsToScrollView.bind(this));
+		} else if (lable === 'PEOPLE') {
+			Search.fetchPeople(args, this.addListItemsToScrollView.bind(this));
+		} else if (lable === 'DISCUSSIONS') {
+			Search.fetchDiscussions(args, this.addListItemsToScrollView.bind(this));
+		} else if (lable === 'SPRINTS') {
+			Search.fetchSprints(args, this.addListItemsToScrollView.bind(this));
+		} else if (lable === 'OWNED') {
+			Search.fetchOwned(args, this.addListItemsToScrollView.bind(this));
+		}
+	};
 
 	SearchView.prototype.refresh = function() {
 
