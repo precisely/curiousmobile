@@ -25,6 +25,7 @@ define(function(require, exports, module) {
 		StateView.apply(this, arguments);
 		this.tags = tagsToPlot;
 		this.plotAreaId = plotAreaId || 'plotArea'
+		this.plottedTags = [];
 		this.renderController = new RenderController();
 		this.add(new StateModifier({transform: Transform.translate(0, 50, 0)})).add(this.renderController);
 		this.init();
@@ -73,6 +74,7 @@ define(function(require, exports, module) {
 	};
 
 	GraphView.prototype.drawGraph = function(tags, isAreaChart) {
+		this.plottedTags.splice(0, this.plottedTags.length);;
 		this.tags = tags;
 		this.clearPillsSurfaceList();
 		if (this.tags) {
@@ -198,6 +200,7 @@ define(function(require, exports, module) {
 			this.pillsSurfaceList.push(pillSurface);
 			this.pillsView.setPillsSurfaceList(this.pillsSurfaceList);
 			this.pillsView.setScrollView(pillSurface);
+			this.plottedTags.push(tag);
 		}
 	};
 

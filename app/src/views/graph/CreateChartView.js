@@ -47,6 +47,9 @@ define(function(require, exports, module) {
 		_createPillsMenu.call(this);
 		_createSubmitBar.call(this);
 		this.selectedTags = [];
+		this.tagsScrollView = new Scrollview({
+			direction: 1
+		});
 		this.init();
 	}
 	CreateChartView.prototype = Object.create(BaseView.prototype);
@@ -211,9 +214,6 @@ define(function(require, exports, module) {
 	}
 
 	CreateChartView.prototype.init = function() {
-		this.tagsScrollView = new Scrollview({
-			direction: 1
-		});
 		if (!App.tagListWidget) {
 			App.tagListWidget = initTagListWidget(_renderTagsList.bind(this));
 		} else {
@@ -226,10 +226,17 @@ define(function(require, exports, module) {
 	function _renderTagsList(tagsList) {
 		this.tagsSurfaceList = [];
 		_.each(tagsList, function(tag) {
+			var circleIcon = 'fa-circle-o';
+			_.each(this.selectedTags, function(tagItem) {
+				if (tagItem.id === tag.id) {
+					circleIcon = 'fa-circle';
+					return;
+				}
+			});
 			var tagSurface = new Surface({
 				size: [undefined, 50],
 				content: '<div data-value="' + tag.id + '" class="tagList"><i class="fa fa-tag"></i><p>' + tag.description +
-					'</p><i class="pull-right fa fa-circle-o fa-2x" id="selection' + tag.id + '"></i></div>'
+					'</p><i class="pull-right fa ' + circleIcon + ' fa-2x" id="selection' + tag.id + '"></i></div>'
 			});
 
 			tagSurface.on('click', function(event) {
@@ -264,7 +271,11 @@ define(function(require, exports, module) {
 	}
 
 	CreateChartView.prototype.preShow = function(state) {
+		if (state.selectedTags) {
+			this.selectedTags = state.selectedTags.slice(0);
+		}
 		this.hideSearchIcon();
+		this.init();
 		return true;
 	};
 

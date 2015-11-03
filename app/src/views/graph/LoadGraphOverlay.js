@@ -74,6 +74,8 @@ define(function(require, exports, module) {
 						} else {
 							currentView.killOverlayContent();
 							currentView.graphView.clearPillsSurfaceList();
+							currentView.graphView.plottedTags.splice(0, currentView.graphView.plottedTags.length);
+							currentView.graphView.plot.clearGraphs();
 							currentView.graphView.plot.loadId(graphItem.id);
 							currentView.graphView.drawDateFooter();
 						}

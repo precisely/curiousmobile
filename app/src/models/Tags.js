@@ -30,6 +30,9 @@ define(function(require, exports, module) {
 
 	Tags.eachSearchMatches = function(term, matchClosure, noMatchClosure, skipSet, additionalWordsCharLimit) {
 		var list = App.tagListWidget.list.listItems.list;
+		if (term.length === 0) {
+			return list;
+		}
 		var i, j, result = [];
 
 		var terms = term.split(' ');
