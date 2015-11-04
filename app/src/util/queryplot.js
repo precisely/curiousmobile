@@ -1252,7 +1252,7 @@ function PlotLine(p) {
 			this.isContinuous = val;
 			var plotLine = this;
 			queueJSON("saving setting", makeGetUrl("setTagPropertiesData"), getCSRFPreventionObject("setTagPropertiesDataCSRF",
-							{tags: $.toJSON(this.getTags()), isContinuous: val ? 'true' : 'false'}),
+					{tags: $.toJSON(this.getTags()), isContinuous: val ? 'true' : 'false'}),
 					function(result){
 						if (this.checkData(result)) {
 							if (plotLine.tag) plotLine.tag.setIsContinuous(val);
@@ -1265,7 +1265,7 @@ function PlotLine(p) {
 			this.showPoints = val;
 			var plotLine = this;
 			queueJSON("saving setting", makeGetUrl("setTagPropertiesData"), getCSRFPreventionObject("setTagPropertiesDataCSRF",
-							{ tags:$.toJSON(this.getTags()), showPoints:val ? 'true' : 'false' }),
+					{ tags:$.toJSON(this.getTags()), showPoints:val ? 'true' : 'false' }),
 					function(result){
 						if (this.checkData(result)) {
 							if (plotLine.tag) plotLine.tag.setShowPoints(val);
@@ -1343,9 +1343,9 @@ function PlotLine(p) {
 		var tagsDebug = this.getTags();
 
 		queueJSON("loading graph data", makeGetUrl(method), getCSRFPreventionObject(method + "CSRF", {tags: $.toJSON(this.getTags()),
-					startDate:startDate == null ? "" : startDate.toUTCString(),
-					endDate:endDate == null ? "" : endDate.toUTCString(),
-					timeZoneName:timeZoneName }),
+				startDate:startDate == null ? "" : startDate.toUTCString(),
+				endDate:endDate == null ? "" : endDate.toUTCString(),
+				timeZoneName:timeZoneName }),
 				function(plotDesc){
 					if (this.checkData(plotDesc)) {
 						plotLine.loadEntries(plotDesc);
@@ -1686,15 +1686,15 @@ function PlotLine(p) {
 			var time = entry[0].getTime();
 			// if space between two data points >= 2 days
 			/*if (reZero && (time - lastTime >= 1000*60*60*24*2)) {
-			 if (lastTime && lastVal != 0) {
-			 // create additional null point at 12 hours after last data
-			 // point if it wasn't already zero
-			 d1Data.push([new Date(lastTime + 1000*60*60*12), null]);
-			 }
+				 if (lastTime && lastVal != 0) {
+					 // create additional null point at 12 hours after last data
+					 // point if it wasn't already zero
+					 d1Data.push([new Date(lastTime + 1000*60*60*12), null]);
+				 }
 			 //if (entry[1] != 0) {
-			 // 12 hours before first data point if it isn't zero
-			 //d1Data.push([new Date(time - 1000*60*60*12), 0]);
-			 //if (minTime == undefined) minTime = time - 1000*60*60*12;
+				 // 12 hours before first data point if it isn't zero
+				 //d1Data.push([new Date(time - 1000*60*60*12), 0]);
+				 //if (minTime == undefined) minTime = time - 1000*60*60*12;
 			 //}
 			 }*/
 			if (minTime == undefined || time < minTime) minTime = time;
@@ -1709,15 +1709,15 @@ function PlotLine(p) {
 			lastVal = entry[1];
 		}
 		/*if (reZero && lastTime && lastVal != 0) {
-		 // create additional null point at 12 hours after last data point
-		 var currentTime = new Date(lastTime);
-		 var dateRangeForToday = new DateUtil().getDateRangeForToday(); // See base.js
-		 // Checking if last data point is not within a day of "now"
-		 if(!(currentTime >= dateRangeForToday.start && currentTime <= dateRangeForToday.end)) {
-		 d1Data.push([new Date(lastTime + 1000*60*60*12), null]);
-		 }
-		 minTime = minTime - 1000*60*60*12;
-		 maxTime = lastTime + 1000*60*60*12;
+			 // create additional null point at 12 hours after last data point
+			 var currentTime = new Date(lastTime);
+			 var dateRangeForToday = new DateUtil().getDateRangeForToday(); // See base.js
+			 // Checking if last data point is not within a day of "now"
+			 if(!(currentTime >= dateRangeForToday.start && currentTime <= dateRangeForToday.end)) {
+				d1Data.push([new Date(lastTime + 1000*60*60*12), null]);
+			 }
+			 minTime = minTime - 1000*60*60*12;
+			 maxTime = lastTime + 1000*60*60*12;
 		 } else {*/
 		if (minTime == maxTime) {
 			minTime = minTime - 1000*60*60;

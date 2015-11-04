@@ -22,11 +22,11 @@ define(function(require, exports, module) {
 			q: args.searchTerm
 		});
 		u.queueJSON("loading Searchs", u.makeGetUrl('searchAllData', 'search'),
-		u.makeGetArgs(argsToSend), function(data) {
-			if (u.checkData(data)) {
-				callback(data.listItems);
-			}
-		});
+				u.makeGetArgs(argsToSend), function(data) {
+					if (u.checkData(data)) {
+						callback(data.listItems);
+					}
+				});
 	};
 
 	Search.fetchDiscussions = function(args, callback) {

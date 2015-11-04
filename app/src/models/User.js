@@ -182,19 +182,19 @@ define(function(require, exports, module) {
 	User.addInterestTags = function(tags, successCallback, failCallback) {
 		u.queuePostJSON('Adding interest tags', App.serverUrl + '/api/data/action/addInterestTagData', tags,
 				function(data) {
-				if (u.checkData(data)) {
-					if (data.interestTags) {
-						successCallback();
-					} else {
-						u.showAlert(data.message);
-						if (failCallback) {
-							failCallback();
+					if (u.checkData(data)) {
+						if (data.interestTags) {
+							successCallback();
+						} else {
+							u.showAlert(data.message);
+							if (failCallback) {
+								failCallback();
+							}
 						}
 					}
-				}
-			}, function(error) {
-				console.log('error: ', error);
-			});
+				}, function(error) {
+					console.log('error: ', error);
+				});
 	};
 
 	User.deleteInterestTags = function(tag, successCallback, failCallback) {

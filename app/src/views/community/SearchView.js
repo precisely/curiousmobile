@@ -62,7 +62,7 @@ define(function(require, exports, module) {
 		this.add(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.header)})).add(this.searchBar);
 	}
 
-	SearchView.prototype.createSearchPills= function() {
+	SearchView.prototype.createSearchPills = function() {
 		this.pillsScrollViewContainerModifier = new StateModifier({
 			origin: [0, 0],
 			align: [0, 0],
