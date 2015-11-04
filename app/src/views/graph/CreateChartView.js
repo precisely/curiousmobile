@@ -25,6 +25,7 @@ define(function(require, exports, module) {
 
 	function CreateChartView() {
 		BaseView.apply(this, arguments);
+		console.log('CreateChartView controller');
 		this.parentPage = 'ChartView';
 		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
@@ -39,7 +40,7 @@ define(function(require, exports, module) {
 		this.renderController = new RenderController();
 		var mod = new StateModifier({
 			size: [App.width, App.height - 250],
-			transform: Transform.translate(0, 164, 13)
+			transform: Transform.translate(0, 184, 13)
 		});
 
 		this.add(mod).add(this.renderController);
@@ -47,6 +48,9 @@ define(function(require, exports, module) {
 		_createPillsMenu.call(this);
 		_createSubmitBar.call(this);
 		this.selectedTags = [];
+		this.tagsScrollView = new Scrollview({
+			direction: 1
+		});
 		this.init();
 	}
 	CreateChartView.prototype = Object.create(BaseView.prototype);
@@ -60,13 +64,11 @@ define(function(require, exports, module) {
 
 	function _createSearchBar() {
 		this.searchBox = new Surface({
-			size: [undefined, 40],
-			content: '<input type="text" class="tag-search-input" placeholder="Search Tags">',
+			size: [undefined, 68],
+			content: '<div class="tag-search-div input-group input-group-lg"><i class="input-group-addon fa fa-search fa-2x"></i>' +
+				'<input type="text" class="form-control tag-search-input" placeholder="Search Tags"></div>',
 			properties: {
 				color: '#d8d8d8',
-				border: '1px solid #d8d8d8',
-				borderRadius: '2px',
-				backgroundColor: '#fff'
 			}
 		});
 
@@ -81,24 +83,53 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		var searchBoxMod = new StateModifier({
-			transform: Transform.translate(0, 66, App.zIndex.readView + 1)
+			transform: Transform.translate(0, 64, App.zIndex.readView + 1)
 		});
 		this.add(searchBoxMod).add(this.searchBox);
+
+		var selectionLabelSurface = new Surface({
+			size: [undefined, 35],
+			content: 'Select up to 3 tags to graph<span class="pull-right uncheck-label-chart">UNCHECK ALL</span>',
+			properties: {
+				padding: '8px 15px',
+				color: '#cc7299',
+				fontStyle: 'italic',
+				fontSize: '12px',
+				fontWeight: '500',
+				borderBottom: '1px solid #eaeaea',
+				backgroundColor: '#fff'
+			}
+		});
+
+		selectionLabelSurface.on('click', function(e) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				if (_.contains(e.srcElement.classList, 'uncheck-label-chart')) {
+					_.each(this.selectedTags, function(tag) {
+						var checkIcon = document.getElementById('selection' + tag.id);
+						checkIcon.classList.add('fa-circle-o');
+						checkIcon.classList.remove('fa-circle');
+					}.bind(this));
+					this.selectedTags = [];
+				}
+			}
+		}.bind(this));
+		this.add(new Modifier({transform: Transform.translate(0, 140, App.zIndex.readView + 1)})).add(selectionLabelSurface);
 	}
 
 	function _createPillsMenu() {
-		this.pillsView = new PillsView([_createPills.call(this, 'MOST_USED'), _createPills.call(this, 'A_Z', true), _createPills.call(this, 'UNCHECK_ALL')]);
-		var pillsViewMod = new StateModifier({
-			transform: Transform.translate(0, 106, App.zIndex.readView + 1)
+		var pillsMod = new StateModifier({
+			origin: [0.5, 0.5],
+			transform: Transform.translate(App.width / 2 + 15, 30, App.zIndex.header + 1)
 		});
-		this.add(pillsViewMod).add(this.pillsView);
+		this.add(pillsMod).add(_createPills.call(this));
 	}
 
-	function _createPills(pillFor, active) {
-		var activePill = active ? ' active-pill' : '';
+	function _createPills() {
 		var pillSurface = new Surface({
-			content: '<button class="feed-pill btn' + activePill + '" id="' + pillFor + '-pill">' + pillFor + '</button>',
-			size: [true, 50],
+			content: '<div class="btn-group tag-filters" role="group">' +
+				'<button type="button" class="btn btn-secondary" id="most-used-pill">Most Used</button>' +
+				'<button type="button" class="btn btn-secondary active" id="a-z-pill">A-Z</button>',
+			size: [true, true],
 			properties: {
 				backgroundColor: '#efefef',
 				textAlign: 'center'
@@ -106,18 +137,12 @@ define(function(require, exports, module) {
 		});
 		pillSurface.on('click', function(e) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				if (pillFor === 'A_Z') {
+				if (e.srcElement.id === 'a-z-pill') {
 					var tagList = Tags.sortTags(App.tagListWidget.list.listItems.list, this.listAscending);
+					document.getElementById('most-used-pill').classList.remove('active');
+					e.srcElement.classList.add('active');
 					_renderTagsList.call(this, tagList);
 					this.listAscending = !this.listAscending;
-				} else if (pillFor === 'UNCHECK_ALL') {
-					this.selectedTags = [];
-					var checkIconList = document.getElementsByClassName('fa-check');
-					if (checkIconList.length > 0) {
-						_.each(checkIconList, function(checkIcon) {
-							checkIcon.classList.add('invisible');
-						});
-					}
 				}
 			}
 		}.bind(this));
@@ -126,30 +151,41 @@ define(function(require, exports, module) {
 
 	function _createSubmitBar() {
 		this.submitFormContainer = new ContainerSurface({
-			size: [undefined, 40],
+			size: [undefined, 57],
 			properties: {
-				backgroundColor: '#efefef'
+				backgroundColor: '#ff935f',
+				padding: '8px',
+				color: '#fff'
 			}
 		});
+
+		var labelSurface = new Surface({
+			size: [150, 40],
+			content: "CHOOSE GRAPH TYPE: ",
+			properties: {
+				fontSize: '10px',
+				margin: '13px 5px 0px 0px'
+			}
+		});
+
+		var plotButtonProperties = {
+			backgroundColor: 'transparent',
+			color: '#fff',
+			padding: App.width > 320  ? '10px 5px' : '10px 3px',
+			border: '1px solid #fff',
+			textAlign: 'center'
+		};
 
 		var createLineChartSurface = new Surface({
 			size: [90, 40],
-			content: "LINE CHART",
-			properties: {
-				backgroundColor: '#c04f7f',
-				color: '#fff',
-				padding: '10px 5px'
-			}
+			content: "Line Chart",
+			properties: plotButtonProperties
 		});
 
 		var createAreaChartSurface = new Surface({
-			size: [100, 40],
-			content: "AREA CHART",
-			properties: {
-				backgroundColor: '#c04f7f',
-				color: '#fff',
-				padding: '10px 5px'
-			}
+			size: App.width > 320 ? [100, 40] : [90, 40],
+			content: "Area Chart",
+			properties: plotButtonProperties
 		});
 
 		createLineChartSurface.on('click', function(e) {
@@ -172,40 +208,43 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.submitFormContainer.add(createLineChartSurface);
+		this.submitFormContainer.add(labelSurface);
 		this.submitFormContainer.add(new Modifier({
-			origin: [1, 1],
-			align: [1, 1]
+			transform: Transform.translate(113, 0, 0)
+		})).add(createLineChartSurface);
+		this.submitFormContainer.add(new Modifier({
+			transform: Transform.translate(214, 0, 0)
 		})).add(createAreaChartSurface);
 		var formContainerMod = new StateModifier({
-			transform: Transform.translate(0, App.height - 90, App.zIndex.readView + 1)
+			transform: Transform.translate(0, App.height - 105, App.zIndex.readView + 1)
 		});
 		this.add(formContainerMod).add(this.submitFormContainer);
 	}
 
 	CreateChartView.prototype.init = function() {
-		this.tagsScrollView = new Scrollview({
-			direction: 1
-		});
-		if (!App.tagListWidget) {
-			App.tagListWidget = initTagListWidget(_renderTagsList.bind(this));
-		} else {
-			_renderTagsList.call(this, App.tagListWidget.list.listItems.list);
-		}
-
+		App.tagListWidget = initTagListWidget(_renderTagsList.bind(this));
+		_renderTagsList.call(this, App.tagListWidget.list.listItems.list);
 		this.renderController.show((this.tagsScrollView));
 	};
 
 	function _renderTagsList(tagsList) {
 		this.tagsSurfaceList = [];
 		_.each(tagsList, function(tag) {
+			var circleIcon = 'fa-circle-o';
+			_.each(this.selectedTags, function(tagItem) {
+				if (tagItem.id === tag.id) {
+					circleIcon = 'fa-circle';
+					return;
+				}
+			});
 			var tagSurface = new Surface({
-				size: [undefined, 40],
-				content: '<div data-value="' + tag.id + '" class="tagList"><i class="fa fa-check invisible"></i>' + tag.description + '</div>'
+				size: [undefined, 50],
+				content: '<div data-value="' + tag.id + '" class="tagList"><i class="fa fa-tag"></i><p>' + tag.description +
+					'</p><i class="pull-right fa ' + circleIcon + ' fa-2x" id="selection' + tag.id + '"></i></div>'
 			});
 
 			tagSurface.on('click', function(event) {
-				var checkIconClassList = event.srcElement.lastElementChild.classList;
+				var checkIconClassList = document.getElementById('selection' + tag.id).classList;
 				// finding index of current tag object
 				// Stackoverflow link: http://stackoverflow.com/questions/15997879/get-the-index-of-the-object-inside-an-array-matching-a-condition
 				var indexes = this.selectedTags.map(function(obj, index) {
@@ -219,10 +258,12 @@ define(function(require, exports, module) {
 						u.showAlert('Can not select more than 3 tags');
 					} else if (indexes.length > 0) {
 						this.selectedTags.splice(indexes[0], 1);
-						checkIconClassList.add('invisible');
+						checkIconClassList.remove('fa-circle');
+						checkIconClassList.add('fa-circle-o');
 					} else {
 						this.selectedTags.push(tag);
-						checkIconClassList.remove('invisible');
+						checkIconClassList.remove('fa-circle-o');
+						checkIconClassList.add('fa-circle');
 					}
 				}
 			}.bind(this));
@@ -232,6 +273,15 @@ define(function(require, exports, module) {
 		}.bind(this));
 		this.tagsScrollView.sequenceFrom(this.tagsSurfaceList);
 	}
+
+	CreateChartView.prototype.preShow = function(state) {
+		if (state && state.selectedTags) {
+			this.selectedTags = state.selectedTags.slice(0);
+		}
+		this.hideSearchIcon();
+		this.init();
+		return true;
+	};
 
 	App.pages['CreateChartView'] = CreateChartView;
 	module.exports = CreateChartView;

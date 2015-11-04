@@ -7,7 +7,6 @@ define(function(require, exports, module) {
 	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var Timer = require('famous/utilities/Timer');
 	var Transform = require('famous/core/Transform');
-	var Transitionable = require('famous/transitions/Transitionable');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var FastClick = require('famous/inputs/FastClick');
 	var RenderController = require('famous/views/RenderController');
@@ -18,15 +17,15 @@ define(function(require, exports, module) {
 	var User = require('models/User');
 	var TrueSurface = require('surfaces/TrueSurface');
 	var u = require('util/Utils');
-	var SequentialLayout = require("famous/views/SequentialLayout");
 	var DiscussionDetailView = require("views/community/DiscussionDetailView");
 	var CreatePostView = require('views/community/CreatePostView');
 	var SprintCardView = require('views/community/card/SprintCardView')
 	var PeopleCardView = require('views/community/card/PeopleCardView')
 	var DiscussionCardView = require('views/community/card/DiscussionCardView')
 
-	function FeedView() {
+	function FeedView(showSearchView) {
 		BaseView.apply(this, arguments);
+		console.log('FeedView Constructor');
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.Y,
 		});
@@ -36,6 +35,9 @@ define(function(require, exports, module) {
 		this.max = 10;
 		this.currentPill = 'ALL';
 		init.call(this);
+		if (this.constructor.name === 'FeedView') {
+			this.initFeedSpecificContents();
+		}
 	}
 
 	FeedView.prototype = Object.create(BaseView.prototype);
@@ -50,11 +52,6 @@ define(function(require, exports, module) {
 
 	function init() {
 		this.deck = [];
-		this.pencilSurface = new ImageSurface({
-			size: [44, 64],
-			content: 'content/images/edit-pencil.png',
-		});
-
 		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
@@ -63,6 +60,48 @@ define(function(require, exports, module) {
 		});
 
 		this.setBody(this.backgroundSurface);
+
+		this.scrollView.sync.on('start', function() {
+			if (this.itemsAvailable) {
+				this.loadMoreItems = true;
+			}
+		}.bind(this));
+
+		this.scrollView._eventOutput.on('onEdge', function() {
+			var currentIndex = this.scrollView.getCurrentIndex();
+
+			// Check if end of the page is reached
+			if ((this.scrollView._scroller._onEdge != -1) && this.loadMoreItems && this.itemsAvailable) {
+				this.loadMoreItems = false;
+				this.offset += this.max;
+				var args = {
+					offset: this.offset,
+					max: this.max
+				}
+
+				if (_.contains(['FeedView', 'SprintListView'], this.constructor.name)) {
+					this.fetchFeedItems(this.currentPill, args);
+				} else {
+					this.fetchSearchResults(args);
+				}
+			}
+		}.bind(this));
+
+		this.renderController = new RenderController();
+		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
+		var mod = new StateModifier({
+			size: [undefined, App.height - 130],
+			transform: Transform.translate(0, 110, App.zIndex.feedItem)
+		});
+		this.add(mod).add(this.renderController);
+		this.initScrollView();
+	};
+
+	FeedView.prototype.initFeedSpecificContents = function() {
+		this.pencilSurface = new ImageSurface({
+			size: [44, 64],
+			content: 'content/images/edit-pencil.png',
+		});
 		this.setRightIcon(this.headerSurface);
 		this.setHeaderLabel('SOCIAL');
 
@@ -97,40 +136,9 @@ define(function(require, exports, module) {
 		navPills.push(this.createPillsSurface('ALL', true));
 		navPills.push(this.createPillsSurface('PEOPLE'));
 		navPills.push(this.createPillsSurface('DISCUSSIONS'));
+		navPills.push(this.createPillsSurface('OWNED'));
 
 		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
-
-
-		this.scrollView.sync.on('start', function() {
-			if (this.itemsAvailable) {
-				this.loadMoreItems = true;
-			}
-		}.bind(this));
-
-		this.scrollView._eventOutput.on('onEdge', function() {
-			var currentIndex = this.scrollView.getCurrentIndex();
-
-			// Check if end of the page is reached
-			if ((this.scrollView._scroller._onEdge != -1) && this.loadMoreItems && this.itemsAvailable) {
-				this.loadMoreItems = false;
-				this.offset += this.max;
-				var args = {
-					offset: this.offset,
-					max: this.max
-				}
-
-				this.fetchFeedItems(this.currentPill, args);
-			}
-		}.bind(this));
-
-		this.renderController = new RenderController();
-		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
-		var mod = new StateModifier({
-			size: [undefined, App.height - 130],
-			transform: Transform.translate(0, 110, App.zIndex.feedItem)
-		});
-		this.add(mod).add(this.renderController);
-		this.initScrollView();
 		this.fetchFeedItems(this.currentPill || 'ALL');
 	};
 
@@ -146,13 +154,15 @@ define(function(require, exports, module) {
 		});
 
 		pillSurface.on('click', function(e) {
-			this.deck = [];
-			this.initScrollView();
-			this.fetchFeedItems(pillFor);
-			var previousActivePill = document.getElementsByClassName('active-pill');
-			previousActivePill[0].classList.remove('active-pill');
-			var pillElement = document.getElementById(pillFor + '-pill');
-			pillElement.classList.add('active-pill');
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				this.deck = [];
+				this.initScrollView();
+				this.fetchFeedItems(pillFor);
+				var previousActivePill = document.getElementsByClassName('active-pill');
+				previousActivePill[0].classList.remove('active-pill');
+				var pillElement = document.getElementById(pillFor + '-pill');
+				pillElement.classList.add('active-pill');
+			}
 		}.bind(this));
 
 		pillSurface.pipe(this.pillsScrollView);
@@ -203,31 +213,26 @@ define(function(require, exports, module) {
 		if (lable === 'ALL') {
 			params.type = 'all';
 			var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', params);
-			u.queueJSON("loading feeds", u.makeGetUrl('indexData', 'search'),
+			u.queueJSON("loading feeds", u.makeGetUrl('getAllSocialData', 'search'),
 				u.makeGetArgs(argsToSend),
 				function(data) {
 					if(!u.checkData(data)) {
 						return;
 					}
 
-					if (data.listItems) {
-						data.listItems.sort(function(a, b) {
-							return a.updated > b.updated ? -1 : (a.updated < b.updated ? 1 : 0)
-						});
-						addListItemsToScrollView.call(this, data.listItems);
-					} else {
-						addListItemsToScrollView.call(this, data.listItems);
-					}
+					this.addListItemsToScrollView(data.listItems);
 				}.bind(this));
 		} else if (lable === 'PEOPLE') {
-			User.fetch(params, addListItemsToScrollView.bind(this));
+			User.fetch(params, this.addListItemsToScrollView.bind(this));
 		} else if (lable === 'DISCUSSIONS') {
 			this.setRightIcon(this.pencilSurface);
-			Discussion.fetch(params, addListItemsToScrollView.bind(this));
+			Discussion.fetch(params, this.addListItemsToScrollView.bind(this));
+		} else if (lable === 'OWNED') {
+			Discussion.fetchOwned(params, this.addListItemsToScrollView.bind(this));
 		}
 	};
 
-	function addListItemsToScrollView(listItems) {
+	FeedView.prototype.addListItemsToScrollView = function(listItems) {
 		if (!listItems) {
 			this.itemsAvailable = false;
 			console.log('no more items available');
@@ -251,8 +256,6 @@ define(function(require, exports, module) {
 				peopleCardView.setScrollView(this.scrollView);
 			}
 		}.bind(this));
-
-		//this.add(Scrollview);
 	}
 
 	FeedView.prototype.refresh = function() {

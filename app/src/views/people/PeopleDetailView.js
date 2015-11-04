@@ -14,9 +14,11 @@ define(function(require, exports, module) {
 	var RenderController = require('famous/views/RenderController');
 	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var Draggable = require("famous/modifiers/Draggable");
+	var ProfileDetailsTemplate = require('text!templates/user-profile.html');
 	var PeopleDetailsTemplate = require('text!templates/people-details.html');
 	var User = require('models/User');
 	var u = require('util/Utils');
+	var EditUserView = require('views/people/EditProfileView');
 
 	function PeopleDetailView() {
 		BaseView.apply(this, arguments);
@@ -24,12 +26,7 @@ define(function(require, exports, module) {
 
 		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
-			properties: {
-				backgroundColor: '#fff',
-				zIndex: 5
-			}
 		});
-		this.setBody(this.backgroundSurface);
 
 		this.renderController = new RenderController();
 		var mod = new StateModifier({
@@ -38,6 +35,7 @@ define(function(require, exports, module) {
 		});
 
 		this.add(mod).add(this.renderController);
+		this.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(this.backgroundSurface);
 	}
 
 	PeopleDetailView.prototype = Object.create(BaseView.prototype);
@@ -64,17 +62,38 @@ define(function(require, exports, module) {
 
 	PeopleDetailView.prototype.refresh = function() {
 		User.show(this.hash, function(peopleDetails) {
-
 			this.setHeaderLabel(peopleDetails.user.name);
+			var profileTemplate = PeopleDetailsTemplate;
+			this.backgroundSurface.setProperties({
+				background: '#fff'
+			});
+			if (peopleDetails.user.id == User.getCurrentUserId()) {
+				profileTemplate = ProfileDetailsTemplate;
+				this.backgroundSurface.setProperties({
+					background: '-webkit-linear-gradient(top,  #f14d43 0%, #f48157 100%)'
+				});
+			}
 			var peopleSurface = new Surface({
 				size: [undefined, undefined],
-				content: _.template(PeopleDetailsTemplate, peopleDetails, templateSettings),
+				content: _.template(profileTemplate, peopleDetails, templateSettings),
 				properties: {
-
 				}
 			});
 
-			this.draggableDetailsView = new DraggableView(peopleSurface);
+			peopleSurface.on('click', function(e) {
+				var classList;
+				if (u.isAndroid() || (e instanceof CustomEvent)) {
+					classList = e.srcElement.classList;
+					if (_.contains(classList, 'edit-button')) {
+						var state = {
+							hash: this.hash
+						};
+						App.pageView.changePage('EditProfileView', state);
+					}
+				}
+			}.bind(this));
+
+			this.draggableDetailsView = new DraggableView(peopleSurface, true);
 			this.renderController.show(this.draggableDetailsView);
 		}.bind(this), function() {
 			App.pageView.goBack();

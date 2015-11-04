@@ -19,3 +19,5 @@ app/lib
 tags
 .project
 .settings/
+*.iml
+.idea

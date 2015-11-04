@@ -18,14 +18,14 @@ define(function(require, exports, module) {
 
 	Discussion.post = function(name, discussionPost, callback) {
 		u.queuePostJSON("posting in", App.serverUrl + '/api/discussion',
-			u.makeGetArgs({
-				name: name,
-				discussionPost: discussionPost,
-				group: ""
-			}),
-			function(data) {
-				callback(data);
-			});
+				u.makeGetArgs({
+					name: name,
+					discussionPost: discussionPost,
+					group: ""
+				}),
+				function(data) {
+					callback(data);
+				});
 	};
 
 	Discussion.fetch = function(args, callback) {
@@ -34,11 +34,23 @@ define(function(require, exports, module) {
 			offset: args.offset ? args.offset : 0,
 			type: 'discussions'
 		});
-		u.queueJSON("loading discussion list", u.makeGetUrl('indexData', 'search'),
-			u.makeGetArgs(argsToSend),
-			function(data) {
-				callback(data.listItems.discussionList);
-			});
+		u.queueJSON("loading discussion list", u.makeGetUrl('getDiscussionSocialData', 'search'),
+				u.makeGetArgs(argsToSend),
+				function(data) {
+					callback(data.listItems);
+				});
+	};
+
+	Discussion.fetchOwned = function(args, callback) {
+		var argsToSend = u.getCSRFPreventionObject('getOwnedSocialData', {
+			max: Discussion.max,
+			offset: args.offset ? args.offset : 0,
+		});
+		u.queueJSON("loading discussion list", u.makeGetUrl('getOwnedSocialData', 'search'),
+				u.makeGetArgs(argsToSend),
+				function(data) {
+					callback(data.listItems);
+				});
 	};
 
 	Discussion.deleteDiscussion = function(args, callback) {
@@ -46,13 +58,13 @@ define(function(require, exports, module) {
 			userId: User.getCurrentUserId(),
 		});
 		u.queueJSONAll("loading discussion list", App.serverUrl + '/api/discussion/' + args.hash,
-			u.makeGetArgs(argsToSend),
-			function(data) {
-				callback(data);
-			}.bind(this), 
-			function(xhr) {
-				u.showAlert('Internal server error occurred');
-			}, null, 'DELETE'
+				u.makeGetArgs(argsToSend),
+				function(data) {
+					callback(data);
+				}.bind(this),
+				function(xhr) {
+					u.showAlert('Internal server error occurred');
+				}, null, {requestMethod: 'DELETE'}
 		);
 	};
 

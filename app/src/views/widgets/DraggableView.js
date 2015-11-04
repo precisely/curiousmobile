@@ -28,7 +28,7 @@ define(function(require, exports, module) {
 	};
 
 	function _createDraggableSurface() {
-		this.minYRange = this.minYRange || 1500;
+		this.minYRange = this.minYRange;
 		var lastDraggablePosition = 0;
 		var dragToRefresh = this.nonStickyEdges ? 0 : 100;
 
@@ -60,9 +60,19 @@ define(function(require, exports, module) {
 				}
 			});
 		} else {
-			draggable.on('update', function(e) {
-				
-			});
+			if (!this.minYRange) {
+				this.targetSurface.on('deploy', function(e) {
+					var containerHeight = document.getElementsByClassName('draggable-container')[0].offsetHeight;
+					if (containerHeight <= App.height) {
+						this.minYRange = -80;
+					} else {
+						this.minYRange = -(containerHeight - (App.height - 80));
+					}
+					draggable.setOptions({
+						yRange: [this.minYRange, 0]
+					});
+				}.bind(this));
+			}
 		}
 
 		var nodePlayer = new RenderNode();

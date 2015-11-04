@@ -25,17 +25,30 @@ define(function(require, exports, module) {
 	}
 
 	Sprint.fetch = function(args, callback) {
-		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
+		var argsToSend = u.getCSRFPreventionObject('getAllSprintData', {
 			max : Sprint.max,
 			offset: args.offset?args.offset:0,
 			type: 'sprints'
 		});
-		u.queueJSON('loading feeds', u.makeGetUrl('indexData', 'search'), 
+		u.queueJSON('loading feeds', u.makeGetUrl('getAllSprintData', 'search'),
 		u.makeGetArgs(argsToSend), function(data) {
 			if (u.checkData(data)) {
-				callback(data.listItems.sprintList);
+				callback(data.listItems);
 			}
 		});
+	};
+
+	Sprint.fetchOwned = function(args, callback) {
+		var argsToSend = u.getCSRFPreventionObject('getOwnedSprintData', {
+			max : Sprint.max,
+			offset: args.offset?args.offset:0,
+		});
+		u.queueJSON('loading feeds', u.makeGetUrl('getOwnedSprintData', 'search'),
+				u.makeGetArgs(argsToSend), function(data) {
+					if (u.checkData(data)) {
+						callback(data.listItems);
+					}
+				});
 	};
 
 	Sprint.show = function(hash, successCallback, failCallback) {
@@ -74,7 +87,7 @@ define(function(require, exports, module) {
 				}
 			}, function(error) {
 				console.log('error: ', error);
-			}, null, 'PUT');
+			}, null, {requestMethod: 'PUT'});
 	};
 
 	Sprint.listDiscussions = function(args, successCallback, failCallback) {

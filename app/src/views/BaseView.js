@@ -71,13 +71,12 @@ define(function(require, exports, module) {
 		if (!this.options.header) {
 			return;
 		}
-		var backgroundSurface = new Surface({
+		this.headerBackgroundSurface = new Surface({
 			origin: [0, 0],
 			align: [0, 0],
 			size: [window.innerWidth, 64],
 			properties: {
 				backgroundColor: '#fff',
-				boxShadow: '0px 3px 5px #dddddd'
 			}
 		});
 
@@ -85,17 +84,19 @@ define(function(require, exports, module) {
 			transform: Transform.translate(0, 0, App.zIndex.header)
 		});
 
-		this.headerContainer.add(headerBackgroundModifier).add(backgroundSurface);
+		this.createRightIconView();
+		this.headerContainer.add(headerBackgroundModifier).add(this.headerBackgroundSurface);
 		this.headerLeftIconController = new RenderController();
 		this.headerRightIconController = new RenderController();
+		this.headerRightIconController.show(this.rightIconsSequenceView);
 
 		var leftModifier = new StateModifier({
-			transform: Transform.translate(0, 0, window.App.zIndex.header + 1)
+			transform: Transform.translate(0, 0, window.App.zIndex.header + 2)
 		});
 		var rightModifier = new StateModifier({
 			align: [1, 0],
 			origin: [1, 0],
-			transform: Transform.translate(0, 0, window.App.zIndex.header + 1)
+			transform: Transform.translate(0, 0, window.App.zIndex.header + 2)
 		});
 
 		this.layout.header.add(leftModifier).add(this.headerLeftIconController);
@@ -133,6 +134,32 @@ define(function(require, exports, module) {
 		}
 		this.layout.header.add(this.headerContainer);
 	}
+
+	BaseView.prototype.createRightIconView = function() {
+		this.searchOptionSurface = new Surface({
+			size: [50, 50],
+			content: '<i class="fa fa-search"></i>',
+			properties: {
+				color: '#7b7b7b',
+				textAlign: 'center',
+				paddingTop: '15px',
+				marginRight: '5px',
+				fontSize: '24px'
+			}
+		});
+
+		this.searchOptionSurface.on('click', function(e) {
+			App.pageView.changePage('SearchView');
+		}.bind(this));
+
+		this.rightIconsList = [];
+		this.rightIconsList.push(this.searchOptionSurface);
+		this.rightIconsSequenceView = new SequentialLayout({
+			direction: 0,
+			itemSpacing: 0,
+		});
+		this.rightIconsSequenceView.sequenceFrom(this.rightIconsList);
+	};
 
 	function _createFooter() {
 		if (!this.options.footer) {
@@ -181,12 +208,24 @@ define(function(require, exports, module) {
 	};
 
 	BaseView.prototype.setRightIcon = function (iconSurface) {
-		this.headerRightIconController.show(iconSurface);
+		this.rightIconsList.push(iconSurface);
 	};
 
 	BaseView.prototype.removeRightIcon = function () {
-		this.headerRightIconController.hide();
+		this.rightIconsList.splice(1, this.rightIconsList.length);
 	};
+
+	BaseView.prototype.showSearchIcon = function() {
+		if (this.headerRightIconController) {
+			this.headerRightIconController.show(this.rightIconsSequenceView);
+		}
+	};
+
+	BaseView.prototype.hideSearchIcon = function() {
+		if (this.headerRightIconController) {
+			this.headerRightIconController.hide();
+		}
+	}
 
 	BaseView.prototype.onShow = function(state) {
 		if (this.options.header) {
@@ -215,14 +254,15 @@ define(function(require, exports, module) {
 		App.pageView.goBack(this.parentPage, state || this.state);
 	};
 
-	BaseView.prototype.setHeaderLabel = function(title) {
+	BaseView.prototype.setHeaderLabel = function(title, color) {
+		color = color || '#F14A42';
 		var labelSurface = new Surface({
 			size: [window.innerWidth - 100, 64],
 			content: title,
 			properties: {
 				fontSize: '15px',
 				fontWeight: 'normal',
-				color: '#F14A42',
+				color: color,
 				textAlign: 'center',
 				padding: '21px 0'
 			}

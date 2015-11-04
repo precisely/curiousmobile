@@ -17,7 +17,7 @@ function Tag(args) {
 		} else {
 			this.state = TREEITEM_MARKED;
 		}
-		
+
 		if (this.description != args['description']) {
 			this.setDescription(args['description']);
 			this.state = TREEITEM_UPDATED;
@@ -27,7 +27,7 @@ function Tag(args) {
 			this.state = TREEITEM_UPDATED;
 		}
 	}
-	
+
 	//Wrapping all init statements that we want to override in a method
 	this.init = function() {
 		$(this).on("updateEvent",function(){
@@ -41,26 +41,26 @@ function Tag(args) {
 	}
 
 	this.init();
-	
+
 	this.isTag = function() { return true; }
-	
+
 	this.setDescription = function(description) {
 		var oldDescription = this.description;
 		this.description = description;
 		$(this).trigger("updateEvent",{oldDescription:oldDescription, description:description});
 	}
-	
+
 	this.getTagProperties = function(callback) {
 		backgroundJSON("loading tag information", "/tag/getTagPropertiesData?callback=?",
-		getCSRFPreventionObject("getTagPropertiesCSRF", {id : this.id}),
-		function(data) {
-			if (!checkData(data))
-				return;
+				getCSRFPreventionObject("getTagPropertiesCSRF", {id : this.id}),
+				function(data) {
+					if (!checkData(data))
+						return;
 
-			this.isContinuous = data.isContinuous;
-			this.showPoints = data.showPoints;
-			callback(this);
-		}.bind(this));
+					this.isContinuous = data.isContinuous;
+					this.showPoints = data.showPoints;
+					callback(this);
+				}.bind(this));
 	}
 
 	this.getDescription = function() {
@@ -86,7 +86,7 @@ function Tag(args) {
 	this.tagList = function() {
 		return [ this ];
 	}
-	
+
 	this.matchNameList = function(tagNames) {
 		if (tagNames.length != 1) return false;
 
@@ -98,8 +98,16 @@ function Tag(args) {
 			return false;
 		return nameIterator.next() == this.description;
 	}
-	
+
 	this.getChildren = function(callback) {
+		callback();
+	}
+
+	this.fetchAll = function(callback) {
+		callback();
+	}
+
+	this.fetch = function(callback) {
 		callback();
 	}
 }
@@ -117,10 +125,10 @@ function TagGroup(args) {
 	this.isSystemGroup = args.isSystemGroup;
 	this.isAdminOfTagGroup = args.isAdminOfTagGroup;
 
-	if (this.getType().indexOf('wildcard')!==-1) {
+	if (this.type.indexOf('wildcard')!==-1) {
 		this.isWildcard = true; // cache this for efficiency
 	}
-	
+
 	this.isTag = function() { return false; }
 
 	this.excludeChild = function(childItem) {
@@ -182,7 +190,7 @@ function TagGroup(args) {
 			}.bind(this));
 		}
 	}
-	
+
 	this.fetchAll = function(callback) {
 		this.fetch(function(tagGroup){
 			for(var i in tagGroup.children) {
@@ -193,7 +201,7 @@ function TagGroup(args) {
 			callback();
 		});
 	}
-	
+
 	this.tagList = function() {
 		var list = new Array();
 		console.log(this.children);
@@ -204,12 +212,12 @@ function TagGroup(args) {
 		console.log(list);
 		return list;
 	}
-	
+
 	this.setIsContinuous = function(isContinuous) {
 		for (var i = 0, len = this.children.length; i < len; ++i) {
 			this.children[i].setIsContinuous(isContinuous);
 		}
-		
+
 		return isContinuous;
 	}
 
@@ -217,7 +225,7 @@ function TagGroup(args) {
 		for (var i = 0, len = this.children.length; i < len; ++i) {
 			this.children[i].setShowPoints(showPoints);
 		}
-		
+
 		return showPoints;
 	}
 
@@ -234,17 +242,17 @@ function TagGroup(args) {
 			}
 		}
 		return false;
-	} 
-	
+	}
+
 	// match list of tags with passed-in tag names --- temporary kludge to check tag group matching with
 	// lists of tags rather than direct references to tag groups
 	// note: assumes tags are in same order, but we'll assume that for this temporary kludge
 	this.matchNameList = function(tagNames) {
 		var nameIterator = new NameIterator(tagNames);
-		
+
 		if (!this.matchNameListSegment(nameIterator))
 			return false;
-		
+
 		return nameIterator.remaining() == 0;
 	}
 
@@ -253,10 +261,10 @@ function TagGroup(args) {
 			if (!this.children[i].matchNameListSegment(nameIterator))
 				return false;
 		}
-		
+
 		return true;
 	}
-		
+
 	this.sort = function() {
 		this.children.sort(function(itemA, itemB) {
 			if (itemA.description < itemB.description)
@@ -306,7 +314,7 @@ function TagGroup(args) {
 
 			callback();
 		}.bind(this));
-		
+
 	}
 
 	this.remove = function() {
@@ -316,23 +324,23 @@ function TagGroup(args) {
 			this.removed();
 		}.bind(this));
 	}
-	
+
 	this.nameList = function() {
 		var list = new Array();
-		
+
 		for (var i = 0, len = this.children.length; i < len; ++i) {
 			var childNames = this.children[i].nameList();
 			for (var j = 0, len2 = childNames.length; j < len2; ++j) {
 				list.push(childNames[j]);
 			}
 		}
-		
+
 		return list;
 	}
-	
+
 	this.matchTagList = function(tags) { // assume tag list is in same order as comparison tags
 		var name = this.nameList();
-		
+
 		if (tags.length != 1) return false;
 
 		return tags[0] == this.description;
@@ -347,13 +355,13 @@ function TagStore(args) {
 		var typeClass;
 		var listItem;
 		var type;
-		if (typeof args.type !== 'undefined' && args.type.indexOf('Group')!==-1) { 
+		if (typeof args.type !== 'undefined' && args.type.indexOf('Group')!==-1) {
 			type = args.type.replace("us.wearecurio.model.", "");
 			type = type.replace(/^[A-Z]/g, function(s) {
-					return s.toLowerCase();
+				return s.toLowerCase();
 			});
 			typeClass=TagGroup;
-						
+
 		} else if (typeof args.class !== 'undefined' && args.class.indexOf('Group')!==-1) {
 			typeClass=TagGroup;
 			type='tagGroup';
@@ -361,7 +369,7 @@ function TagStore(args) {
 			typeClass=Tag;
 			type='tag';
 		}
-		
+
 		listItem = this.store[type+args.id];
 		var initArgs = {
 			description : args['description'],
@@ -391,20 +399,20 @@ function TagStore(args) {
 		} else {
 			listItem.update(initArgs);
 		}
-		
+
 		return listItem;
 	}
-	
+
 	this.getTagByName = function(tagName) {
 		for (var property in this.store) {
-		    if (this.store.hasOwnProperty(property)) {
-		    	if(this.store[property].description == tagName) {
-		    		return this.store[property];
-		    	}
-		    }
+			if (this.store.hasOwnProperty(property)) {
+				if(this.store[property].description == tagName) {
+					return this.store[property];
+				}
+			}
 		}
 	}.bind(this)
-	
+
 }
 
 inherit(TreeStore, TagStore);
@@ -425,13 +433,13 @@ function TagList(args) {
 			return 0;
 		}
 	}
-	
+
 	TreeItemList.call(this, args);
-	
+
 	this.sort = function() {
 		this.listItems.sort();
 	}
-	
+
 	this.searchItemByDescriptionAndType = function(description, type) {
 		var item;
 		$.each(this.listItems.list, function() {
@@ -446,7 +454,7 @@ function TagList(args) {
 		}
 		return item;
 	}
-	
+
 	this.searchListItemByName = function(name) {
 		var found = false;
 		$.each(this.listItems, function() {
@@ -456,20 +464,20 @@ function TagList(args) {
 		});
 		return found;
 	}
-	
+
 	this.eachSearchMatches = function(term, matchClosure, noMatchClosure, skipSet, additionalWordsCharLimit) {
 		var list = this.listItems.list;
 		var i, j, result = [];
-		
+
 		var terms = term.split(' ');
 		var spaceTerms = [];
-		
+
 		for (j in terms) {
 			spaceTerms.push(' ' + terms[j]);
 		}
-		
+
 		var termLonger = term.length > additionalWordsCharLimit;
-		
+
 		for (i = 0; i < list.length; ++i) {
 			var tag = list[i];
 			var match = false;
@@ -489,24 +497,24 @@ function TagList(args) {
 				noMatchClosure(tag, i);
 			}
 		}
-		
+
 		return result;
 	}
 
 	this.eachMatchingTag = function(term, matchClosure, noMatchClosure) {
 		if (term.length > 0) {
 			var skipSet = {};
-			
+
 			this.eachSearchMatches(term, matchClosure, noMatchClosure, skipSet, 3);
-			
+
 			this.eachSearchMatches(term, matchClosure, noMatchClosure, skipSet, 0);
 		}
 	}
-	
+
 	this.eachTag = function(closure) {
 		this.listItems.each(closure);
 	}
-	
+
 	this.generateUniqueTagName = function(name) {
 		if (this.searchListItemByName(name)) {
 			var exists = false;
@@ -521,7 +529,7 @@ function TagList(args) {
 			return name;
 		}
 	}
-	
+
 	this.createTagGroupFromTags = function(targetTag, sourceTag, callback) {
 		backgroundJSON("creating tag group", "/tag/createTagGroupData?callback=?", getCSRFPreventionObject("createTagGroupDataCSRF", {
 			tagGroupName : this.generateUniqueTagName(targetTag.description
@@ -538,7 +546,7 @@ function TagList(args) {
 			}
 		}.bind(this));
 	}
-	
+
 	this.addTagGroupToTagGroup = function(targetTagGroup, sourceTagGroup) {
 		console.log("addTagGroupToTagGroup");
 		backgroundJSON("adding tag group", "/tag/addTagGroupToTagGroupData?callback=?", getCSRFPreventionObject("addTagGroupToTagGroupDataCSRF", {
@@ -552,7 +560,7 @@ function TagList(args) {
 			console.log("Debug addTagGroupToTagGroup callback");
 		});
 	}
-	
+
 	this.addTagToTagGroup = function(tagGroup, tag) {
 		console.log("addTagToTagGroup");
 		backgroundJSON("adding tag to group", "/tag/addTagToTagGroupData?callback=?", getCSRFPreventionObject("addTagToTagGroupDataCSRF", {
@@ -573,11 +581,11 @@ inherit(TagList, TreeItemList);
 function NameIterator(names) {
 	this.names = names;
 	this.i = 0;
-	
+
 	this.remaining = function() {
 		return this.names.length - this.i;
 	}
-	
+
 	this.next = function() {
 		return this.names[this.i++];
 	}
@@ -586,17 +594,17 @@ function NameIterator(names) {
 function TagView(args) {
 	TreeItemView.call(this,args);
 	this.pinned = args.pinned || false;
-	
+
 	this.pin = function() {
 		this.getDOMElement().addClass("pinned");
 		this.hide();
 	}
-	
+
 	this.unpin = function() {
 		this.getDOMElement().removeClass("pinned");
 		this.show();
 	}
-	
+
 	this.render = function(extraParams) {
 		var pinIcon = "ui-icon-pin-w";
 		if (this.pinned) {
@@ -604,9 +612,9 @@ function TagView(args) {
 		}
 
 		var parentTagGroup,
-			hasParentSharedGroup,
-			isAdminOfParentTagGroup,
-			parentTagGroupView = this.getParentItemView();
+				hasParentSharedGroup,
+				isAdminOfParentTagGroup,
+				parentTagGroupView = this.getParentItemView();
 
 		if (parentTagGroupView) {
 			parentTagGroup = parentTagGroupView.getData();
@@ -614,8 +622,8 @@ function TagView(args) {
 			isAdminOfParentTagGroup = parentTagGroup.isAdminOfTagGroup || false;
 		}
 
-		var html = '<li id="'+this.element+'" class="'+ this.getTreeItemViewCssClass() +' tag" data-type="tag"><span class="description">' 
-		+ this.data.description +'</span><span class="ui-icon '+pinIcon+'"></span>';
+		var html = '<li id="'+this.element+'" class="'+ this.getTreeItemViewCssClass() +' tag" data-type="tag"><span class="description">'
+				+ this.data.description +'</span><span class="ui-icon '+pinIcon+'"></span>';
 
 		var deleteHtml = '<span class="hide ui-icon ui-icon-close"></span>';
 
@@ -636,17 +644,17 @@ function TagView(args) {
 		html += '</li>';
 		return html;
 	}
-	
+
 	this.update = function(data) {
 		var $element = $(this.getDOMElement());
 		$("> .description",$element).html(data.description);
 	}
-	
+
 	this.highlight = function(isTemporary) {
 		$element = this.getDOMElement();
 		$(".highlight").removeClass("highlight");
 		$element.addClass('highlight');
-		
+
 		if(isTemporary) {
 			setTimeout(function() {
 				this.removeClass('highlight');
@@ -658,11 +666,11 @@ function TagView(args) {
 function TagGroupView(args) {
 	TagView.call(this, args);
 	TreeItemGroupView.call(this,args);
-	
+
 	this.clear = function() {
-		
+
 	}
-	
+
 	this.render = function(extraParams) {
 		var pinIcon = "ui-icon-pin-w";
 		if (this.pinned) {
@@ -675,11 +683,11 @@ function TagGroupView(args) {
 		}
 
 		var parentTagGroup,
-			hasParentSharedGroup,
-			tagGroup = this.data,
-			isAdminOfParentTagGroup,
-			isSystemTagGroup = tagGroup.isSystemGroup,
-			parentTagGroupView = this.getParentItemView();
+		hasParentSharedGroup,
+		tagGroup = this.data,
+		isAdminOfParentTagGroup,
+		isSystemTagGroup = tagGroup.isSystemGroup,
+		parentTagGroupView = this.getParentItemView();
 
 		if (parentTagGroupView) {
 			parentTagGroup = parentTagGroupView.getData();
@@ -688,9 +696,9 @@ function TagGroupView(args) {
 		}
 
 
-		var html = '<li id="'+this.element+'" class="'+ classes + ' '+ this.data.type + '" data-type="' + this.data.type + 
-		'"><span class="ui-icon ui-icon-triangle-1-e"></span><span class="description">'
-		+ this.data.description;
+		var html = '<li id="'+this.element+'" class="'+ classes + ' '+ this.data.type + '" data-type="' + this.data.type +
+				'"><span class="ui-icon ui-icon-triangle-1-e"></span><span class="description">'
+				+ this.data.description;
 
 		if (this.data.type === 'sharedTagGroup' && this.data.groupName) {
 			html += ' [' + this.data.groupName + ']';
@@ -699,7 +707,7 @@ function TagGroupView(args) {
 		html += '</span>';
 
 		var deleteHtml = '<span class=" hide ui-icon ui-icon-close"></span>';
-		
+
 		if (hasParentSharedGroup) {
 			if (isAdminOfParentTagGroup && !isSystemTagGroup) {
 				html += deleteHtml;
@@ -724,7 +732,7 @@ function TagGroupView(args) {
 		html += '<ul class="hide tags"></ul></li>';
 		return html;
 	}
-	
+
 	this.update = function(data) {
 		var $element = $(this.getDOMElement());
 		$("> .description",$element).html(data.description);
@@ -733,7 +741,7 @@ function TagGroupView(args) {
 	this.getChildrenWrapper = function() {
 		return $("> ul", this.getDOMElement());
 	}
-	
+
 	this.createChildView = function(listItem) {
 		var itemView;
 		if (listItem instanceof Tag && !(listItem instanceof TagGroup)) {
@@ -744,7 +752,7 @@ function TagGroupView(args) {
 		}
 		return itemView
 	}
-	
+
 	this.toggleShow = function() {
 		if (this.data.isWildcard) {
 			this.removeChildren();
@@ -757,7 +765,7 @@ function TagGroupView(args) {
 		this.getDOMElement().toggleClass("active");
 		$(" > span[class*='ui-icon-triangle']", this.getDOMElement())
 				.toggleClass("ui-icon-triangle-1-e").toggleClass(
-						"ui-icon-triangle-1-s");
+				"ui-icon-triangle-1-s");
 	}
 
 }
@@ -766,7 +774,7 @@ inherit(TagGroupView, TreeItemGroupView)
 /**
  * TagListWidget - Represents the Tag and Tag Group list widget on the query and
  * track page
- * 
+ *
  * @returns
  */
 function TagListWidget(args) {
@@ -776,7 +784,7 @@ function TagListWidget(args) {
 	TreeWidget.call(this,args);
 	this.element = "div#tagListWrapper ul#tagList";
 	this.filterText = "";
-	
+
 	this.createTreeItemView = function(listItem) {
 		var itemView;
 		if (listItem instanceof Tag && !(listItem instanceof TagGroup)) {
@@ -798,7 +806,7 @@ function TagListWidget(args) {
 				revert : 'invalid',
 				helper: function(event) {
 					return $( '<div class="draggable-helper">' + $(event.target).html() + '</div>' );
-			    }
+				}
 			})
 
 			$(this).droppable({
@@ -820,48 +828,48 @@ function TagListWidget(args) {
 		var positionOnTapEvent, positionOnTapHoldEvent;
 
 		$(".treeItemView", element).off("taphold tap mousedown dblclick")	// Make sure to remove older same events as this is called sevaral times.
-		.on("tap mousedown", function(e) {
-			positionOnTapEvent = $(this).offset();
-		})
-		.on("taphold dblclick", function(e) {
-			var $item = $(this);
-			positionOnTapHoldEvent = $item.offset();
+				.on("tap mousedown", function(e) {
+					positionOnTapEvent = $(this).offset();
+				})
+				.on("taphold dblclick", function(e) {
+					var $item = $(this);
+					positionOnTapHoldEvent = $item.offset();
 
-			// Elemenet may have been moved (dragged somewhere else)
-			if (e.type === 'taphold' && (positionOnTapEvent.top != positionOnTapHoldEvent.top ||
-					positionOnTapEvent.left != positionOnTapHoldEvent.left)) {
-				return;
-			}
-			// Clear this timeout to prevent click event on tag group.
-			clearTimeout(doubleClickEventTimeout);
+					// Elemenet may have been moved (dragged somewhere else)
+					if (e.type === 'taphold' && (positionOnTapEvent.top != positionOnTapHoldEvent.top ||
+							positionOnTapEvent.left != positionOnTapHoldEvent.left)) {
+						return;
+					}
+					// Clear this timeout to prevent click event on tag group.
+					clearTimeout(doubleClickEventTimeout);
 
-			var tagOrTagGroupView = $item.data(DATA_KEY_FOR_ITEM_VIEW);
-			var tagOrTagGroup = tagOrTagGroupView.getData();
-			if (["sharedTagGroup", "wildcardTagGroup"].indexOf(tagOrTagGroup.type) == -1) {
-				console.log('return', tagOrTagGroup.type)
-				return;
-			}
+					var tagOrTagGroupView = $item.data(DATA_KEY_FOR_ITEM_VIEW);
+					var tagOrTagGroup = tagOrTagGroupView.getData();
+					if (["sharedTagGroup", "wildcardTagGroup"].indexOf(tagOrTagGroup.type) == -1) {
+						console.log('return', tagOrTagGroup.type)
+						return;
+					}
 
-			var tagGroup = tagOrTagGroup;
-			if (!tagGroup.excludes || tagGroup.excludes.length === 0) {
-				console.log('No exclusion found.');
-				return;
-			}
+					var tagGroup = tagOrTagGroup;
+					if (!tagGroup.excludes || tagGroup.excludes.length === 0) {
+						console.log('No exclusion found.');
+						return;
+					}
 
-			var html = '<ul>';
-			for (i in tagGroup.excludes) {
-				var excludedItem = tagGroup.excludes[i];
-				html += '<li>' + excludedItem['description'] + ' <a href="#" class="add-back-item" data-group-id="' +
-					tagGroup.id + '" data-item-id="' + excludedItem.objectId + '" data-item-type="' + excludedItem.type + '"' +
-					' style="font-size: 14px">+</a></li>';
-			}
+					var html = '<ul>';
+					for (i in tagGroup.excludes) {
+						var excludedItem = tagGroup.excludes[i];
+						html += '<li>' + excludedItem['description'] + ' <a href="#" class="add-back-item" data-group-id="' +
+								tagGroup.id + '" data-item-id="' + excludedItem.objectId + '" data-item-type="' + excludedItem.type + '"' +
+								' style="font-size: 14px">+</a></li>';
+					}
 
-			var $dialogElement = $('div#remove-exclusion-dialog');
-			$dialogElement.html(html);
-			$dialogElement.dialog();
-		});
+					var $dialogElement = $('div#remove-exclusion-dialog');
+					$dialogElement.html(html);
+					$dialogElement.dialog();
+				});
 	}
-	
+
 	this.dropTagListItem = function(event, ui) {
 		var $target = $(event.target);
 		var $source = $(ui.draggable[0]);
@@ -869,15 +877,15 @@ function TagListWidget(args) {
 		if ($target.is("span")) { //Disregard events on innner spans
 			return;
 		}
-		
+
 		if ($source.is("span")) {
 			return;
 		}
-		
+
 		if ($target.hasClass('tag') && $target.data(DATA_KEY_FOR_ITEM_VIEW).hasParentItemView()) {
 			return;
 		}
-		
+
 		var sourceItem = $source.data(DATA_KEY_FOR_ITEM_VIEW).getData();
 		var targetItem = $target.data(DATA_KEY_FOR_ITEM_VIEW).getData();
 		var targetView = $target.data(DATA_KEY_FOR_ITEM_VIEW);
@@ -899,9 +907,9 @@ function TagListWidget(args) {
 		} else if (!(sourceItem instanceof TagGroup) && (sourceItem instanceof Tag) && (targetItem instanceof Tag)) {
 			this.list.createTagGroupFromTags(targetItem, sourceItem);
 		}
-		
+
 	}
-	
+
 	this.dropWildcardTagGroup = function(event, ui) {
 		var $source = $(ui.draggable[0]);
 		var sourceItem = $source.data(DATA_KEY_FOR_ITEM_VIEW).getData();
@@ -913,12 +921,12 @@ function TagListWidget(args) {
 					return;
 
 				data.type = "wildcardTagGroup";
-				
+
 				this.add(new TagGroup(data));
 			}.bind(this));
 		}
 	}
-	
+
 	this.showMatchingTags = function(description) {
 		var elements = this.getListItemElements();
 		this.list.eachMatchingTag(description, function(tag, i) {
@@ -929,11 +937,11 @@ function TagListWidget(args) {
 			$(elements[i]).hide();
 		}.bind(this));
 	}
-	
+
 	this.showAllTags = function() {
 		this.getListItemElements().show();
 	}
-	
+
 	this.addToPinnedList = function(itemView) {
 		$("#stickyTagList").append(itemView.render({pinned:true}));
 		if ($("#stickyTagList").hasClass("hide")) {
@@ -941,7 +949,7 @@ function TagListWidget(args) {
 		}
 		$(itemView.getDOMElement()).data(DATA_KEY_FOR_ITEM_VIEW, itemView);
 	}
-	
+
 	this.makeDraggableAndDroppable();
 	this.makeDraggableAndDroppable("#stickyTagList");
 	$(document).on("click","li.tagGroup > .ui-icon-pencil", function(e) {
@@ -952,7 +960,7 @@ function TagListWidget(args) {
 		$("input","#tagGroupEditDialog").data(DATA_KEY_FOR_TAGLIST_ITEM,tagGroupView.getData());
 		$("#tagGroupEditDialog").dialog("open");
 	}.bind(this));
-	
+
 	$(document).on("click","li.treeItemView > .ui-icon-pin-w", function(e) {
 		e.stopPropagation();
 		var target = e.target.parentElement;
@@ -962,13 +970,13 @@ function TagListWidget(args) {
 		pinnedView.pinned = true;
 		this.addToPinnedList(pinnedView);
 		itemView.pin();
-		
+
 		//Show the view in the list view once unpinned
 		$(itemView.getData()).on("unpinned",function(event, target){
 			this.unpin();
 		}.bind(itemView));
 	}.bind(this));
-	
+
 	$(document).on("click","li.treeItemView > .ui-icon-pin-s", function(e) {
 		e.stopPropagation();
 		var target = e.target.parentElement;
@@ -976,7 +984,7 @@ function TagListWidget(args) {
 		$(itemView.getData()).trigger("unpinned");
 		itemView.remove();
 	}.bind(this));
-	
+
 }
 
 inherit(TagListWidget, TreeWidget);
@@ -1017,7 +1025,7 @@ function initTagListOnly(load) {
 
 //must be called from within $(document).ready()
 function initTagListWidget(postLoadCallback) {
-	var tagStore = new TagStore(); 
+	var tagStore = new TagStore();
 	tagList = new TagList({store:tagStore});
 	var tagListWidget = new TagListWidget({list:tagList});
 	tagListWidget.bindClickOnTreeItemGroupView();
@@ -1030,7 +1038,7 @@ function initTagListWidget(postLoadCallback) {
 	$(tagSearchInput).click(function(e) {
 		tagListSetInputText(tagSearchInput, '');
 	}.bind(this));
-	
+
 	var widget = tagListWidget;
 
 	tagSearchInput.keyup(function(e) {
@@ -1050,18 +1058,18 @@ function initTagListWidget(postLoadCallback) {
 			revert : true
 		});
 	});
-	
+
 	/*var $editDialog = $("#tagGroupEditDialog").dialog({
 		autoOpen: false,
 		dialogClass:'tagGroupDialog',
 		buttons: {
 			"Save": renameTagGroup
 		},
-		
+
 	});
 
 	var $editTagGroupElement = $("input", $editDialog);
-	
+
 	$editTagGroupElement.attr("id", "tagGroupEditDialogInputControl")*/
 
 	function renameTagGroup() {
@@ -1078,6 +1086,6 @@ function initTagListWidget(postLoadCallback) {
 			return false;
 		}
 	});
-	
+
 	return tagListWidget;
 }

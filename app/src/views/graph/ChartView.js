@@ -15,8 +15,10 @@ define(function(require, exports, module) {
 	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var Draggable = require("famous/modifiers/Draggable");
 	var Utility = require('famous/utilities/Utility');
-	var User = require('models/User');
-	var jqFlot = require('util/jquery.flot.min');
+	var jqSmooth = require('util/interpolate/smooth');
+	require("util/interpolate/science.min");
+	require("util/interpolate/science_loess");
+	require('util/jquery.flot.min');
 	var u = require('util/Utils');
 	var CreateChartView = require('views/graph/CreateChartView');
 	var treeView = require('util/treeview');
@@ -25,6 +27,7 @@ define(function(require, exports, module) {
 
 	function ChartView() {
 		BaseView.apply(this, arguments);
+		console.log('ChartView constructor');
 		App.tagListWidget = initTagListWidget();
 		this.optionsSurface = new Surface({
 			size: [44, 64],
@@ -91,7 +94,7 @@ define(function(require, exports, module) {
 
 	function _setHandlers() {
 		this.on('create-chart', function() {
-			App.pageView.changePage('CreateChartView');
+			App.pageView.changePage('CreateChartView', {selectedTags: this.graphView.plottedTags});
 		});
 		this.on('save-snapshot', function() {
 			this.graphView.plot.save();
