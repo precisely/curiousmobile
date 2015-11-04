@@ -25,6 +25,7 @@ define(function(require, exports, module) {
 
 	function CreateChartView() {
 		BaseView.apply(this, arguments);
+		console.log('CreateChartView controller');
 		this.parentPage = 'ChartView';
 		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
@@ -88,7 +89,7 @@ define(function(require, exports, module) {
 
 		var selectionLabelSurface = new Surface({
 			size: [undefined, 35],
-			content: 'Select up to 3 tags to graph',
+			content: 'Select up to 3 tags to graph<span class="pull-right uncheck-label-chart">UNCHECK ALL</span>',
 			properties: {
 				padding: '8px 15px',
 				color: '#cc7299',
@@ -99,13 +100,26 @@ define(function(require, exports, module) {
 				backgroundColor: '#fff'
 			}
 		});
+
+		selectionLabelSurface.on('click', function(e) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				if (_.contains(e.srcElement.classList, 'uncheck-label-chart')) {
+					_.each(this.selectedTags, function(tag) {
+						var checkIcon = document.getElementById('selection' + tag.id);
+						checkIcon.classList.add('fa-circle-o');
+						checkIcon.classList.remove('fa-circle');
+					}.bind(this));
+					this.selectedTags = [];
+				}
+			}
+		}.bind(this));
 		this.add(new Modifier({transform: Transform.translate(0, 140, App.zIndex.readView + 1)})).add(selectionLabelSurface);
 	}
 
 	function _createPillsMenu() {
 		var pillsMod = new StateModifier({
 			origin: [0.5, 0.5],
-			transform: Transform.translate(App.width / 2 + 20, 30, App.zIndex.header + 1)
+			transform: Transform.translate(App.width / 2 + 15, 30, App.zIndex.header + 1)
 		});
 		this.add(pillsMod).add(_createPills.call(this));
 	}
@@ -114,8 +128,7 @@ define(function(require, exports, module) {
 		var pillSurface = new Surface({
 			content: '<div class="btn-group tag-filters" role="group">' +
 				'<button type="button" class="btn btn-secondary" id="most-used-pill">Most Used</button>' +
-				'<button type="button" class="btn btn-secondary" id="a-z-pill">A-Z</button>' +
-				'<button type="button" class="btn btn-secondary" id="uncheck-all-pill">Uncheck All</button></div>',
+				'<button type="button" class="btn btn-secondary active" id="a-z-pill">A-Z</button>',
 			size: [true, true],
 			properties: {
 				backgroundColor: '#efefef',
@@ -126,15 +139,10 @@ define(function(require, exports, module) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				if (e.srcElement.id === 'a-z-pill') {
 					var tagList = Tags.sortTags(App.tagListWidget.list.listItems.list, this.listAscending);
+					document.getElementById('most-used-pill').classList.remove('active');
+					e.srcElement.classList.add('active');
 					_renderTagsList.call(this, tagList);
 					this.listAscending = !this.listAscending;
-				} else if (e.srcElement.id === 'uncheck-all-pill') {
-					_.each(this.selectedTags, function(tag) {
-						var checkIcon = document.getElementById('selection' + tag.id);
-						checkIcon.classList.add('fa-circle-o');
-						checkIcon.classList.remove('fa-circle');
-					});
-					this.selectedTags = [];
 				}
 			}
 		}.bind(this));
@@ -163,7 +171,7 @@ define(function(require, exports, module) {
 		var plotButtonProperties = {
 			backgroundColor: 'transparent',
 			color: '#fff',
-			padding: '10px 5px',
+			padding: App.width > 320  ? '10px 5px' : '10px 3px',
 			border: '1px solid #fff',
 			textAlign: 'center'
 		};
@@ -175,7 +183,7 @@ define(function(require, exports, module) {
 		});
 
 		var createAreaChartSurface = new Surface({
-			size: [100, 40],
+			size: App.width > 320 ? [100, 40] : [90, 40],
 			content: "Area Chart",
 			properties: plotButtonProperties
 		});
@@ -202,10 +210,10 @@ define(function(require, exports, module) {
 
 		this.submitFormContainer.add(labelSurface);
 		this.submitFormContainer.add(new Modifier({
-			transform: Transform.translate(110, 0, 0)
+			transform: Transform.translate(113, 0, 0)
 		})).add(createLineChartSurface);
 		this.submitFormContainer.add(new Modifier({
-			transform: Transform.translate(210, 0, 0)
+			transform: Transform.translate(214, 0, 0)
 		})).add(createAreaChartSurface);
 		var formContainerMod = new StateModifier({
 			transform: Transform.translate(0, App.height - 105, App.zIndex.readView + 1)
@@ -214,12 +222,8 @@ define(function(require, exports, module) {
 	}
 
 	CreateChartView.prototype.init = function() {
-		if (!App.tagListWidget) {
-			App.tagListWidget = initTagListWidget(_renderTagsList.bind(this));
-		} else {
-			_renderTagsList.call(this, App.tagListWidget.list.listItems.list);
-		}
-
+		App.tagListWidget = initTagListWidget(_renderTagsList.bind(this));
+		_renderTagsList.call(this, App.tagListWidget.list.listItems.list);
 		this.renderController.show((this.tagsScrollView));
 	};
 
@@ -271,7 +275,7 @@ define(function(require, exports, module) {
 	}
 
 	CreateChartView.prototype.preShow = function(state) {
-		if (state.selectedTags) {
+		if (state && state.selectedTags) {
 			this.selectedTags = state.selectedTags.slice(0);
 		}
 		this.hideSearchIcon();

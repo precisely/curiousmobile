@@ -15,6 +15,7 @@ define(function(require, exports, module) {
 
 	function SearchView() {
 		FeedView.apply(this, arguments);
+		console.log('SearchView controller');
 		this.createSearchHeader();
 		this.createSearchPills();
 	}
@@ -56,6 +57,7 @@ define(function(require, exports, module) {
 
 			document.getElementsByClassName('close-background')[0].onclick = function() {
 				this.goBack();
+				return true;
 			}.bind(this);
 		}.bind(this));
 

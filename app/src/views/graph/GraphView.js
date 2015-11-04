@@ -23,6 +23,7 @@ define(function(require, exports, module) {
 
 	function GraphView(tagsToPlot, plotAreaId) {
 		StateView.apply(this, arguments);
+		console.log('GraphView controller');
 		this.tags = tagsToPlot;
 		this.plotAreaId = plotAreaId || 'plotArea'
 		this.plottedTags = [];
@@ -57,6 +58,14 @@ define(function(require, exports, module) {
 				'rename':'#queryTitleEdit',
 				'logout':'#logoutLink'
 			}));
+		}.bind(this));
+
+		this.graphSurface.on('deploy', function() {
+			if (document.getElementById('plot-here-msg')) {
+				document.getElementById('plot-here-msg').onclick = function() {
+					App.pageView.changePage('CreateChartView');
+				}.bind(this);
+			}
 		}.bind(this));
 
 		this.pillsSurfaceList = [];
@@ -103,7 +112,7 @@ define(function(require, exports, module) {
 			backgroundColor: '#fff',
 			textAlign: 'center',
 			margin: '16px 15px',
-			padding: '4px',
+			padding: '3px 0px 3px 3px',
 			border: '1px solid #c3c3c3'
 		};
 
@@ -112,6 +121,9 @@ define(function(require, exports, module) {
 			size: [27, 27],
 			content: '<i class="fa fa-chevron-left"></i>',
 			properties: datePickerButtonProperties
+		});
+		this.startDatePickerSurface.setProperties({
+			padding: '3px 3px 3px 0px'
 		});
 		this.endDatePickerSurface = new Surface({
 			classes: ['end-date-picker'],
@@ -132,18 +144,19 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.endDateString = this.startDateString = '-';
+		this.endDateString = this.startDateString = 'DD/MM/YY';
 		this.dateLabelSurface = new Surface({
 			size: [158, 28],
-			content: ' - ',
+			content: '<span class="blank-date-label">DD/MM/YY</span> - <span class="blank-date-label">DD/MM/YY</span>',
 			properties: {
 				border: '1px solid #C3C3C3',
 				borderRadius: '2px',
-				padding: '3px',
+				padding: '5px',
 				color: '#6f6f6f',
 				textAlign: 'center',
 				whiteSpace: 'no-wrap',
-				backgroundColor: '#fff'
+				backgroundColor: '#fff',
+				fontSize: '12px'
 			}
 		});
 		dateContainerSurface.add(new StateModifier({transform: Transform.translate(0, 0, 2)})).add(this.startDatePickerSurface);

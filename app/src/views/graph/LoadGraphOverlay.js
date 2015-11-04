@@ -14,6 +14,7 @@ define(function(require, exports, module) {
 
 	function LoadGraphOverlay() {
 		StateView.apply(this, arguments);
+		console.log('LoadGrapOverlay controller');
 		var backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
@@ -47,7 +48,7 @@ define(function(require, exports, module) {
 			_.each(graphList, function(graphItem) {
 				var graphItemSurface = new Surface({
 					size: [undefined, 50],
-					content: '<div class="graph-item-bar"><p>' + graphItem.name + '</p><i class="delete-graph fa fa-times-circle-o fa-2x"></i></div>',
+					content: '<div class="graph-item-bar"><p>' + graphItem.name + '</p><i class="delete-graph fa fa-trash-o fa-2x"></i></div>',
 					properties: {
 						backgroundColor: '#fff',
 					}

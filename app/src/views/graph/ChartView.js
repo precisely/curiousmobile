@@ -16,7 +16,7 @@ define(function(require, exports, module) {
 	var Draggable = require("famous/modifiers/Draggable");
 	var Utility = require('famous/utilities/Utility');
 	var jqSmooth = require('util/interpolate/smooth');
-	require("util/interpolate/science");
+	require("util/interpolate/science.min");
 	require("util/interpolate/science_loess");
 	require('util/jquery.flot.min');
 	var u = require('util/Utils');
@@ -27,6 +27,7 @@ define(function(require, exports, module) {
 
 	function ChartView() {
 		BaseView.apply(this, arguments);
+		console.log('ChartView constructor');
 		App.tagListWidget = initTagListWidget();
 		this.optionsSurface = new Surface({
 			size: [44, 64],

@@ -25,6 +25,7 @@ define(function(require, exports, module) {
 
 	function FeedView(showSearchView) {
 		BaseView.apply(this, arguments);
+		console.log('FeedView Constructor');
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.Y,
 		});

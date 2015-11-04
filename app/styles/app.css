@@ -830,16 +830,17 @@ button.close {
 	border-radius: 2px;
 	text-align: center;
 	margin: 10px;
-}
-
-.feed-pill {
-	background-color: transparent;
+	padding: 0px 5px;
 }
 
 .tag-pill {
 	background-color: #fff;
 	border-left: 2px solid #c04f7f;
 	white-space: nowrap;
+}
+
+.feed-pill {
+	background-color: transparent;
 }
 
 .feed-pill:active, .feed-pill.active-pill {
@@ -1901,6 +1902,10 @@ and (max-device-height: 568px) {
 	margin-right: 10px;
 }
 
+.tagList .fa-circle-o {
+	color: #9d9d9d;
+}
+
 .tagList .fa-tag {
 	vertical-align: top;
 	font-size: 20px;
@@ -1941,6 +1946,7 @@ and (max-device-height: 568px) {
 
 .tag-search-input:focus {
 	outline: none;
+	outline-width: 0;
 }
 
 .tag-search-input::-webkit-input-placeholder {
@@ -1951,6 +1957,13 @@ and (max-device-height: 568px) {
 	background-color: #fff;
 	border: 1px solid #cc7299;
 	color: #cc7299;
+	width: 100px;
+	text-align: center;
+}
+
+.btn-secondary.active {
+	background-color: #cc7299;
+	color: #fff;
 }
 
 .graphData {
@@ -2421,4 +2434,21 @@ input.cropit-image-zoom-input {
 
 #userDetailsEdit .media {
 	margin-top: 10px;
+}
+
+.uncheck-label-chart {
+	font-style: normal;
+	color: #A2A2A2;
+}
+
+.blank-date-label {
+	color: #A2A2A2;
+}
+
+#plot-here-msg {
+	border: 2px solid #7F7C7C;
+	height: 95%;
+	width: 93%;
+	margin: 0px 0px 7px 11px;
+	padding: 50% 0px 50% 0px;
 }
