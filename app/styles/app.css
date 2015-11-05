@@ -1904,7 +1904,7 @@ and (max-device-height: 568px) {
 	margin-right: 10px;
 }
 
-.tagList .fa-circle-o {
+.tagList .fa-square-o {
 	color: #9d9d9d;
 }
 
@@ -1913,7 +1913,7 @@ and (max-device-height: 568px) {
 	font-size: 20px;
 }
 
-.tagList .fa-circle, .tagList .fa-circle-o {
+.tagList .fa-check-square, .tagList .fa-square-o {
 	margin-top: -3px;
 }
 
@@ -1946,9 +1946,11 @@ and (max-device-height: 568px) {
 	border: none;
 }
 
-.tag-search-input:focus {
+*:focus {
 	outline: none;
 	outline-width: 0;
+	box-shadow: none;
+	-webkit-box-shadow: none;
 }
 
 .tag-search-input::-webkit-input-placeholder {

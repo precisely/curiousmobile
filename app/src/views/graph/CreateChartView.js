@@ -77,7 +77,11 @@ define(function(require, exports, module) {
 			if (_.contains(event.srcElement.classList, 'tag-search-input')) {
 				if (event.which != 13) {
 					var searchTerm = document.getElementsByClassName('tag-search-input')[0].value;
-					_renderTagsList.call(this, Tags.eachMatchingTags(searchTerm));
+					if (searchTerm === '') {
+						_renderTagsList.call(this, App.tagListWidget.list.listItems.list);
+					} else {
+						_renderTagsList.call(this, Tags.eachMatchingTags(searchTerm));
+					}
 				}
 			}
 		}.bind(this));
@@ -104,12 +108,8 @@ define(function(require, exports, module) {
 		selectionLabelSurface.on('click', function(e) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				if (_.contains(e.srcElement.classList, 'uncheck-label-chart')) {
-					_.each(this.selectedTags, function(tag) {
-						var checkIcon = document.getElementById('selection' + tag.id);
-						checkIcon.classList.add('fa-circle-o');
-						checkIcon.classList.remove('fa-circle');
-					}.bind(this));
-					this.selectedTags = [];
+					this.selectedTags.splice(0, this.selectedTags.length);
+					this.init();
 				}
 			}
 		}.bind(this));
@@ -230,17 +230,17 @@ define(function(require, exports, module) {
 	function _renderTagsList(tagsList) {
 		this.tagsSurfaceList = [];
 		_.each(tagsList, function(tag) {
-			var circleIcon = 'fa-circle-o';
+			var squareIcon = 'fa-square-o';
 			_.each(this.selectedTags, function(tagItem) {
 				if (tagItem.id === tag.id) {
-					circleIcon = 'fa-circle';
+					squareIcon = 'fa-check-square';
 					return;
 				}
 			});
 			var tagSurface = new Surface({
 				size: [undefined, 50],
 				content: '<div data-value="' + tag.id + '" class="tagList"><i class="fa fa-tag"></i><p>' + tag.description +
-					'</p><i class="pull-right fa ' + circleIcon + ' fa-2x" id="selection' + tag.id + '"></i></div>'
+					'</p><i class="pull-right fa ' + squareIcon + ' fa-2x" id="selection' + tag.id + '"></i></div>'
 			});
 
 			tagSurface.on('click', function(event) {
@@ -258,12 +258,12 @@ define(function(require, exports, module) {
 						u.showAlert('Can not select more than 3 tags');
 					} else if (indexes.length > 0) {
 						this.selectedTags.splice(indexes[0], 1);
-						checkIconClassList.remove('fa-circle');
-						checkIconClassList.add('fa-circle-o');
+						checkIconClassList.remove('fa-check-square');
+						checkIconClassList.add('fa-square-o');
 					} else {
 						this.selectedTags.push(tag);
-						checkIconClassList.remove('fa-circle-o');
-						checkIconClassList.add('fa-circle');
+						checkIconClassList.remove('fa-square-o');
+						checkIconClassList.add('fa-check-square');
 					}
 				}
 			}.bind(this));
