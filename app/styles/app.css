@@ -756,6 +756,8 @@ button.close {
 	height: 50px;
 	border: 1px solid #FC3F28;
 	color: #FC3F28;
+	width: 100%;
+	-webkit-appearance: initial;
 }
 
 .not-loggedin {

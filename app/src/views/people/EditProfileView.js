@@ -170,23 +170,23 @@ define(function(require, exports, module, store) {
 						this.editPeopleSurface = editPeopleSurface;
 						this.showProfileUpdateForm();
 					} else if (_.contains(classList, 'link-withings')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/registerwithings?mobileSessionId=' + u.getMobileSessionId(), '_system');
+						cordova.InAppBrowser.open(App.serverUrl + '/home/registerwithings?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
 					} else if (_.contains(classList, 'link-moves')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/registermoves?mobileSessionId=' + u.getMobileSessionId(), '_system');
+						cordova.InAppBrowser.open(App.serverUrl + '/home/registermoves?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
 					} else if (_.contains(classList, 'link-fitbit')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/registerfitbit?mobileSessionId=' + u.getMobileSessionId(), '_system');
+						cordova.InAppBrowser.open(App.serverUrl + '/home/registerfitbit?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
 					} else if (_.contains(classList, 'link-jawbone')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/registerjawbone?mobileSessionId=' + u.getMobileSessionId(), '_system');
+						cordova.InAppBrowser.open(App.serverUrl + '/home/registerjawbone?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
 					} else if (_.contains(classList, 'link-twenty3andMe')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/register23andme?mobileSessionId=' + u.getMobileSessionId(), '_system');
+						cordova.InAppBrowser.open(App.serverUrl + '/home/register23andme?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
 					} else if (_.contains(classList, 'unlink-moves')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/unregistermoves?mobileSessionId=' + u.getMobileSessionId(), '_system');
+						cordova.InAppBrowser.open(App.serverUrl + '/home/unregistermoves?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
 					} else if (_.contains(classList, 'unlink-withings')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterwithings?mobileSessionId=' + u.getMobileSessionId(), '_system');
+						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterwithings?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
 					} else if (_.contains(classList, 'unlink-fitbit')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterfitbit?mobileSessionId=' + u.getMobileSessionId(), '_system');
+						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterfitbit?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
 					} else if (_.contains(classList, 'unlink-jawbone')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterjawbone?mobileSessionId=' + u.getMobileSessionId(), '_system');
+						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterjawbone?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
 					}
 				}
 			}.bind(this));
