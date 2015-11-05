@@ -25,8 +25,8 @@ define(function(require, exports, module) {
 	};
 
 	function createCard() {
-		var prettyDate = u.prettyDate(new Date(this.user.updated));
-		this.user.updated = prettyDate;
+		var prettyDate = u.prettyDate(new Date(this.user.created));
+		this.user.created = this.user.created ? prettyDate : null;
 		this.cardSurface = new Surface({
 			size: [undefined, true],
 			content: _.template(peopleTemplate, this.user, templateSettings),

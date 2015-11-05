@@ -6,27 +6,27 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 	var User = require('models/User');
 
-	var Feed = Backbone.Model.extend({
+	var Search = Backbone.Model.extend({
 		constructor: function(argument) {
 			this.eventInput = new EventHandler();
 			Backbone.Model.apply(this, arguments);
 		},
 	});
 
-	Feed.max = 10;
+	Search.max = 10;
 
-	Feed.fetch = function(args, callback) {
+	Search.fetch = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
-			max : Feed.max,
-			offset: args.offset?args.offset:0,
-			type: args.type
+			max : Search.max,
+			offset: args.offset ? args.offset : 0,
+			q: args.searchTerm
 		});
-		u.queueJSON("loading feeds", u.makeGetUrl('indexData', 'search'), 
+		u.queueJSON("loading Searchs", u.makeGetUrl('searchAllData', 'search'),
 		u.makeGetArgs(argsToSend), function(data) {
 			if (u.checkData(data)) {
 				callback(data.listItems);
 			}
 		});
 	};
-	module.exports = Feed;
+	module.exports = Search;
 });

@@ -3,7 +3,7 @@
 		<i class="fa fa-circle fa-4x"></i>
 		<h2>{{= user.name || user.username }}</h2>
 		<button>FOLLOW</button>
-		<p>{{= user.description }}</p>
+		<p>{{= user.bio }}</p>
 	</div>
 	<div class="lower-body">
 		<div class="public-interests">
@@ -25,14 +25,14 @@
 				SPRINTS
 			</label>
 			{{ if (user.sprints.length == 0) { }}
-				<div class="media">
-					<div class="media-left">
-						<img src="content/images/sprint-icon.png" height="30" width="auto">
-					</div>
-					<div class="media-body">
-						<p>No Sprints</p>
-					</div>
+			<div class="media">
+				<div class="media-left">
+					<img src="content/images/sprint-icon.png" height="30" width="auto">
 				</div>
+				<div class="media-body">
+					<p>No Sprints</p>
+				</div>
+			</div>
 			{{ } else { }}
 			{{ _.each(user.sprints, function(sprint) { }}
 			<div class="media">

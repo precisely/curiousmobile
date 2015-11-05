@@ -2,25 +2,27 @@
 	<div class="user-details-header">
 		<a href="#">
 			<i class="fa fa-circle"></i>
-			<span class="user-name">{{= name || username }}</span>
+			<span class="user-name">{{= name }}</span>
 		</a>
 		<button class="follow">FOLLOW</button>
 	</div>
 	<div class="user-details-content">
 		<span>Interest Tags:</span>
-		<span class="label-value">{{= interestTags.join(", ") }}</span>
+		<span class="label-value">{{= (interestTagsString == '') ? 'No Tags' : interestTagsString }}</span>
 	</div>
-	<div class="user-details-content">
+	<!--<div class="user-details-content">
 		<span>Public Sprints:</span>
 		<span class="label-value">
-			{{ _.each(sprints, function(sprint, index) { }}
+			&lt;!&ndash; Using an empty list and keeping the code for now. Can be removed if user's sprints “user.sprints”
+				 are not going to be used in the future. &ndash;&gt;
+			{{ _.each([], function(sprint, index) { }}
 				{{= sprint.name }}
 				{{ if (index < sprints.length - 1) { print(', '); } }}
 			{{ }) }}
 		</span>
-	</div>
+	</div>-->
 	<div class="user-details-content">
 		<span>Start Date:</span>
-		<span class="label-value">{{= updated }}</span>
+		<span class="label-value">{{= created }}</span>
 	</div>
 </div>

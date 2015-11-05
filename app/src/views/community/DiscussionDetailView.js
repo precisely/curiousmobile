@@ -21,7 +21,7 @@ define(function(require, exports, module) {
 	function DiscussionDetailView() {
 		BaseView.apply(this, arguments);
 		this.parentPage = 'FeedView';
-		this.setHeaderLabel('FEED');
+		this.setHeaderLabel('SOCIAL');
 
 		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
