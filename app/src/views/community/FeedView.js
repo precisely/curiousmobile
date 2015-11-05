@@ -25,6 +25,7 @@ define(function(require, exports, module) {
 
 	function FeedView(showSearchView) {
 		BaseView.apply(this, arguments);
+		console.log('FeedView Constructor');
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.Y,
 		});
@@ -78,7 +79,7 @@ define(function(require, exports, module) {
 					max: this.max
 				}
 
-				if (this.constructor.name === 'FeedView') {
+				if (_.contains(['FeedView', 'SprintListView'], this.constructor.name)) {
 					this.fetchFeedItems(this.currentPill, args);
 				} else {
 					this.fetchSearchResults(args);
@@ -135,6 +136,7 @@ define(function(require, exports, module) {
 		navPills.push(this.createPillsSurface('ALL', true));
 		navPills.push(this.createPillsSurface('PEOPLE'));
 		navPills.push(this.createPillsSurface('DISCUSSIONS'));
+		navPills.push(this.createPillsSurface('OWNED'));
 
 		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
 		this.fetchFeedItems(this.currentPill || 'ALL');
@@ -152,13 +154,15 @@ define(function(require, exports, module) {
 		});
 
 		pillSurface.on('click', function(e) {
-			this.deck = [];
-			this.initScrollView();
-			this.fetchFeedItems(pillFor);
-			var previousActivePill = document.getElementsByClassName('active-pill');
-			previousActivePill[0].classList.remove('active-pill');
-			var pillElement = document.getElementById(pillFor + '-pill');
-			pillElement.classList.add('active-pill');
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				this.deck = [];
+				this.initScrollView();
+				this.fetchFeedItems(pillFor);
+				var previousActivePill = document.getElementsByClassName('active-pill');
+				previousActivePill[0].classList.remove('active-pill');
+				var pillElement = document.getElementById(pillFor + '-pill');
+				pillElement.classList.add('active-pill');
+			}
 		}.bind(this));
 
 		pillSurface.pipe(this.pillsScrollView);
@@ -223,6 +227,8 @@ define(function(require, exports, module) {
 		} else if (lable === 'DISCUSSIONS') {
 			this.setRightIcon(this.pencilSurface);
 			Discussion.fetch(params, this.addListItemsToScrollView.bind(this));
+		} else if (lable === 'OWNED') {
+			Discussion.fetchOwned(params, this.addListItemsToScrollView.bind(this));
 		}
 	};
 
@@ -250,8 +256,6 @@ define(function(require, exports, module) {
 				peopleCardView.setScrollView(this.scrollView);
 			}
 		}.bind(this));
-
-		//this.add(Scrollview);
 	}
 
 	FeedView.prototype.refresh = function() {

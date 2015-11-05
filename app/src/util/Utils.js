@@ -209,28 +209,28 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		}
 
 		Utils.queueJSON = function(description, url, args, successCallback, failCallback, delay, post, background) {
-			u.queueJSONAll(description, url, args, successCallback, failCallback, delay, post ? 'POST' : 'GET', background);
+			u.queueJSONAll(description, url, args, successCallback, failCallback, delay, post ? {requestMethod: 'POST'} : {requestMethod: 'GET'}, background);
 		}
 
 		Utils.queueJSONAll = function(description, url, args, successCallback, failCallback, delay, httpArgs, background) {
 			var currentLoginSession = u._loginSessionNumber; // cache current login session
 			var stillRunning = true;
 			var alertShown = false;
-            var requestMethod = (httpArgs.requestMethod || 'get').toUpperCase();
-            var contentType;
-            var processData;
+			var requestMethod = (httpArgs.requestMethod || 'get').toUpperCase();
+			var contentType;
+			var processData;
 
-            if (httpArgs.contentType == false) {
-                contentType = httpArgs.contentType;
-            } else {
-                contentType = (requestMethod == 'PUT') ? 'application/json; charset=UTF-8' : 'application/x-www-form-urlencoded; charset=UTF-8'
-            }
+			if (httpArgs.contentType == false) {
+				contentType = httpArgs.contentType;
+			} else {
+				contentType = (requestMethod == 'PUT') ? 'application/json; charset=UTF-8' : 'application/x-www-form-urlencoded; charset=UTF-8'
+			}
 
-            if (httpArgs.processData == false) {
-                processData = httpArgs.processData;
-            } else {
-                processData = true;
-            }
+			if (httpArgs.processData == false) {
+				processData = httpArgs.processData;
+			} else {
+				processData = true;
+			}
 
 			window.setTimeout(function() {
 				if (stillRunning) {
@@ -317,8 +317,8 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				$.ajax({
 					type: requestMethod,
 					dataType: "json",
-                    contentType: contentType,
-                    processData: processData,
+					contentType: contentType,
+					processData: processData,
 					//contentType: (requestMethod == 'PUT') ? 'application/json; charset=UTF-8' : 'application/x-www-form-urlencoded; charset=UTF-8',
 					url: url,
 					data: args,

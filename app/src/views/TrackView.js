@@ -182,10 +182,10 @@ define(function(require, exports, module) {
 	};
 
 	TrackView.prototype.killOverlayContent = function () {
-		this.killInterestTagsForm();
+		this.killEntryForm();
 	};
 
-	TrackView.prototype.killInterestTagsForm = function(state) {
+	TrackView.prototype.killEntryForm = function(state) {
 		this.entryListContainer.setProperties({
 			webkitFilter: 'blur(0px)',
 			filter: 'blur(0px)'

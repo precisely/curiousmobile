@@ -46,7 +46,7 @@ define( function(require, exports, module) {
 			}
 		}.bind(this), function(error) {
 			u.showAlert('Internal server error occurred');
-		}, null, 'DELETE');
+		}, null, {requestMethod: 'DELETE'});
 	};
 
 	DiscussionPost.createComment = function(args, callback) {

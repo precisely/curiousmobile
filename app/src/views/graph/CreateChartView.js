@@ -25,6 +25,7 @@ define(function(require, exports, module) {
 
 	function CreateChartView() {
 		BaseView.apply(this, arguments);
+		console.log('CreateChartView controller');
 		this.parentPage = 'ChartView';
 		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
@@ -47,6 +48,9 @@ define(function(require, exports, module) {
 		_createPillsMenu.call(this);
 		_createSubmitBar.call(this);
 		this.selectedTags = [];
+		this.tagsScrollView = new Scrollview({
+			direction: 1
+		});
 		this.init();
 	}
 	CreateChartView.prototype = Object.create(BaseView.prototype);
@@ -73,7 +77,11 @@ define(function(require, exports, module) {
 			if (_.contains(event.srcElement.classList, 'tag-search-input')) {
 				if (event.which != 13) {
 					var searchTerm = document.getElementsByClassName('tag-search-input')[0].value;
-					_renderTagsList.call(this, Tags.eachMatchingTags(searchTerm));
+					if (searchTerm === '') {
+						_renderTagsList.call(this, App.tagListWidget.list.listItems.list);
+					} else {
+						_renderTagsList.call(this, Tags.eachMatchingTags(searchTerm));
+					}
 				}
 			}
 		}.bind(this));
@@ -85,7 +93,7 @@ define(function(require, exports, module) {
 
 		var selectionLabelSurface = new Surface({
 			size: [undefined, 35],
-			content: 'Select up to 3 tags to graph',
+			content: 'Select up to 3 tags to graph<span class="pull-right uncheck-label-chart">UNCHECK ALL</span>',
 			properties: {
 				padding: '8px 15px',
 				color: '#cc7299',
@@ -96,13 +104,22 @@ define(function(require, exports, module) {
 				backgroundColor: '#fff'
 			}
 		});
+
+		selectionLabelSurface.on('click', function(e) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				if (_.contains(e.srcElement.classList, 'uncheck-label-chart')) {
+					this.selectedTags.splice(0, this.selectedTags.length);
+					this.init();
+				}
+			}
+		}.bind(this));
 		this.add(new Modifier({transform: Transform.translate(0, 140, App.zIndex.readView + 1)})).add(selectionLabelSurface);
 	}
 
 	function _createPillsMenu() {
 		var pillsMod = new StateModifier({
 			origin: [0.5, 0.5],
-			transform: Transform.translate(App.width / 2 + 20, 30, App.zIndex.header + 1)
+			transform: Transform.translate(App.width / 2 + 15, 30, App.zIndex.header + 1)
 		});
 		this.add(pillsMod).add(_createPills.call(this));
 	}
@@ -111,8 +128,7 @@ define(function(require, exports, module) {
 		var pillSurface = new Surface({
 			content: '<div class="btn-group tag-filters" role="group">' +
 				'<button type="button" class="btn btn-secondary" id="most-used-pill">Most Used</button>' +
-				'<button type="button" class="btn btn-secondary" id="a-z-pill">A-Z</button>' +
-				'<button type="button" class="btn btn-secondary" id="uncheck-all-pill">Uncheck All</button></div>',
+				'<button type="button" class="btn btn-secondary active" id="a-z-pill">A-Z</button>',
 			size: [true, true],
 			properties: {
 				backgroundColor: '#efefef',
@@ -123,15 +139,10 @@ define(function(require, exports, module) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				if (e.srcElement.id === 'a-z-pill') {
 					var tagList = Tags.sortTags(App.tagListWidget.list.listItems.list, this.listAscending);
+					document.getElementById('most-used-pill').classList.remove('active');
+					e.srcElement.classList.add('active');
 					_renderTagsList.call(this, tagList);
 					this.listAscending = !this.listAscending;
-				} else if (e.srcElement.id === 'uncheck-all-pill') {
-					_.each(this.selectedTags, function(tag) {
-						var checkIcon = document.getElementById('selection' + tag.id);
-						checkIcon.classList.add('fa-circle-o');
-						checkIcon.classList.remove('fa-circle');
-					});
-					this.selectedTags = [];
 				}
 			}
 		}.bind(this));
@@ -160,7 +171,7 @@ define(function(require, exports, module) {
 		var plotButtonProperties = {
 			backgroundColor: 'transparent',
 			color: '#fff',
-			padding: '10px 5px',
+			padding: App.width > 320  ? '10px 5px' : '10px 3px',
 			border: '1px solid #fff',
 			textAlign: 'center'
 		};
@@ -172,7 +183,7 @@ define(function(require, exports, module) {
 		});
 
 		var createAreaChartSurface = new Surface({
-			size: [100, 40],
+			size: App.width > 320 ? [100, 40] : [90, 40],
 			content: "Area Chart",
 			properties: plotButtonProperties
 		});
@@ -199,10 +210,10 @@ define(function(require, exports, module) {
 
 		this.submitFormContainer.add(labelSurface);
 		this.submitFormContainer.add(new Modifier({
-			transform: Transform.translate(110, 0, 0)
+			transform: Transform.translate(113, 0, 0)
 		})).add(createLineChartSurface);
 		this.submitFormContainer.add(new Modifier({
-			transform: Transform.translate(210, 0, 0)
+			transform: Transform.translate(214, 0, 0)
 		})).add(createAreaChartSurface);
 		var formContainerMod = new StateModifier({
 			transform: Transform.translate(0, App.height - 105, App.zIndex.readView + 1)
@@ -211,25 +222,25 @@ define(function(require, exports, module) {
 	}
 
 	CreateChartView.prototype.init = function() {
-		this.tagsScrollView = new Scrollview({
-			direction: 1
-		});
-		if (!App.tagListWidget) {
-			App.tagListWidget = initTagListWidget(_renderTagsList.bind(this));
-		} else {
-			_renderTagsList.call(this, App.tagListWidget.list.listItems.list);
-		}
-
+		App.tagListWidget = initTagListWidget(_renderTagsList.bind(this));
+		_renderTagsList.call(this, App.tagListWidget.list.listItems.list);
 		this.renderController.show((this.tagsScrollView));
 	};
 
 	function _renderTagsList(tagsList) {
 		this.tagsSurfaceList = [];
 		_.each(tagsList, function(tag) {
+			var squareIcon = 'fa-square-o';
+			_.each(this.selectedTags, function(tagItem) {
+				if (tagItem.id === tag.id) {
+					squareIcon = 'fa-check-square';
+					return;
+				}
+			});
 			var tagSurface = new Surface({
 				size: [undefined, 50],
 				content: '<div data-value="' + tag.id + '" class="tagList"><i class="fa fa-tag"></i><p>' + tag.description +
-					'</p><i class="pull-right fa fa-circle-o fa-2x" id="selection' + tag.id + '"></i></div>'
+					'</p><i class="pull-right fa ' + squareIcon + ' fa-2x" id="selection' + tag.id + '"></i></div>'
 			});
 
 			tagSurface.on('click', function(event) {
@@ -247,12 +258,12 @@ define(function(require, exports, module) {
 						u.showAlert('Can not select more than 3 tags');
 					} else if (indexes.length > 0) {
 						this.selectedTags.splice(indexes[0], 1);
-						checkIconClassList.remove('fa-circle');
-						checkIconClassList.add('fa-circle-o');
+						checkIconClassList.remove('fa-check-square');
+						checkIconClassList.add('fa-square-o');
 					} else {
 						this.selectedTags.push(tag);
-						checkIconClassList.remove('fa-circle-o');
-						checkIconClassList.add('fa-circle');
+						checkIconClassList.remove('fa-square-o');
+						checkIconClassList.add('fa-check-square');
 					}
 				}
 			}.bind(this));
@@ -264,7 +275,11 @@ define(function(require, exports, module) {
 	}
 
 	CreateChartView.prototype.preShow = function(state) {
+		if (state && state.selectedTags) {
+			this.selectedTags = state.selectedTags.slice(0);
+		}
 		this.hideSearchIcon();
+		this.init();
 		return true;
 	};
 

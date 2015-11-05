@@ -123,7 +123,7 @@ define(function(require, exports, module) {
 			if (tagListItem instanceof TagGroup) {
 				tagListItem.fetchAll(function () { plot.addLine(tagListItem); });
 			} else {
-				tagListItem.isContinuous = true;
+				tagListItem.isContinuous = isContinuous;
 				tagListItem.showPoints = false;
 				plot.addLine(tagListItem);
 			}

@@ -178,8 +178,8 @@ define(function(require, exports, module) {
 			}
 		}
 		this.setCurrentPage(view.constructor.name);
-		if (view.constructor.name === 'TrackView' || view.constructor.name === 'EditProfileView'
-				|| view.constructor.name === 'CreateChartView') {
+		// See main.js
+		if (_.contains(App.viewsWithoutSearchIcon, view.constructor.name)) {
 			view.hideSearchIcon();
 		} else {
 			view.showSearchIcon();

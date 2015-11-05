@@ -74,32 +74,40 @@ define(function(require, exports, module) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				this.removeSuffix();
 				this.setRemind = false;
-				this.setRepeat = true;
+				this.setRepeat = !this.setRepeat;
 				this.setPinned = false;
-				if (!this.isUpdating) {
-					this.resetRepeatModifierForm();
+				if (this.setRepeat) {
+					if (!this.isUpdating) {
+						this.resetRepeatModifierForm();
+					}
+					this.renderController.show(this.repeatModifierSurface);
+				} else {
+					this.renderController.hide();
 				}
-				this.highlightSelector(this.repeatSurface);
-				this.renderController.show(this.repeatModifierSurface);
+				this.toggleSelector(this.repeatSurface);
 			}
 		}.bind(this));
 
 		this.remindSurface.on('click', function(e) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				this.removeSuffix();
-				this.setRemind = true;
+				this.setRemind = !this.setRemind;
 				this.setRepeat = false;
 				this.setPinned = false;
-				if (!this.isUpdating) {
-					this.resetRepeatModifierForm();
-					this.renderController.show(this.repeatModifierSurface, null, function() {
-						document.getElementById('daily').checked = false;
-						document.getElementById('confirm-each-repeat').checked = true;
-					}.bind(this));
+				if (this.setRemind) {
+					if (!this.isUpdating) {
+						this.resetRepeatModifierForm();
+						this.renderController.show(this.repeatModifierSurface, null, function() {
+							document.getElementById('daily').checked = false;
+							document.getElementById('confirm-each-repeat').checked = true;
+						}.bind(this));
+					} else {
+						this.renderController.show(this.repeatModifierSurface);
+					}
 				} else {
-					this.renderController.show(this.repeatModifierSurface);
+					this.renderController.hide();
 				}
-				this.highlightSelector(this.remindSurface);
+				this.toggleSelector(this.remindSurface);
 			}
 		}.bind(this));
 
@@ -108,8 +116,8 @@ define(function(require, exports, module) {
 				this.removeSuffix();
 				this.setRemind = false;
 				this.setRepeat = false;
-				this.setPinned = true;
-				this.highlightSelector(this.pinSurface);
+				this.setPinned = !this.setPinned;
+				this.toggleSelector(this.pinSurface);
 				this.submit();
 				this.renderController.hide();
 				this.dateGridRenderController.hide();
@@ -154,7 +162,7 @@ define(function(require, exports, module) {
 			this.renderController.hide();
 			var currentListView = this.trackView.currentListView;
 			currentListView.refreshEntries(resp.entries, resp.glowEntry);
-			this.trackView.killInterestTagsForm({ entryDate: resp.glowEntry.date });
+			this.trackView.killEntryForm({ entryDate: resp.glowEntry.date });
 		}.bind(this));
 
 		this.on('update-entry', function(resp) {
@@ -173,7 +181,7 @@ define(function(require, exports, module) {
 					new: false
 				}
 			}
-			this.trackView.killInterestTagsForm(state);
+			this.trackView.killEntryForm(state);
 		}.bind(this));
 	}
 
@@ -401,19 +409,20 @@ define(function(require, exports, module) {
 				}
 				setDate(entry);
 				if (this.setRemind) {
-					this.highlightSelector(this.remindSurface);
+					this.toggleSelector(this.remindSurface);
 				} else {
-					this.highlightSelector(this.repeatSurface);
+					this.toggleSelector(this.repeatSurface);
 				}
 			}.bind(this));
 		}
 	};
 
-	EntryFormView.prototype.highlightSelector = function(selectorSurface) {
+	EntryFormView.prototype.toggleSelector = function(selectorSurface) {
+		var isHilighted = selectorSurface ? _.contains(selectorSurface.getClassList(), 'highlight-surface') : null;
 		this.pinSurface.removeClass('highlight-surface');
 		this.repeatSurface.removeClass('highlight-surface');
 		this.remindSurface.removeClass('highlight-surface');
-		if (selectorSurface) {
+		if (selectorSurface && !isHilighted) {
 			selectorSurface.addClass('highlight-surface');
 		}
 	}
@@ -529,9 +538,9 @@ define(function(require, exports, module) {
 	};
 
 	EntryFormView.prototype.submit = function(e, directlyCreateEntry) {
-		if (cordova) {
+		/*if (cordova) {
 			cordova.plugins.Keyboard.close();
-		}
+		}*/
 		var entry = null;
 		var newText;
 
@@ -578,7 +587,7 @@ define(function(require, exports, module) {
 			}
 			if (repeatEnd) {
 				newEntry.set("repeatEnd", repeatEnd);
-			} 
+			}
 			newEntry.create(function(resp) {
 				if (this.setRepeat || this.setRemind || this.setPinned) {
 					window.App.collectionCache.clear();
@@ -594,12 +603,8 @@ define(function(require, exports, module) {
 			return;
 		} else {
 			entry.setText(newText);
-			if (repeatTypeId) {
-				entry.set("repeatType", repeatTypeId);
-			}
-			if (repeatEnd) {
-				entry.set("repeatEnd", repeatEnd);
-			} 
+			entry.set("repeatType", repeatTypeId);
+			entry.set("repeatEnd", repeatEnd);
 		}
 
 		if (this.setRepeat || this.setRemind || this.setPinned) {
@@ -646,7 +651,7 @@ define(function(require, exports, module) {
 	};
 
 	EntryFormView.prototype.resetRepeatModifierForm = function() {
-		this.highlightSelector(null);
+		this.toggleSelector(null);
 		if (document.getElementById('repeat-modifier-form')) {
 			document.getElementById('repeat-modifier-form').reset();
 		}

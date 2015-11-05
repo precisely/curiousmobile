@@ -683,11 +683,11 @@ function TagGroupView(args) {
 		}
 
 		var parentTagGroup,
-				hasParentSharedGroup,
-				tagGroup = this.data,
-				isAdminOfParentTagGroup,
-				isSystemTagGroup = tagGroup.isSystemGroup,
-				parentTagGroupView = this.getParentItemView();
+		hasParentSharedGroup,
+		tagGroup = this.data,
+		isAdminOfParentTagGroup,
+		isSystemTagGroup = tagGroup.isSystemGroup,
+		parentTagGroupView = this.getParentItemView();
 
 		if (parentTagGroupView) {
 			parentTagGroup = parentTagGroupView.getData();

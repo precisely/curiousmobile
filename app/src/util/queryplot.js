@@ -1135,6 +1135,7 @@ function PlotLine(p) {
 			freqDataWidth:this.freqDataWidth,parentLineName:this.parentLine?this.parentLine.name:'',flatten:this.flatten,smoothData:this.smoothLine&&this.smoothDataWidth>0?true:false,
 			freqData:this.freqLine&&this.freqDataWidth>0?true:false,
 			min:this.minSeriesVal,max:this.maxSeriesVal,unitGroupId:this.unitGroupId,valueScale:this.valueScale};
+
 		if (this.minRange != undefined) data.minRange = this.minRange;
 		if (this.maxRange != undefined) data.maxRange = this.maxRange;
 		return data;
@@ -1342,7 +1343,7 @@ function PlotLine(p) {
 		var plotLine = this;
 		var tagsDebug = this.getTags();
 
-		queueJSON("loading graph data", makeGetUrl(method), getCSRFPreventionObject(method + "CSRF", {tags: $.toJSON(this.getTags()),
+		queuePostJSON("loading graph data", makeGetUrl(method), getCSRFPreventionObject(method + "CSRF", {tags: $.toJSON(this.getTags()),
 					startDate:startDate == null ? "" : startDate.toUTCString(),
 					endDate:endDate == null ? "" : endDate.toUTCString(),
 					timeZoneName:timeZoneName }),
@@ -1372,6 +1373,11 @@ function PlotLine(p) {
 									// been loaded yet
 
 		if (parentEntries.length < 1) return; // don't calculate if parent line has no data
+
+		if (parentEntries.length == 1) {
+			this.entries = parentEntries;
+			return;
+		}
 
 		var data = [];
 

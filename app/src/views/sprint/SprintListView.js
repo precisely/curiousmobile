@@ -21,20 +21,18 @@ define(function(require, exports, module) {
 	var DiscussionDetailView = require("views/community/DiscussionDetailView");
 	var SprintFormView = require("views/sprint/SprintFormView");
 	var CreatePostView = require('views/community/CreatePostView');
-	var SprintCardView = require('views/community/card/SprintCardView')
-	var PeopleCardView = require('views/community/card/PeopleCardView')
-	var DiscussionCardView = require('views/community/card/DiscussionCardView')
+	var SprintCardView = require('views/community/card/SprintCardView');
+	var PeopleCardView = require('views/community/card/PeopleCardView');
+	var DiscussionCardView = require('views/community/card/DiscussionCardView');
+	var FeedView = require('views/community/FeedView');
 
 	function SprintListView() {
-		BaseView.apply(this, arguments);
-		this.scrollView = new Scrollview({
-			direction: Utility.Direction.Y,
-		});
+		FeedView.apply(this, arguments);
 		this.max = 10;
-		init.call(this);
+		initSprintView.call(this);
 	}
 
-	SprintListView.prototype = Object.create(BaseView.prototype);
+	SprintListView.prototype = Object.create(FeedView.prototype);
 	SprintListView.prototype.constructor = SprintListView;
 
 	SprintListView.DEFAULT_OPTIONS = {
@@ -44,21 +42,12 @@ define(function(require, exports, module) {
 		activeMenu: 'sprint'
 	};
 
-	function init() {
-		this.deck = [];
+	function initSprintView() {
 		this.pencilSurface = new ImageSurface({
 			size: [44, 64],
 			content: 'content/images/edit-pencil.png',
 		});
 
-		this.backgroundSurface = new Surface({
-			size: [undefined, undefined],
-			properties: {
-				backgroundColor: '#efefef'
-			}
-		});
-
-		this.setBody(this.backgroundSurface);
 		this.setRightIcon(this.pencilSurface);
 		this.setHeaderLabel('SPRINTS');
 
@@ -71,36 +60,33 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.scrollView.sync.on('start', function() {
-			if (this.itemsAvailable) {
-				this.loadMoreItems = true;
-			}
-		}.bind(this));
-
-		this.scrollView._eventOutput.on('onEdge', function() {
-			var currentIndex = this.scrollView.getCurrentIndex();
-
-			// Check if end of the page is reached
-			if ((this.scrollView._scroller._onEdge != -1) && this.loadMoreItems && this.itemsAvailable) {
-				this.loadMoreItems = false;
-				this.offset += this.max;
-				var args = {
-					offset: this.offset,
-					max: this.max
-				}
-
-				this.fetchSprints(args);
-			}
-		}.bind(this));
-
-		this.renderController = new RenderController();
-		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
-		var mod = new StateModifier({
-			size: [undefined, App.height - 130],
-			transform: Transform.translate(0, 70, App.zIndex.feedItem)
+		this.pillsScrollViewContainerModifier = new StateModifier({
+			origin: [0, 0],
+			align: [0, 0],
+			transform: Transform.translate(0, 64, App.zIndex.header)
 		});
-		this.add(mod).add(this.renderController);
-		this.initScrollView();
+
+		var pillsScrollViewContainer = new ContainerSurface({
+			size: [undefined, 50],
+			properties: {
+				backgroundColor: '#efefef',
+				textAlign: 'center'
+			}
+		});
+		this.add(this.pillsScrollViewContainerModifier).add(pillsScrollViewContainer);
+
+		this.pillsScrollViewModifier = new StateModifier({
+			origin: [0.5, 0],
+			align: [0.5, 0]
+		});
+		var navPills = [];
+		this.pillsScrollView.sequenceFrom(navPills);
+
+		// Adding navigation pills below header
+		navPills.push(this.createPillsSurface('ALL', true));
+		navPills.push(this.createPillsSurface('OWNED'));
+
+		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
 		this.fetchSprints();
 	};
 
@@ -119,6 +105,19 @@ define(function(require, exports, module) {
 	SprintListView.prototype.getCurrentState = function() {
 		var state = {};
 		return state;
+	};
+
+	SprintListView.prototype.fetchFeedItems = function(lable, args) {
+		this.currentPill = lable;
+		var params = args || {
+					offset: 0,
+					max: this.max
+				};
+		if (lable === 'ALL') {
+			Sprint.fetch(params, addListItemsToScrollView.bind(this));
+		} else if (lable === 'OWNED') {
+			Sprint.fetchOwned(params, this.addListItemsToScrollView.bind(this));
+		}
 	};
 
 	SprintListView.prototype.submit = function() {
@@ -158,16 +157,6 @@ define(function(require, exports, module) {
 	SprintListView.prototype.refresh = function() {
 		this.initScrollView();
 		this.fetchSprints();
-	};
-
-	SprintListView.prototype.initScrollView = function() {
-
-		this.deck = [];
-		this.group = '';
-		this.loadMoreItems = true;
-		this.itemsAvailable = true;
-		this.offset = 0;
-		this.scrollView.setPosition(0);
 	};
 
 	SprintListView.prototype.getScrollPosition = function() {
