@@ -2467,3 +2467,8 @@ input.cropit-image-zoom-input {
 .user-email-label {
 	margin-top: 0px;
 }
+
+.edit-image .fa-circle {
+	font-size: 110px;
+	vertical-align: middle;
+}

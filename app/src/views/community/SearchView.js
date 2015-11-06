@@ -106,16 +106,18 @@ define(function(require, exports, module) {
 			max: this.max
 		};
 		args.searchTerm = searchTerm || this.originalSearchTerm;
-		if (lable === 'ALL') {
-			Search.fetch(args, this.addListItemsToScrollView.bind(this));
-		} else if (lable === 'PEOPLE') {
-			Search.fetchPeople(args, this.addListItemsToScrollView.bind(this));
-		} else if (lable === 'DISCUSSIONS') {
-			Search.fetchDiscussions(args, this.addListItemsToScrollView.bind(this));
-		} else if (lable === 'SPRINTS') {
-			Search.fetchSprints(args, this.addListItemsToScrollView.bind(this));
-		} else if (lable === 'OWNED') {
-			Search.fetchOwned(args, this.addListItemsToScrollView.bind(this));
+		if (args.searchTerm) {
+			if (lable === 'ALL') {
+				Search.fetch(args, this.addListItemsToScrollView.bind(this));
+			} else if (lable === 'PEOPLE') {
+				Search.fetchPeople(args, this.addListItemsToScrollView.bind(this));
+			} else if (lable === 'DISCUSSIONS') {
+				Search.fetchDiscussions(args, this.addListItemsToScrollView.bind(this));
+			} else if (lable === 'SPRINTS') {
+				Search.fetchSprints(args, this.addListItemsToScrollView.bind(this));
+			} else if (lable === 'OWNED') {
+				Search.fetchOwned(args, this.addListItemsToScrollView.bind(this));
+			}
 		}
 	};
 
