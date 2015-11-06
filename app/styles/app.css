@@ -924,6 +924,7 @@ button.close {
 	width: 24px;
 	height: 24px;
 	display: inline-block;
+	padding-top: 1px;
 	font-size: 13px;
 	margin-right: 7px;
 }
@@ -1489,6 +1490,10 @@ button.close {
 	font-size: 10px;
 }
 
+.sprint-default-label {
+	padding: 7px 10px 5px 10px;
+}
+
 .sprint-details h2 {
 	font-size: 25px;
 	color: #5d5d5d;
@@ -1951,6 +1956,7 @@ and (max-device-height: 568px) {
 	outline-width: 0;
 	box-shadow: none;
 	-webkit-box-shadow: none;
+	border: 0px;
 }
 
 .tag-search-input::-webkit-input-placeholder {
@@ -1990,6 +1996,8 @@ and (max-device-height: 568px) {
 	float: right;
 	color: #cc7299;
 	font-weight: 600;
+	margin-right: 15px;
+	font-size: 20px;
 }
 
 .profile-detail h1 {
@@ -2031,7 +2039,6 @@ and (max-device-height: 568px) {
 }
 
 .edit-image, .edit-body {
-	margin-left: 21px;
 }
 
 .edit-image p {
@@ -2061,15 +2068,15 @@ and (max-device-height: 568px) {
 	margin-top: 23px;
 	margin-right: 76px;
 	height: 35px;
-	width: 114px;
 	border-color: #ffffff;
 	font-size: 14px;
 	display: inline-block;
 	font-weight: 500;
 	border-radius: 2px;
+	padding: 0px 10px;
 }
 
-.edit-body input[type="text"], input[type="password"] {
+.edit-body input[type="text"], .edit-body input[type="password"] {
 	background-color: transparent;
 	color: #ffffff;
 	font-size: 14px;
@@ -2078,7 +2085,7 @@ and (max-device-height: 568px) {
 	border-style: solid;
 	-webkit-appearance: initial;
 	border-radius: 2px;
-	width: 284px;
+	width: 100%;
 	height: 40px;
 	padding: 18px 14px 18px 14px;
 	font-weight: 500;
@@ -2095,7 +2102,7 @@ and (max-device-height: 568px) {
 	border-radius: 2px;
 	padding: 18px 14px 18px 14px;
 	font-weight: 500;
-	width: 284px;
+	width: 100%;
 	height: 102px;
 	resize: none;
 	margin-bottom: -6px;
@@ -2130,7 +2137,7 @@ and (max-device-height: 568px) {
 	border-width: 1px;
 	border-style: solid;
 	border-radius: 2px;
-	width: 284px;
+	width: 100%;
 	height: 40px;
 	padding: 9px 11px 20px 13px;
 	font-weight: 500;
@@ -2210,22 +2217,22 @@ and (max-device-height: 568px) {
 
 .radio-public-private .name-radio-public {
 	left: 38px;
-	top: 235px;
+	top: 231px;
 }
 
 .radio-public-private .name-radio-private {
 	left: 115px;
-	top: 235px;
+	top: 231px;
 }
 
 .radio-public-private .bio-radio-public {
 	left: 38px;
-	top: 408px;
+	top: 399px;
 }
 
 .radio-public-private .bio-radio-private {
 	left: 115px;
-	top: 408px;
+	top: 399px;
 }
 
 .radio-public-private label {
@@ -2238,26 +2245,25 @@ and (max-device-height: 568px) {
 
 .radio-public-private .name-public-label {
 	left: 14px;
-	top: 235px;
+	top: 233px;
 }
 
 .radio-public-private .name-private-label {
 	left: 83px;
-	top: 235px;
+	top: 233px;
 }
 
 .radio-public-private .bio-public-label {
 	left: 14px;
-	top: 422px;
+	top: 416px;
 }
 
 .radio-public-private .bio-private-label {
 	left: 82px;
-	top: 422px;
+	top: 416px;
 }
 
 .edit-interests .new-tag {
-	width: 130px;
 	height: 28px;
 	margin-top: 16px;
 	background: #f15747;
@@ -2434,6 +2440,7 @@ input.cropit-image-zoom-input {
 
 #search-input:focus {
 	outline: 0;
+	border: 0px;
 }
 
 #userDetailsEdit .media {
@@ -2451,8 +2458,6 @@ input.cropit-image-zoom-input {
 
 #plot-here-msg {
 	border: 2px solid #7F7C7C;
-	height: 95%;
-	width: 93%;
-	margin: 0px 0px 7px 11px;
-	padding: 50% 0px 50% 0px;
+	margin: 7px 10px;
+	padding: 47% 0px 47% 0px;
 }

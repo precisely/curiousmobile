@@ -42,7 +42,7 @@ define(function(require, exports, module) {
 		formContainerSurface.on('keyup', function(e) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				if (e.srcElement && e.which == 13) {
-
+					this.submit();
 				}
 			}
 		});
@@ -53,7 +53,7 @@ define(function(require, exports, module) {
 	AddInterestTagView.prototype.submit = function() {
 		User.addInterestTags({tagName: document.getElementById('tag-name').value}, function() {
 			this.parentView.killOverlayContent();
-			this.parentView.refresh();
+			this.parentView.showUserDetailsForm();
 		}.bind(this));
 	};
 

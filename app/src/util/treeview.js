@@ -320,7 +320,7 @@ function TreeItemList(options) {
 	CallbackObject.call(this);
 
 	this.options = $.extend({
-		url:"/tag/listTagsAndTagGroupsData?callback=?",
+		url: App.serverUrl + "/tag/listTagsAndTagGroupsData?callback=?",
 		sort:'alpha',
 		unique:true,
 		equalsClosure:function(a,b) { return a.uniqueId == b.uniqueId; }
