@@ -56,11 +56,11 @@ define(function(require, exports, module) {
 			return false;
 		}
 		this.hash = state.hash;
-		this.refresh();
+		this.showProfile();
 		return true;
 	};
 
-	PeopleDetailView.prototype.refresh = function() {
+	PeopleDetailView.prototype.showProfile = function() {
 		User.show(this.hash, function(peopleDetails) {
 			this.setHeaderLabel(peopleDetails.user.name);
 			var profileTemplate = PeopleDetailsTemplate;

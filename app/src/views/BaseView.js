@@ -102,10 +102,12 @@ define(function(require, exports, module) {
 		this.layout.header.add(leftModifier).add(this.headerLeftIconController);
 		this.layout.header.add(rightModifier).add(this.headerRightIconController);
 		this.leftSurface = new Surface({
-			content: '<img src="content/images/left.png" />',
+			content: '<i class="fa fa-arrow-left"></i>',
 			size: [61, 64],
 			properties: {
-				padding: '20px'
+				padding: '20px',
+				color: '#7b7b7b',
+				fontSize: '22px'
 			}
 		});
 		this.leftSurface.on('click', function(e) {
@@ -137,14 +139,13 @@ define(function(require, exports, module) {
 
 	BaseView.prototype.createRightIconView = function() {
 		this.searchOptionSurface = new Surface({
-			size: [50, 50],
+			size: [45, 50],
 			content: '<i class="fa fa-search"></i>',
 			properties: {
 				color: '#7b7b7b',
 				textAlign: 'center',
 				paddingTop: '15px',
-				marginRight: '5px',
-				fontSize: '24px'
+				fontSize: '22px'
 			}
 		});
 
@@ -190,6 +191,8 @@ define(function(require, exports, module) {
 					App.pageView.changePage('SprintListView');
 				} else if (e.data == 'ChartView') {
 					App.pageView.changePage('ChartView');
+				} else if (e.data == 'CuriositiesListView') {
+					App.pageView.changePage('CuriositiesListView');
 				}
 			}
 		}.bind(this));

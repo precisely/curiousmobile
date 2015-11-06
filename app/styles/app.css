@@ -1599,6 +1599,7 @@ button.close {
 	margin-top: 10px;
 	width: 90px;
 	height: 90px;
+	border: 2px solid #fff;
 }
 
 .profile-detail .upper-body {
@@ -1638,6 +1639,10 @@ button.close {
 	padding-top: 5px;
 	text-align: center;
 	margin-bottom: 25px;
+}
+
+.user-profile .media-body {
+	padding-left: 0px;
 }
 
 .public-interests, .public-groups, .public-sprints {
@@ -2064,9 +2069,8 @@ and (max-device-height: 568px) {
 
 .edit-image button {
 	color: #ffffff;
-	float: right;
 	margin-top: 23px;
-	margin-right: 76px;
+	margin-left: 20px;
 	height: 35px;
 	border-color: #ffffff;
 	font-size: 14px;
@@ -2145,6 +2149,7 @@ and (max-device-height: 568px) {
 	border-top-left-radius: 0px;
 	border-top-right-radius: 0px;
 	border-top-width: 0px;
+	position: relative;
 }
 
 .edit-email-notifications .media input[type="radio"] {
@@ -2202,10 +2207,6 @@ and (max-device-height: 568px) {
 	border-style: solid;
 }
 
-.edit-bio .radio-public-private input[type="radio"]:checked, .edit-bio .radio-public-private input[type="radio"] {
-	margin-top: 15px;
-}
-
 .radio-public-private input[type="radio"]:checked {
 	height: 16px;
 	width: 16px;
@@ -2216,23 +2217,23 @@ and (max-device-height: 568px) {
 }
 
 .radio-public-private .name-radio-public {
-	left: 38px;
-	top: 231px;
+	left: 25px;
+	top: 12px;
 }
 
 .radio-public-private .name-radio-private {
-	left: 115px;
-	top: 231px;
+	left: 105px;
+	top: 12px;
 }
 
 .radio-public-private .bio-radio-public {
-	left: 38px;
-	top: 399px;
+	left: 25px;
+	top: 12px;
 }
 
 .radio-public-private .bio-radio-private {
-	left: 115px;
-	top: 399px;
+	left: 104px;
+	top: 12px;
 }
 
 .radio-public-private label {
@@ -2244,23 +2245,23 @@ and (max-device-height: 568px) {
 }
 
 .radio-public-private .name-public-label {
-	left: 14px;
-	top: 233px;
+	left: 0px;
+	top: 12px;
 }
 
 .radio-public-private .name-private-label {
-	left: 83px;
-	top: 233px;
+	left: 73px;
+	top: 12px;
 }
 
 .radio-public-private .bio-public-label {
-	left: 14px;
-	top: 416px;
+	left: 0px;
+	top: 12px;
 }
 
 .radio-public-private .bio-private-label {
-	left: 82px;
-	top: 416px;
+	left: 73px;
+	top: 12px;
 }
 
 .edit-interests .new-tag {
@@ -2460,4 +2461,8 @@ input.cropit-image-zoom-input {
 	border: 2px solid #7F7C7C;
 	margin: 7px 10px;
 	padding: 47% 0px 47% 0px;
+}
+
+.user-email-label {
+	margin-top: 0px;
 }
