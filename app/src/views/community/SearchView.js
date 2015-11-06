@@ -32,7 +32,7 @@ define(function(require, exports, module) {
 		this.searchBar = new Surface({
 			size: [undefined, 65],
 			content: '<div class="search-bar"><i class="fa fa-search fa-2x"></i><input type="text" id="search-input" ' +
-					'placeholder="Type your search here"><span class="close-background  pull-right"><i class="fa fa-times"></i></span></div>',
+				'placeholder="Type your search here"><span class="close-background  pull-right"><i class="fa fa-times"></i></span></div>',
 			properties: {
 
 			}
@@ -47,10 +47,9 @@ define(function(require, exports, module) {
 						this.deck.splice(0, this.deck.length);
 						this.fetchFeedItems(this.currentPill);
 						this.originalSearchTerm = searchTerm;
-					} else if (!searchTerm) {
-						if (cordova) {
-							cordova.plugins.Keyboard.close();
-						}
+					}
+					if (cordova) {
+						cordova.plugins.Keyboard.close();
 					}
 				}
 			}.bind(this);
@@ -61,7 +60,9 @@ define(function(require, exports, module) {
 			}.bind(this);
 		}.bind(this));
 
-		this.add(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.header)})).add(this.searchBar);
+		this.add(new StateModifier({
+			transform: Transform.translate(0, 0, App.zIndex.header)
+		})).add(this.searchBar);
 	}
 
 	SearchView.prototype.createSearchPills = function() {
@@ -101,9 +102,9 @@ define(function(require, exports, module) {
 		this.currentPill = lable;
 		var searchTerm = document.getElementById('search-input').value;
 		var args = args || {
-					offset: 0,
-					max: this.max
-				};
+			offset: 0,
+			max: this.max
+		};
 		args.searchTerm = searchTerm || this.originalSearchTerm;
 		if (lable === 'ALL') {
 			Search.fetch(args, this.addListItemsToScrollView.bind(this));
@@ -134,4 +135,3 @@ define(function(require, exports, module) {
 	App.pages['SearchView'] = SearchView;
 	module.exports = SearchView;
 });
-
