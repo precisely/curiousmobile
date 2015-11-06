@@ -42,7 +42,8 @@ define(function(require, exports, module) {
 				if (_.contains(classList, 'follow')) {
 				} else {
 					var state = {
-						hash: this.user.hash
+						hash: this.user.hash,
+						parentPage: App.pageView.getCurrentPage()
 					};
 					App.pageView.changePage('PeopleDetailView', state);
 				}
