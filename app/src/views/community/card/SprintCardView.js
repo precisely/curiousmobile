@@ -44,13 +44,15 @@ define(function(require, exports, module) {
 				} else if (_.contains(classList, 'details')) {
 					var state = {
 						hash: this.sprint.hash,
-						name: this.sprint.name
+						name: this.sprint.name,
+						parentPage: App.pageView.getCurrentPage()
 					};
 					App.pageView.changePage('SprintDetailView', state);
 				} else if (_.contains(classList, 'activity')) {
 					var state = {
 						hash: this.sprint.hash,
-						name: this.sprint.name
+						name: this.sprint.name,
+						parentPage: App.pageView.getCurrentPage()
 					};
 					App.pageView.changePage('SprintActivityView', state);
 				}

@@ -233,9 +233,22 @@ define(function(require, exports, module) {
 	};
 
 	FeedView.prototype.addListItemsToScrollView = function(listItems) {
-		if (!listItems) {
+		if (!listItems || listItems.length <= 0) {
 			this.itemsAvailable = false;
 			console.log('no more items available');
+			if (this.offset == 0) {
+				var notFountSurface = new Surface({
+					size: [undefined, true],
+					content: 'No results found',
+					properties: {
+						backgroundColor: 'transparent',
+						color: '#5d5d5d',
+						padding: '10px'
+					}
+				});
+				this.deck.push(notFountSurface);
+				notFountSurface.pipe(this.scrollView);
+			}
 			return;
 		}
 		listItems.forEach(function(item) {
@@ -246,7 +259,7 @@ define(function(require, exports, module) {
 				sprintCardView.setScrollView(this.scrollView);
 
 			} else if (item.type === 'dis') {
-				var discussionCardView = new DiscussionCardView(item, null, this.deck);
+				var discussionCardView = new DiscussionCardView(item, App.pageView.getCurrentPage(), this.deck);
 				this.deck.push(discussionCardView);
 				discussionCardView.setScrollView(this.scrollView);
 
