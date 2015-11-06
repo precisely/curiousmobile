@@ -77,6 +77,7 @@ define(function(require, exports, module) {
 			if (_.contains(event.srcElement.classList, 'tag-search-input')) {
 				if (event.which != 13) {
 					var searchTerm = document.getElementsByClassName('tag-search-input')[0].value;
+                    searchTerm = searchTerm.toLowerCase();
 					if (searchTerm === '') {
 						_renderTagsList.call(this, App.tagListWidget.list.listItems.list);
 					} else {
@@ -171,24 +172,18 @@ define(function(require, exports, module) {
 		var plotButtonProperties = {
 			backgroundColor: 'transparent',
 			color: '#fff',
-			padding: App.width > 320  ? '10px 5px' : '10px 3px',
+			padding: App.width > 320  ? '5px' : '5px 3px',
 			border: '1px solid #fff',
 			textAlign: 'center'
 		};
 
-		var createLineChartSurface = new Surface({
-			size: [90, 40],
-			content: "Line Chart",
+		var createChartSurface = new Surface({
+			size: [55, 30],
+			content: "Go",
 			properties: plotButtonProperties
 		});
 
-		var createAreaChartSurface = new Surface({
-			size: App.width > 320 ? [100, 40] : [90, 40],
-			content: "Area Chart",
-			properties: plotButtonProperties
-		});
-
-		createLineChartSurface.on('click', function(e) {
+		createChartSurface.on('click', function(e) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				if (!this.selectedTags || this.selectedTags.length < 1) {
 					u.showAlert('No Tags Selected to plot');
@@ -198,23 +193,10 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		createAreaChartSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				if (!this.selectedTags || this.selectedTags.length < 1) {
-					u.showAlert('No Tags Selected to plot');
-				} else {
-					App.pageView.changePage('ChartView', {tagsToPlot: this.selectedTags, areaChart: true});
-				}
-			}
-		}.bind(this));
-
 		this.submitFormContainer.add(labelSurface);
 		this.submitFormContainer.add(new Modifier({
-			transform: Transform.translate(113, 0, 0)
-		})).add(createLineChartSurface);
-		this.submitFormContainer.add(new Modifier({
-			transform: Transform.translate(214, 0, 0)
-		})).add(createAreaChartSurface);
+			transform: Transform.translate(115, 5, 0)
+		})).add(createChartSurface);
 		var formContainerMod = new StateModifier({
 			transform: Transform.translate(0, App.height - 105, App.zIndex.readView + 1)
 		});
