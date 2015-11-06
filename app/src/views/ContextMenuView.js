@@ -26,9 +26,9 @@ define(function (require, exports, module) {
 		pinnedEntry: [
 			{class: 'trigger-delete-entry', label: 'Delete Tag'},
 		],
-		chart: [{class: 'load-snapshot', label: 'Load Snapshot'},
-			{class: 'save-snapshot', label: 'Save Snapshot'},
-			{class: 'share-snapshot', label: 'Share Snapshot'},
+		chart: [{class: 'load-snapshot', label: 'Load'},
+			{class: 'save-snapshot', label: 'Save'},
+			{class: 'share-snapshot', label: 'Share'},
 			{class: 'create-chart', label: 'Create New Chart'}
 		],
 		discussion: {},
