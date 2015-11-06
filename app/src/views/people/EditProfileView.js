@@ -117,6 +117,9 @@ define(function(require, exports, module, store) {
 
 			this.editProfileContainerSurface = new ContainerSurface({
 				size: [undefined, true],
+				properties: {
+					padding: '5px 20px'
+				}
 			});
 			var editPeopleSurface = new Surface({
 				size: [undefined, true],
@@ -136,7 +139,7 @@ define(function(require, exports, module, store) {
 			});
 
 			this.setHeaderLabel('EDIT PROFILE', '#FFF');
-			this.add(new Modifier({align: [1, 0], origin: [1, 0], transform: Transform.translate(0, 0, App.zIndex.header + 1)})).add(this.saveSurface);
+			this.add(new Modifier({align: [1, 0], origin: [1, 0], transform: Transform.translate(0, 0, App.zIndex.header + 5)})).add(this.saveSurface);
 
 			this.saveSurface.on('click', function(e) {
 				if (u.isAndroid() || (e instanceof CustomEvent)) {
@@ -201,7 +204,7 @@ define(function(require, exports, module, store) {
 			_.each(peopleDetails.user.interestTags, function(tag) {
 				var tagView = new InterestTagView(tag);
 				var draggableTag = new Draggable( {
-					xRange: [-90, 0],
+					xRange: [-100, 0],
 					yRange: [0, 0],
 				});
 
@@ -212,7 +215,7 @@ define(function(require, exports, module, store) {
 			}.bind(this));
 			this.tagSequentialLayout.sequenceFrom(this.tagList);
 			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(editPeopleSurface);
-			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 1280, 0)})).add(this.tagSequentialLayout);
+			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 1260, 0)})).add(this.tagSequentialLayout);
 
 			// Calculating draggable container height according to the taglist height
 			var draggableView = new DraggableView(this.editProfileContainerSurface, true, 930 + (this.tagList.length * 50));

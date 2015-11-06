@@ -41,8 +41,11 @@ define(function(require, exports, module) {
 
 	GraphView.prototype.init = function() {
 		this.graphSurface = new Surface({
-			size: [undefined, App.height - 220],
-			content: _.template(GraphTemplate, {plotAreaId: this.plotAreaId}, templateSettings)
+			size: [undefined, App.height - 230],
+			content: _.template(GraphTemplate, {plotAreaId: this.plotAreaId}, templateSettings),
+			properties: {
+				backgroundColor: '#fff'
+			}
 		});
 
 		this.renderController.show(this.graphSurface, function() {

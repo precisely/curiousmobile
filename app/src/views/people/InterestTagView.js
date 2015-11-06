@@ -66,6 +66,10 @@ define(function(require, exports, module) {
 		this.add(entryModifier).add(this.entrySurface);
 	}
 
+	InterestTagView.prototype.select = function() {
+
+	};
+
 	InterestTagView.prototype.delete = function() {
 		User.deleteInterestTags(this.entry, function() {
 			App.pageView.getCurrentView().showUserDetailsForm();
