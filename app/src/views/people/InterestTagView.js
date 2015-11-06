@@ -66,8 +66,8 @@ define(function(require, exports, module) {
 		this.add(entryModifier).add(this.entrySurface);
 	}
 
+	//Overriding select method from EntryView
 	InterestTagView.prototype.select = function() {
-
 	};
 
 	InterestTagView.prototype.delete = function() {
