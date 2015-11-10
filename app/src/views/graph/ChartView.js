@@ -29,6 +29,7 @@ define(function(require, exports, module) {
 		BaseView.apply(this, arguments);
 		console.log('ChartView constructor');
 		App.tagListWidget = initTagListWidget();
+		this.tagsToPlot = [];
 		this.optionsSurface = new Surface({
 			size: [44, 64],
 			content: '<i class="fa fa-ellipsis-h fa-2x"></i>',
@@ -66,14 +67,24 @@ define(function(require, exports, module) {
 	};
 
 	ChartView.prototype.init = function(isAreaChart) {
+		this.add(new StateModifier({transform: Transform.translate(0, 65, App.zIndex.readView)})).add(this.graphView);
 		this.graphView.drawGraph(this.tagsToPlot, isAreaChart);
 	};
 
 	ChartView.prototype.preShow = function(state) {
 		if (state) {
-			this.tagsToPlot = state.tagsToPlot;
 			if (state.tagsToPlot) {
-				this.init(state.areaChart);
+				this.tagsToPlot = state.tagsToPlot;
+				if (state.tagsToPlot) {
+					this.init(state.areaChart);
+				}
+			} else if (state.tagsByDescription) {
+				this.tagsToPlot.splice(0, this.tagsToPlot.length);
+				App.tagListWidget = initTagListWidget(function () {
+					this.tagsToPlot.push(App.tagListWidget.list.searchItemByDescription(state.tagsByDescription[0]));
+					this.tagsToPlot.push(App.tagListWidget.list.searchItemByDescription(state.tagsByDescription[1]));
+					this.init(false);
+				}.bind(this));
 			}
 		}
 		return true;

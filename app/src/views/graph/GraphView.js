@@ -61,6 +61,8 @@ define(function(require, exports, module) {
 				'rename':'#queryTitleEdit',
 				'logout':'#logoutLink'
 			}));
+			this.graphIsRendered = true;
+			this._eventOutput.emit('graph-visible');
 		}.bind(this));
 
 		this.graphSurface.on('deploy', function() {
@@ -88,9 +90,15 @@ define(function(require, exports, module) {
 	GraphView.prototype.drawGraph = function(tags, isAreaChart) {
 		this.plottedTags.splice(0, this.plottedTags.length);;
 		this.tags = tags;
-		this.clearPillsSurfaceList();
 		if (this.tags) {
-			this.plot.initiateAddLine(this.tags, isAreaChart);
+			if (this.graphIsRendered) {
+				this.clearPillsSurfaceList();
+				this.plot.initiateAddLine(this.tags, isAreaChart);
+			} else {
+				this.on('graph-visible', function() {
+					this.plot.initiateAddLine(this.tags, isAreaChart);
+				}.bind(this));
+			}
 		}
 	};
 

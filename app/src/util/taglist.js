@@ -455,6 +455,21 @@ function TagList(args) {
 		return item;
 	}
 
+	this.searchItemByDescription = function(description) {
+		var item;
+		$.each(this.listItems.list, function() {
+			if (this.description == description) {
+				item = this;
+				return false;
+			}
+		});
+		if (!item) {
+			console.error("No tag or tag group found with description: "
+					+ description);
+		}
+		return item;
+	}
+
 	this.searchListItemByName = function(name) {
 		var found = false;
 		$.each(this.listItems, function() {

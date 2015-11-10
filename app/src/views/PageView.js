@@ -16,6 +16,7 @@ define(function(require, exports, module) {
 	var SearchView = require('views/community/SearchView');
 	var ChartView = require('views/graph/ChartView');
 	var SprintListView = require('views/sprint/SprintListView');
+	var CuriositiesListView = require('views/curiosities/CuriositiesListView');
 	var EntryFormView = require('views/entry/EntryFormView');
 	var ContextMenuView = require('views/ContextMenuView');
 	var Utils = require('util/Utils');
