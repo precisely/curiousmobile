@@ -421,23 +421,27 @@ function initCuriosities() {
 	};
 
 	// Record the last 5 sort orders and store it in localStorage if it is available.
-	$('#sort-by-row').on('click', '.filter', function(e) {
-		var id = $(this).attr('id');
-		var idReg = new RegExp(id);
-		var order = $(this).attr('data-order');
-		var newOrder = order;
-		if (_.first(C.curiositiesSortOrder).match(idReg)) {
-			newOrder = toggleSortOrder(order);
-		}
-		$(this).attr('data-order', newOrder);
-		C.curiositiesSortOrder = _.filter(C.curiositiesSortOrder, function(sortOrder) { return !sortOrder.match(idReg); });
-		appendSortOrder(newOrder);
+	C.sortClickHandler = function(selector) {
+		$(selector).on('click', '.filter', function(e) {
+			var id = $(this).attr('id');
+			var idReg = new RegExp(id);
+			var order = $(this).attr('data-order');
+			var newOrder = order;
+			if (_.first(C.curiositiesSortOrder).match(idReg)) {
+				newOrder = toggleSortOrder(order);
+			}
+			$(this).attr('data-order', newOrder);
+			C.curiositiesSortOrder = _.filter(C.curiositiesSortOrder, function(sortOrder) { return !sortOrder.match(idReg); });
+			appendSortOrder(newOrder);
 
-		log("C.curiositiesSortOrder", C.curiositiesSortOrder);
+			log("C.curiositiesSortOrder", C.curiositiesSortOrder);
 
-		C.pageIds = resort(C.pageIds, newOrder);
-		reRenderCorrelations(C.pageIds);
-	});
+			C.pageIds = resort(C.pageIds, newOrder);
+			reRenderCorrelations(C.pageIds);
+		});
+	}
+
+	C.sortClickHandler('#sort-by-row');
 
 	// Click on row to view graph.
 	$('#correlation-container').on('click', '.curiosities-row-top', function() {

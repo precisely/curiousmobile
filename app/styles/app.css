@@ -2635,7 +2635,8 @@ input.cropit-image-zoom-input {
 }
 
 #correlation-template .curiosities-section-mark-no-or-yes img {
-	width: 20px;
+	width: 25px;
+	margin-top: -5px;
 }
 
 #correlation-template .x-button {
@@ -2755,10 +2756,6 @@ input.cropit-image-zoom-input {
 	margin-right: 0px;
 }
 
-#correlation-template .curiosities-name {
-	margin-top: 20px;
-}
-
 #correlation-template .curiosities-name p {
 	margin: 0px;
 }
@@ -2788,5 +2785,16 @@ input.cropit-image-zoom-input {
 	margin-top: 9px;
 }
 
-#correlation-template .curiosities-row-container {
+#correlation-template .fa-circle {
+	color: #f48d5b;
+	margin-left: -10px;
+}
+
+.curiosities-filter-button, .curiosities-filter-button:focus {
+	background-color: transparent;
+	background-image: none;
+	box-shadow: none;
+	border: none;
+	color: #5d5d5d;
+	font-size: 15px;
 }

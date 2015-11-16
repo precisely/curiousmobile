@@ -40,9 +40,9 @@ define(function(require, exports, module) {
 					var currentElement = e.srcElement;
 					setNoiseOrSignal(currentElement);
 				} else if (_.contains(classList, 'plot-curiosity-chart-image')) {
+					e.preventDefault();
 					App.pageView.changePage('ChartView', {tagsByDescription: [this.templateProperties.description1,
 						this.templateProperties.description2]});
-					return false;
 				}
 			}
 		}.bind(this));

@@ -81,7 +81,7 @@ define(function(require, exports, module) {
 					if (searchTerm === '') {
 						_renderTagsList.call(this, App.tagListWidget.list.listItems.list);
 					} else {
-						_renderTagsList.call(this, Tags.eachMatchingTags(searchTerm));
+						_renderTagsList.call(this, Tags.eachMatchingTags(searchTerm.toLowerCase()));
 					}
 				}
 			}

@@ -220,13 +220,13 @@ define(function(require, exports, module) {
 
 	BaseView.prototype.showSearchIcon = function() {
 		if (this.headerRightIconController) {
-			this.headerRightIconController.show(this.rightIconsSequenceView);
+			this.rightIconsList.splice(0, 0, this.searchOptionSurface);
 		}
 	};
 
 	BaseView.prototype.hideSearchIcon = function() {
 		if (this.headerRightIconController) {
-			this.headerRightIconController.hide();
+			this.rightIconsList.splice(this.rightIconsList.indexOf(this.searchOptionSurface), 1);
 		}
 	}
 
