@@ -57,6 +57,12 @@ define(function(require, exports, module) {
 		});
 
 		this.add(layoutModifier).add(this.layout);
+		this.bodyRenderController = new RenderController();
+		var bodyModifier = new StateModifier({
+			origin: [0, 0],
+			transform: Transform.translate(0, 0, 10)
+		});
+		this.addContent(bodyModifier, this.bodyRenderController);
 	}
 
 	function _createHeader() {
@@ -279,11 +285,7 @@ define(function(require, exports, module) {
 	}
 
 	BaseView.prototype.setBody = function(body) {
-		var bodyModifier = new StateModifier({
-			origin: [0, 0],
-			transform: Transform.translate(0, 0, 2)
-		});
-		this.addContent(bodyModifier, body);
+		this.bodyRenderController.show(body);
 	}
 
 	BaseView.prototype.addContent = function(modifier, renderable) {

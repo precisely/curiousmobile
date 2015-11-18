@@ -7,7 +7,8 @@ define(function(require, exports, module) {
 	var Modifier = require('famous/core/Modifier');
 	var RenderController = require("famous/views/RenderController");
 	var TrackView = require('views/TrackView');
-	var QuickHelpView = require('views/QuickHelpView');
+	var TutorialView = require('views/TutorialView');
+	var HelpContentsView = require('views/help/HelpContentsView');
 	var HomeView = require('views/HomeView');
 	var LoginView = require('views/LoginView');
 	var RegisterView = require('views/RegisterView');
@@ -15,6 +16,9 @@ define(function(require, exports, module) {
 	var FeedView = require('views/community/FeedView');
 	var SearchView = require('views/community/SearchView');
 	var ChartView = require('views/graph/ChartView');
+	var CreateTagHelpView = require('views/help/CreateTagHelpView');
+	var ShareHelpView = require('views/help/ShareHelpView');
+	var MakeChartHelpView = require('views/help/MakeChartHelpView');
 	var SprintListView = require('views/sprint/SprintListView');
 	var CuriositiesListView = require('views/curiosities/CuriositiesListView');
 	var EntryFormView = require('views/entry/EntryFormView');

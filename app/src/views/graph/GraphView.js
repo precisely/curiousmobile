@@ -67,9 +67,9 @@ define(function(require, exports, module) {
 
 		this.graphSurface.on('deploy', function() {
 			if (document.getElementById('plot-here-msg')) {
-				document.getElementById('plot-here-msg').onclick = function() {
+				document.getElementById('plot-here-msg').addEventListener('click', function(e) {
 					App.pageView.changePage('CreateChartView');
-				}.bind(this);
+				}.bind(this), false);
 			}
 		}.bind(this));
 

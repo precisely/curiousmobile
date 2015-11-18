@@ -13,6 +13,7 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 
 	Transitionable.registerMethod('spring', SpringTransition);
+
 	function DraggableView(targetSurface, nonStickyEdges, minYRange) {
 		View.apply(this, arguments);
 		this.targetSurface = targetSurface;

@@ -25,7 +25,7 @@ define(function(require, exports, module) {
 		this.renderController = new RenderController();
 		this.add(new StateModifier({transform: Transform.translate(0, 10, App.zIndex.contextMenu + 1)})).add(this.renderController);
 		this.initScrollView();
-		this.listGraph();
+		this.listContents();
 	}
 
 	LoadGraphOverlay.prototype = Object.create(StateView.prototype);
@@ -38,12 +38,12 @@ define(function(require, exports, module) {
 		this.scrollView = new Scrollview({
 			direction: 1,
 		});
-		this.graphItemSurfaceList = [];
-		this.scrollView.sequenceFrom(this.graphItemSurfaceList);
+		this.contentsSurfaceList = [];
+		this.scrollView.sequenceFrom(this.contentsSurfaceList);
 		this.renderController.show(this.scrollView);
 	};
 
-	LoadGraphOverlay.prototype.listGraph = function() {
+	LoadGraphOverlay.prototype.listContents = function() {
 		Graph.load({offset: 0}, function(graphList) {
 			_.each(graphList, function(graphItem) {
 				var graphItemSurface = new Surface({
@@ -64,7 +64,7 @@ define(function(require, exports, module) {
 								b: 'No',
 								onA: function() {
 									Graph.delete(graphItem.id, function() {
-										this.graphItemSurfaceList.splice(this.graphItemSurfaceList.indexOf(graphItemSurface), 1);
+										this.contentsSurfaceList.splice(this.contentsSurfaceList.indexOf(graphItemSurface), 1);
 									}.bind(this));
 								}.bind(this),
 								onB: function() {
@@ -82,7 +82,7 @@ define(function(require, exports, module) {
 						}
 					}
 				}.bind(this));
-				this.graphItemSurfaceList.push(graphItemSurface);
+				this.contentsSurfaceList.push(graphItemSurface);
 				graphItemSurface.pipe(this.scrollView);
 			}.bind(this));
 		}.bind(this));

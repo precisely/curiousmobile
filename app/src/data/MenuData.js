@@ -6,11 +6,11 @@ define(function(require, exports, module) {
 		trigger: {name:'change-page', data: 'PeopleDetailView'}
 	}, {
 		title: 'Help',
-		iconFont: '<i class="fa fa-cloud"></i>',
-		trigger: {name:'change-page', data: 'QuickHelpView'}
+		iconFont: '<i class="fa fa-question-circle"></i>',
+		trigger: {name:'change-page', data: 'HelpContentsView'}
 	}, {
 		title: 'Logout',
-		iconFont: '<i class="fa fa-cloud"></i>',
+		iconFont: '<i class="fa fa-sign-out"></i>',
 		trigger: {name:'logout', data: 'HomeView'}
 	}, {
 		title: '             ',

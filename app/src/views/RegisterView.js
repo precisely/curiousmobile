@@ -94,7 +94,7 @@ define(function(require, exports, module) {
 				username,
 				password,
 				function(user) {
-					App.pageView.changePage('QuickHelpView');
+					App.pageView.changePage('TutorialView');
 				}.bind(this)
 			)
 		}

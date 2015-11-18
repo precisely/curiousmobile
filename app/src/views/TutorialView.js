@@ -19,7 +19,7 @@ define(function(require, exports, module) {
 	var Entry = require('models/Entry');
 	var u = require('util/Utils');
 
-	function QuickHelpView() {
+	function TutorialView() {
 		BaseView.apply(this, arguments);
 
 		this.renderController = new RenderController();
@@ -36,11 +36,11 @@ define(function(require, exports, module) {
 		});
 	}
 
-	QuickHelpView.prototype = Object.create(BaseView.prototype);
+	TutorialView.prototype = Object.create(BaseView.prototype);
 
-	QuickHelpView.prototype.constructor = QuickHelpView;
+	TutorialView.prototype.constructor = TutorialView;
 
-	QuickHelpView.DEFAULT_OPTIONS = {
+	TutorialView.DEFAULT_OPTIONS = {
 		header: false,
 		footer: true,
 	};
@@ -58,7 +58,7 @@ define(function(require, exports, module) {
 		return stepSurface;
 	}
 
-	QuickHelpView.prototype.init = function() {
+	TutorialView.prototype.init = function() {
 		this.step1Surface = createStepSurfaces(HelpStep1Template);
 		this.step2Surface = createStepSurfaces(HelpStep2Template);
 		this.step3Surface = createStepSurfaces(HelpStep3Template);
@@ -212,7 +212,7 @@ define(function(require, exports, module) {
 		}
 	}
 
-	QuickHelpView.prototype.createSleepEntry = function(value, entryId, callback) {
+	TutorialView.prototype.createSleepEntry = function(value, entryId, callback) {
 		if (value != '') {
 			value = value.substring(value.indexOfRegex(/[0-9]/g));
 			if (isNaN(value.charAt(0))) {
@@ -275,19 +275,19 @@ define(function(require, exports, module) {
 		});
 	};
 
-	QuickHelpView.prototype.storeMoodEntry = function(moodEntry) {
+	TutorialView.prototype.storeMoodEntry = function(moodEntry) {
 		this.moodEntry = moodEntry;
 		this.navigate('step3');
 	};
 
 
-	QuickHelpView.prototype.onShow = function(state) {
+	TutorialView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 		this.init();
 
 	};
 
-	QuickHelpView.prototype.navigate = function(step) {
+	TutorialView.prototype.navigate = function(step) {
 		if (step === 'step1') {
 			this.renderController.show(this.step1Surface);
 		} else if (step === 'step2') {
@@ -299,6 +299,6 @@ define(function(require, exports, module) {
 		}
 	};
 
-	App.pages[QuickHelpView.name] = QuickHelpView;
-	module.exports = QuickHelpView;
+	App.pages[TutorialView.name] = TutorialView;
+	module.exports = TutorialView;
 });

@@ -41,6 +41,7 @@ define(function(require, exports, module) {
 					setNoiseOrSignal(currentElement);
 				} else if (_.contains(classList, 'plot-curiosity-chart-image')) {
 					e.preventDefault();
+					e.stopPropagation();
 					App.pageView.changePage('ChartView', {tagsByDescription: [this.templateProperties.description1,
 						this.templateProperties.description2]});
 				}
