@@ -114,7 +114,9 @@ define(function(require, exports, module) {
 	window.mainContext = mainContext;
 	window.App.width = window.innerWidth;
 	window.App.height = window.innerHeight;
-	App.viewsWithoutSearchIcon = ['TrackView', 'EditProfileView', 'CreateChartView', 'LoginView', 'RegisterView', 'ForgotPasswordView', 'CuriositiesListView'];
+	App.viewsWithoutSearchIcon = ['TrackView', 'EditProfileView', 'CreateChartView', 'LoginView', 'RegisterView',
+			'ForgotPasswordView', 'CuriositiesListView', 'HelpContentsView', 'CreateTagHelpView', 'HelpContentsView',
+			'ShareHelpView', 'MakeChartHelpView'];
 	var appView = new AppView();
 	window.App.appView = appView;
 	var mod = new Modifier({
