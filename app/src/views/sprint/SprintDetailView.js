@@ -31,20 +31,6 @@ define(function(require, exports, module) {
 		});
 		this.setBody(this.backgroundSurface);
 
-		this.pencilSurface = new ImageSurface({
-			size: [44, 64],
-			content: 'content/images/edit-pencil.png',
-		});
-
-		// Pencil icon will appear when sprint edit will be functional
-		this.setRightIcon(this.pencilSurface);
-
-		this.pencilSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				App.pageView.changePage('SprintFormView', {parentPage: 'SprintDetailView', hash: this.hash});
-			}
-		}.bind(this));
-
 		this.renderController = new RenderController();
 		var mod = new StateModifier({
 			size: [App.width, App.height - 120],
@@ -61,6 +47,22 @@ define(function(require, exports, module) {
 		header: true,
 		footer: true,
 		activeMenu: 'sprint'
+	};
+
+	SprintDetailView.prototype.showEditIcon = function() {
+		this.pencilSurface = new ImageSurface({
+			size: [44, 64],
+			content: 'content/images/edit-pencil.png'
+		});
+
+		// Pencil icon will appear when sprint edit will be functional
+		this.setRightIcon(this.pencilSurface);
+
+		this.pencilSurface.on('click', function(e) {
+			if (u.isAndroid() || (e instanceof CustomEvent)) {
+				App.pageView.changePage('SprintFormView', {parentPage: 'SprintDetailView', hash: this.hash});
+			}
+		}.bind(this));
 	};
 
 	SprintDetailView.prototype.onShow = function(state) {
@@ -82,6 +84,9 @@ define(function(require, exports, module) {
 		this.participantsOffset = 10;
 		Sprint.show(this.hash, function(sprintDetails) {
 			this.totalParticipants = sprintDetails.totalParticipants;
+			if (sprintDetails.sprint.hasAdmin) {
+				this.showEditIcon();
+			}
 			if (!this.name) {
 				this.name = sprintDetails.sprint.name;
 			}
@@ -120,7 +125,7 @@ define(function(require, exports, module) {
 					}
 				}
 			}.bind(this));
-			this.draggableDetailsView = new DraggableView(sprintSurface);
+			this.draggableDetailsView = new DraggableView(sprintSurface, true);
 			this.renderController.show(this.draggableDetailsView);
 		}.bind(this), function() {
 			App.pageView.goBack();

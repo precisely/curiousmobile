@@ -42,7 +42,7 @@ define(function(require, exports, module) {
 			console.log('backgroundSurface event');
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				e.data = this.options.trigger.data;
-				this._eventOutput.emit(this.options.trigger.name, e);				
+				this._eventOutput.emit(this.options.trigger.name, e);
 			}
 		}.bind(this));
 
@@ -78,7 +78,7 @@ define(function(require, exports, module) {
 			properties: {
 				color: 'white',
 				fontFamily: 'AvenirNextCondensed-DemiBold',
-				fontSize: '25px',
+				fontSize: '23px',
 				textTransform: 'uppercase',
 				pointerEvents: 'none'
 			}

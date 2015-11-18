@@ -98,15 +98,19 @@ define(function(require, exports, module) {
 	};
 
 	FeedView.prototype.initFeedSpecificContents = function() {
-		this.pencilSurface = new ImageSurface({
+		this.plusSurface = new Surface({
 			size: [44, 64],
-			content: 'content/images/edit-pencil.png',
+			content: '<i class="fa fa-2x fa-plus-square-o"></i>',
+			properties: {
+				padding: '19px 0px 0px 5px',
+				color: '#f14a42'
+			}
 		});
-		this.setRightIcon(this.headerSurface);
+		this.setRightIcon(this.plusSurface);
 		this.setHeaderLabel('SOCIAL');
 
 
-		this.pencilSurface.on('click', function(e) {
+		this.plusSurface.on('click', function(e) {
 			App.pageView.changePage(CreatePostView.name);
 		}.bind(this));
 
@@ -209,7 +213,6 @@ define(function(require, exports, module) {
 			offset: 0,
 			max: this.max
 		};
-		this.removeRightIcon();
 		if (lable === 'ALL') {
 			params.type = 'all';
 			var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', params);
@@ -225,7 +228,6 @@ define(function(require, exports, module) {
 		} else if (lable === 'PEOPLE') {
 			User.fetch(params, this.addListItemsToScrollView.bind(this));
 		} else if (lable === 'DISCUSSIONS') {
-			this.setRightIcon(this.pencilSurface);
 			Discussion.fetch(params, this.addListItemsToScrollView.bind(this));
 		} else if (lable === 'OWNED') {
 			Discussion.fetchOwned(params, this.addListItemsToScrollView.bind(this));

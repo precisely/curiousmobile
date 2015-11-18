@@ -2812,12 +2812,12 @@ input.cropit-image-zoom-input {
 	vertical-align: middle;
 }
 
-.help-container {
+.help-container, .terms-of-service-container {
 	width: 100%;
 	height: 100%;
 }
 
-.help-container .header-bar {
+.help-container .header-bar, .terms-of-service-container .header-bar {
 	height: 45px;
 	background-color: #fff;
 	color: #f14a42;
@@ -2827,7 +2827,11 @@ input.cropit-image-zoom-input {
 	border-top: 2px solid #e2e2e2;
 }
 
-.help-container .help-body {
+.terms-of-service-container p {
+	font-style: normal;
+}
+
+.help-container .help-body, .terms-of-service-container .details-body {
 	background-color: #f9f9f9;
 	padding: 20px 10px;
 	color: #4a4a4a;

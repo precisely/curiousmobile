@@ -230,26 +230,6 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		}
 		return plotDataStr;
 	}
-	this.saveSnapshot = function() {
-		var first = true;
-		var plotDataStr = this.storeSnapshot();
-		if (plotDataStr == null) {
-			this.showAlert("No plotted data to save");
-			return;
-		}
-		var plot = this;
-
-		this.queuePostJSON("sharing graph", this.makePostUrl("saveSnapshotData"), { name: this.getName() + ' (snapshot)', snapshotData: plotDataStr },
-				function(data) {
-					if (this.checkData(data, '', "Error while saving snapshot")) {
-						if (data.success) {
-							window.location = this.makePlainUrl('social#discussions/' + data.discussionHash);
-						} else {
-							this.showAlert(data.message);
-						}
-					}
-				});
-	}
 	this.load = function(plotData) {
 		$(document).trigger(beforeLinePlotEvent);
 		var version = plotData.version;

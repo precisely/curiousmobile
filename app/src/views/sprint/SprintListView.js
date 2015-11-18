@@ -43,16 +43,20 @@ define(function(require, exports, module) {
 	};
 
 	function initSprintView() {
-		this.pencilSurface = new ImageSurface({
+		this.plusSurface = new Surface({
 			size: [44, 64],
-			content: 'content/images/edit-pencil.png',
+			content: '<i class="fa fa-2x fa-plus-square-o"></i>',
+			properties: {
+				padding: '19px 0px 0px 5px',
+				color: '#f14a42'
+			}
 		});
 
-		this.setRightIcon(this.pencilSurface);
+		this.setRightIcon(this.plusSurface);
 		this.setHeaderLabel('SPRINTS');
 
 
-		this.pencilSurface.on('click', function(e) {
+		this.plusSurface.on('click', function(e) {
 			if (u.isAndroid() || (e instanceof CustomEvent)) {
 				Sprint.create(function(data) {
 					App.pageView.changePage('SprintFormView', {hash: data.hash});

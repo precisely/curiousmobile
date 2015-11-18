@@ -111,7 +111,7 @@ define(function(require, exports, module) {
 			content: '<i class="fa fa-arrow-left"></i>',
 			size: [61, 64],
 			properties: {
-				padding: '20px',
+				padding: '15px 20px',
 				color: '#7b7b7b',
 				fontSize: '22px'
 			}
@@ -281,7 +281,7 @@ define(function(require, exports, module) {
 	}
 
 	BaseView.prototype.setHeaderSurface = function(headerSurface, surfaceModifier) {
-			this.headerController.show(headerSurface);
+		this.headerController.show(headerSurface);
 	}
 
 	BaseView.prototype.setBody = function(body) {

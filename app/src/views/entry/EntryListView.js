@@ -343,9 +343,9 @@ define(function(require, exports, module) {
 		this.pinnedEdgeIndex = [];
 		_.each(this.pinnedViews, function (pinnedView, index) {
 			rowWidthSoFar = rowWidthSoFar + pinnedView.getSize()[0] + 8; //adding padding after the tags
-			if (rowWidthSoFar > (App.width - 30)) {
+			if (rowWidthSoFar > (App.width - 10)) {
 				numberOfRows ++;
-				rowWidthSoFar = 20;
+				rowWidthSoFar = 20 + (pinnedView.getSize()[0] + 8);
 				this.pinnedEdgeIndex.push(index);
 			}
 		}.bind(this));

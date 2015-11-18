@@ -9,6 +9,10 @@ define(function(require, exports, module) {
 		iconFont: '<i class="fa fa-question-circle"></i>',
 		trigger: {name:'change-page', data: 'HelpContentsView'}
 	}, {
+		title: 'Terms of Service',
+		iconFont: '<i class="fa fa-file-text-o"></i>',
+		trigger: {name:'change-page', data: 'TermsView'}
+	}, {
 		title: 'Logout',
 		iconFont: '<i class="fa fa-sign-out"></i>',
 		trigger: {name:'logout', data: 'HomeView'}

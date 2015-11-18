@@ -67,7 +67,7 @@ define(function(require, exports, module) {
 					if (containerHeight <= App.height) {
 						this.minYRange = -80;
 					} else {
-						this.minYRange = -(containerHeight - (App.height - 80));
+						this.minYRange = -(containerHeight - (App.height - 100));
 					}
 					draggable.setOptions({
 						yRange: [this.minYRange, 0]
