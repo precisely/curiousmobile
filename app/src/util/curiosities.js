@@ -619,9 +619,9 @@ function setNoiseOrSignal(currentElement) {
 
 				console.log('success', data);
 			});
-	$(currentElement).siblings('img').attr('src', "/images/curiosities/empty_circle.png");
+	$(currentElement).siblings('img').attr('src', (isMobile ? 'content' : '') + "/images/curiosities/empty_circle.png");
 	$(currentElement).siblings('img').attr('marked', 'empty');
-	$(currentElement).attr('src', "/images/curiosities/marked_circle.png");
+	$(currentElement).attr('src', (isMobile ? 'content' : '') + "/images/curiosities/marked_circle.png");
 	$(currentElement).attr('marked', 'marked');
 	C.correlationIndex[correlationId].marked = 'marked';
 }

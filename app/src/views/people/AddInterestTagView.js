@@ -40,7 +40,7 @@ define(function(require, exports, module) {
 		});
 
 		formContainerSurface.on('keyup', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				if (e.srcElement && e.which == 13) {
 					this.submit();
 				}

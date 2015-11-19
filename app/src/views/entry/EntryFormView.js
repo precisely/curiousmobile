@@ -71,7 +71,7 @@ define(function(require, exports, module) {
 
 		this.repeatSurface.on('click', function(e) {
 			console.log("repeatSurface event");
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				this.removeSuffix();
 				this.setRemind = false;
 				this.setRepeat = !this.setRepeat;
@@ -89,7 +89,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.remindSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				this.removeSuffix();
 				this.setRemind = !this.setRemind;
 				this.setRepeat = false;
@@ -112,7 +112,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.pinSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				this.removeSuffix();
 				this.setRemind = false;
 				this.setRepeat = false;
@@ -126,7 +126,7 @@ define(function(require, exports, module) {
 
 		this.repeatModifierSurface.on('click', function(e) {
 			var classList = e.srcElement.parentElement.classList;
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				if (_.contains(classList, 'entry-checkbox') || 
 						_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {
 					var repeatEachCheckbox = document.getElementById('confirm-each-repeat');

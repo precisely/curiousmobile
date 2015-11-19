@@ -59,7 +59,7 @@ define(function (require, exports, module) {
 
 		this.contextMenu.on('click', function (e) {
 			console.log('EventHandler: this.contextMenu event: click');
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				var classList = e.srcElement.classList;
 				if (_.contains(classList, 'menu-item')) {
 					var arg = this.eventArg;

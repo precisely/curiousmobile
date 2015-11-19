@@ -64,7 +64,7 @@ define(function(require, exports, module) {
 			}
 		});
 		contentItemSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				App.pageView.changePage(destinationPage);
 			}
 		}.bind(this));

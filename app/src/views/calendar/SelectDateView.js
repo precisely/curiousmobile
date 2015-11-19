@@ -34,7 +34,7 @@ define(function(require, exports, module) {
 		this.add(leftModifier).add(leftSurface);	
 
 		leftSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				this._eventOutput.emit('date-minus');	
 			}
 		}.bind(this));
@@ -53,7 +53,7 @@ define(function(require, exports, module) {
 
 		this.dateSurface.on('click', function(e) {
 			console.log("dateSurface event");
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				this._eventOutput.emit('toggle-date-grid');
 			}
 		}.bind(this));
@@ -78,7 +78,7 @@ define(function(require, exports, module) {
 		});
 		this.add(rightModifier).add(rightSurface);
 		rightSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				this._eventOutput.emit('date-add');	
 			}
 		}.bind(this));

@@ -65,14 +65,6 @@ define(function(require, exports, module) {
 			this._eventOutput.emit('graph-visible');
 		}.bind(this));
 
-		this.graphSurface.on('deploy', function() {
-			if (document.getElementById('plot-here-msg')) {
-				document.getElementById('plot-here-msg').addEventListener('click', function(e) {
-					App.pageView.changePage('CreateChartView');
-				}.bind(this), false);
-			}
-		}.bind(this));
-
 		this.pillsSurfaceList = [];
 		this.pillsView = new PillsView(this.pillsSurfaceList);
 		var pillsViewMod = new StateModifier({
@@ -88,7 +80,7 @@ define(function(require, exports, module) {
 	};
 
 	GraphView.prototype.drawGraph = function(tags, isAreaChart) {
-		this.plottedTags.splice(0, this.plottedTags.length);;
+		this.plottedTags.splice(0, this.plottedTags.length);
 		this.tags = tags;
 		if (this.tags) {
 			if (this.graphIsRendered) {
@@ -127,42 +119,15 @@ define(function(require, exports, module) {
 			border: '1px solid #c3c3c3'
 		};
 
-		this.startDatePickerSurface = new Surface({
-			classes: ['start-date-picker'],
-			size: [27, 27],
-			content: '<i class="fa fa-chevron-left"></i>',
-			properties: datePickerButtonProperties
-		});
-		this.startDatePickerSurface.setProperties({
-			padding: '3px 3px 3px 0px'
-		});
-		this.endDatePickerSurface = new Surface({
-			classes: ['end-date-picker'],
-			size: [27, 27],
-			content: '<i class="fa fa-chevron-right"></i>',
-			properties: datePickerButtonProperties
-		});
-
-		this.startDatePickerSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				showDatePicker.call(this, 'startDate');
-			}
-		}.bind(this));
-
-		this.endDatePickerSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
-				showDatePicker.call(this, 'endDate');
-			}
-		}.bind(this));
-
 		this.endDateString = this.startDateString = 'DD/MM/YY';
+
 		this.dateLabelSurface = new Surface({
-			size: [158, 28],
-			content: '<span class="blank-date-label">DD/MM/YY</span> - <span class="blank-date-label">DD/MM/YY</span>',
+			size: [200, 28],
+			content: '<span class="blank-date-label start-date">DD/MM/YY</span> - <span class="blank-date-label end-date">DD/MM/YY</span>',
 			properties: {
 				border: '1px solid #C3C3C3',
 				borderRadius: '2px',
-				padding: '5px',
+				padding: '5px 10px',
 				color: '#6f6f6f',
 				textAlign: 'center',
 				whiteSpace: 'no-wrap',
@@ -170,8 +135,17 @@ define(function(require, exports, module) {
 				fontSize: '12px'
 			}
 		});
-		dateContainerSurface.add(new StateModifier({transform: Transform.translate(0, 0, 2)})).add(this.startDatePickerSurface);
-		dateContainerSurface.add(new StateModifier({align:[1, 0], origin: [1, 0], transform: Transform.translate(-30, 0, 2)})).add(this.endDatePickerSurface);
+		this.dateLabelSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				var classList = e.srcElement.classList;
+				if (_.contains(classList, 'start-date')) {
+					showDatePicker.call(this, 'startDate');
+				} else if (_.contains(classList, 'end-date')) {
+					showDatePicker.call(this, 'endDate');
+				}
+			}
+		}.bind(this));
+
 		dateContainerSurface.add(new StateModifier({align:[0.5, 0.5], origin: [0.5, 0.5], transform: Transform.translate(0, 0, 2)})).add(this.dateLabelSurface);
 		this.add(new StateModifier({align: [0, 1], origin: [0, 1], transform: Transform.translate(0, -115, 0)})).add(dateContainerSurface);
 	};
@@ -206,21 +180,35 @@ define(function(require, exports, module) {
 			this.endDateString = ('0' + date.getDate()).slice(-2) + '/'  + ('0' + (date.getMonth()+1)).slice(-2) + '/'
 					+ year.substring(2);
 		}
-		this.dateLabelSurface.setContent(this.startDateString + ' - ' + this.endDateString);
+		this.dateLabelSurface.setContent('<span class="blank-date-label start-date">' + this.startDateString + '</span> - '
+				+ '<span class="blank-date-label end-date">' + this.endDateString + '</span>');
 		this.plot.loadAllData();
 
 	}
 
-	GraphView.prototype.createTagsPill = function(tag, color) {
+	GraphView.prototype.createTagsPill = function(lineId, tag, color) {
 		if (tag) {
 			var pillSurface = new Surface({
-				content: '<button class="tag-pill btn' + '" id="' + tag.id + '" style="border-left: 2px solid' + color + '; color: ' + color + ';">' + tag.description + '</button>',
+				content: '<button class="tag-pill btn' + '" id="' + tag.id + '" style="border-left: 2px solid' + color +
+						'; color: ' + color + ';">' + tag.description + '<i class="fa fa-times-circle"></i></button>',
 				size: [true, 50],
 				properties: {
 					backgroundColor: '#efefef',
 					textAlign: 'center',
 				}
 			});
+			pillSurface.on('click', function(e) {
+				if (e instanceof CustomEvent) {
+					var classList = e.srcElement.classList;
+					if (_.contains(classList, 'fa')) {
+						removePlotLine(this.plotAreaId, lineId);
+						this.pillsSurfaceList.splice(this.pillsSurfaceList.indexOf(pillSurface), 1);
+						this.plottedTags.splice(this.plottedTags.indexOf(tag), 1);
+						var currentView = App.pageView.getCurrentView();
+						currentView.tagsToPlot.splice(currentView.tagsToPlot.indexOf(tag), 1)
+					}
+				}
+			}.bind(this));
 			this.pillsSurfaceList.push(pillSurface);
 			this.pillsView.setPillsSurfaceList(this.pillsSurfaceList);
 			this.pillsView.setScrollView(pillSurface);

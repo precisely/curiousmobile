@@ -83,7 +83,7 @@ define(function(require, exports, module) {
 
 		this.inputSurface.on('click', function(e) {
 			console.log('TrackView: Clicking on dummy input surface');
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				this._eventOutput.emit('create-entry');
 			}
 		}.bind(this));

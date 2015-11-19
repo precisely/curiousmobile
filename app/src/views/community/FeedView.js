@@ -158,7 +158,7 @@ define(function(require, exports, module) {
 		});
 
 		pillSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				this.deck = [];
 				this.initScrollView();
 				this.fetchFeedItems(pillFor);

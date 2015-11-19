@@ -43,7 +43,7 @@ define(function(require, exports, module) {
 		});
 		registerSurface.on('click', function(e) {
 			var classList;
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				classList = e.srcElement.classList;
 				if (_.contains(classList, 'submit')) {
 					console.log('RegisterView: submit form');

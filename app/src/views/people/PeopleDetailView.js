@@ -82,7 +82,7 @@ define(function(require, exports, module) {
 
 			peopleSurface.on('click', function(e) {
 				var classList;
-				if (u.isAndroid() || (e instanceof CustomEvent)) {
+				if (e instanceof CustomEvent) {
 					classList = e.srcElement.classList;
 					if (_.contains(classList, 'edit-button')) {
 						var state = {

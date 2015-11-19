@@ -200,7 +200,7 @@ define(function(require, exports, module) {
 				}.bind(this), 300);
 			}
 		}.bind(view));
-		this._eventOutput.emit('page-change-complete');
+		this._eventOutput.emit('page-change-complete', {view: view, state: state});
 	};
 
 	/**

@@ -142,7 +142,7 @@ define(function(require, exports, module, store) {
 			this.add(new Modifier({align: [1, 0], origin: [1, 0], transform: Transform.translate(0, 0, App.zIndex.header + 5)})).add(this.saveSurface);
 
 			this.saveSurface.on('click', function(e) {
-				if (u.isAndroid() || (e instanceof CustomEvent)) {
+				if (e instanceof CustomEvent) {
 					if (this.currentOverlay) {
 						this.addInterestTagView.submit();
 					} else {
@@ -157,7 +157,7 @@ define(function(require, exports, module, store) {
 
 			editPeopleSurface.on('click', function(e) {
 				var classList;
-				if (u.isAndroid() || (e instanceof CustomEvent)) {
+				if (e instanceof CustomEvent) {
 					classList = e.srcElement.classList;
 					if (_.contains(classList, 'new-tag')) {
 						this.editPeopleSurface = editPeopleSurface;

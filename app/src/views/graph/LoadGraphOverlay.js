@@ -54,7 +54,7 @@ define(function(require, exports, module) {
 					}
 				});
 				graphItemSurface.on('click', function(e) {
-					if (u.isAndroid() || (e instanceof CustomEvent)) {
+					if (e instanceof CustomEvent) {
 						var classList = e.srcElement.classList;
 						var currentView = App.pageView.getCurrentView();
 						if (_.contains(classList, 'delete-graph')) {

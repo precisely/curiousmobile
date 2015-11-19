@@ -71,7 +71,7 @@ define(function(require, exports, module) {
 		this.showMoreSurface.pipe(this._eventOutput);
 		this.showMoreSurface.on('click', function(e) {
 			console.log("showMoreSurface event");
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				this.select();
 			}
 		}.bind(this));

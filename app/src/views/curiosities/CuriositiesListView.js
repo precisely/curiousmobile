@@ -104,7 +104,7 @@ define(function(require, exports, module) {
 		});
 
 		pillSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				//C.sortClickHandler('.sort-curiosities');
 				var previousActivePill = document.getElementsByClassName('active-pill');
 				this.deck = [];

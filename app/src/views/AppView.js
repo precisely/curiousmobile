@@ -55,8 +55,10 @@ define(function(require, exports, module) {
 
 	function _setListeners() {
 
-		this.pageView.on('page-change-complete', function() {
-			if (this.showingMenu) {
+		this.pageView.on('page-change-complete', function(contents) {
+			if (contents && contents.view.constructor.name === 'ChartView' && contents.state.onLoad) {
+				this.pageView.changePage('CreateChartView');
+			} else if (this.showingMenu) {
 				this.toggleMenu();
 			}
 		}.bind(this));

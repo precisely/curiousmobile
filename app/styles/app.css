@@ -841,6 +841,13 @@ button.close {
 	white-space: nowrap;
 }
 
+.tag-pill .fa {
+	padding: 2px 2px 0px 7px;
+	color: #d8d8d8;
+	font-size: 22px;
+	vertical-align: inherit;
+}
+
 .feed-pill {
 	background-color: transparent;
 }
@@ -2458,10 +2465,12 @@ input.cropit-image-zoom-input {
 	color: #A2A2A2;
 }
 
-#plot-here-msg {
-	border: 2px solid #7F7C7C;
-	margin: 7px 10px;
-	padding: 47% 0px 47% 0px;
+.blank-date-label.start-date {
+	float: left;
+}
+
+.blank-date-label.end-date {
+	float: right;
 }
 
 .user-email-label {

@@ -196,5 +196,5 @@ define(function(require, exports, module) {
 });
 
 $(document).on('postLineDetails', function(e, tagLine) {
-	App.pageView.getPage('ChartView').graphView.createTagsPill(tagLine.tag, tagLine.color);
+	App.pageView.getPage('ChartView').graphView.createTagsPill(tagLine.id, tagLine.tag, tagLine.color);
 });

@@ -34,7 +34,7 @@ define(function(require, exports, module) {
 		});
 
 		this.cardSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				var classList = e.srcElement.classList;
 				if (_.contains(classList, 'bubble')) {
 					var currentElement = e.srcElement;

@@ -71,8 +71,15 @@ define(function(require, exports, module) {
 		this.graphView.drawGraph(this.tagsToPlot, isAreaChart);
 	};
 
+	ChartView.prototype.onShow = function() {
+		BaseView.prototype.onShow.call(this);
+		if (!this.tagsToPlot || !this.tagsToPlot.length) {
+			App.pageView.changePage('CreateChartView');
+		}
+	};
+
 	ChartView.prototype.preShow = function(state) {
-		if (state) {
+		if (state && !state.onLoad) {
 			if (state.tagsToPlot) {
 				this.tagsToPlot = state.tagsToPlot;
 				if (state.tagsToPlot) {

@@ -54,9 +54,11 @@ define(function(require, exports, module) {
 				}
 			}.bind(this);
 
-			document.getElementsByClassName('close-background')[0].onclick = function() {
-				this.goBack();
-				return true;
+			document.getElementsByClassName('close-background')[0].onclick = function(e) {
+				if (e instanceof CustomEvent) {
+					e.stopPropagation();
+					this.goBack();
+				}
 			}.bind(this);
 		}.bind(this));
 

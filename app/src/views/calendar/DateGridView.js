@@ -70,7 +70,7 @@ define(function(require, exports, module) {
 		this.add(leftModifier).add(leftSurface);
 
 		leftSurface.on('click', function(e) {
-			if ((u.isAndroid() || (e instanceof CustomEvent))) {
+			if ((e instanceof CustomEvent)) {
 				console.log("leftSurface event");
 				this.changeMonth(-1);
 			}
@@ -104,7 +104,7 @@ define(function(require, exports, module) {
 		});
 		this.add(rightModifier).add(rightSurface);
 		rightSurface.on('click', function(e) {
-			if ((u.isAndroid() || (e instanceof CustomEvent))) {
+			if ((e instanceof CustomEvent)) {
 				console.log("rightSurface event");
 				this.changeMonth(1);
 			}

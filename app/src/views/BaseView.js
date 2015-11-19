@@ -118,7 +118,7 @@ define(function(require, exports, module) {
 		});
 		this.leftSurface.on('click', function(e) {
 			console.log("Clicked on menu icon image");
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				this.goBack();
 			}
 		}.bind(this));
@@ -129,7 +129,7 @@ define(function(require, exports, module) {
 		});
 
 		this.hamburgerSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				console.log("Clicked on menu icon image");
 				this._eventOutput.emit('show-menu');
 			}
@@ -156,7 +156,9 @@ define(function(require, exports, module) {
 		});
 
 		this.searchOptionSurface.on('click', function(e) {
-			App.pageView.changePage('SearchView');
+			if (u.isAndroid() || e instanceof CustomEvent) {
+				App.pageView.changePage('SearchView');
+			}
 		}.bind(this));
 
 		this.rightIconsList = [];
@@ -187,7 +189,7 @@ define(function(require, exports, module) {
 		});
 
 		footerSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				console.log('footerSurface event');
 				var pageName = e.srcElement.getAttribute('data');
 				e.data = pageName;

@@ -40,7 +40,7 @@ define(function(require, exports, module) {
 
 		backgroundSurface.on('click', function(e) {
 			console.log('backgroundSurface event');
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				e.data = this.options.trigger.data;
 				this._eventOutput.emit(this.options.trigger.name, e);
 			}

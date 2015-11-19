@@ -287,20 +287,6 @@ define(function(require, exports, module) {
 			}	
 		});
 
-
-		var pinnedHelp = new Surface({
-			content: 'PINNED TAGS: (tap to add tag to your list below)',
-			size: [undefined, 11],
-			properties: {
-				color: '#aeaeae',
-				fontSize: '11px'
-			}
-		});
-		var pinnedHelpModifier = new Modifier({
-			transform: Transform.translate(10, 0, 0)
-		});
-		pinnedContainerSurface.add(pinnedHelpModifier).add(pinnedHelp);
-
 		pinnedContainerSurface.on('deploy', function() {
 			Timer.every(function() {
 				pinnedContainerSurface.setSize([undefined, this.heightOfPins() + 10]);

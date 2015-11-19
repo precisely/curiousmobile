@@ -57,7 +57,7 @@ define(function(require, exports, module) {
 
 
 		this.plusSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				Sprint.create(function(data) {
 					App.pageView.changePage('SprintFormView', {hash: data.hash});
 				});

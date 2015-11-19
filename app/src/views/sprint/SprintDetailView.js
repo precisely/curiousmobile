@@ -59,7 +59,7 @@ define(function(require, exports, module) {
 		this.setRightIcon(this.pencilSurface);
 
 		this.pencilSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				App.pageView.changePage('SprintFormView', {parentPage: 'SprintDetailView', hash: this.hash});
 			}
 		}.bind(this));
@@ -101,7 +101,7 @@ define(function(require, exports, module) {
 
 			sprintSurface.on('click', function(e) {
 				var classList;
-				if (u.isAndroid() || (e instanceof CustomEvent)) {
+				if (e instanceof CustomEvent) {
 					classList = e.srcElement.classList;
 					if (_.contains(classList, 'activity')) {
 						var state = {

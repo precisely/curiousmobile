@@ -107,7 +107,7 @@ define(function(require, exports, module) {
 		});
 
 		selectionLabelSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				if (_.contains(e.srcElement.classList, 'uncheck-label-chart')) {
 					this.selectedTags.splice(0, this.selectedTags.length);
 					this.init();
@@ -137,7 +137,7 @@ define(function(require, exports, module) {
 			}
 		});
 		pillSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				if (e.srcElement.id === 'a-z-pill') {
 					var tagList = Tags.sortTags(App.tagListWidget.list.listItems.list, this.listAscending);
 					document.getElementById('most-used-pill').classList.remove('active');
@@ -184,7 +184,7 @@ define(function(require, exports, module) {
 		});
 
 		createChartSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				if (!this.selectedTags || this.selectedTags.length < 1) {
 					u.showAlert('No Tags Selected to plot');
 				} else {

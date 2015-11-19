@@ -98,7 +98,7 @@ define(function(require, exports, module) {
 		});
 
 		myView.autoCompleteSurface.on('click', function(e) {
-			if (u.isAndroid() || (e instanceof CustomEvent)) {
+			if (e instanceof CustomEvent) {
 				console.log('Autocomplete click: ' + e);
 				this.renderController.hide(this.scrollView);
 				onSelectCallback(autocomplete.label || autocomplete);
