@@ -57,7 +57,7 @@ define(function(require, exports, module) {
 	var App = window.App;
 	App.CSRF.SyncTokenUriName = "SYNCHRONIZER_URI"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_URI
 	App.zIndex = {
-		menu: 12,
+		menu: 1,
 		readView: 16,
 		feedItem: 16,
 		pinned: 23,

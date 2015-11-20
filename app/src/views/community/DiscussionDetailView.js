@@ -16,6 +16,7 @@ define(function(require, exports, module) {
 	var DiscussionPost = require('models/DiscussionPost');
 	var discussionPostTemplate = require('text!templates/discussion-post.html');
 	var commentTemplate = require('text!templates/comments.html');
+	var GraphView = require('views/graph/GraphView');
 	var User = require('models/User');
 
 	function DiscussionDetailView() {
@@ -129,14 +130,23 @@ define(function(require, exports, module) {
 			content: _.template(discussionPostTemplate, discussionPost.discussionDetails, templateSettings),
 		});
 
+		if (discussionPost.discussionDetails.firstPost && discussionPost.discussionDetails.firstPost.plotDataId) {
+			App.tagListWidget = initTagListWidget();
+			this.graphView = new GraphView();
+			this.surfaceList.splice(0, 0, this.graphView);
+			this.graphView.pipe(this.scrollView)
+		}
 		discussionPostSurface.on('deploy', function() {
 			Timer.every(function() {
-				var size = this.getSize();
-				var width = (size[0] == true) ? this._currTarget.offsetWidth : size[0];
-				var height = (size[1] == true) ? this._currTarget.offsetHeight : size[1];
-				this.setSize([width, height]);
+				var size = discussionPostSurface.getSize();
+				var width = (size[0] == true) ? discussionPostSurface._currTarget.offsetWidth : size[0];
+				var height = (size[1] == true) ? discussionPostSurface._currTarget.offsetHeight : size[1];
+				discussionPostSurface.setSize([width, height]);
 			}.bind(this), 2);
-		});
+			if (this.graphView) {
+				this.graphView.showDiscussionChart(discussionPost.discussionDetails.firstPost.plotDataId);
+			}
+		}.bind(this));
 		this.surfaceList.push(discussionPostSurface);
 		discussionPostSurface.pipe(this.scrollView);
 

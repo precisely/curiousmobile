@@ -56,6 +56,7 @@ define(function(require, exports, module) {
 		});
 
 		// Pencil icon will appear when sprint edit will be functional
+		this.removeRightIcon();
 		this.setRightIcon(this.pencilSurface);
 
 		this.pencilSurface.on('click', function(e) {
@@ -76,6 +77,7 @@ define(function(require, exports, module) {
 		this.hash = state.hash;
 		this.name = state.name;
 		this.parentPage = state.parentPage || 'SprintListView';
+		this.parentCard = state.parentCard;
 		this.refresh();
 		return true;
 	};
@@ -122,6 +124,30 @@ define(function(require, exports, module) {
 						}.bind(this), function() {
 
 						});
+					} else if (e.srcElement.id.indexOf('start-sprint') > -1) {
+						Sprint.start(this.hash, function(data) {
+							$('#stop-sprint').show();
+							$('#start-sprint').hide();
+						}.bind(this));
+					} else if (e.srcElement.id.indexOf('stop-sprint') > -1) {
+						Sprint.stop(this.hash, function(data) {
+							$('#stop-sprint').hide();
+							$('#start-sprint').show();
+						}.bind(this));
+					} else if (e.srcElement.id.indexOf('delete-sprint') > -1) {
+						Sprint.delete(this.hash, function(data) {
+							var sprintsList = App.pageView.getPage(this.parentPage).deck;
+							sprintsList.splice(sprintsList.indexOf(this.parentCard), 1);
+							this.goBack();
+						}.bind(this));
+					} else if (e.srcElement.id.indexOf('leave-sprint') > -1) {
+						Sprint.unfollow(this.hash, function(data) {
+							this.refresh();
+						}.bind(this));
+					} else if (e.srcElement.id.indexOf('join-sprint') > -1) {
+						Sprint.follow(this.hash, function(data) {
+							this.refresh();
+						}.bind(this));
 					}
 				}
 			}.bind(this));

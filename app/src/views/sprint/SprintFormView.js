@@ -127,7 +127,7 @@ define(function(require, exports, module) {
 				}
 			}.bind(this));
 
-			this.draggableFormView = new DraggableView(this.sprintSurface);
+			this.draggableFormView = new DraggableView(this.sprintSurface, true);
 			this.renderController.show(this.draggableFormView);
 		}.bind(this), function() {
 			App.pageView.goBack();

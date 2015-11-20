@@ -158,11 +158,6 @@ define(function(require, exports, module) {
 		//this.add(Scrollview);
 	}
 
-	SprintListView.prototype.refresh = function() {
-		this.initScrollView();
-		this.fetchSprints();
-	};
-
 	SprintListView.prototype.getScrollPosition = function() {
 		return this.scrollView.getPosition()	
 	};

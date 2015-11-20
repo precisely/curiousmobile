@@ -45,7 +45,8 @@ define(function(require, exports, module) {
 					var state = {
 						hash: this.sprint.hash,
 						name: this.sprint.name,
-						parentPage: App.pageView.getCurrentPage()
+						parentPage: App.pageView.getCurrentPage(),
+						parentCard: this
 					};
 					App.pageView.changePage('SprintDetailView', state);
 				} else if (_.contains(classList, 'activity')) {

@@ -294,11 +294,12 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		scrollModifier.transformFrom(function() {
-			return Transform.translate(0, this.heightOfPins() + 10, App.zIndex.readView);
+			var heightOfPins = this.heightOfPins();
+			return Transform.translate(0, heightOfPins ? (heightOfPins + 10) : 20, App.zIndex.readView);
 		}.bind(this));
 
 		var pinnedEntriesModifier = new Modifier({
-			transform: Transform.translate(0, 10, App.zIndex.pinned)
+			transform: Transform.translate(0, 0, App.zIndex.pinned)
 		});
 		pinnedContainerSurface.add(pinnedEntriesModifier).add(this.pinnedSequentialLayout);
 
@@ -320,11 +321,11 @@ define(function(require, exports, module) {
 
 	EntryListView.prototype.heightOfPins = function () {
 		var numberOfRows = this.numberOfPinRows();
-		return (numberOfRows * 40) + 25;
+		return numberOfRows ? ((numberOfRows * 40) + 15) : 0;
 	}
 
 	EntryListView.prototype.numberOfPinRows = function () {
-		var numberOfRows = 1;
+		var numberOfRows = this.pinnedViews.length ? 1 : 0;
 		var rowWidthSoFar = 20;
 		this.pinnedEdgeIndex = [];
 		_.each(this.pinnedViews, function (pinnedView, index) {

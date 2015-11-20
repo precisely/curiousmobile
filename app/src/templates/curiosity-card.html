@@ -7,7 +7,11 @@
 		<div class="row curiosities-row curiosities-row-top">
 			<div class="col-xs-8 curiosities-description">
 				<p>
-					Is {{= description1 }} {{= relation_in_english }} {{= description2 }}?
+					{{ if (label == 'proportional' || label == 'inversely proportional') { }}
+						Could there be a relationship between {{= description1 }} and {{= description2 }}? YES ... NO
+					{{ } else if (label == 'triggered') { }}
+						Could {{= description1 }} be a trigger of {{= description2 }}? YES ... NO
+					{{ } }}
 				</p>
 			</div>
 			<div class="col-xs-4 plot-curiosity-chart">

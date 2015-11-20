@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 	}, {
 		title: 'Help',
 		iconFont: '<i class="fa fa-question-circle"></i>',
-		trigger: {name:'change-page', data: 'HelpContentsView'}
+		trigger: {name:'change-page', data: 'TutorialView'}
 	}, {
 		title: 'Terms of Service',
 		iconFont: '<i class="fa fa-file-text-o"></i>',

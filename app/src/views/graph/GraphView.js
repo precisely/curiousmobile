@@ -48,6 +48,7 @@ define(function(require, exports, module) {
 			}
 		});
 
+		this.graphSurface.pipe(this._eventOutput);
 		this.renderController.show(this.graphSurface, function() {
 			this.plot = new PlotMobile(App.tagListWidget.list, User.getCurrentUserId(), User.getCurrentUser().get("username"), '#' + this.plotAreaId, true, false, new PlotProperties({
 				'startDate':'#startdatepicker1',
@@ -92,6 +93,12 @@ define(function(require, exports, module) {
 				}.bind(this));
 			}
 		}
+	};
+
+	GraphView.prototype.showDiscussionChart = function(plotDataId) {
+		this.on('graph-visible', function() {
+			this.plot.loadSnapshotId(plotDataId);
+		}.bind(this));
 	};
 
 	GraphView.prototype.drawDateFooter = function() {
@@ -147,7 +154,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		dateContainerSurface.add(new StateModifier({align:[0.5, 0.5], origin: [0.5, 0.5], transform: Transform.translate(0, 0, 2)})).add(this.dateLabelSurface);
-		this.add(new StateModifier({align: [0, 1], origin: [0, 1], transform: Transform.translate(0, -115, 0)})).add(dateContainerSurface);
+		this.add(new StateModifier({transform: Transform.translate(0, (App.height - 172), 0)})).add(dateContainerSurface);
 	};
 
 	function showDatePicker(dateType) {

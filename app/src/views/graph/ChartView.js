@@ -40,12 +40,14 @@ define(function(require, exports, module) {
 			}
 		});
 
-		this.optionsSurface.on('click', function() {
-			App.pageView._eventOutput.emit('show-context-menu', {
-				menu: 'chart',
-				target: this,
-				eventArg: null
-			});
+		this.optionsSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				App.pageView._eventOutput.emit('show-context-menu', {
+					menu: 'chart',
+					target: this,
+					eventArg: null
+				});
+			}
 		}.bind(this));
 
 		this.setRightIcon(this.optionsSurface);

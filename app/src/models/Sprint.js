@@ -124,5 +124,121 @@ define(function(require, exports, module) {
 		});	
 	};
 
+	Sprint.stop = function(sprintHash, successCallback, failCallback) {
+		var timeZoneName = jstz.determine().name();
+		var now = new Date().toUTCString();
+		u.queueJSON('Stopping Sprint', App.serverUrl + '/api/sprint/action/stop?callback=?', u.getCSRFPreventionObject('stopSprintDataCSRF', {
+			id: sprintHash,
+			now: now,
+			timeZoneName: timeZoneName
+		}), function(data) {
+			if (!u.checkData(data))
+				return;
+
+			if (data.success) {
+				if (successCallback) {
+					successCallback();
+				}
+			} else {
+				u.showAlert(data.message);
+				if (failCallback) {
+					failCallback();
+				}
+			}
+		});
+	};
+
+	Sprint.start = function(sprintHash, successCallback, failCallback) {
+		var timeZoneName = jstz.determine().name();
+		var now = new Date().toUTCString();
+		u.queueJSON('Stopping Sprint', App.serverUrl + '/api/sprint/action/start?callback=?', u.getCSRFPreventionObject('stopSprintDataCSRF', {
+			id: sprintHash,
+			now: now,
+			timeZoneName: timeZoneName
+		}), function(data) {
+			if (!u.checkData(data))
+				return;
+
+			if (data.success) {
+				if (successCallback) {
+					successCallback();
+				}
+			} else {
+				u.showAlert(data.message);
+				if (failCallback) {
+					failCallback();
+				}
+			}
+		});
+	};
+
+	Sprint.delete = function(sprintHash, successCallback) {
+		var httpArgs ={requestMethod:'delete'};
+		u.showAlert({
+			message: 'Are you sure to delete this sprint?',
+			a: 'Yes',
+			b: 'No',
+			onA: function() {
+				u.queueJSONAll('Deleting sprint', App.serverUrl + '/api/sprint/' + sprintHash,
+						u.getCSRFPreventionObject('deleteSprintDataCSRF'),
+						function(data) {
+							if (!u.checkData(data))
+								return;
+
+							if (!data.success) {
+								u.showAlert('Unable to delete sprint!');
+							} else if (successCallback) {
+								successCallback();
+							}
+						}, function(data) {
+							u.showAlert(data.message);
+						}, null, httpArgs);
+			}.bind(this),
+			onB: function() {}.bind(this),
+		});
+	};
+
+	Sprint.unfollow = function(sprintHash, successCallback) {
+		var timeZoneName = jstz.determine().name();
+		var now = new Date().toUTCString();
+		u.queueJSON('Unfollow Sprint', App.serverUrl + '/api/sprint/action/leave?callback=?', u.getCSRFPreventionObject('leaveSprintDataCSRF', {
+			id: sprintHash,
+			now: now,
+			timeZoneName: timeZoneName
+		}), function(data) {
+			if (!u.checkData(data))
+				return;
+
+			if (data.success) {
+				if (successCallback) {
+					successCallback();
+				}
+			} else {
+				u.showAlert(data.message);
+			}
+		});
+	};
+
+	Sprint.follow = function(sprintHash, successCallback) {
+		var timeZoneName = jstz.determine().name();
+		var now = new Date().toUTCString();
+		u.queueJSON('Unfollow Sprint', App.serverUrl + '/api/sprint/action/join?callback=?', u.getCSRFPreventionObject('leaveSprintDataCSRF', {
+			id: sprintHash,
+			now: now,
+			timeZoneName: timeZoneName
+		}), function(data) {
+			if (!u.checkData(data))
+				return;
+
+			if (data.success) {
+				if (successCallback) {
+					successCallback();
+				}
+			} else {
+				u.showAlert(data.message);
+			}
+		});
+	};
+
 	module.exports = Sprint;
 });

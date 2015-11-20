@@ -16,7 +16,6 @@ define(function(require, exports, module) {
 	var CuriosityCardView = require('views/curiosities/CuriosityCardView');
 	var FeedView = require('views/community/FeedView');
 	var curiosities = require('util/curiosities');
-	require('../../../lib/bootstrap/dist/js/bootstrap.min');
 
 	function CuriositiesListView() {
 		FeedView.apply(this, arguments);
@@ -37,21 +36,6 @@ define(function(require, exports, module) {
 
 	function initCuriosityView() {
 		this.setHeaderLabel('CURIOSITIES');
-		var filterButton = new Surface({
-			size: [80, 40],
-			content: '<div class="btn-group">' +
-					'<button type="button" class="btn btn-default dropdown-toggle curiosities-filter-button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">' +
-					'Filter&nbsp;&nbsp;<i class="fa fa-chevron-down"></i></button><ul class="dropdown-menu">' +
-					'<li><a href="#">All</a></li><li><a href="#">Yes</a></li>' +
-					'<li><a href="#">No</a></li></ul></div>',
-			properties: {
-				margin: '15px 20px 0px 0px'
-			}
-		});
-		filterButton.on('deploy', function() {
-			$('.dropdown-toggle').dropdown();
-		}.bind(this));
-		this.setRightIcon(filterButton);
 		this.loadCuriosities();
 	};
 
@@ -80,10 +64,9 @@ define(function(require, exports, module) {
 		this.pillsScrollView.sequenceFrom(navPills);
 
 		// Adding navigation pills below header
-		navPills.push(this.createPillsSurface('NATURAL', true, 'natural'));
-		navPills.push(this.createPillsSurface('A-Z', false, 'alpha'));
-		navPills.push(this.createPillsSurface('MARKED', false, 'marked'));
-		navPills.push(this.createPillsSurface('SCORE', false, 'score'));
+		navPills.push(this.createPillsSurface('Unrated', true, 'natural'));
+		navPills.push(this.createPillsSurface('Rated', false, 'marked'));
+		navPills.push(this.createPillsSurface('All', false, 'score'));
 
 		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
 		pillsScrollViewContainer.on('deploy', function() {

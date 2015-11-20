@@ -2782,7 +2782,7 @@ input.cropit-image-zoom-input {
 	display:inline;
 	clear: both;
 	margin:0;
-	margin-top: 9px;
+	margin-top: -3px;
 }
 
 #search-image {
@@ -2855,4 +2855,20 @@ input.cropit-image-zoom-input {
 	color: #fff;
 	text-align: center;
 	margin-top: 5px;
+}
+
+.sprint-button {
+	font-size: 11px;
+	height: 25px;
+	width: 65px;
+	background-color: transparent;
+	border: 1px #656565 solid;
+	margin: 10px 5px 10px 0px;
+	border-radius: 2px;
+	font-weight: 500;
+}
+
+.sprint-details .prompted-action {
+	background-color: #f48d5b;
+	color: #ffffff;
 }
