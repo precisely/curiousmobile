@@ -48,6 +48,8 @@ define(function(require, exports, module) {
 				if (_.contains(classList, 'submit')) {
 					console.log('RegisterView: submit form');
 					this.submit();
+				} else if (_.contains(classList, 'terms-conditions')) {
+					App.pageView.changePage('TermsView', {comingFrom: this});
 				}
 			}
 		}.bind(this));

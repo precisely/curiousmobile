@@ -28,7 +28,6 @@ define(function(require, exports, module) {
 			size: [undefined, undefined],
 			properties: {
 				backgroundColor: '#efefef',
-				zIndex: 5
 			}
 		});
 
@@ -36,6 +35,7 @@ define(function(require, exports, module) {
 
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.Y,
+			paginated: false
 		});
 		this.surfaceList = [];
 
@@ -125,7 +125,7 @@ define(function(require, exports, module) {
 			size: [undefined, true],
 			properties: {
 				padding: '5px 10px',
-				marginTop: '10px'
+				paddingTop: '20px'
 			},
 			content: _.template(discussionPostTemplate, discussionPost.discussionDetails, templateSettings),
 		});
@@ -143,7 +143,7 @@ define(function(require, exports, module) {
 				var height = (size[1] == true) ? discussionPostSurface._currTarget.offsetHeight : size[1];
 				discussionPostSurface.setSize([width, height]);
 			}.bind(this), 2);
-			if (this.graphView) {
+			if (discussionPost.discussionDetails.firstPost && discussionPost.discussionDetails.firstPost.plotDataId) {
 				this.graphView.showDiscussionChart(discussionPost.discussionDetails.firstPost.plotDataId);
 			}
 		}.bind(this));

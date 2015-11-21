@@ -62,12 +62,12 @@ define(function(require, exports, module) {
 		feedItem: 16,
 		pinned: 23,
 		formView: 14,
-		header: 25,
-		footer: 25,
+		header: 35,
+		footer: 35,
 		datePicker: 23,
 		autocomplete: 99,
 		alertView: 999,
-		contextMenu: 30,
+		contextMenu: 50,
 		overlay: 20
 	};
 	var Engine = require('famous/core/Engine');
@@ -116,7 +116,7 @@ define(function(require, exports, module) {
 	window.App.height = window.innerHeight;
 	App.viewsWithoutSearchIcon = ['TrackView', 'EditProfileView', 'CreateChartView', 'LoginView', 'RegisterView',
 			'ForgotPasswordView', 'CuriositiesListView', 'HelpContentsView', 'CreateTagHelpView', 'HelpContentsView',
-			'ShareHelpView', 'MakeChartHelpView', 'TermsView'];
+			'ShareHelpView', 'MakeChartHelpView', 'TermsView', 'DiscussionDetailView'];
 	var appView = new AppView();
 	window.App.appView = appView;
 	var mod = new Modifier({

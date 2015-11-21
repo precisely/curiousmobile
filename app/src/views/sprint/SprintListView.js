@@ -91,7 +91,6 @@ define(function(require, exports, module) {
 		navPills.push(this.createPillsSurface('OWNED'));
 
 		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
-		this.fetchSprints();
 	};
 
 	SprintListView.prototype.onShow = function(state) {
@@ -118,7 +117,8 @@ define(function(require, exports, module) {
 					max: this.max
 				};
 		if (lable === 'ALL') {
-			Sprint.fetch(params, addListItemsToScrollView.bind(this));
+			params.nextSuggestionOffset = this.nextSuggestionOffset;
+			Sprint.fetch(params, this.addListItemsToScrollView.bind(this));
 		} else if (lable === 'OWNED') {
 			Sprint.fetchOwned(params, this.addListItemsToScrollView.bind(this));
 		}
@@ -138,25 +138,10 @@ define(function(require, exports, module) {
 			offset: 0,
 			max: this.max
 		};
-		Sprint.fetch(params, addListItemsToScrollView.bind(this));
+		Sprint.fetch(params, this.addListItemsToScrollView.bind(this));
 		this.scrollView.sequenceFrom(this.deck);
 		this.renderController.show(this.scrollView);
 	};
-
-	function addListItemsToScrollView(listItems) {
-		if (!listItems) {
-			this.itemsAvailable = false;
-			console.log('no more items available');
-			return;
-		}
-		listItems.forEach(function(item) {
-			var sprintCardView = new SprintCardView(item);
-			this.deck.push(sprintCardView);
-			sprintCardView.setScrollView(this.scrollView);
-		}.bind(this));
-
-		//this.add(Scrollview);
-	}
 
 	SprintListView.prototype.getScrollPosition = function() {
 		return this.scrollView.getPosition()	

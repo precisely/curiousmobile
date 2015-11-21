@@ -41,10 +41,11 @@ define(function(require, exports, module) {
 
 	GraphView.prototype.init = function() {
 		this.graphSurface = new Surface({
-			size: [undefined, App.height - 230],
+			size: [undefined, App.height - 222],
 			content: _.template(GraphTemplate, {plotAreaId: this.plotAreaId}, templateSettings),
 			properties: {
-				backgroundColor: '#fff'
+				backgroundColor: '#fff',
+				zIndex: 10
 			}
 		});
 
@@ -95,14 +96,19 @@ define(function(require, exports, module) {
 		}
 	};
 
+	// Considering height of graph and the date footer, required for scri=ollview in discussion
+	GraphView.prototype.getSize = function() {
+		return (App.height - 200);
+	};
+
 	GraphView.prototype.showDiscussionChart = function(plotDataId) {
 		this.on('graph-visible', function() {
 			this.plot.loadSnapshotId(plotDataId);
 		}.bind(this));
 	};
-
 	GraphView.prototype.drawDateFooter = function() {
 		startDate = endDate = null;
+
 		var dateContainerSurface = new ContainerSurface({
 			size: [undefined, 58],
 			properties: {
@@ -154,7 +160,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		dateContainerSurface.add(new StateModifier({align:[0.5, 0.5], origin: [0.5, 0.5], transform: Transform.translate(0, 0, 2)})).add(this.dateLabelSurface);
-		this.add(new StateModifier({transform: Transform.translate(0, (App.height - 172), 0)})).add(dateContainerSurface);
+		this.add(new StateModifier({transform: Transform.translate(0, (App.height - 172), -5)})).add(dateContainerSurface);
 	};
 
 	function showDatePicker(dateType) {
@@ -195,9 +201,13 @@ define(function(require, exports, module) {
 
 	GraphView.prototype.createTagsPill = function(lineId, tag, color) {
 		if (tag) {
+			var deleteAffordance = '';
+			if (App.pageView.getCurrentPage() !== 'DiscussionDetailView') {
+				deleteAffordance = '<i class="fa fa-times-circle"></i>';
+			}
 			var pillSurface = new Surface({
 				content: '<button class="tag-pill btn' + '" id="' + tag.id + '" style="border-left: 2px solid' + color +
-						'; color: ' + color + ';">' + tag.description + '<i class="fa fa-times-circle"></i></button>',
+						'; color: ' + color + ';">' + tag.description + deleteAffordance + '</button>',
 				size: [true, 50],
 				properties: {
 					backgroundColor: '#efefef',

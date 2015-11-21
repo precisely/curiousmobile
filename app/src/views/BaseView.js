@@ -30,7 +30,7 @@ define(function(require, exports, module) {
 		StateView.apply(this, arguments);
 		_createLayout.call(this);
 		_createHeader.call(this);
-		_createFooter.call(this);
+		this._createFooter();
 		_setListeners.call(this);
 	}
 
@@ -72,6 +72,9 @@ define(function(require, exports, module) {
 		this.layout.header.add(headerMainControllerModifier).add(this.headerController);
 		this.headerContainer = new ContainerSurface({
 			size: [undefined, undefined],
+			properties: {
+				zIndex: '90'
+			}
 		});
 
 		if (!this.options.header) {
@@ -170,7 +173,7 @@ define(function(require, exports, module) {
 		this.rightIconsSequenceView.sequenceFrom(this.rightIconsList);
 	};
 
-	function _createFooter() {
+	BaseView.prototype._createFooter = function() {
 		if (!this.options.footer) {
 			return;
 		}
@@ -185,6 +188,7 @@ define(function(require, exports, module) {
 			properties: {
 				borderTop: '1px solid #c0c0c0',
 				backgroundColor: 'white',
+				zIndex: '30'
 			}
 		});
 
@@ -275,7 +279,8 @@ define(function(require, exports, module) {
 				fontWeight: 'normal',
 				color: color,
 				textAlign: 'center',
-				padding: '21px 0'
+				padding: '21px 0',
+				zIndex: 40
 			}
 		});
 

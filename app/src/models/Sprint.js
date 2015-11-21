@@ -27,13 +27,14 @@ define(function(require, exports, module) {
 	Sprint.fetch = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getAllSprintData', {
 			max : Sprint.max,
-			offset: args.offset?args.offset:0,
+			offset: args.offset ? args.offset : 0,
+			nextSuggestionOffset: args.nextSuggestionOffset,
 			type: 'sprints'
 		});
 		u.queueJSON('loading feeds', u.makeGetUrl('getAllSprintData', 'search'),
 		u.makeGetArgs(argsToSend), function(data) {
 			if (u.checkData(data)) {
-				callback(data.listItems);
+				callback(data.listItems, data.nextSuggestionOffset);
 			}
 		});
 	};
@@ -41,7 +42,7 @@ define(function(require, exports, module) {
 	Sprint.fetchOwned = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getOwnedSprintData', {
 			max : Sprint.max,
-			offset: args.offset?args.offset:0,
+			offset: args.offset ? args.offset : 0,
 		});
 		u.queueJSON('loading feeds', u.makeGetUrl('getOwnedSprintData', 'search'),
 				u.makeGetArgs(argsToSend), function(data) {

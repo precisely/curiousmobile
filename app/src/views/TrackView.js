@@ -193,6 +193,7 @@ define(function(require, exports, module) {
 		this.formContainerSurface.setProperties({
 			visibility: 'visible'
 		});
+		$('#entry-description').val('');
 		BaseView.prototype.killOverlayContent.call(this);
 		this.showMenuButton();
 		this.setHeaderSurface(this.calendarView);

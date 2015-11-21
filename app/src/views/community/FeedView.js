@@ -143,7 +143,6 @@ define(function(require, exports, module) {
 		navPills.push(this.createPillsSurface('OWNED'));
 
 		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
-		this.fetchFeedItems(this.currentPill || 'ALL');
 	};
 
 	FeedView.prototype.createPillsSurface = function(pillFor, active) {
@@ -215,6 +214,7 @@ define(function(require, exports, module) {
 		};
 		if (lable === 'ALL') {
 			params.type = 'all';
+			params.nextSuggestionOffset = this.nextSuggestionOffset;
 			var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', params);
 			u.queueJSON("loading feeds", u.makeGetUrl('getAllSocialData', 'search'),
 				u.makeGetArgs(argsToSend),
@@ -223,7 +223,7 @@ define(function(require, exports, module) {
 						return;
 					}
 
-					this.addListItemsToScrollView(data.listItems);
+					this.addListItemsToScrollView(data.listItems, data.nextSuggestionOffset);
 				}.bind(this));
 		} else if (lable === 'PEOPLE') {
 			User.fetch(params, this.addListItemsToScrollView.bind(this));
@@ -234,7 +234,7 @@ define(function(require, exports, module) {
 		}
 	};
 
-	FeedView.prototype.addListItemsToScrollView = function(listItems) {
+	FeedView.prototype.addListItemsToScrollView = function(listItems, nextSuggestionOffset) {
 		if (!listItems || listItems.length <= 0) {
 			this.itemsAvailable = false;
 			console.log('no more items available');
@@ -253,6 +253,10 @@ define(function(require, exports, module) {
 			}
 			return;
 		}
+		if (nextSuggestionOffset) {
+			this.nextSuggestionOffset = nextSuggestionOffset;
+		}
+
 		listItems.forEach(function(item) {
 
 			if (item.type === 'spr') {
@@ -285,6 +289,7 @@ define(function(require, exports, module) {
 		this.loadMoreItems = true;
 		this.itemsAvailable = true;
 		this.offset = 0;
+		this.nextSuggestionOffset = 0;
 		this.scrollView.setPosition(0);
 		this.scrollView.sequenceFrom(this.deck);
 		this.renderController.show(this.scrollView);

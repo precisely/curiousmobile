@@ -18,12 +18,19 @@ define(function(require, exports, module) {
 	TermsView.prototype.constructor = TermsView;
 	TermsView.DEFAULT_OPTIONS = {
 		header: true,
-		footer: true,
+		footer: false,
 		noBackButton: true
 	};
 
 
 	TermsView.prototype.createBody = function() {
+		if (this.parentPage) {
+			this.showBackButton();
+		} else{
+			this.showMenuButton();
+			this.options.footer = true;
+			this._createFooter();
+		}
 		var backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
@@ -39,7 +46,12 @@ define(function(require, exports, module) {
 		this.setBody(this.draggableView);
 	};
 
-	TermsView.prototype.preShow = function() {
+	TermsView.prototype.preShow = function(state) {
+		if (state && state.comingFrom) {
+			this.parentPage = state.comingFrom.constructor.name;
+		} else {
+			this.parentPage = null;
+		}
 		this.createBody();
 		return true;
 	}
