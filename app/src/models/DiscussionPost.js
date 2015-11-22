@@ -16,7 +16,8 @@ define( function(require, exports, module) {
 			Id: User.getCurrentUserId(),
 			discussionHash: params.discussionHash,
 			max: DiscussionPost.max,
-			offset: params.offset ? params.offset : 0
+			offset: params.offset ? params.offset : 0,
+			order: 'desc'
 		});
 		u.queueJSON("loading comments", App.serverUrl + '/api/discussionPost',
 		  u.makeGetArgs(argsToSend), function(data) {

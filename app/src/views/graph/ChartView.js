@@ -36,7 +36,8 @@ define(function(require, exports, module) {
 			properties: {
 				color: '#F14A42',
 				padding: '20px 0px',
-				cursor: 'pointer'
+				cursor: 'pointer',
+				zIndex: 20
 			}
 		});
 
@@ -50,7 +51,9 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
+		this.setHeaderLabel('CHART');
 		this.setRightIcon(this.optionsSurface);
+		this.add(new StateModifier({transform: Transform.translate(35, 0, App.zIndex.header + 5)})).add(this.leftSurface);
 
 		this.graphView = new GraphView(null, 'plotArea');
 		this.add(new StateModifier({transform: Transform.translate(0, 65, App.zIndex.readView)})).add(this.graphView);
@@ -97,6 +100,10 @@ define(function(require, exports, module) {
 			}
 		}
 		return true;
+	};
+
+	ChartView.prototype.goBack = function() {
+		App.pageView.changePage('CreateChartView', {selectedTags: this.graphView.plottedTags});
 	};
 
 	ChartView.prototype.showLoadGraphOverlay = function() {

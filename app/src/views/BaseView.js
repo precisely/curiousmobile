@@ -116,7 +116,8 @@ define(function(require, exports, module) {
 			properties: {
 				padding: '15px 20px',
 				color: '#7b7b7b',
-				fontSize: '22px'
+				fontSize: '22px',
+				zIndex: 20
 			}
 		});
 		this.leftSurface.on('click', function(e) {
@@ -129,6 +130,9 @@ define(function(require, exports, module) {
 		this.hamburgerSurface = new ImageSurface({
 			size: [49, 64],
 			content: 'content/images/hamburg-menu.png',
+			properties: {
+				zIndex: 20
+			}
 		});
 
 		this.hamburgerSurface.on('click', function(e) {
@@ -154,7 +158,8 @@ define(function(require, exports, module) {
 				color: '#7b7b7b',
 				textAlign: 'center',
 				paddingTop: '15px',
-				fontSize: '22px'
+				fontSize: '22px',
+				zIndex: 20
 			}
 		});
 

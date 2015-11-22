@@ -62,6 +62,7 @@ define(function (require, exports, module) {
 						App.pageView.getCurrentView().showUserDetailsForm();
 						console.log('********************** profile picture updated ***********************************');
 					});
+				} else {
 				}
 			}
 		}.bind(this));

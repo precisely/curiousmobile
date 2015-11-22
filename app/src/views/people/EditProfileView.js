@@ -159,8 +159,8 @@ define(function(require, exports, module, store) {
 				var classList;
 				if (e instanceof CustomEvent) {
 					classList = e.srcElement.classList;
+					this.editPeopleSurface = editPeopleSurface;
 					if (_.contains(classList, 'new-tag')) {
-						this.editPeopleSurface = editPeopleSurface;
 						this.showAddInterestTagForm();
 					} else if (_.contains(classList, 'delete-tag')) {
 						var tagName = $('#tagName').serializeObject();
@@ -170,7 +170,6 @@ define(function(require, exports, module, store) {
 							App.pageView.changePage('EditProfileView', state);
 						});
 					} else if (_.contains(classList, 'choose-image')) {
-						this.editPeopleSurface = editPeopleSurface;
 						this.showProfileUpdateForm();
 					} else if (_.contains(classList, 'link-withings')) {
 						cordova.InAppBrowser.open(App.serverUrl + '/home/registerwithings?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');

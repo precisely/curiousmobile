@@ -16,6 +16,7 @@ define(function(require, exports, module) {
 	var DiscussionPost = require('models/DiscussionPost');
 	var discussionPostTemplate = require('text!templates/discussion-post.html');
 	var commentTemplate = require('text!templates/comments.html');
+	var addCommentTemplate = require('text!templates/post-comment.html');
 	var GraphView = require('views/graph/GraphView');
 	var User = require('models/User');
 
@@ -44,29 +45,23 @@ define(function(require, exports, module) {
 				this.loadMoreItems = true;
 			}
 		}.bind(this));
-
-		this.scrollView._eventOutput.on('onEdge', function() {
-			var currentIndex = this.scrollView.getCurrentIndex();
-
-			// Check if end of the page is reached
-			if ((this.scrollView._scroller._onEdge != -1) && this.loadMoreItems && this.itemsAvailable) {
-				this.loadMoreItems = false;
-				this.offset += DiscussionPost.max;
-
-				var params = {
-					discussionHash: this.discussionHash,
-					offset: this.offset
-				}
-				DiscussionPost.fetch(params, function(discussionPost) {
-					this.discussionPost = discussionPost;
-					this.showComments(discussionPost);
-				}.bind(this));
-			}
-		}.bind(this));
 	}
 
 	DiscussionDetailView.prototype = Object.create(BaseView.prototype);
 	DiscussionDetailView.prototype.constructor = DiscussionDetailView;
+
+	DiscussionDetailView.prototype.loadItems = function() {
+		this.loadMoreItems = false;
+		this.offset += DiscussionPost.max;
+		var params = {
+			discussionHash: this.discussionHash,
+			offset: this.offset
+		}
+		DiscussionPost.fetch(params, function(discussionPost) {
+			this.discussionPost = discussionPost;
+			this.showComments(discussionPost);
+		}.bind(this));
+	};
 
 	DiscussionDetailView.DEFAULT_OPTIONS = {
 		header: true,
@@ -84,6 +79,7 @@ define(function(require, exports, module) {
 		}
 		this.discussionHash = state.discussionHash;
 		this.parentPage = state.parentPage || 'FeedView';
+		this.isSharedGraph = false;
 		this.refresh();
 		return true;
 	};
@@ -131,10 +127,13 @@ define(function(require, exports, module) {
 		});
 
 		if (discussionPost.discussionDetails.firstPost && discussionPost.discussionDetails.firstPost.plotDataId) {
+			this.isSharedGraph = true;
 			App.tagListWidget = initTagListWidget();
 			this.graphView = new GraphView();
 			this.surfaceList.splice(0, 0, this.graphView);
 			this.graphView.pipe(this.scrollView)
+		} else {
+			this.isSharedGraph = false;
 		}
 		discussionPostSurface.on('deploy', function() {
 			Timer.every(function() {
@@ -143,18 +142,12 @@ define(function(require, exports, module) {
 				var height = (size[1] == true) ? discussionPostSurface._currTarget.offsetHeight : size[1];
 				discussionPostSurface.setSize([width, height]);
 			}.bind(this), 2);
-			if (discussionPost.discussionDetails.firstPost && discussionPost.discussionDetails.firstPost.plotDataId) {
+			if (this.isSharedGraph) {
 				this.graphView.showDiscussionChart(discussionPost.discussionDetails.firstPost.plotDataId);
 			}
 		}.bind(this));
 		this.surfaceList.push(discussionPostSurface);
 		discussionPostSurface.pipe(this.scrollView);
-
-		discussionPostSurface.on('keyup', function(e) {
-			if (e.keyCode == 13) {
-				this.postComment();
-			}
-		}.bind(this));
 
 		discussionPostSurface.on('click', function(e) {
 			var classList = e.srcElement.classList;
@@ -185,9 +178,26 @@ define(function(require, exports, module) {
 					if (window.plugins) {
 						window.plugins.socialsharing.share(null, 'Curious Discussions', null, App.serverUrl + '/home/social/discussion/' + this.discussionHash);
 					}
+				} else if (_.contains(classList, 'view-more-comments')) {
+					this.loadItems();
 				}
 			}
 		}.bind(this));
+
+		var addCommentSurface = new Surface({
+			size: [undefined, 50],
+			content: _.template(addCommentTemplate, templateSettings),
+			properties: {
+				padding: '0px 10px',
+			}
+		});
+		addCommentSurface.on('keyup', function(e) {
+			if (e.keyCode == 13) {
+				this.postComment();
+			}
+		}.bind(this));
+		this.surfaceList.push(addCommentSurface);
+		addCommentSurface.pipe(this.scrollView);
 
 		this.showComments(discussionPost);
 	};
@@ -210,6 +220,7 @@ define(function(require, exports, module) {
 	DiscussionDetailView.prototype.showComments = function(discussionPost) {
 		if (!discussionPost.posts || discussionPost.posts.length === 0) {
 			this.itemsAvailable = false;
+			$('.view-more-comments').hide();
 			return;
 		}
 		var discussionHash = this.discussionHash;
@@ -259,7 +270,12 @@ define(function(require, exports, module) {
 					}
 				});
 
-				this.surfaceList.push(commentSurface);
+				if (this.isSharedGraph) {
+					this.surfaceList.splice(2, 0, commentSurface);
+				} else {
+					this.surfaceList.splice(1, 0, commentSurface);
+				}
+
 				commentSurface.pipe(this.scrollView);
 			}
 		}.bind(this));
