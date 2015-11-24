@@ -190,6 +190,8 @@ define(function(require, exports, module, store) {
 					} else if (_.contains(classList, 'unlink-jawbone')) {
 						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterjawbone?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
 					}
+				} else {
+					e.stopPropagation();
 				}
 			}.bind(this));
 

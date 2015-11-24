@@ -62,7 +62,8 @@ define(function (require, exports, module) {
 						App.pageView.getCurrentView().showUserDetailsForm();
 						console.log('********************** profile picture updated ***********************************');
 					});
-				} else {
+				} else if (_.contains(classList, 'choose-image-button')) {
+					$('#cropit-image-input').click();
 				}
 			}
 		}.bind(this));

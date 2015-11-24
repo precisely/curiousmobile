@@ -451,7 +451,7 @@ function initCuriosities() {
 	};	 // processSearchResults
 
 	search = function(afterSuccess, q, pageNumber, filter, order1, order2) {
-		var url = '/correlation/search';
+		var url = App.serverUrl + '/correlation/search';
 		log('search more data via AJAX', url);
 		var searchId = getSearchId(q)
 		queuePostJSON('search', url, {q: q, page: pageNumber, filter: filter, order1: order1, order2: order2}, processSearchResults(searchId, afterSuccess));
@@ -509,7 +509,7 @@ function setNoiseOrSignal(currentElement) {
 	var signalLevel = $(currentElement).attr('signal-level');
 	var correlationId = parseInt($(currentElement).closest('.curiosities-row-container').attr('data-id'));
 	var action = 'updateSignalLevel'
-	var url = '/correlation/' + correlationId + '/updateSignalLevel'
+	var url = App.serverUrl + '/correlation/' + correlationId + '/updateSignalLevel'
 	queuePostJSON(action, url, { _method: 'PATCH', signalLevel: signalLevel},
 			function(data) {
 				if (!checkData(data))

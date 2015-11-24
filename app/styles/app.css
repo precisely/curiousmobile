@@ -2328,11 +2328,10 @@ and (max-device-height: 568px) {
 	  height: 200px;*/
 	background-color: #f8f8f8;
 	border-radius: 3px;
-	height: 250px;
-	/*width: 250px;*/
+	height: 200px;
 	cursor: move;
 	margin: auto;
-	width: 80%;
+	width: 185px;
 }
 
 /* Translucent background image */
@@ -2640,7 +2639,7 @@ input.cropit-image-zoom-input {
 }
 
 #correlation-template .curiosities-section-mark-no-or-yes img {
-	width: 25px;
+	width: 30px;
 	margin-top: -5px;
 }
 
@@ -2879,4 +2878,27 @@ input.cropit-image-zoom-input {
 .btn:active, .btn.active {
 	box-shadow: none;
 	-webkit-box-shadow: none;
+}
+
+#cropit-image-input {
+	display: none;
+}
+
+#saveAvatar {
+	text-align: left;
+}
+
+.image-size-label {
+	text-align: center;
+}
+
+.choose-image-button {
+	margin-bottom: 10px;
+}
+
+.cropit-image-preview-container {
+	position: relative;
+	width: 185px;
+	height: 180px;
+	margin: 0px auto;
 }

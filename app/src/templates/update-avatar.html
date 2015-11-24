@@ -1,30 +1,32 @@
 <div class="update-avatar" id="avatarModal" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                Add/Edit Avatar
-            </div>
-            <div class="modal-body text-center">
-                <div class="image-editor">
-                    <form name="saveAvatar" id="saveAvatar" class="form-horizontal" autocomplete="off">
-                        <!--<input type="hidden" name="userId" value="${user.id}" />-->
-                        <div id="image-cropper">
-                            <input type="file" class="cropit-image-input" id="cropit-image-input">
-                            <div class="cropit-image-preview-container">
-                                <div class="cropit-image-preview"></div>
-                            </div>
-                            <div class="image-size-label">
-                                Resize image
-                            </div>
-                            <input type="range" class="cropit-image-zoom-input">
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <div class="wait-form-submit waiting-icon" hidden="true"></div>
-                <button class="export btn btn-danger"  type="button">Upload</button>
-            </div>
-        </div>
-    </div>
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				Add/Edit Avatar
+			</div>
+			<div class="modal-body text-center">
+				<div class="image-editor">
+					<form name="saveAvatar" id="saveAvatar" class="form-horizontal" autocomplete="off">
+						<button type="button" class="btn btn-primary choose-image-button">Choose Image</button>
+						<!--<input type="hidden" name="userId" value="${user.id}" />-->
+						<div id="image-cropper">
+							<input type="file" class="cropit-image-input hidden" id="cropit-image-input">
+
+							<div class="cropit-image-preview-container">
+								<div class="cropit-image-preview"></div>
+							</div>
+							<input type="range" class="cropit-image-zoom-input">
+						</div>
+						<div class="image-size-label">
+							Resize image
+						</div>
+					</form>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<div class="wait-form-submit waiting-icon" hidden="true"></div>
+				<button class="export btn btn-danger" type="button">Upload</button>
+			</div>
+		</div>
+	</div>
 </div>
