@@ -162,7 +162,7 @@ define(function(require, exports, module) {
 
 		var labelSurface = new Surface({
 			size: [150, 40],
-			content: "CHOOSE GRAPH TYPE: ",
+			content: "PLOT GRAPH: ",
 			properties: {
 				fontSize: '10px',
 				margin: '13px 5px 0px 0px'

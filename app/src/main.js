@@ -60,7 +60,7 @@ define(function(require, exports, module) {
 		menu: 1,
 		readView: 16,
 		feedItem: 16,
-		pinned: 23,
+		pinned: 0,
 		formView: 14,
 		header: 35,
 		footer: 35,

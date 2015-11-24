@@ -9,10 +9,11 @@ define(function(require, exports, module) {
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var u = require('util/Utils');
 	var DateUtil = require('util/DateUtil');
-	function DateGridView(date) {
+	function DateGridView(date, withClearButton) {
 		View.apply(this, arguments);
 		this.weekRows = [];
 		this.selectedDate = date;
+		this.withClearButton = withClearButton;
 		this.currentMonth = new Date(date.getFullYear(), date.getMonth(), 1);
 		_createMonthHeader.call(this, this.currentMonth);
 		_createMonthGrid.call(this);
@@ -21,10 +22,21 @@ define(function(require, exports, module) {
 	DateGridView.prototype = Object.create(View.prototype);
 	DateGridView.prototype.constructor = DateGridView;
 
-	DateGridView.DEFAULT_OPTIONS = {};
+	DateGridView.DEFAULT_OPTIONS = {
+		controlButtonProperties:  {
+			fontSize: '20px',
+			backgroundColor: '#333',
+			color: 'white',
+			textAlign: 'center',
+			borderRadius: '5px',
+			marginLeft: '10px',
+			padding : '3px',
+			cursor: 'pointer'
+		}
+	};
 
 	function _zIndex(argument) {
-		return window.App.zIndex.datePicker;	
+		return window.App.zIndex.datePicker;
 	}
 
 	function _createTodayButtom() {
@@ -212,17 +224,7 @@ define(function(require, exports, module) {
 		this.todayButton = new Surface({
 			content: 'Today',
 			size: [65, 35],
-			properties: {
-				fontSize: '20px',
-				backgroundColor: '#333',
-				color: 'white',
-				textAlign: 'center',
-				borderRadius: '5px',
-				marginLeft: '10px',
-				padding : '3px',
-				cursor: 'pointer'
-
-			}
+			properties: this.options.controlButtonProperties
 		});
 
 		this.todayButton.on('click', function() {
@@ -238,12 +240,39 @@ define(function(require, exports, module) {
 		}.bind(this));
 		this.add(this.todayController);
 		this.todayController.show(this.todayButton);
+
+		if (this.withClearButton) {
+			this.setClearButton();
+		}
+
 		weekRowLayout.sequenceFrom(this.weekRenderControllers);
 
 		this.add(weekRowLayout);
 
 		this.renderDates(new Date());
 	}
+
+	DateGridView.prototype.setClearButton = function() {
+		this.clearButton = new Surface({
+			content: 'Clear',
+			size: [65, 35],
+			properties: this.options.controlButtonProperties
+		});
+
+		this.clearButton.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				this._eventOutput.emit('select-date', undefined);
+			}
+		}.bind(this));
+
+		this.clearController = new RenderController();
+
+		this.clearController.inTransformFrom(function() {
+			return Transform.translate(200, 75 + (this.rowsToShow * 37), 999);
+		}.bind(this));
+		this.add(this.clearController);
+		this.clearController.show(this.clearButton);
+	};
 
 	DateGridView.prototype.renderDates = function(date) {
 		var leadDays = this.getLeadDays(date);
@@ -276,7 +305,6 @@ define(function(require, exports, module) {
 				this.weekRenderControllers[i].hide();	
 			}
 		}
-
 	}
 
 	DateGridView.prototype.numberOfRowsToShow = function(date) {

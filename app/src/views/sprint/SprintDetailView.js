@@ -138,7 +138,7 @@ define(function(require, exports, module) {
 						Sprint.delete(this.hash, function(data) {
 							var sprintsList = App.pageView.getPage(this.parentPage).deck;
 							sprintsList.splice(sprintsList.indexOf(this.parentCard), 1);
-							this.goBack();
+							App.pageView.changePage('SprintListView');
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('leave-sprint') > -1) {
 						Sprint.unfollow(this.hash, function(data) {

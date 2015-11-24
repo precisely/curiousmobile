@@ -252,8 +252,11 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				args = {
 					dateToken: new Date().getTime()
 				};
-			} else if (!args['dateToken']) {
-				//args['dateToken'] = new Date().getTime();
+			} else if (requestMethod != 'PUT' && !args['dateToken']) {
+				args['dateToken'] = new Date().getTime();
+			}
+			if (url.indexOf('?') >= 0 && url.indexOf('dateToken=') < 0) {
+				url += '&dateToken=' + new Date().getTime();
 			}
 			var wrapSuccessCallback = function(data, msg) {
 				u.spinnerStop();

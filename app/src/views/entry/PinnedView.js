@@ -32,6 +32,12 @@ define(function(require, exports, module) {
 				lineHeight: '13px',
 				fontSize: '13px',
 				backgroundColor: '#e2e2e2',
+				overflow: 'hidden',
+				whiteSpace: 'nowrap',
+				fontStyle: 'normal',
+				textOverflow: 'ellipsis',
+				maxWidth: '150px',
+				zIndex: 0
 			}
 		};
 

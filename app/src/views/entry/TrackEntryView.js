@@ -41,11 +41,12 @@ define(function(require, exports, module) {
 			textOverflow: 'ellipsis',
 			whiteSpace: 'nowrap',
 			overflow: 'hidden',
+			zIndex: 10
 		};
 
 		var size = [window.innerWidth, this.options.entryHeight];
 		if (this.entry.isContinuous()) {
-			properties.margin = '5px'
+			properties.margin = '5px';
 			size[0] = size[0] - 10;
 			size[1] = size[1] - 10;
 		}
@@ -64,9 +65,12 @@ define(function(require, exports, module) {
 		this.showMoreSurface = new ImageSurface({
 			content: 'content/images/show-more-' + (this.entry.isRemind() ? 'remind' : this.entry.isRepeat() ? 'repeat' : 'default') + '.png',
 			size: [24, 24],
+			properties: {
+				zIndex: 10
+			}
 		});
 		var showMoreModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth - 40, 15, window.App.zIndex.readView + 1)
+			transform: Transform.translate(window.innerWidth - 40, 15, window.App.zIndex.readView + 6)
 		});
 		this.showMoreSurface.pipe(this._eventOutput);
 		this.showMoreSurface.on('click', function(e) {
@@ -83,7 +87,7 @@ define(function(require, exports, module) {
 		this.add(deleteModifier).add(this.deleteSurface);
 
 		var entryModifier = new Modifier({
-			transform: Transform.translate(0, 0, window.App.zIndex.readView)
+			transform: Transform.translate(0, 0, window.App.zIndex.readView + 5)
 		});
 		this.add(entryModifier).add(this.entrySurface);
 	}

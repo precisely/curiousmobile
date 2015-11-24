@@ -73,6 +73,7 @@ define(function(require, exports, module) {
 	};
 
 	Sprint.update = function(params, successCallback, failCallback) {
+		params['dateToken'] = new Date().getTime();
 		u.queueJSONAll('Updating sprint', App.serverUrl + '/api/sprint/' + params.id + '?' + 
 			u.getCSRFPreventionURI('updateSprintDataCSRF'), JSON.stringify(params), 
 			function(data) {

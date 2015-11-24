@@ -162,6 +162,7 @@ define(function(require, exports, module) {
 	};
 
 	User.update = function(updatedData, successCallback, failCallback) {
+		updatedData['dateToken'] = new Date().getTime();
 		u.queueJSONAll('Updating user details', App.serverUrl + '/api/user/' + updatedData.id, JSON.stringify(updatedData),
 				function(data) {
 					if (u.checkData(data)) {

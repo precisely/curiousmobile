@@ -57,7 +57,7 @@ define(function(require, exports, module) {
 		var backgroundSurface = new Surface({
 			size: [320, 543],
 			properties: {
-				backgroundColor: 'white',
+				backgroundColor: '#ebebeb',
 			}
 		});
 		this.add(backgroundSurface);
@@ -103,6 +103,7 @@ define(function(require, exports, module) {
 
 	EntryListView.prototype.addPinnedEntry = function (entry) {
 		var pinnedEntryView = new PinnedView(entry);
+		this.draggablePin.subscribe(pinnedEntryView.entrySurface);
 		this.pinnedViews.push(pinnedEntryView);
 		this.entryEventListeners(pinnedEntryView);
 	}
@@ -129,6 +130,8 @@ define(function(require, exports, module) {
 		this.pinnedViews = [];
 		this.draggableList = [];
 		this.glowEntry = glowEntry;
+		this.minYRange = 0;
+		this.createDraggable();
 
 		if (!entries && this.entries) {
 			entries = EntryCollection.getFromCache(this.entries.key);
@@ -206,8 +209,10 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 		var scrollWrapperSurface = new ContainerSurface({
+			size: [undefined, undefined],
 			properties: {
 				overflow: 'hidden',
+				backgroundColor: '#fff'
 			}
 		});
 
@@ -278,38 +283,54 @@ define(function(require, exports, module) {
 		this.scrollView.sequenceFrom(this.draggableList);
 		this.pinnedSequentialLayout.sequenceFrom(this.pinnedViews);
 
+		var heightOfPins = Math.min(this.heightOfPins(), 150);
 		var pinnedContainerSurface = new ContainerSurface({
-			size: [true, true],
+			size: [undefined, true],
 			classes: ['pin-container'],
 			properties: {
 				backgroundColor: '#ebebeb',
-				padding: '10px'
-			}	
+				padding: '10px',
+				height: '135px',
+				overflowY: 'hidden'
+			}
 		});
 
 		pinnedContainerSurface.on('deploy', function() {
 			Timer.every(function() {
-				pinnedContainerSurface.setSize([undefined, this.heightOfPins() + 10]);
+				pinnedContainerSurface.setSize([undefined, Math.min(this.heightOfPins(), 150) + 10]);
+				/*pinnedContainerSurface.setProperties({
+					height: Math.min(this.heightOfPins(), 150) + 'px',
+					backgroundColor: '#ebebeb',
+					overflowY: 'hidden'
+				});*/
+				this.minYRange = (this.heightOfPins() - 90);
+				this.draggablePin.setOptions({
+					yRange: [-Math.max(this.minYRange, 0), 0]
+				});
 			}.bind(this), 2);
 		}.bind(this));
 
 		scrollModifier.transformFrom(function() {
-			var heightOfPins = this.heightOfPins();
-			return Transform.translate(0, heightOfPins ? (heightOfPins + 10) : 20, App.zIndex.readView);
+			var heightOfPins = Math.min(this.heightOfPins(), 135);
+			return Transform.translate(0, 0, App.zIndex.readView + 22);
 		}.bind(this));
 
-		var pinnedEntriesModifier = new Modifier({
-			transform: Transform.translate(0, 0, App.zIndex.pinned)
-		});
-		pinnedContainerSurface.add(pinnedEntriesModifier).add(this.pinnedSequentialLayout);
+		var nodePlayer = new RenderNode();
+		nodePlayer.add(this.draggablePin).add(this.pinnedSequentialLayout);
+		pinnedContainerSurface.add(nodePlayer);
 
-		this.pinnedEntriesController.inTransformFrom(function() {
-			return Transform.translate(0, 0, App.zIndex.pinned);
+		var scrollerBackgroundSurface = new Surface({
+			size: [undefined, undefined],
+			properties: {
+				backgroundColor: '#fff',
+			}
 		});
+		scrollWrapperSurface.add(new Modifier({transform: Transform.translate(0, 0, 0)})).add(scrollerBackgroundSurface);
 
 		this.renderController.inTransformFrom(function() {
-			return Transform.translate(0, 0, App.zIndex.readView);
-		});
+			var heightOfPins = 20 + Math.min(this.heightOfPins(), 140);
+			return Transform.translate(0, heightOfPins, App.zIndex.readView);
+		}.bind(this));
 
 		this.pinnedEntriesController.show(pinnedContainerSurface, {duration: 0});
 
@@ -317,12 +338,23 @@ define(function(require, exports, module) {
 		if (this.glowView) {
 			this.glowView.glow();
 		}
-	}
+	};
+
+	EntryListView.prototype.createDraggable = function() {
+		this.min
+		this.draggablePin = new Draggable({
+			xRange: [0, 0],
+			yRange: [-this.minYRange, 0]
+		});
+		this.draggablePin.on('update', function(e) {
+			console.log(e);
+		});
+	};
 
 	EntryListView.prototype.heightOfPins = function () {
 		var numberOfRows = this.numberOfPinRows();
 		return numberOfRows ? ((numberOfRows * 40) + 15) : 0;
-	}
+	};
 
 	EntryListView.prototype.numberOfPinRows = function () {
 		var numberOfRows = this.pinnedViews.length ? 1 : 0;
@@ -337,7 +369,7 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 		return numberOfRows;
-	}
+	};
 
 	EntryListView.prototype.blur = function() {
 	}

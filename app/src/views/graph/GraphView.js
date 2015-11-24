@@ -167,7 +167,7 @@ define(function(require, exports, module) {
 		if(this.dateGridOpen) {
 			this.dateGridRenderController.hide();
 		} else {
-			var dateGridView = new DateGridView(this.selectedDate || new Date());
+			var dateGridView = new DateGridView(this.selectedDate || new Date(), true);
 			this.dateGrid = dateGridView;
 			this.dateGridRenderController.show(this.dateGrid);
 			this.dateGrid.on('select-date', function(date) {
@@ -183,15 +183,24 @@ define(function(require, exports, module) {
 	GraphView.prototype.setSelectedDate = function(date, dateType) {
 		var App = window.App;
 		this.selectedDate = date;
-		var year = date.getFullYear().toString();
 		if (dateType == 'startDate') {
+			if (!date) {
+				this.startDateString = 'DD/MM/YY';
+			} else {
+				var year = date.getFullYear().toString();
+				this.startDateString = ('0' + date.getDate()).slice(-2) + '/'  + ('0' + (date.getMonth()+1)).slice(-2) + '/'
+						+ year.substring(2);
+			}
 			startDate = date;
-			this.startDateString = ('0' + date.getDate()).slice(-2) + '/'  + ('0' + (date.getMonth()+1)).slice(-2) + '/'
-					+ year.substring(2);
 		} else {
 			endDate = date;
-			this.endDateString = ('0' + date.getDate()).slice(-2) + '/'  + ('0' + (date.getMonth()+1)).slice(-2) + '/'
-					+ year.substring(2);
+			if (!date) {
+				this.endDateString = 'DD/MM/YY';
+			} else {
+				var year = date.getFullYear().toString();
+				this.endDateString = ('0' + date.getDate()).slice(-2) + '/'  + ('0' + (date.getMonth()+1)).slice(-2) + '/'
+						+ year.substring(2);
+			}
 		}
 		this.dateLabelSurface.setContent('<span class="blank-date-label start-date">' + this.startDateString + '</span> - '
 				+ '<span class="blank-date-label end-date">' + this.endDateString + '</span>');
