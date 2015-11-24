@@ -2875,3 +2875,8 @@ input.cropit-image-zoom-input {
 	padding: 0px 10px 10px 10px;
 	color: #656565;
 }
+
+.btn:active, .btn.active {
+	box-shadow: none;
+	-webkit-box-shadow: none;
+}

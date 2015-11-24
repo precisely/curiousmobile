@@ -48,7 +48,7 @@ define(function(require, exports, module) {
 
 		var pillsScrollViewContainer = new ContainerSurface({
 			size: [undefined, 50],
-			classes: ['sort-curiosities'],
+			classes: ['sort-curiosities', 'filter-group'],
 			properties: {
 				backgroundColor: '#efefef',
 				textAlign: 'center'
@@ -65,8 +65,8 @@ define(function(require, exports, module) {
 
 		// Adding navigation pills below header
 		navPills.push(this.createPillsSurface('Unrated', true, 'natural'));
-		navPills.push(this.createPillsSurface('Rated', false, 'marked'));
-		navPills.push(this.createPillsSurface('All', false, 'score'));
+		navPills.push(this.createPillsSurface('Rated', false, 'rated'));
+		navPills.push(this.createPillsSurface('All', false, 'all'));
 
 		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
 		pillsScrollViewContainer.on('deploy', function() {
@@ -77,8 +77,7 @@ define(function(require, exports, module) {
 	CuriositiesListView.prototype.createPillsSurface = function(pillFor, active, id) {
 		var activePill = active ? ' active-pill' : '';
 		var pillSurface = new Surface({
-			content: '<button class="feed-pill btn filter' + activePill + '" id="' + id + '" data-order="' + id +
-			((id !== 'natural') ? ' asc' : '') + '">' + pillFor + '</button>',
+			content: '<button class="feed-pill btn filter' + activePill + '" id="' + id + '" data-order="' + id + '">' + pillFor + '</button>',
 			size: [true, 50],
 			properties: {
 				backgroundColor: '#efefef',
