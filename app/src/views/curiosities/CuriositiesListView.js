@@ -21,6 +21,7 @@ define(function(require, exports, module) {
 		FeedView.apply(this, arguments);
 		this.max = 10;
 		this.createCuriositiesPills();
+		this.createSearchBar();
 		initCuriosityView.call(this);
 	}
 
@@ -31,12 +32,33 @@ define(function(require, exports, module) {
 		header: true,
 		footer: true,
 		noBackButton: true,
-		activeMenu: 'curiosities'
+		activeMenu: 'curiosities',
+		scrollViewYTransform: 160
 	};
 
 	function initCuriosityView() {
 		this.setHeaderLabel('CURIOSITIES');
 		this.loadCuriosities();
+	};
+
+	CuriositiesListView.prototype.createSearchBar = function() {
+		var searchBox = new Surface({
+			size: [undefined, 58],
+			content: '<div class="curiosities-search-div input-group input-group-lg"><i class="input-group-addon fa fa-search fa-2x"></i>' +
+			'<input type="text" class="form-control curiosities-search-input" placeholder="Search Curiosities" id="curiosities-search"></div>',
+			properties: {
+				color: '#d8d8d8',
+			}
+		});
+
+		searchBox.on('deploy', function() {
+			$('#curiosities-search').keyup(function(e) {
+				this.deck.splice(0, this.deck.length);
+				C.performSearch($('#curiosities-search').val());
+			}.bind(this));
+		}.bind(this));
+
+		this.add(new StateModifier({transform: Transform.translate(0, 113, App.zIndex.readView + 5)})).add(searchBox);
 	};
 
 	CuriositiesListView.prototype.createCuriositiesPills = function() {

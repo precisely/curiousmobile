@@ -22,6 +22,9 @@ define(function(require, exports, module) {
 	var MakeChartHelpView = require('views/help/MakeChartHelpView');
 	var SprintListView = require('views/sprint/SprintListView');
 	var CuriositiesListView = require('views/curiosities/CuriositiesListView');
+	var ManageCuriositiesHelpView = require('views/help/ManageCuriositiesHelpView');
+	var AddDiscussionHelpView = require('views/help/AddDiscussionHelpView');
+	var CreateSprintHelpView = require('views/help/CreateSprintHelpView');
 	var EntryFormView = require('views/entry/EntryFormView');
 	var ContextMenuView = require('views/ContextMenuView');
 	var Utils = require('util/Utils');

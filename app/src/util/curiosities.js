@@ -109,7 +109,9 @@ function initCuriosities() {
 	}
 
 	var reRenderCorrelations = function(ids) {
-		$('.curiosities-row-container').remove();
+		if (!isMobile) {
+			$('.curiosities-row-container').remove();
+		}
 		_.forEach(ids, function(id, i) {
 			// e stands for element, which is the raw data for a correlation row, stored in C.correlationIndex.
 			var e = C.correlationIndex[id];
@@ -300,9 +302,9 @@ function initCuriosities() {
 		C.curiositiesPageNumber[searchId] += 1;
 	};
 
-	performSearch = function(q) {
+	C.performSearch = function(q) {
 		if (undefined == q) {
-			var q = $('#search-input').val() || '';
+			var q = (isMobile ? $('#curiosities-search').val() : $('#search-input').val()) || '';
 		}
 		var searchId = getSearchId(q);
 		C.curiositiesLastSearch = q;
@@ -311,11 +313,11 @@ function initCuriosities() {
 
 	// search
 	$('#search-input').keyup(function(e) {
-		performSearch();
+		C.performSearch();
 	});
 
 	$('#search-image').click(function() {
-		performSearch();
+		C.performSearch();
 	});
 
 	// Record the last 5 sort orders and store it in localStorage if it is available.
@@ -341,7 +343,7 @@ function initCuriosities() {
 			var id = $(this).attr('id');
 			makeActiveById(id);
 			if (shouldLoad()) {
-				performSearch();
+				C.performSearch();
 			}
 		});
 	}
@@ -502,7 +504,7 @@ function initCuriosities() {
 	$(window).on('scroll', handleScroll);
 
 	initSortOrder();
-	performSearch();
+	C.performSearch();
 }
 
 function setNoiseOrSignal(currentElement) {

@@ -216,7 +216,7 @@ define(function(require, exports, module, store) {
 			}.bind(this));
 			this.tagSequentialLayout.sequenceFrom(this.tagList);
 			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(editPeopleSurface);
-			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 1260, 0)})).add(this.tagSequentialLayout);
+			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 1280, 0)})).add(this.tagSequentialLayout);
 
 			// Calculating draggable container height according to the taglist height
 			var draggableView = new DraggableView(this.editProfileContainerSurface, true, 930 + (this.tagList.length * 50));

@@ -280,7 +280,7 @@ define(function(require, exports, module) {
 			size: [window.innerWidth - 100, 64],
 			content: title,
 			properties: {
-				fontSize: '15px',
+				fontSize: '18px',
 				fontWeight: 'normal',
 				color: color,
 				textAlign: 'center',

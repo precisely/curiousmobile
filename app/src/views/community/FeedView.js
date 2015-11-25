@@ -47,7 +47,7 @@ define(function(require, exports, module) {
 		header: true,
 		footer: true,
 		noBackButton: true,
-		activeMenu: 'feed'
+		activeMenu: 'feed',
 	};
 
 	function init() {
@@ -91,7 +91,7 @@ define(function(require, exports, module) {
 		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
 		var mod = new StateModifier({
 			size: [undefined, App.height - 130],
-			transform: Transform.translate(0, 110, App.zIndex.feedItem)
+			transform: Transform.translate(0, this.options.scrollViewYTransform || 110, App.zIndex.feedItem)
 		});
 		this.add(mod).add(this.renderController);
 		this.initScrollView();
@@ -239,7 +239,7 @@ define(function(require, exports, module) {
 			this.itemsAvailable = false;
 			console.log('no more items available');
 			if (this.offset == 0) {
-				var notFountSurface = new Surface({
+				var notFoundSurface = new Surface({
 					size: [undefined, true],
 					content: 'No results found',
 					properties: {
@@ -248,8 +248,8 @@ define(function(require, exports, module) {
 						padding: '10px'
 					}
 				});
-				this.deck.push(notFountSurface);
-				notFountSurface.pipe(this.scrollView);
+				this.deck.push(notFoundSurface);
+				notFoundSurface.pipe(this.scrollView);
 			}
 			return;
 		}
