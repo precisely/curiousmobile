@@ -1890,6 +1890,7 @@ and (max-device-height: 568px) {
 	height: 40px;
 	padding: 5px 8px 5px 8px;
 	border-bottom: 1px solid #DBDBDB;
+	background-color: #fff;
 }
 
 .graph-item-bar p, .tagList p {
@@ -2029,7 +2030,6 @@ and (max-device-height: 568px) {
 	color: #cc7299;
 	font-weight: 600;
 	margin-right: 15px;
-	font-size: 20px;
 }
 
 .profile-detail h1 {

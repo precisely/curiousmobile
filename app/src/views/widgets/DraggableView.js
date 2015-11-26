@@ -10,6 +10,7 @@ define(function(require, exports, module) {
 	var Draggable = require("famous/modifiers/Draggable");
 	var RenderNode = require("famous/core/RenderNode");
 	var SpringTransition = require('famous/transitions/SpringTransition');
+	var Timer = require('famous/utilities/Timer');
 	var u = require('util/Utils');
 
 	Transitionable.registerMethod('spring', SpringTransition);
@@ -63,15 +64,17 @@ define(function(require, exports, module) {
 		} else {
 			if (!this.minYRange) {
 				this.targetSurface.on('deploy', function(e) {
-					var containerHeight = document.getElementsByClassName('draggable-container')[0].offsetHeight;
-					if (containerHeight <= App.height) {
-						this.minYRange = -80;
-					} else {
-						this.minYRange = -(containerHeight - (App.height - 100));
-					}
-					draggable.setOptions({
-						yRange: [this.minYRange, 0]
-					});
+					Timer.every(function() {
+						var containerHeight = document.getElementsByClassName('draggable-container')[0].offsetHeight;
+						if (containerHeight <= App.height) {
+							this.minYRange = -80;
+						} else {
+							this.minYRange = -(containerHeight - (App.height - 100));
+						}
+						draggable.setOptions({
+							yRange: [this.minYRange, 0]
+						});
+					}.bind(this));
 				}.bind(this));
 			}
 		}

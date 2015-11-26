@@ -290,8 +290,8 @@ define(function(require, exports, module) {
 			properties: {
 				backgroundColor: '#ebebeb',
 				padding: '10px',
-				height: '135px',
-				overflowY: 'hidden'
+				overflowY: 'hidden',
+				borderBottom: '8px solid #ebebeb'
 			}
 		});
 

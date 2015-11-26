@@ -43,6 +43,13 @@ define(function(require, exports, module) {
 
 		this.optionsSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
+				if (this.tagsToPlot && this.tagsToPlot.length) {
+					if (this.options.contextMenuOptions.length < 5) {
+						this.options.contextMenuOptions.push({class: 'edit-chart', label: 'Edit Chart'});
+					}
+				} else if (this.options.contextMenuOptions.length >= 5) {
+					this.options.contextMenuOptions.pop();
+				}
 				App.pageView._eventOutput.emit('show-context-menu', {
 					menu: 'chart',
 					target: this,
@@ -53,7 +60,9 @@ define(function(require, exports, module) {
 
 		this.setHeaderLabel('CHART');
 		this.setRightIcon(this.optionsSurface);
-		this.add(new StateModifier({transform: Transform.translate(35, 0, App.zIndex.header + 5)})).add(this.leftSurface);
+		this.backRenderController = new RenderController();
+		this.add(new StateModifier({transform: Transform.translate(35, 0, App.zIndex.header + 5)})).add(this.backRenderController);
+		this.backRenderController.show(this.leftSurface);
 
 		this.graphView = new GraphView(null, 'plotArea');
 		this.add(new StateModifier({transform: Transform.translate(0, 65, App.zIndex.readView)})).add(this.graphView);
@@ -68,7 +77,11 @@ define(function(require, exports, module) {
 		header: true,
 		footer: true,
 		activeMenu: 'chart',
-		noBackButton: true
+		noBackButton: true,
+		contextMenuOptions: [{class: 'load-snapshot', label: 'Load'},
+		{class: 'save-snapshot', label: 'Save'},
+		{class: 'share-snapshot', label: 'Share'},
+		{class: 'create-chart', label: 'Create New Chart'}]
 	};
 
 	ChartView.prototype.init = function(isAreaChart) {
@@ -103,11 +116,16 @@ define(function(require, exports, module) {
 	};
 
 	ChartView.prototype.goBack = function() {
-		App.pageView.changePage('CreateChartView', {selectedTags: this.graphView.plottedTags});
+		if (this.currentOverlay) {
+			BaseView.prototype.goBack.call(this);
+		} else {
+			App.pageView.changePage('CreateChartView', {selectedTags: this.graphView.plottedTags});
+		}
 	};
 
 	ChartView.prototype.showLoadGraphOverlay = function() {
 		this.loadGraphOverlay = new LoadGraphOverlay();
+		this.backRenderController.hide();
 		this.showBackButton();
 		this.removeRightIcon();
 		this.showOverlayContent(this.loadGraphOverlay);
@@ -116,13 +134,26 @@ define(function(require, exports, module) {
 	ChartView.prototype.killOverlayContent = function() {
 		BaseView.prototype.killOverlayContent.call(this);
 		this.showMenuButton();
+		this.backRenderController.show(this.leftSurface);
 		this.setRightIcon(this.optionsSurface);
 	};
 
 	function _setHandlers() {
 		this.on('create-chart', function() {
-			App.pageView.changePage('CreateChartView', {selectedTags: this.graphView.plottedTags});
+			u.showAlert({
+				message: 'Are you sure to clear graph?',
+				a: 'Yes',
+				b: 'No',
+				onA: function() {
+					this.graphView.plottedTags.splice(0, this.graphView.plottedTags.length);
+					App.pageView.changePage('CreateChartView', {selectedTags: this.graphView.plottedTags});
+				}.bind(this),
+				onB: function() {}.bind(this),
+			});
 		});
+		this.on('edit-chart', function() {
+			App.pageView.changePage('CreateChartView', {selectedTags: this.graphView.plottedTags});
+		}.bind(this));
 		this.on('save-snapshot', function() {
 			this.graphView.plot.save();
 		}.bind(this));

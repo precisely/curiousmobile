@@ -26,11 +26,6 @@ define(function (require, exports, module) {
 		pinnedEntry: [
 			{class: 'trigger-delete-entry', label: 'Delete Tag'},
 		],
-		chart: [{class: 'load-snapshot', label: 'Load'},
-			{class: 'save-snapshot', label: 'Save'},
-			{class: 'share-snapshot', label: 'Share'},
-			{class: 'create-chart', label: 'Create New Chart'}
-		],
 		discussion: {},
 	};
 
@@ -78,7 +73,7 @@ define(function (require, exports, module) {
 		this.target = e.target;
 		this.eventArg = e.eventArg;
 		var template = ContextMenuTemplate;
-		this.contextMenu.setContent(_.template(template, {buttons: this.options[e.menu]}, templateSettings));
+		this.contextMenu.setContent(_.template(template, {buttons: (this.options[e.menu] || e.target.options.contextMenuOptions)}, templateSettings));
 		this.renderController.show(this.contextMenuContainer);
 	};
 

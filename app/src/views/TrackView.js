@@ -115,7 +115,7 @@ define(function(require, exports, module) {
 		});
 
 		var entryListModifier = new Modifier({
-			transform: Transform.translate(0, 55, 1),
+			transform: Transform.translate(0, 45, 1),
 		});
 
 		entryListModifier.sizeFrom(function() {

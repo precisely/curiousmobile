@@ -173,7 +173,7 @@ define(function(require, exports, module) {
 	};
 
 	FeedView.prototype.getScrollPosition = function() {
-		return this.scrollView.getPosition()	
+		return this.scrollView.getPosition();
 	};
 
 	FeedView.prototype.onShow = function(state) {

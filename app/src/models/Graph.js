@@ -31,7 +31,7 @@ define(function(require, exports, module) {
 	};
 
 	Graph.delete = function(id, callback) {
-		u.backgroundJSON("deleting saved graph", "/home/deletePlotDataId?id=" + escape(id) + "&callback=?",
+		u.backgroundJSON("deleting saved graph", App.serverUrl + "/home/deletePlotDataId?id=" + escape(id) + "&callback=?",
 				function(entries) {
 				if (checkData(entries)) {
 					if (callback)

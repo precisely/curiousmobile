@@ -104,7 +104,7 @@ define(function(require, exports, module) {
 	//App.serverUrl = "http://192.168.0.108:8080";
 	//App.serverUrl = "http://192.168.1.103:8080";
 	//App.serverUrl = "http://192.168.1.141:8080";
-	App.serverUrl = "http://114.143.237.123:8080";
+	App.serverUrl = "http://114.143.237.122:8080";
 	//App.serverUrl = "http://192.168.1.141:8080";
 
 	Engine.setOptions({
@@ -117,7 +117,7 @@ define(function(require, exports, module) {
 	App.viewsWithoutSearchIcon = ['TrackView', 'EditProfileView', 'CreateChartView', 'LoginView', 'RegisterView',
 			'ForgotPasswordView', 'CuriositiesListView', 'HelpContentsView', 'CreateTagHelpView', 'HelpContentsView',
 			'ShareHelpView', 'MakeChartHelpView', 'TermsView', 'DiscussionDetailView', 'CreateSprintHelpView', 'AddDiscussionHelpView',
-			'ManageCuriositiesHelpView'];
+			'ManageCuriositiesHelpView', 'SprintFormView'];
 	var appView = new AppView();
 	window.App.appView = appView;
 	var mod = new Modifier({
@@ -143,7 +143,7 @@ define(function(require, exports, module) {
 			var currentView = App.pageView.getCurrentView();
 			if (!currentView.currentOverlay) {
 				if (currentView && currentView.refresh) {
-					if (currentView.getScrollPosition && currentView.getScrollPosition() > 0) {
+					if (currentView.getScrollPosition && currentView.getScrollPosition() >= 0) {
 						return;
 					}
 					currentView.refresh();

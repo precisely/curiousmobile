@@ -23,7 +23,7 @@ define(function(require, exports, module) {
 		});
 		this.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(backgroundSurface);
 		this.renderController = new RenderController();
-		this.add(new StateModifier({transform: Transform.translate(0, 10, App.zIndex.contextMenu + 1)})).add(this.renderController);
+		this.add(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.contextMenu + 1)})).add(this.renderController);
 		this.initScrollView();
 		this.listContents();
 	}
@@ -48,7 +48,7 @@ define(function(require, exports, module) {
 			_.each(graphList, function(graphItem) {
 				var graphItemSurface = new Surface({
 					size: [undefined, 50],
-					content: '<div class="graph-item-bar"><p>' + graphItem.name + '</p><i class="delete-graph fa fa-trash-o"></i></div>',
+					content: '<div class="graph-item-bar"><p>' + graphItem.name + '</p><i class="delete-graph fa-2x fa fa-trash-o"></i></div>',
 					properties: {
 						backgroundColor: '#fff',
 					}

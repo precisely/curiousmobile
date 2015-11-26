@@ -100,7 +100,7 @@ define(function(require, exports, module) {
 		this.headerRightIconController.show(this.rightIconsSequenceView);
 
 		var leftModifier = new StateModifier({
-			transform: Transform.translate(0, 0, window.App.zIndex.header + 2)
+			transform: Transform.translate(0, 0, window.App.zIndex.header + 5)
 		});
 		var rightModifier = new StateModifier({
 			align: [1, 0],

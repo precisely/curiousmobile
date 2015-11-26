@@ -16,8 +16,8 @@ define(function(require, exports, module) {
 	var User = require('models/User');
 	var Tags = require('models/Tags');
 	var u = require('util/Utils');
-	var jqFlotTime = require('util/jquery.flot.time.min');
 	var jueryJson = require('util/jquery.json-2.2.min');
+	var jqFlotTime = require('util/jquery.flot.time.min');
 	var PlotMobile = require('util/plot.mobile');
 	var plotProperties = require('util/plot.properties');
 
@@ -30,7 +30,6 @@ define(function(require, exports, module) {
 		this.renderController = new RenderController();
 		this.add(new StateModifier({transform: Transform.translate(0, 50, 0)})).add(this.renderController);
 		this.init();
-
 	}
 
 	GraphView.prototype = Object.create(StateView.prototype);
