@@ -19,7 +19,7 @@ define(function(require, exports, module) {
 		View.apply(this, arguments);
 		this.targetSurface = targetSurface;
 		this.nonStickyEdges = nonStickyEdges;
-		this.minYRange = minYRange
+		this.minYRange = minYRange;
 		_createDraggableSurface.call(this);
 	}
 
@@ -30,7 +30,6 @@ define(function(require, exports, module) {
 	};
 
 	function _createDraggableSurface() {
-		this.minYRange = this.minYRange;
 		var lastDraggablePosition = 0;
 		var dragToRefresh = this.nonStickyEdges ? 0 : 100;
 
