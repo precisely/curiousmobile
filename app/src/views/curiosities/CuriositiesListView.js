@@ -54,7 +54,7 @@ define(function(require, exports, module) {
 		searchBox.on('deploy', function() {
 			$('#curiosities-search').keyup(function(e) {
 				this.deck.splice(0, this.deck.length);
-				C.performSearch($('#curiosities-search').val());
+				C.performSearch($('#curiosities-search').val(), true);
 			}.bind(this));
 		}.bind(this));
 
@@ -162,7 +162,7 @@ define(function(require, exports, module) {
 
 	CuriositiesListView.prototype.refresh = function() {
 		this.initScrollView();
-		this.loadCuriosities();
+		C.performSearch($('#curiosities-search').val(), true);
 	};
 
 	CuriositiesListView.prototype.loadCuriosities = function() {

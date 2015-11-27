@@ -1925,6 +1925,7 @@ and (max-device-height: 568px) {
 .tagList .fa-tag {
 	vertical-align: top;
 	font-size: 20px;
+	margin-left: 10px;
 }
 
 .tagList .fa-check-square, .tagList .fa-square-o {
@@ -1981,7 +1982,6 @@ and (max-device-height: 568px) {
 	outline-width: 0 !important;
 	box-shadow: none !important;
 	-webkit-box-shadow: none !important;
-	border: 0px !important;
 }
 
 .tag-search-input::-webkit-input-placeholder {

@@ -302,11 +302,14 @@ function initCuriosities() {
 		C.curiositiesPageNumber[searchId] += 1;
 	};
 
-	C.performSearch = function(q) {
+	C.performSearch = function(q, withRefresh) {
 		if (undefined == q) {
 			var q = (isMobile ? $('#curiosities-search').val() : $('#search-input').val()) || '';
 		}
-		var searchId = getSearchId(q);
+			var searchId = getSearchId(q);
+		if (withRefresh) {
+			C.curiositiesPageNumber[searchId] = 0;
+		}
 		C.curiositiesLastSearch = q;
 		C.searchWithDefaults(afterSearch(q), q, C.curiositiesPageNumber[searchId]);
 	};

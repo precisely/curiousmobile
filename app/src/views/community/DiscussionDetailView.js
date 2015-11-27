@@ -80,12 +80,12 @@ define(function(require, exports, module) {
 		this.discussionHash = state.discussionHash;
 		this.parentPage = state.parentPage || 'FeedView';
 		this.isSharedGraph = false;
-		this.refresh();
+		this.loadDetails();
 		return true;
 	};
 
-	DiscussionDetailView.prototype.refresh = function() {
-		console.log('DiscussionDetailView: refresh called...');
+	DiscussionDetailView.prototype.loadDetails = function() {
+		console.log('DiscussionDetailView: loadDetails called...');
 		this.surfaceList = [];
 		var transition = new Transitionable(Transform.translate(0, 75, App.zIndex.feedItem));
 		this.renderController = new RenderController();
@@ -104,13 +104,13 @@ define(function(require, exports, module) {
 			discussionHash: this.discussionHash
 		}, function(discussionPost) {
 			this.discussionPost = discussionPost;
-			this.postRefresh();
+			this.postloadDetails();
 		}.bind(this), function() {
 			App.pageView.goBack();
 		}.bind(this));
 	};
 
-	DiscussionDetailView.prototype.postRefresh = function() {
+	DiscussionDetailView.prototype.postloadDetails = function() {
 		this.loadMoreItems = true;
 		this.itemsAvailable = true;
 		this.offset = 0;

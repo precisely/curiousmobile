@@ -9,7 +9,7 @@ define( function(require, exports, module) {
 		url: "/api/discussionPost"
 	});
 
-	DiscussionPost.max = 10;
+	DiscussionPost.max = 5;
 
 	DiscussionPost.fetch = function(params, successCallback, failCallback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {

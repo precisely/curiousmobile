@@ -13,9 +13,6 @@ define(function(require, exports, module) {
 		title: 'Add a discussion in social',
 		destinationPage: 'AddDiscussionHelpView'
 	}, {
-		title: 'Make an alert, repeat a tag, or turn a tag into a button',
-		destinationPage: 'ModifyTagHelpView'
-	}, {
 		title: 'Share',
 		destinationPage: 'ShareHelpView'
 	}, {

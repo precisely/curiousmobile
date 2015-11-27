@@ -78,11 +78,11 @@ define(function(require, exports, module) {
 		this.name = state.name;
 		this.parentPage = state.parentPage || 'SprintListView';
 		this.parentCard = state.parentCard;
-		this.refresh();
+		this.loadDetails();
 		return true;
 	};
 
-	SprintDetailView.prototype.refresh = function() {
+	SprintDetailView.prototype.loadDetails = function() {
 		this.participantsOffset = 10;
 		Sprint.show(this.hash, function(sprintDetails) {
 			this.totalParticipants = sprintDetails.totalParticipants;
@@ -142,11 +142,11 @@ define(function(require, exports, module) {
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('leave-sprint') > -1) {
 						Sprint.unfollow(this.hash, function(data) {
-							this.refresh();
+							this.loadDetails();
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('join-sprint') > -1) {
 						Sprint.follow(this.hash, function(data) {
-							this.refresh();
+							this.loadDetails();
 						}.bind(this));
 					}
 				}

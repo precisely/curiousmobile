@@ -166,6 +166,11 @@ define(function(require, exports, module) {
 		if(this.dateGridOpen) {
 			this.dateGridRenderController.hide();
 		} else {
+			if (dateType == 'startDate') {
+				this.selectedDate = startDate;
+			} else {
+				this.selectedDate = endDate;
+			}
 			var dateGridView = new DateGridView(this.selectedDate || new Date(), true);
 			this.dateGrid = dateGridView;
 			this.dateGridRenderController.show(this.dateGrid);
