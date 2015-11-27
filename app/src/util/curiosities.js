@@ -309,6 +309,7 @@ function initCuriosities() {
 			var searchId = getSearchId(q);
 		if (withRefresh) {
 			C.curiositiesPageNumber[searchId] = 0;
+			C.curiositiesNumSearchResults[searchId] = undefined;
 		}
 		C.curiositiesLastSearch = q;
 		C.searchWithDefaults(afterSearch(q), q, C.curiositiesPageNumber[searchId]);
