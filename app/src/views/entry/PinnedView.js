@@ -37,7 +37,6 @@ define(function(require, exports, module) {
 				fontStyle: 'normal',
 				textOverflow: 'ellipsis',
 				maxWidth: '150px',
-				zIndex: 0
 			}
 		};
 

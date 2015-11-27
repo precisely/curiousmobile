@@ -91,7 +91,7 @@ define(function(require, exports, module) {
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(function(progress) {
-			return Transform.translate(0, 0, window.App.zIndex.readView);
+			return Transform.translate(0, 0, 0);
 		});
 
 		var draggableToRefresh = new Draggable({

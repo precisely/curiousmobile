@@ -55,12 +55,14 @@ define(function(require, exports, module) {
 
 	function _createList(entries) {
 		var backgroundSurface = new Surface({
-			size: [320, 543],
+			classes: ['entry-list-background'],
+			size: [undefined, undefined],
 			properties: {
 				backgroundColor: '#ebebeb',
 			}
 		});
-		this.add(backgroundSurface);
+		
+		this.add(new StateModifier({transform: Transform.translate(0,0,0)})).add(backgroundSurface);
 		backgroundSurface.pipe(this._eventOutput);
 		this.add(this.pinnedEntriesController);
 		this.add(this.renderController);
@@ -192,7 +194,7 @@ define(function(require, exports, module) {
 			} else {
 				xOffset += this.pinnedSequentialLayout.lastXOffset;
 			}
-			var transform = Transform.translate(xOffset, this.pinnedSequentialLayout.nextYOffset, App.zIndex.readView);
+			var transform = Transform.translate(xOffset, this.pinnedSequentialLayout.nextYOffset, App.zIndex.readView + 2);
 			this.pinnedSequentialLayout.lastXOffset = xOffset;
 			return {
 				transform: transform,
@@ -332,6 +334,9 @@ define(function(require, exports, module) {
 			return Transform.translate(0, heightOfPins, App.zIndex.readView);
 		}.bind(this));
 
+		this.pinnedEntriesController.inTransformFrom(function() {
+			return Transform.translate(0, 0, App.zIndex.readView - 1);
+		}.bind(this));
 		this.pinnedEntriesController.show(pinnedContainerSurface, {duration: 0});
 
 		this.renderController.show(scrollWrapperSurface, {duration:0});
