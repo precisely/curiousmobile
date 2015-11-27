@@ -20,6 +20,7 @@ define(function(require, exports, module) {
 		this.targetSurface = targetSurface;
 		this.nonStickyEdges = nonStickyEdges;
 		this.minYRange = minYRange;
+		this.calculateScrollHeight = minYRange ? false : true;
 		_createDraggableSurface.call(this);
 	}
 
@@ -61,9 +62,9 @@ define(function(require, exports, module) {
 				}
 			});
 		} else {
-			if (!this.minYRange) {
-				this.targetSurface.on('deploy', function(e) {
-					Timer.every(function() {
+			this.targetSurface.on('deploy', function(e) {
+				Timer.every(function() {
+					if (this.calculateScrollHeight && document.getElementsByClassName('draggable-container')[0]) {
 						var containerHeight = document.getElementsByClassName('draggable-container')[0].offsetHeight;
 						if (containerHeight <= App.height) {
 							this.minYRange = -80;
@@ -73,9 +74,9 @@ define(function(require, exports, module) {
 						draggable.setOptions({
 							yRange: [this.minYRange, 0]
 						});
-					}.bind(this));
+					}
 				}.bind(this));
-			}
+			}.bind(this));
 		}
 
 		var nodePlayer = new RenderNode();

@@ -194,6 +194,7 @@ define(function(require, exports, module) {
 			visibility: 'visible'
 		});
 		$('#entry-description').val('');
+		this.entryFormView.dateGridRenderController.hide();
 		BaseView.prototype.killOverlayContent.call(this);
 		this.showMenuButton();
 		this.setHeaderSurface(this.calendarView);
