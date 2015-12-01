@@ -87,7 +87,6 @@ define(function(require, exports, module) {
 					window.App.currentUser = user;
 					console.log('LoginView: login success');
 					App.pageView.changePage('TrackView', { new: true });
-					push.registerNotification();
 				}.bind(this)
 			)
 		}
