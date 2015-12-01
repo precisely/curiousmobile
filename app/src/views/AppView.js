@@ -59,6 +59,8 @@ define(function(require, exports, module) {
 			if (this.showingMenu) {
 				this.toggleMenu();
 			}
+			$('.footer-item.active').removeClass('active');
+			$('.footer-item.' + App.pageView.getCurrentView().options.activeMenu).addClass('active');
 		}.bind(this));
 
 		this.pageView.on('show-menu', function(e) {

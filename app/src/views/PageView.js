@@ -202,8 +202,9 @@ define(function(require, exports, module) {
 					this.onShow(state);
 				}.bind(this), 300);
 			}
+			this._eventOutput.emit('page-change-complete', {view: view, state: state});
 		}.bind(view));
-		this._eventOutput.emit('page-change-complete', {view: view, state: state});
+
 	};
 
 	/**

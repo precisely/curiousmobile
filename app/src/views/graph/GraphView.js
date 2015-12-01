@@ -18,6 +18,7 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 	var jueryJson = require('util/jquery.json-2.2.min');
 	var jqFlotTime = require('util/jquery.flot.time.min');
+	var datejs = require('util/date');
 	var PlotMobile = require('util/plot.mobile');
 	var plotProperties = require('util/plot.properties');
 

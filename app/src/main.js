@@ -97,14 +97,14 @@ define(function(require, exports, module) {
 
 	//App.serverUrl = "http://192.168.0.31:8080";
 	//App.serverUrl = "http://192.168.1.123:8080";
-	App.serverUrl = "https://www.wearecurio.us";
+	//App.serverUrl = "https://www.wearecurio.us";
 	//App.serverUrl = "http://192.168.0.111:8080";
-	//App.serverUrl = "http://localhost:8080";
+	App.serverUrl = "http://localhost:8080";
 	//App.serverUrl = "http://127.0.0.1:8080";
 	//App.serverUrl = "http://192.168.0.108:8080";
 	//App.serverUrl = "http://192.168.1.103:8080";
 	//App.serverUrl = "http://192.168.1.141:8080";
-	//App.serverUrl = "http://114.143.237.122:8080";
+	//App.serverUrl = "http://103.17.156.129:8080";
 	//App.serverUrl = "http://192.168.1.141:8080";
 
 	Engine.setOptions({
@@ -152,6 +152,15 @@ define(function(require, exports, module) {
 		}
 	});
 
+	Engine.on('click', function(e) {
+		if (e instanceof CustomEvent) {
+			var srcElement = e.srcElement;
+			if (srcElement.tagName != 'INPUT' && srcElement.tagName != 'TEXTAREA') {
+				cordova.plugins.Keyboard.close();
+				e.stopPropagation();
+			}
+		}
+	});
 	Engine.pipe(touchSync);
 	module.exports = App;
 });

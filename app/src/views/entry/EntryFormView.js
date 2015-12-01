@@ -132,9 +132,9 @@ define(function(require, exports, module) {
 					var repeatEachCheckbox = document.getElementById('confirm-each-repeat');
 					repeatEachCheckbox.checked = !repeatEachCheckbox.checked;
 				} else if (_.contains(classList, 'date-picker-field')) {
-					if (cordova) {
+					/*if (cordova) {
 						cordova.plugins.Keyboard.close();
-					}
+					}*/
 					document.getElementById('entry-description').blur();
 					if(this.dateGridOpen) {
 						this.dateGridRenderController.hide();
@@ -251,20 +251,8 @@ define(function(require, exports, module) {
 			defaultItemSize: [80, 24],
 		});
 
-		var firstOffset = (App.width / 2) - 175;
-		sequentialLayout.setOutputFunction(function(input, offset, index) {
-			//Bumping the offset to add additional padding on the left
-			if (index === 0) {
-				offset = (firstOffset < 0) ? 10 : firstOffset;
-			} else {
-				offset += (firstOffset < 0) ? 0 : firstOffset;
-			}
-			var transform = Transform.translate(offset, 0, 0);
-			return {
-				transform: transform,
-				target: input.render()
-			};
-		});
+		var firstOffset = (App.width - ((84 * 3) + 60))/2;
+
 
 		this.repeatSurface = new Surface({
 			content: '<div class="text-center"><i class="fa fa-repeat"></i> <br/> Set Repeat</div>',
@@ -277,7 +265,7 @@ define(function(require, exports, module) {
 		});
 
 		this.pinSurface = new Surface({
-			content: '<div class="text-center"><i class="fa fa-plus-square-o"></i><br/> Make Button</div>',
+			content: '<div class="text-center"><i class="fa fa-plus-square-o"></i><br/> Make Tag Button</div>',
 			size: [84, 24],
 		});
 
@@ -292,7 +280,7 @@ define(function(require, exports, module) {
 		});
 		this.buttonsAndHelp.add(sequentialLayout);
 
-		this.formContainerSurface.add(new StateModifier({transform: Transform.translate(0, 80, _zIndex())})).add(this.buttonsAndHelp);
+		this.formContainerSurface.add(new StateModifier({transform: Transform.translate(firstOffset, 200, _zIndex())})).add(this.buttonsAndHelp);
 
 		this.renderController = new RenderController();
 		this.dateGridRenderController = new RenderController();
@@ -307,10 +295,10 @@ define(function(require, exports, module) {
 
 		var mod = new StateModifier({
 			size: [App.width, undefined],
-			transform: Transform.translate(0, 130, _zIndex())
+			transform: Transform.translate(0, 240, _zIndex())
 		});
 		var dateGridRenderControllerMod = new StateModifier({
-			transform: Transform.translate(18, 200, 16)
+			transform: Transform.translate(18, 320, 16)
 		});
 		this.formContainerSurface.add(mod).add(this.renderController);
 		this.formContainerSurface.add(dateGridRenderControllerMod).add(this.dateGridRenderController);
@@ -538,9 +526,9 @@ define(function(require, exports, module) {
 	};
 
 	EntryFormView.prototype.submit = function(e, directlyCreateEntry) {
-		/*if (cordova) {
+		if (cordova) {
 			cordova.plugins.Keyboard.close();
-		}*/
+		}
 		var entry = null;
 		var newText;
 

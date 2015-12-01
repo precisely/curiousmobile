@@ -10,6 +10,7 @@ define(function(require, exports, module) {
 	var CardView = require('views/community/card/CardView');
 	var peopleTemplate = require('text!templates/people.html');
 	var PeopleDetailView = require('views/people/PeopleDetailView');
+	var User = require('models/User');
 	var u = require('util/Utils');
 
 	function PeopleCardView(user) {
@@ -40,6 +41,15 @@ define(function(require, exports, module) {
 			if (e instanceof CustomEvent) {
 				classList = e.srcElement.classList;
 				if (_.contains(classList, 'follow')) {
+					User.follow(this.user.hash, function(data) {
+						e.srcElement.innerText = 'UNFOLLOW';
+						$(e.srcElement).removeClass('follow').addClass('unfollow');
+					}.bind(this));
+				} else if (_.contains(classList, 'unfollow')) {
+					/*User.unfollow(this.user.hash, function(data) {
+						e.srcElement.innerText = 'FOLLOW';
+						$(e.srcElement).removeClass('unfollow').addClass('follow');
+					}.bind(this));*/
 				} else {
 					var state = {
 						hash: this.user.hash,

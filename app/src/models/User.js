@@ -234,5 +234,25 @@ define(function(require, exports, module) {
 					console.log('error: ', error);
 				}, null, httpArgs);
 	};
+
+	User.follow = function(followedUserId, successCallback, failCallback) {
+		var httpArgs = {requestMethod:'GET'};
+		u.queueJSONAll('Following user', App.serverUrl + '/api/user/action/follow', {id: followedUserId},
+				function(data) {
+					if (u.checkData(data)) {
+						if (data.success) {
+							successCallback();
+						} else {
+							u.showAlert(data.message);
+							if (failCallback) {
+								failCallback();
+							}
+						}
+					}
+				}, function(error) {
+					console.log('error: ', error);
+				}, null, httpArgs);
+	};
+
 	module.exports = User;
 });

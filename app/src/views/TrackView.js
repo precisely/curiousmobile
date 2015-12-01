@@ -120,7 +120,7 @@ define(function(require, exports, module) {
 
 		entryListModifier.sizeFrom(function() {
 			var size = [App.width, App.height];
-			return [undefined, size[1] - 170];
+			return [undefined, size[1] - 160];
 		});
 
 		entryListContainer.add(this.renderController);
@@ -155,25 +155,22 @@ define(function(require, exports, module) {
 		}.bind(this));
 		App.selectedDate = DateUtil.getMidnightDate(this.calendarView.selectedDate);
 		this.setHeaderSurface(this.calendarView);
-
 	}
 
 	TrackView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 	};
 
-
 	TrackView.prototype.preShow = function(state) {
 		BaseView.prototype.preShow.call(this);
-		if (state && state.new) {
-			EntryCollection.clearCache();
-			this.changeDate(this.calendarView.selectedDate);
-		} else if (state && (state.entryDate)) {
+		if (state && (state.entryDate)) {
 			EntryCollection.clearCache();
 			this.calendarView.setSelectedDate(state.entryDate);
 			this.changeDate(state.entryDate);
+		} else {
+			EntryCollection.clearCache();
+			this.changeDate(this.calendarView.selectedDate);
 		}
-
 		return true;
 	};
 

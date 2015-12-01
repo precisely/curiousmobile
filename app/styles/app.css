@@ -695,7 +695,7 @@ button.close {
 
 .entry-input-surface.input-group input, .entry-input-surface.input-group .form-control {
 	height: 40px;
-	border-left: 0;
+	border: 0;
 	color: #C04F7F;
 	-webkit-box-shadow: inset 0 0 0 0 !important;
 	box-shadow: inset 0 0 0 0 !important;
@@ -897,9 +897,11 @@ button.close {
 	color: #ff935f;
 }
 
-.people-wrapper .user-details-header .following {
+.people-wrapper .user-details-header .unfollow {
 	background-color: #ff935f;
 	color: #fff;
+	padding: 0px;
+	width: 90px;
 }
 
 .people-wrapper .user-details-content {
