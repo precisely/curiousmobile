@@ -246,6 +246,7 @@ define(function(require, exports, module) {
 			});
 			this.showBackButton();
 			this.setHeaderLabel('');
+			this.entryFormView.draggableEntryFormView.setPosition([0, 0]);
 			this.showOverlayContent(this.entryFormView, function() {
 				this.onShow(state);
 			}.bind(this.entryFormView));
