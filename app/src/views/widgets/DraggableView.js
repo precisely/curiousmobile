@@ -34,12 +34,12 @@ define(function(require, exports, module) {
 		var lastDraggablePosition = 0;
 		var dragToRefresh = this.nonStickyEdges ? 0 : 100;
 
-		var draggable = new Draggable({
+		this.draggable = new Draggable({
 			xRange: [0, 0],
 			yRange: [-this.minYRange, dragToRefresh]
 		});
 
-		draggable.subscribe(this.targetSurface);
+		this.draggable.subscribe(this.targetSurface);
 
 		var spring = {
 			method: 'spring',
@@ -48,7 +48,7 @@ define(function(require, exports, module) {
 		};
 
 		if (!this.nonStickyEdges) {
-			draggable.on('end', function(e) {
+			this.draggable.on('end', function(e) {
 				console.log(e);
 				var newYRange = Math.max(0, (document.getElementsByClassName('draggable-container')[0].offsetHeight - (App.height - 114)));
 				if (e.position[1] < lastDraggablePosition) {
@@ -71,7 +71,7 @@ define(function(require, exports, module) {
 						} else {
 							this.minYRange = -(containerHeight - (App.height - 100));
 						}
-						draggable.setOptions({
+						this.draggable.setOptions({
 							yRange: [this.minYRange, 0]
 						});
 					}
@@ -80,8 +80,12 @@ define(function(require, exports, module) {
 		}
 
 		var nodePlayer = new RenderNode();
-		nodePlayer.add(draggable).add(this.targetSurface);
+		nodePlayer.add(this.draggable).add(this.targetSurface);
 		this.add(nodePlayer);
+	}
+
+	DraggableView.prototype.setPosition = function(position) {
+		this.draggable.setPosition(position);
 	}
 
 	module.exports = DraggableView;
