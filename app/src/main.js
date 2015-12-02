@@ -104,8 +104,7 @@ define(function(require, exports, module) {
 	//App.serverUrl = "http://192.168.1.103:8080";
 	//App.serverUrl = "http://192.168.1.141:8080";
 	//App.serverUrl = "http://103.17.156.129:8080";
-	//App.serverUrl = "http://114.143.237.122:8080";
-	//App.serverUrl = "http://192.168.1.141:8080";
+	App.serverUrl = "http://114.143.237.122:8080";
 
 	Engine.setOptions({
 		containerClass: 'app-container'

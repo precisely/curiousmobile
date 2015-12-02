@@ -98,7 +98,7 @@ define(function(require, exports, module) {
 					if (!this.isUpdating) {
 						this.resetRepeatModifierForm();
 						this.renderController.show(this.repeatModifierSurface, null, function() {
-							document.getElementById('daily').checked = false;
+							document.getElementById('daily').checked = true;
 							document.getElementById('confirm-each-repeat').checked = true;
 						}.bind(this));
 					} else {
@@ -118,9 +118,9 @@ define(function(require, exports, module) {
 				this.setRepeat = false;
 				this.setPinned = !this.setPinned;
 				this.toggleSelector(this.pinSurface);
-				this.submit();
 				this.renderController.hide();
 				this.dateGridRenderController.hide();
+				this.submit();
 			}
 		}.bind(this));
 
