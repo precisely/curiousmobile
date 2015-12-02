@@ -57,8 +57,9 @@ define(function (require, exports, module) {
         }
 
         console.log("Entry ID: " + data.additionalData);
-        var entryDate = new Date(data.additonalData.entryDate);
-        App.pageView.changePage('track', data.additionalData);
+        var entryDate = new Date(data.additionalData.entryDate);
+        data.additionalData.entryDate = entryDate;
+        App.pageView.changePage('TrackView', data.additionalData);
 
         push.finish(function () {
             console.log("processing of push data is finished");

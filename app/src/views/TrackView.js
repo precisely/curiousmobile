@@ -166,7 +166,7 @@ define(function(require, exports, module) {
 		if (state && (state.entryDate)) {
 			EntryCollection.clearCache();
 			this.calendarView.setSelectedDate(state.entryDate);
-			this.changeDate(state.entryDate);
+			this.changeDate(state.entryDate, null, state.entryId);
 		} else {
 			EntryCollection.clearCache();
 			this.changeDate(this.calendarView.selectedDate);
@@ -198,13 +198,13 @@ define(function(require, exports, module) {
 		this.preShow(state);
 	}
 
-	TrackView.prototype.changeDate = function(date, callback) {
+	TrackView.prototype.changeDate = function(date, callback, glowEntry) {
 		date = u.getMidnightDate(date);
 
 		App.selectedDate = date;
 		EntryCollection.fetchEntries(_getDefaultDates(date), function(entries) {
 			//5 days before and 5 days after today
-			this.currentListView = new EntryListView(entries);
+			this.currentListView = new EntryListView(entries, glowEntry);
 			//Handle entry selection handler
 			this.currentListView.on('select-entry', function(entry) {
 				console.log('TrackView: Selecting an entry');

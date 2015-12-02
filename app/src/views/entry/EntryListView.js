@@ -26,7 +26,7 @@ define(function(require, exports, module) {
 	var snap = { method:'snap', period:200, dampingRatio:0.4 };
 
 
-	function EntryListView(collection) {
+	function EntryListView(collection, glowEntry) {
 		View.apply(this, arguments);
 		this.trackEntryViews = [];
 		this.entries = collection;
@@ -42,7 +42,7 @@ define(function(require, exports, module) {
 			}
 		});
 
-		_createList.call(this, this.entries);
+		_createList.call(this, this.entries, glowEntry);
 	}
 
 	EntryListView.prototype = Object.create(View.prototype);
@@ -53,7 +53,7 @@ define(function(require, exports, module) {
 		selectionPadding: 24,
 	};
 
-	function _createList(entries) {
+	function _createList(entries, glowEntry) {
 		var backgroundSurface = new Surface({
 			classes: ['entry-list-background'],
 			size: [undefined, undefined],
@@ -61,12 +61,12 @@ define(function(require, exports, module) {
 				backgroundColor: '#ebebeb',
 			}
 		});
-		
+
 		this.add(new StateModifier({transform: Transform.translate(0,0,0)})).add(backgroundSurface);
 		backgroundSurface.pipe(this._eventOutput);
 		this.add(this.pinnedEntriesController);
 		this.add(this.renderController);
-		this.refreshEntries(entries);
+		this.refreshEntries(entries, glowEntry);
 
 	}
 
@@ -277,9 +277,13 @@ define(function(require, exports, module) {
 				addedView = this.addEntry(entry);
 			}
 
-			if (this.glowEntry && entry.id == this.glowEntry.id) {
-				this.glowView = addedView;
-			}
+            if (this.glowEntry) {
+                if (Number.isFinite(this.glowEntry) && entry.id == this.glowEntry) {
+                    this.glowView = addedView;
+                } else if (entry.id == this.glowEntry.id) {
+                    this.glowView = addedView;
+                }
+            }
 		}.bind(this));
 
 		this.scrollView.sequenceFrom(this.draggableList);
