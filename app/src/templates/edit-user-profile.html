@@ -122,6 +122,11 @@
 						{{ } else { }}
 							<p class="link-withings">Link Withings Account</p>
 						{{ } }}
+						{{ if (user.linkedToOura) { }}
+							<p class="unlink-oura">Unlink Oura Account</p>
+						{{ } else { }}
+							<p class="link-oura">Link Oura Account</p>
+						{{ } }}
 						{{ if (!user.linkedToMoves) { }}
 							<p class="link-moves">Link Moves Account</p>
 						{{ } else { }}

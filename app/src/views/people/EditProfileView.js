@@ -189,6 +189,10 @@ define(function(require, exports, module, store) {
 						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterfitbit?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
 					} else if (_.contains(classList, 'unlink-jawbone')) {
 						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterjawbone?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+					} else if (_.contains(classList, 'link-oura')) {
+						cordova.InAppBrowser.open(App.serverUrl + '/home/registerOura?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+					} else if (_.contains(classList, 'unlink-oura')) {
+						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterOura?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
 					}
 				} else {
 					e.stopPropagation();
