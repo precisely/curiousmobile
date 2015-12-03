@@ -14,7 +14,7 @@ define(function(require, exports, module) {
 		trigger: {name:'change-page', data: 'TermsView'}
 	},  {
 		title: 'Tutorial',
-		iconFont: '<i class="fa fa-question-circle"></i>',
+		iconFont: '<i class="fa fa-university"></i>',
 		trigger: {name:'change-page', data: 'TutorialView'}
 	}, {
 		title: 'Logout',

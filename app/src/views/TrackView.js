@@ -58,7 +58,7 @@ define(function(require, exports, module) {
 
 	function _createBody() {
 		var formContainerSurface = new ContainerSurface({
-			size: [undefined, 60],
+			size: [undefined, 69],
 			properties: {
 				backgroundColor: '#eaeaea',
 			}

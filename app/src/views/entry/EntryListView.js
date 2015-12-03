@@ -297,7 +297,7 @@ define(function(require, exports, module) {
 				backgroundColor: '#ebebeb',
 				padding: '10px',
 				overflowY: 'hidden',
-				borderBottom: '8px solid #ebebeb'
+				borderBottom: '13px solid #ebebeb'
 			}
 		});
 
