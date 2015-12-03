@@ -87,6 +87,7 @@ define(function(require, exports, module) {
 	DiscussionDetailView.prototype.loadDetails = function() {
 		console.log('DiscussionDetailView: loadDetails called...');
 		this.surfaceList = [];
+		this.scrollView.setPosition(0);
 		var transition = new Transitionable(Transform.translate(0, 75, App.zIndex.feedItem));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
@@ -143,7 +144,7 @@ define(function(require, exports, module) {
 				discussionPostSurface.setSize([width, height]);
 			}.bind(this), 2);
 			if (this.isSharedGraph) {
-				this.graphView.showDiscussionChart(discussionPost.discussionDetails.firstPost.plotDataId);
+				this.graphView.showDiscussionChart(discussionPost.discussionDetails.firstPost.plotDataId, this.discussionHash);
 			}
 		}.bind(this));
 		this.surfaceList.push(discussionPostSurface);
@@ -287,7 +288,7 @@ define(function(require, exports, module) {
 			discussionHash: this.discussionHash,
 			message: message
 		}, function(success) {
-			App.pageView.changePage('DiscussionDetailView', {discussionHash: this.discussionHash});
+			this.loadDetails();
 		}.bind(this));
 	};
 	App.pages[DiscussionDetailView.name] = DiscussionDetailView;

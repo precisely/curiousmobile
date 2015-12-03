@@ -101,9 +101,9 @@ define(function(require, exports, module) {
 		return (App.height - 200);
 	};
 
-	GraphView.prototype.showDiscussionChart = function(plotDataId) {
+	GraphView.prototype.showDiscussionChart = function(plotDataId, discussionHash) {
 		this.on('graph-visible', function() {
-			this.plot.loadSnapshotId(plotDataId);
+			this.plot.loadSnapshotId(plotDataId, discussionHash);
 		}.bind(this));
 	};
 	GraphView.prototype.drawDateFooter = function() {
