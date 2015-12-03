@@ -12,6 +12,10 @@ define(function(require, exports, module) {
 		title: 'Terms of Service',
 		iconFont: '<i class="fa fa-file-text-o"></i>',
 		trigger: {name:'change-page', data: 'TermsView'}
+	},  {
+		title: 'Tutorial',
+		iconFont: '<i class="fa fa-question-circle"></i>',
+		trigger: {name:'change-page', data: 'TutorialView'}
 	}, {
 		title: 'Logout',
 		iconFont: '<i class="fa fa-sign-out"></i>',
