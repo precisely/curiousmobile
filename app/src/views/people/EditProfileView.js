@@ -127,7 +127,7 @@ define(function(require, exports, module, store) {
 			});
 
 			this.saveSurface = new Surface({
-				size: [window.innerWidth - 250, 64],
+				size: [100, 64],
 				content: 'SAVE',
 				properties: {
 					fontSize: '15px',
