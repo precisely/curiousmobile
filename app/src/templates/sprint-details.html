@@ -10,11 +10,11 @@
             {{ if (sprint.hasStarted && !sprint.hasEnded) { }}
 
             <button id="stop-sprint" class="sprint-button prompted-action button-color">Stop</button>
-            <button id="start-sprint" class="prompted-action  sprint-button   ">Start</button>
+            <button id="start-sprint" class="prompted-action  sprint-button  button-color hidden">Start</button>
 
             {{ } else { }}
 
-            <button id="start-sprint" class="prompted-action sprint-button ">Start</button>
+            <button id="start-sprint" class="prompted-action sprint-button   button-color hidden">Start</button>
             <button id="stop-sprint" class="sprint-button prompted-action  button-color">Stop</button>
 
 
