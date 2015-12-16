@@ -6,7 +6,7 @@ define(function(require, exports, module) {
 	var LoginTemplate = require('text!templates/login.html');
 	var User = require('models/User');
 	var u = require('util/Utils');
-	var push = require('util/Push');
+	//var push = require('util/Push');
 
 	function LoginView() {
 		BaseView.apply(this, arguments);
@@ -68,7 +68,7 @@ define(function(require, exports, module) {
 	};
 
 //	LoginView.prototype.getCurrentState = function() {
-	
+
 //	};
 
 	LoginView.prototype.submit = function() {

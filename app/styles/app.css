@@ -1745,7 +1745,7 @@ and (max-device-height: 568px) {
 }
 
 
-.repeat-modifier .choose-date-input::-webkit-input-placeholder, .repeat-modifier .choose-date-input::-moz-placeholder, 
+.repeat-modifier .choose-date-input::-webkit-input-placeholder, .repeat-modifier .choose-date-input::-moz-placeholder,
 .repeat-modifier .choose-date-input:-ms-input-placeholder {
 	color: #656565 !important;
 	font-size: 10px;
@@ -2903,7 +2903,15 @@ input.cropit-image-zoom-input {
 	border-radius: 2px;
 	font-weight: 500;
 }
-
+.sprint-top{
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  float: right;
+}
+.sprint-top .button-color {
+  background-color: #c04f7f;
+}
 .sprint-details .prompted-action {
 	background-color: #f48d5b;
 	color: #ffffff;
