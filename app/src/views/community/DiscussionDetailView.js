@@ -197,10 +197,10 @@ define(function(require, exports, module) {
 				this.postComment();
 			}
 		}.bind(this));
-        if(discussionPost.discussionDetails.canWrite) {
-            this.surfaceList.push(addCommentSurface);
-            addCommentSurface.pipe(this.scrollView);
-        }
+		if(discussionPost.discussionDetails.canWrite) {
+			this.surfaceList.push(addCommentSurface);
+			addCommentSurface.pipe(this.scrollView);
+		}
 
 		this.showComments(discussionPost);
 	};
