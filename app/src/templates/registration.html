@@ -1,17 +1,21 @@
 <div class="not-loggedin create-account">
 	<form role="form" name="registerForm" method="post" onSubmit="return false;">
+
 		<div class="form-group">
 			<input type="email" class="form-control" id="email" name="email" placeholder="EMAIL">
 		</div>
+
 		<div class="form-group">
-			<input type="email" class="form-control" id="confirm_email" name="confirm_email" placeholder="CONFIRM EMAIL">
+			<input type="email" class="form-control" id="confirm_email" name="confirm_email"
+				   placeholder="CONFIRM EMAIL">
 		</div>
+
 		<div class="form-group">
 			<input type="text" class="form-control" name="username" placeholder="SOCIAL USER NAME">
 		</div>
 
 		<!--<div class="form-group">-->
-			<!--<p>alphanumberic, plus at least one symbol (e.g. &,#,%)</p>-->
+		<!--<p>alphanumberic, plus at least one symbol (e.g. &,#,%)</p>-->
 		<!--</div>-->
 
 		<div class="form-group">
@@ -22,13 +26,13 @@
 			<button type="submit" class="btn submit">Create Account</button>
 		</div>
 
-        <div class="terms-check">
+		<div class="terms-check">
+			<br><br>
+			<input type="checkbox" class="name-radio-public text-style" name="term-radio" id="term-id" value="terms">
 
-            <br><br>
-            <input type="checkbox" class="name-radio-public text-style" name="term-radio" id="term-id" value="terms">
-            <p>Agree to the</p><u><b><a href="#" class="terms-conditions">Terms of Service</a></b> </u>
+			<p>Agree to the</p><u><b><a href="#" class="terms-conditions">Terms of Service</a></b> </u>
+		</div>
 
-        </div>
 	</form>
 
 </div>
