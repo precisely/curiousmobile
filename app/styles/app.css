@@ -1341,9 +1341,21 @@ button.close {
 	margin-left: 35px;
 }
 
-@media screen and (max-width: 350px) {
+@media screen and (max-width: 320px) {
 	.feed-item .footer-label {
 		display: none;
+	}
+
+	.intro-content h3 {
+		margin-bottom: 15px !important;
+	}
+
+	.help-wizard.intro .questions {
+		margin-bottom: 10px !important;
+	}
+
+	.help-wizard .intro-content {
+		padding-top: 10px !important;
 	}
 }
 
@@ -1351,6 +1363,27 @@ button.close {
 	background-color: #f48d5b;
 	width: 100%;
 	padding: 10px;
+}
+
+.help-wizard.intro {
+	text-align: left;
+}
+
+.help-wizard .intro-content {
+	padding: 20px;
+}
+
+/*.help-wizard .intro-content li {
+	list-style-type: none;
+}*/
+
+.intro-content h3, .intro-content h5 {
+	color: #fff;
+	margin-top: 0px;
+}
+
+.intro-content h3 {
+	margin-bottom: 30px;
 }
 
 .help-wizard .sub-heading {
@@ -1362,12 +1395,18 @@ button.close {
 
 .help-wizard h4 {
 	color: #fff;
+	line-height: 1.3em;
 }
 
 .help-wizard .questions {
 	font-weight: 600;
 	margin: 20px 0px;
 	color: #fff;
+}
+
+.help-wizard.intro .questions {
+	margin-top: 0px;
+	text-align: center;
 }
 
 .help-wizard p {
@@ -1436,13 +1475,26 @@ button.close {
 	margin-top: 40px;
 }
 
-.help-wizard .next-question {
+.help-wizard .next-question,.help-wizard.intro .close-button {
 	background-color: #e27c4a;
 	color: white;
 	height: 50px;
 	width: 100%;
 	border-radius: 0px;
 	font-size: 18px;
+}
+
+.help-wizard.intro .next-question, .help-wizard.intro .close-button {
+	width: auto;
+	padding: 5px 20px;
+	height: 42px;
+	position: fixed;
+	bottom: 80px;
+}
+
+.help-wizard.intro .next-question {
+	float: right;
+	right: 30px;
 }
 
 .help-wizard .next-question:active {
@@ -1718,6 +1770,26 @@ and (max-device-height: 480px) {
 
 	.exercise-questions label {
 		margin: 7px 0px 0px 0px !important;
+	}
+
+	.help-wizard.intro {
+		padding-top: 0px;
+	}
+
+	.help-wizard.intro .next-question, .help-wizard.intro .close-button {
+		bottom: 55px !important;
+	}
+
+	.intro-content h3 {
+		margin-bottom: 0px !important;
+	}
+
+	.intro-content h4 {
+		margin-top: 0px !important;
+	}
+
+	.help-wizard.intro hr {
+		margin-bottom: 10px;
 	}
 }
 
