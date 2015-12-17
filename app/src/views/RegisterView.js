@@ -77,6 +77,8 @@ define(function(require, exports, module) {
 		var confirmEmail = document.forms["registerForm"]["confirm_email"].value;
 		var username = document.forms["registerForm"]["username"].value;
 		var password = document.forms["registerForm"]["password"].value;
+        var terms    = document.getElementById("terms");
+
 		if (!email) {
 			u.showAlert("Email is a required field!");
 		} else if (email.search(emailRegEx) == -1) {
@@ -89,12 +91,15 @@ define(function(require, exports, module) {
 			u.showAlert("Username is a required field!");
 		} else if (!password) {
 			u.showAlert("Password is a required field!");
-		} else {
+		} else if (!terms.value()=="aggrement") {
+            u.showAlert("You should agree on Terms and Conditions.");
+        } else {
 			user.register(
 				email,
 				confirmEmail,
 				username,
 				password,
+                terms,
 				function(user) {
 					App.pageView.changePage('TutorialView');
 				}.bind(this)

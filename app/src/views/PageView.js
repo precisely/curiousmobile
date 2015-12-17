@@ -28,7 +28,7 @@ define(function(require, exports, module) {
 	var EntryFormView = require('views/entry/EntryFormView');
 	var ContextMenuView = require('views/ContextMenuView');
 	var Utils = require('util/Utils');
-	//var push = require('util/Push');
+	var push = require('util/Push');
 	var store = require('store');
 	var User = require('models/User');
 
