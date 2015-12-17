@@ -163,7 +163,7 @@ define(function(require, exports, module) {
 								hash: this.discussionHash
 							}, function(success) {
 								u.spinnerStart();
-								setTimeout(function(){
+								setTimeout(function() {
 									u.spinnerStop();
 									App.pageView.changePage('FeedView', {
 										new: true
