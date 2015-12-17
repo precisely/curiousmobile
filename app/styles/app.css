@@ -341,8 +341,11 @@ body {
 }
 
 body p {
-	font-style: italic;
-	font-weight: 300; /* You specify the number you see next to the fonts to change from light to bold ie you would put 700 etc. etc. */
+  font-style: normal;
+  font-weight: 300;
+  display: inline; /* You specify the number you see next to the fonts to change from light to bold ie you would put 700 etc. etc. */
+  margin-right: 5px;
+  font-size: 16px;
 }
 
 html {
@@ -350,7 +353,8 @@ html {
 }
 
 a {
-	color: blue;
+	color: #464646;
+  font-size: 16px;
 }
 
 button {
@@ -760,9 +764,35 @@ button.close {
 	-webkit-appearance: initial;
 }
 
+.not-loggedin .terms-check input[type="checkbox"]:checked {
+
+  height: 28px;
+  width: 28px;
+  border-radius: 21px;
+  margin-top: 0px;
+  background: #FC3F28;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.not-loggedin .terms-check input[type="checkbox"] {
+  -webkit-appearance:none;
+  height: 28px;
+  width: 28px;
+  border-radius: 21px;
+  margin-top: 0px;
+  border-color:  #FC3F28;
+  background-color: #ffffff;
+  border: solid 1px #FC3F28;
+}
+
 .not-loggedin {
 	margin: 10px 20px;
-	font-size: 18px;
+}
+
+.not-loggedin  .terms-check .text-style{
+  vertical-align: middle;
+  margin-right: 15px;
 }
 
 .not-loggedin .btn {
