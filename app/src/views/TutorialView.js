@@ -36,7 +36,7 @@ define(function(require, exports, module) {
 		this.init();
 		Engine.on('keyup', onKeyUp.bind(this));
 		this.on('backToStep1', function() {
-			this.navigate('step1');
+			this.navigate(-1);
 		});
 	}
 
@@ -197,7 +197,7 @@ define(function(require, exports, module) {
 					if (resp.glowEntry) {
 						document.getElementById('sleep-hour-entry').dataset.id = resp.glowEntry.id;
 					}
-					this.navigate('step2');
+					this.navigate(1);
 				}.bind(this));
 			} else if (sleepInputElement.value === '') {
 				document.getElementById('sleep-entry-label').innerHTML = '';
@@ -216,10 +216,10 @@ define(function(require, exports, module) {
 						if (resp.glowEntry) {
 							document.getElementById('mood-entry').dataset.id = resp.glowEntry.id;
 						}
-						this.navigate('step3');
+						this.navigate(1);
 					}.bind(this));
 				} else {
-					this.navigate('step3');
+					this.navigate(1);
 				}
 			} else if (moodInputElement.value === '') {
 				document.getElementById('mood-entry-label').innerHTML = '';
