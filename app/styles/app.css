@@ -1357,6 +1357,10 @@ button.close {
 	.help-wizard .intro-content {
 		padding-top: 10px !important;
 	}
+
+	.help-wizard .navigators {
+		bottom: 60px !important;
+	}
 }
 
 .help-wizard {
@@ -1475,7 +1479,7 @@ button.close {
 	margin-top: 40px;
 }
 
-.help-wizard .next-question,.help-wizard.intro .close-button {
+.help-wizard .next-question {
 	background-color: #e27c4a;
 	color: white;
 	height: 50px;
@@ -1484,17 +1488,13 @@ button.close {
 	font-size: 18px;
 }
 
-.help-wizard.intro .next-question, .help-wizard.intro .close-button {
-	width: auto;
-	padding: 5px 20px;
-	height: 42px;
+.help-wizard .navigators {
 	position: fixed;
-	bottom: 80px;
-}
-
-.help-wizard.intro .next-question {
-	float: right;
-	right: 30px;
+	bottom: 70px;
+	padding-right: 10px;
+	width: 100%;
+	left: 0;
+	padding-left: 10px;
 }
 
 .help-wizard .next-question:active {
@@ -1776,7 +1776,7 @@ and (max-device-height: 480px) {
 		padding-top: 0px;
 	}
 
-	.help-wizard.intro .next-question, .help-wizard.intro .close-button {
+	.help-wizard .navigators {
 		bottom: 55px !important;
 	}
 
@@ -1789,7 +1789,11 @@ and (max-device-height: 480px) {
 	}
 
 	.help-wizard.intro hr {
-		margin-bottom: 10px;
+		margin: 5px 0px;
+	}
+
+	.intro-content h5 {
+		margin-bottom: 0px;
 	}
 }
 

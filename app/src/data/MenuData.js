@@ -13,7 +13,7 @@ define(function(require, exports, module) {
 		iconFont: '<i class="fa fa-file-text-o"></i>',
 		trigger: {name:'change-page', data: 'TermsView'}
 	},  {
-		title: 'Tutorial',
+		title: 'Tracking Tutorial',
 		iconFont: '<i class="fa fa-university"></i>',
 		trigger: {name:'change-page', data: 'TutorialView'}
 	}, {

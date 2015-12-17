@@ -63,7 +63,7 @@ define(function(require, exports, module) {
 		});
 
 		var iconModifier = new StateModifier({
-			transform: Transform.translate(10, 4, 0)
+			transform: Transform.translate(10, 6, 0)
 		});
 
 		this.add(iconModifier).add(iconSurface);
@@ -78,14 +78,14 @@ define(function(require, exports, module) {
 			properties: {
 				color: 'white',
 				fontFamily: 'AvenirNextCondensed-DemiBold',
-				fontSize: '23px',
+				fontSize: '20px',
 				textTransform: 'uppercase',
 				pointerEvents: 'none'
 			}
 		});
 
 		var titleModifier = new StateModifier({
-			transform: Transform.translate(55, 10, 0)
+			transform: Transform.translate(55, 15, 0)
 		});
 
 		this.add(titleModifier).add(titleSurface);

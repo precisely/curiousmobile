@@ -93,6 +93,8 @@ define(function(require, exports, module) {
 							new: true
 						});
 					});
+				} else if (_.contains(classList, 'back-label')) {
+					this.navigate(-1);
 				}
 			}
 		}.bind(this));
@@ -175,12 +177,14 @@ define(function(require, exports, module) {
 		var classList;
 		if (u.isAndroid() || (event instanceof CustomEvent)) {
 			classList = event.srcElement.classList;
-			if (_.contains(classList, 'close-button')) {
+			if (_.contains(classList, 'skip-label')) {
 				App.pageView.changePage('TrackView', {
 					new: true
 				});
 			} else if (_.contains(classList, 'next-question')) {
 				this.navigate(1);
+			} else if (_.contains(classList, 'back-label')) {
+				this.navigate(-1);
 			}
 		}
 	}
