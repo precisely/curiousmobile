@@ -163,7 +163,7 @@ define(function(require, exports, module) {
 								hash: this.discussionHash
 							}, function(success) {
 								u.spinnerStart();
-								setTimeout(function(){ 
+								setTimeout(function(){
 									u.spinnerStop();
 									App.pageView.changePage('FeedView', {
 										new: true
@@ -197,8 +197,10 @@ define(function(require, exports, module) {
 				this.postComment();
 			}
 		}.bind(this));
-		this.surfaceList.push(addCommentSurface);
-		addCommentSurface.pipe(this.scrollView);
+        if(discussionPost.discussionDetails.canWrite) {
+            this.surfaceList.push(addCommentSurface);
+            addCommentSurface.pipe(this.scrollView);
+        }
 
 		this.showComments(discussionPost);
 	};
