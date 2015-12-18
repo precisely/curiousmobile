@@ -92,7 +92,7 @@ define(function(require, exports, module) {
 		} else if (!password) {
 			u.showAlert("Password is a required field!");
 		} else if (!terms) {
-            u.showAlert("You should agree on Terms and Services.");
+            u.showAlert("You should agree to Terms of Service before registering.");
         } else {
 			user.register(
 				email,
