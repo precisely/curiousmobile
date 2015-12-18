@@ -53,7 +53,7 @@ define(function(require, exports, module) {
 		});
 
 		this.setRightIcon(this.plusSurface);
-		this.setHeaderLabel('SPRINTS');
+		this.setHeaderLabel('EXPERIMENTS');
 
 
 		this.plusSurface.on('click', function(e) {
