@@ -7,10 +7,10 @@
 		<div class="row curiosities-row curiosities-row-top">
 			<div class="col-xs-8 curiosities-description">
 				<p>
-					{{ if (label == 'proportional' || label == 'inversely proportional') { }}
-						Could there be a relationship between {{= description1 }} and {{= description2 }}? SIGNAL ... NOISE
-					{{ } else if (label == 'triggered') { }}
-						Could {{= description1 }} be a trigger of {{= description2 }}? SIGNAL ... NOISE
+					{{ if (label == 'proportional' || label == 'triggered') { }}
+						There may be a relationship between {{= description1 }} and {{= description2 }}, what do you think?
+					{{ } else if (label == 'inversely proportional') { }}
+						There may be an inverse relationship between {{= description1 }} and {{= description2 }}, what do you think?
 					{{ } }}
 				</p>
 			</div>

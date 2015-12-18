@@ -3104,3 +3104,26 @@ input.cropit-image-zoom-input {
 	height: 180px;
 	margin: 0px auto;
 }
+
+.explanation-card {
+	color: #a3a3a3;
+	background-color: #fff;
+	padding: 10px 10px 20px 10px;
+	-webkit-box-shadow: 1px 5px 12px 2px;
+	box-shadow: 1px 5px 12px 2px;
+	position: relative;
+}
+
+.explanation-card h2 {
+	margin-top: 0px;
+}
+
+.explanation-card .close {
+	position: absolute;
+	right: 10px;
+	top: 15px;
+}
+
+.explanation-card .fa {
+	color: #4a4a4a;
+}

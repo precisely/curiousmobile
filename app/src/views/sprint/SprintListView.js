@@ -24,12 +24,17 @@ define(function(require, exports, module) {
 	var SprintCardView = require('views/community/card/SprintCardView');
 	var PeopleCardView = require('views/community/card/PeopleCardView');
 	var DiscussionCardView = require('views/community/card/DiscussionCardView');
+	var SprintExplanationCardView = require('views/sprint/SprintExplanationCard');
 	var FeedView = require('views/community/FeedView');
+	var store = require('store');
 
 	function SprintListView() {
 		FeedView.apply(this, arguments);
 		this.max = 10;
 		initSprintView.call(this);
+		if (store.get('showExplanation')) {
+			this.showExplanationCard();
+		}
 	}
 
 	SprintListView.prototype = Object.create(FeedView.prototype);
@@ -65,8 +70,6 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.pillsScrollViewContainerModifier = new StateModifier({
-			origin: [0, 0],
-			align: [0, 0],
 			transform: Transform.translate(0, 64, App.zIndex.header)
 		});
 
@@ -91,6 +94,24 @@ define(function(require, exports, module) {
 		navPills.push(this.createPillsSurface('OWNED'));
 
 		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
+	};
+
+	SprintListView.prototype.showExplanationCard = function() {
+		var sprintExplanationCard = new SprintExplanationCardView();
+		this.sprintRenderController = new RenderController();
+		this.add(new StateModifier({transform: Transform.translate(0, 64, App.zIndex.header)})).add(this.sprintRenderController);
+
+		this.sprintRenderController.show(sprintExplanationCard, null, function() {
+			this.pillsScrollViewContainerModifier.setTransform(Transform.translate(0, 52 + sprintExplanationCard.getSize()[1], App.zIndex.header));
+			this.scrollViewMod.setTransform(Transform.translate(0, 110 + sprintExplanationCard.getSize()[1], App.zIndex.feedItem));
+		}.bind(this));
+
+		this.on('close-explanation', function() {
+			this.sprintRenderController.hide();
+			store.set('showExplanation', false);
+			this.pillsScrollViewContainerModifier.setTransform(Transform.translate(0, 64, App.zIndex.header));
+			this.scrollViewMod.setTransform(Transform.translate(0, 110, App.zIndex.feedItem));
+		}.bind(this));
 	};
 
 	SprintListView.prototype.onShow = function(state) {

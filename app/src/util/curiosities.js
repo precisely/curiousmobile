@@ -405,6 +405,9 @@ function initCuriosities() {
 
 			log( "search results", data.length);
 			C.curiositiesNumSearchResults[searchId] = data.length;
+			if (isMobile && data.length <= 0) {
+				App.pageView.getCurrentView().addListItemsToScrollView([]);
+			}
 			for (var i=0; i < data.length; i++) {
 				// Aliases for readability.
 				var id = data[i].id;

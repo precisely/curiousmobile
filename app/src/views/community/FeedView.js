@@ -89,11 +89,11 @@ define(function(require, exports, module) {
 
 		this.renderController = new RenderController();
 		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
-		var mod = new StateModifier({
+		this.scrollViewMod = new StateModifier({
 			size: [undefined, App.height - 130],
 			transform: Transform.translate(0, this.options.scrollViewYTransform || 110, App.zIndex.feedItem)
 		});
-		this.add(mod).add(this.renderController);
+		this.add(this.scrollViewMod).add(this.renderController);
 		this.initScrollView();
 	};
 
@@ -238,6 +238,9 @@ define(function(require, exports, module) {
 		if (!listItems || listItems.length <= 0) {
 			this.itemsAvailable = false;
 			console.log('no more items available');
+			if (this.showExplanationCard) {
+				this.showExplanationCard();
+			}
 			if (this.offset == 0) {
 				var notFoundSurface = new Surface({
 					size: [undefined, true],
