@@ -123,7 +123,9 @@ define(function(require, exports, module) {
 
 		entryView.on('select-entry', function(entry) {
 			console.log('EntryListView: Selecting an entry');
-			this._eventOutput.emit('select-entry', entry);
+			if (entryView.select) {
+				entryView.select();
+			}
 		}.bind(this));
 	}
 

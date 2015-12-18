@@ -12,10 +12,14 @@ define(function(require, exports, module) {
 	var Draggable = require("famous/modifiers/Draggable");
 	var RenderNode = require('famous/core/RenderNode');
 	var View = require('famous/core/View');
-	var HelpStep1Template = require('text!templates/help-step-1.html');
-	var HelpStep2Template = require('text!templates/help-step-2.html');
-	var HelpStep3Template = require('text!templates/help-step-3.html');
-	var HelpGetStartedTemplate = require('text!templates/help-get-started.html');
+	var TutorialIntro1Template = require('text!templates/tutorial/tutorial-intro-1.html');
+	var TutorialIntro2Template = require('text!templates/tutorial/tutorial-intro-2.html');
+	var TutorialIntro3Template = require('text!templates/tutorial/tutorial-intro-3.html');
+	var TutorialIntro4Template = require('text!templates/tutorial/tutorial-intro-4.html');
+	var HelpStep1Template = require('text!templates/tutorial/help-step-1.html');
+	var HelpStep2Template = require('text!templates/tutorial/help-step-2.html');
+	var HelpStep3Template = require('text!templates/tutorial/help-step-3.html');
+	var HelpGetStartedTemplate = require('text!templates/tutorial/help-get-started.html');
 	var Entry = require('models/Entry');
 	var u = require('util/Utils');
 
@@ -32,7 +36,7 @@ define(function(require, exports, module) {
 		this.init();
 		Engine.on('keyup', onKeyUp.bind(this));
 		this.on('backToStep1', function() {
-			this.navigate('step1');
+			this.navigate(-1);
 		});
 	}
 
@@ -59,11 +63,17 @@ define(function(require, exports, module) {
 	}
 
 	TutorialView.prototype.init = function() {
+		this.tutorialIntro1 = createStepSurfaces(TutorialIntro1Template);
+		this.tutorialIntro2 = createStepSurfaces(TutorialIntro2Template);
+		this.tutorialIntro3 = createStepSurfaces(TutorialIntro3Template);
+		this.tutorialIntro4 = createStepSurfaces(TutorialIntro4Template);
 		this.step1Surface = createStepSurfaces(HelpStep1Template);
 		this.step2Surface = createStepSurfaces(HelpStep2Template);
 		this.step3Surface = createStepSurfaces(HelpStep3Template);
 		this.getStartedSurface = createStepSurfaces(HelpGetStartedTemplate);
 
+		this.stepsSurfaceList = [this.tutorialIntro1, this.tutorialIntro2, this.tutorialIntro3, this.tutorialIntro4,
+				this.step1Surface, this.step2Surface, this.step3Surface, this.getStartedSurface];
 		this.step1Surface.on('click', function(event) {
 			var classList;
 			if (u.isAndroid() || (event instanceof CustomEvent)) {
@@ -75,7 +85,7 @@ define(function(require, exports, module) {
 						if (resp.glowEntry) {
 							document.getElementById('sleep-hour-entry').dataset.id = resp.glowEntry.id;
 						}
-						this.navigate('step2');
+						this.navigate(1);
 					}.bind(this));
 				} else if (_.contains(classList, 'skip-label')) {
 					this.createSleepEntry(value, entryId, function(resp) {
@@ -83,6 +93,8 @@ define(function(require, exports, module) {
 							new: true
 						});
 					});
+				} else if (_.contains(classList, 'back-label')) {
+					this.navigate(-1);
 				}
 			}
 		}.bind(this));
@@ -94,17 +106,17 @@ define(function(require, exports, module) {
 				var value = document.getElementById('mood-entry').value;
 				var entryId = document.getElementById('mood-entry').dataset.id;
 				if (_.contains(classList, 'back-label')) {
-					this.navigate('step1');
+					this.navigate(-1);
 				} else if (_.contains(classList, 'next-question')) {
 					if (value != '') {
 						createSingleEntry.call(this, {value: value, entryId: entryId}, function(resp) {
 							if (resp.glowEntry) {
 								document.getElementById('mood-entry').dataset.id = resp.glowEntry.id;
 							}
-							this.navigate('step3');
+							this.navigate(1);
 						}.bind(this));
 					} else {
-						this.navigate('step3');
+						this.navigate(1);
 					}
 				} else if (_.contains(classList, 'skip-label')) {
 					if (value != '') {
@@ -127,7 +139,7 @@ define(function(require, exports, module) {
 			if (u.isAndroid() || (event instanceof CustomEvent)) {
 				classList = event.srcElement.classList;
 				if (_.contains(classList, 'back-label')) {
-					this.navigate('step2');
+					this.navigate(-1);
 				} else if (_.contains(classList, 'next-question')) {
 					if (cordova) {
 						cordova.plugins.Keyboard.close();
@@ -151,9 +163,31 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.navigate('step1');
+		this.tutorialIntro1.on('click', tutorialNavigation.bind(this));
+		this.tutorialIntro2.on('click', tutorialNavigation.bind(this));
+		this.tutorialIntro3.on('click', tutorialNavigation.bind(this));
+		this.tutorialIntro4.on('click', tutorialNavigation.bind(this));
+
+		this.currentStepIndex = -1;
+		this.navigate(1);
 
 	};
+
+	function tutorialNavigation(event) {
+		var classList;
+		if (u.isAndroid() || (event instanceof CustomEvent)) {
+			classList = event.srcElement.classList;
+			if (_.contains(classList, 'skip-label')) {
+				App.pageView.changePage('TrackView', {
+					new: true
+				});
+			} else if (_.contains(classList, 'next-question')) {
+				this.navigate(1);
+			} else if (_.contains(classList, 'back-label')) {
+				this.navigate(-1);
+			}
+		}
+	}
 
 	function onKeyUp(event) {
 		var classList;
@@ -167,7 +201,7 @@ define(function(require, exports, module) {
 					if (resp.glowEntry) {
 						document.getElementById('sleep-hour-entry').dataset.id = resp.glowEntry.id;
 					}
-					this.navigate('step2');
+					this.navigate(1);
 				}.bind(this));
 			} else if (sleepInputElement.value === '') {
 				document.getElementById('sleep-entry-label').innerHTML = '';
@@ -186,10 +220,10 @@ define(function(require, exports, module) {
 						if (resp.glowEntry) {
 							document.getElementById('mood-entry').dataset.id = resp.glowEntry.id;
 						}
-						this.navigate('step3');
+						this.navigate(1);
 					}.bind(this));
 				} else {
-					this.navigate('step3');
+					this.navigate(1);
 				}
 			} else if (moodInputElement.value === '') {
 				document.getElementById('mood-entry-label').innerHTML = '';
@@ -249,7 +283,7 @@ define(function(require, exports, module) {
 			document.getElementById('stretch').value, document.getElementById('metabolic').value];
 		entries = _.filter(entries, Boolean);
 		if (entries.length == 0) {
-			this.navigate('getStarted');
+			this.navigate(1);
 			return false;
 		}
 		var argsToSend = u.getCSRFPreventionObject("addEntryCSRF", {
@@ -263,7 +297,7 @@ define(function(require, exports, module) {
 		function(data) {
 			if (u.checkData(data)) {
 				if (data.success) {
-					this.navigate('getStarted');
+					this.navigate(1);
 				} else {
 					u.showAlert(data.message);
 				}
@@ -277,26 +311,18 @@ define(function(require, exports, module) {
 
 	TutorialView.prototype.storeMoodEntry = function(moodEntry) {
 		this.moodEntry = moodEntry;
-		this.navigate('step3');
+		this.navigate(1);
 	};
 
 
 	TutorialView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 		this.init();
-
 	};
 
-	TutorialView.prototype.navigate = function(step) {
-		if (step === 'step1') {
-			this.renderController.show(this.step1Surface);
-		} else if (step === 'step2') {
-			this.renderController.show(this.step2Surface);
-		} else if (step === 'step3') {
-			this.renderController.show(this.step3Surface);
-		} else {
-			this.renderController.show(this.getStartedSurface);
-		}
+	TutorialView.prototype.navigate = function(indexModifier) {
+		this.currentStepIndex += indexModifier;
+		this.renderController.show(this.stepsSurfaceList[this.currentStepIndex]);
 	};
 
 	App.pages[TutorialView.name] = TutorialView;
