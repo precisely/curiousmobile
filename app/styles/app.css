@@ -1558,7 +1558,6 @@ button.close {
 }
 
 .sprint-default-label, .people-default-label {
-	background-color: white;
 	text-align: center;
 	padding: 7px 10px;
 	font-weight: 500;
@@ -1568,7 +1567,8 @@ button.close {
 }
 
 .sprint-default-label {
-	padding: 7px 10px 5px 10px;
+	padding: 7px 10px 5px 0px;
+	font-size: 14px;
 }
 
 .sprint-details h2 {
@@ -1580,6 +1580,10 @@ button.close {
 .sprint-details p, .profile-detail p, .edit-people-detail p, .people-detail p {
 	font-style: normal;
 	font-weight: 500;
+}
+
+.sprint-details p {
+	display: block;
 }
 
 .sprint-details input, .sprint-details textarea, .add-interest-tag input {
@@ -2982,12 +2986,14 @@ input.cropit-image-zoom-input {
 	float: right;
 }
 
-.sprint-top .button-color {
-	background-color: #c04f7f;
+.sprint-top .sprint-button {
+	background-color: #fbfbfb;
+	color: #c04f7f;
+	border: 1px solid #c04f7f;
 }
 
 .sprint-details .prompted-action {
-	background-color: #f48d5b;
+	background-color: #c04f7f;
 	color: #ffffff;
 }
 
