@@ -68,7 +68,7 @@ define(function(require, exports, module) {
 	};
 
 //	LoginView.prototype.getCurrentState = function() {
-	
+
 //	};
 
 	LoginView.prototype.submit = function() {

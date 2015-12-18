@@ -1,4 +1,4 @@
-define(function(require, exports, module) {
+define(function (require, exports, module) {
 	'use strict';
 	var BaseView = require('views/BaseView');
 	var View = require('famous/core/View');
@@ -25,7 +25,7 @@ define(function(require, exports, module) {
 		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
-				backgroundColor: '#efefef',
+				backgroundColor: '#fbfbfb',
 				zIndex: 5
 			}
 		});
@@ -49,7 +49,7 @@ define(function(require, exports, module) {
 		activeMenu: 'sprint'
 	};
 
-	SprintDetailView.prototype.showEditIcon = function() {
+	SprintDetailView.prototype.showEditIcon = function () {
 		this.pencilSurface = new ImageSurface({
 			size: [44, 64],
 			content: 'content/images/edit-pencil.png'
@@ -59,18 +59,18 @@ define(function(require, exports, module) {
 		this.removeRightIcon();
 		this.setRightIcon(this.pencilSurface);
 
-		this.pencilSurface.on('click', function(e) {
+		this.pencilSurface.on('click', function (e) {
 			if (e instanceof CustomEvent) {
 				App.pageView.changePage('SprintFormView', {parentPage: 'SprintDetailView', hash: this.hash});
 			}
 		}.bind(this));
 	};
 
-	SprintDetailView.prototype.onShow = function(state) {
+	SprintDetailView.prototype.onShow = function (state) {
 		BaseView.prototype.onShow.call(this);
 	};
 
-	SprintDetailView.prototype.preShow = function(state) {
+	SprintDetailView.prototype.preShow = function (state) {
 		if (!state || !state.hash) {
 			return false;
 		}
@@ -82,9 +82,9 @@ define(function(require, exports, module) {
 		return true;
 	};
 
-	SprintDetailView.prototype.loadDetails = function() {
+	SprintDetailView.prototype.loadDetails = function () {
 		this.participantsOffset = 10;
-		Sprint.show(this.hash, function(sprintDetails) {
+		Sprint.show(this.hash, function (sprintDetails) {
 			this.totalParticipants = sprintDetails.totalParticipants;
 			if (sprintDetails.sprint.hasAdmin) {
 				this.showEditIcon();
@@ -96,12 +96,10 @@ define(function(require, exports, module) {
 			var sprintSurface = new Surface({
 				size: [undefined, undefined],
 				content: _.template(SprintDetailsTemplate, sprintDetails, templateSettings),
-				properties: {
-
-				}
+				properties: {}
 			});
 
-			sprintSurface.on('click', function(e) {
+			sprintSurface.on('click', function (e) {
 				var classList;
 				if (e instanceof CustomEvent) {
 					classList = e.srcElement.classList;
@@ -113,39 +111,43 @@ define(function(require, exports, module) {
 						};
 						App.pageView.changePage('SprintActivityView', state);
 					} else if (e.srcElement.id.indexOf('more-participants') > -1) {
-						Sprint.getMoreParticipants({id: this.hash, offset: this.participantsOffset ,max: 10}, function(participantsList) {
-							_.each(participantsList, function(participant) {
-								document.getElementById('sprint-participants').insertAdjacentHTML( 'beforeend', participant.username + '<br>');
+						Sprint.getMoreParticipants({
+							id: this.hash,
+							offset: this.participantsOffset,
+							max: 10
+						}, function (participantsList) {
+							_.each(participantsList, function (participant) {
+								document.getElementById('sprint-participants').insertAdjacentHTML('beforeend', participant.username + '<br>');
 							});
 							this.participantsOffset += 10;
 							if (this.participantsOffset >= this.totalParticipants) {
 								document.getElementById('more-participants').style.visibility = 'hidden';
 							}
-						}.bind(this), function() {
+						}.bind(this), function () {
 
 						});
 					} else if (e.srcElement.id.indexOf('start-sprint') > -1) {
-						Sprint.start(this.hash, function(data) {
+						Sprint.start(this.hash, function (data) {
 							$('#stop-sprint').show();
 							$('#start-sprint').hide();
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('stop-sprint') > -1) {
-						Sprint.stop(this.hash, function(data) {
+						Sprint.stop(this.hash, function (data) {
 							$('#stop-sprint').hide();
 							$('#start-sprint').show();
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('delete-sprint') > -1) {
-						Sprint.delete(this.hash, function(data) {
+						Sprint.delete(this.hash, function (data) {
 							var sprintsList = App.pageView.getPage(this.parentPage).deck;
 							sprintsList.splice(sprintsList.indexOf(this.parentCard), 1);
 							App.pageView.changePage('SprintListView');
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('leave-sprint') > -1) {
-						Sprint.unfollow(this.hash, function(data) {
+						Sprint.unfollow(this.hash, function (data) {
 							this.loadDetails();
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('join-sprint') > -1) {
-						Sprint.follow(this.hash, function(data) {
+						Sprint.follow(this.hash, function (data) {
 							this.loadDetails();
 						}.bind(this));
 					}
@@ -153,7 +155,7 @@ define(function(require, exports, module) {
 			}.bind(this));
 			this.draggableDetailsView = new DraggableView(sprintSurface, true);
 			this.renderController.show(this.draggableDetailsView);
-		}.bind(this), function() {
+		}.bind(this), function () {
 			App.pageView.goBack();
 		}.bind(this));
 	};

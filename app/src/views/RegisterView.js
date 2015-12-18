@@ -1,4 +1,4 @@
-define(function(require, exports, module) {
+define(function (require, exports, module) {
 	'use strict';
 	var View = require('famous/core/View');
 	var BaseView = require('views/BaseView');
@@ -29,7 +29,7 @@ define(function(require, exports, module) {
 		backButton: true,
 	};
 
-	RegisterView.prototype.createView = function() {
+	RegisterView.prototype.createView = function () {
 		var template = RegisterTemplate;
 		var registerSurface = new Surface({
 			content: _.template(template, this.options, templateSettings),
@@ -38,10 +38,10 @@ define(function(require, exports, module) {
 			}
 		});
 		var registerModifier = new Modifier();
-		registerModifier.sizeFrom(function() {
+		registerModifier.sizeFrom(function () {
 			return [App.width, App.height - 70];
 		});
-		registerSurface.on('click', function(e) {
+		registerSurface.on('click', function (e) {
 			var classList;
 			if (e instanceof CustomEvent) {
 				classList = e.srcElement.classList;
@@ -54,7 +54,7 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		registerSurface.on('keyup', function(e) {
+		registerSurface.on('keyup', function (e) {
 			if (e.keyCode == 13) {
 				this.submit();
 			}
@@ -64,19 +64,21 @@ define(function(require, exports, module) {
 		this.addContent(registerModifier, registerSurface);
 	};
 
-	RegisterView.prototype.onShow = function(state) {
+	RegisterView.prototype.onShow = function (state) {
 		BaseView.prototype.onShow.call(this);
 		var inputElement = document.getElementById("email");
 		inputElement.focus();
 	};
 
-	RegisterView.prototype.submit = function() {
+	RegisterView.prototype.submit = function () {
 		var user = new User();
 		var emailRegEx = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i;
 		var email = document.forms["registerForm"]["email"].value;
 		var confirmEmail = document.forms["registerForm"]["confirm_email"].value;
 		var username = document.forms["registerForm"]["username"].value;
 		var password = document.forms["registerForm"]["password"].value;
+		var terms = document.getElementById("term-id").checked;
+
 		if (!email) {
 			u.showAlert("Email is a required field!");
 		} else if (email.search(emailRegEx) == -1) {
@@ -89,15 +91,18 @@ define(function(require, exports, module) {
 			u.showAlert("Username is a required field!");
 		} else if (!password) {
 			u.showAlert("Password is a required field!");
+		} else if (!terms) {
+			u.showAlert("You should agree to Terms of Service before registering.");
 		} else {
 			user.register(
-				email,
-				confirmEmail,
-				username,
-				password,
-				function(user) {
-					App.pageView.changePage('TutorialView');
-				}.bind(this)
+					email,
+					confirmEmail,
+					username,
+					password,
+					terms,
+					function (user) {
+						App.pageView.changePage('TutorialView');
+					}.bind(this)
 			)
 		}
 	};

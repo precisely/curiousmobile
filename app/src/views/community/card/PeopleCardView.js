@@ -1,4 +1,4 @@
-define(function(require, exports, module) {
+define(function (require, exports, module) {
 	'use strict';
 	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
@@ -22,8 +22,7 @@ define(function(require, exports, module) {
 	PeopleCardView.prototype = Object.create(CardView.prototype);
 	PeopleCardView.prototype.constructor = PeopleCardView;
 
-	PeopleCardView.DEFAULT_OPTIONS = {
-	};
+	PeopleCardView.DEFAULT_OPTIONS = {};
 
 	function createCard() {
 		var prettyDate = u.prettyDate(new Date(this.user.created));
@@ -36,20 +35,20 @@ define(function(require, exports, module) {
 			}
 		});
 
-		this.cardSurface.on('click', function(e) {
+		this.cardSurface.on('click', function (e) {
 			var classList;
 			if (e instanceof CustomEvent) {
 				classList = e.srcElement.classList;
 				if (_.contains(classList, 'follow')) {
-					User.follow(this.user.hash, function(data) {
+					User.follow({id: this.user.hash}, function (data) {
 						e.srcElement.innerText = 'UNFOLLOW';
 						$(e.srcElement).removeClass('follow').addClass('unfollow');
 					}.bind(this));
 				} else if (_.contains(classList, 'unfollow')) {
-					/*User.unfollow(this.user.hash, function(data) {
+					User.follow({id: this.user.hash, unfollow: true}, function (data) {
 						e.srcElement.innerText = 'FOLLOW';
 						$(e.srcElement).removeClass('unfollow').addClass('follow');
-					}.bind(this));*/
+					}.bind(this));
 				} else {
 					var state = {
 						hash: this.user.hash,

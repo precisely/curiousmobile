@@ -27,7 +27,7 @@ define(function (require, exports, module) {
         return device.platform == 'android' || device.platform == 'Android';
     };
 
-    push.isIOS =  function () {
+    push.isIOS = function () {
         return device.platform == 'ios' || device.platform == 'iOS';
     };
 
@@ -66,7 +66,7 @@ define(function (require, exports, module) {
         });
     });
 
-    push.on('error', function(e) {
+    push.on('error', function (e) {
         // e.message
         console.log('Error with push notification' + e);
     });

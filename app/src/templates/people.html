@@ -4,7 +4,11 @@
 			<i class="fa fa-circle"></i>
 			<span class="user-name">{{= name || username }}</span>
 		</a>
+		{{ if (followed) { }}
+		<button class="unfollow">UNFOLLOW</button>
+		{{ } else { }}
 		<button class="follow">FOLLOW</button>
+		{{ } }}
 	</div>
 	<div class="user-details-content">
 		<span>Interest Tags:</span>
