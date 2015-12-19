@@ -12,6 +12,7 @@ define(function (require, exports, module) {
 	var FastClick = require('famous/inputs/FastClick');
 	var User = require('models/User');
 	var RegisterTemplate = require('text!templates/registration.html');
+	var store = require('store');
 	var u = require('util/Utils');
 
 	function RegisterView() {
@@ -101,6 +102,7 @@ define(function (require, exports, module) {
 					password,
 					terms,
 					function (user) {
+						store.set('showExplanation', true);
 						App.pageView.changePage('TutorialView');
 					}.bind(this)
 			)

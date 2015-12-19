@@ -16,7 +16,7 @@ define(function(require, exports, module) {
 		title: 'Share',
 		destinationPage: 'ShareHelpView'
 	}, {
-		title: 'Create a sprint',
+		title: 'Create an experiment',
 		destinationPage: 'CreateSprintHelpView'
 	}];
 });
