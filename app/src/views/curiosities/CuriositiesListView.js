@@ -23,7 +23,8 @@ define(function(require, exports, module) {
 	function CuriositiesListView() {
 		FeedView.apply(this, arguments);
 		this.max = 10;
-		if (store.get('showExplanation')) {
+		var showExplanationCard = store.get('showExplanation');
+		if (showExplanationCard == undefined || showExplanationCard) {
 			this.showExplanationCard();
 		}
 		this.mainContainerSurface = new ContainerSurface({

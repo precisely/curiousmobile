@@ -32,7 +32,8 @@ define(function(require, exports, module) {
 		FeedView.apply(this, arguments);
 		this.max = 10;
 		initSprintView.call(this);
-		if (store.get('showExplanation')) {
+		var showExplanationCard = store.get('showExplanation');
+		if (showExplanationCard == undefined || showExplanationCard) {
 			this.showExplanationCard();
 		}
 	}
