@@ -3110,8 +3110,6 @@ input.cropit-image-zoom-input {
 	color: #a3a3a3;
 	background-color: #fff;
 	padding: 10px 16px 20px 16px;
-	-webkit-box-shadow: 1px 5px 12px 2px;
-	box-shadow: 1px 5px 12px 2px;
 	position: relative;
 }
 
