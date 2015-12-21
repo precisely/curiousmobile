@@ -128,7 +128,7 @@ define(function(require, exports, module) {
 			var explanationCardHeight = sprintExplanationCard.getSize()[1]
 			this.pillsScrollViewContainerModifier.setTransform(Transform.translate(0, 52 + explanationCardHeight, App.zIndex.header));
 			this.scrollViewMod.setTransform(Transform.translate(0, 110 + explanationCardHeight, App.zIndex.feedItem));
-			this.explanationBoxModifier.setTransform(Transform.translate(App.width - 50, 55 + explanationCardHeight, App.zIndex.header));
+			this.explanationBoxModifier.setTransform(Transform.translate(App.width - 50, 52 + explanationCardHeight, App.zIndex.header));
 		}.bind(this));
 
 		this.on('close-explanation', this.hideExplanationBox);
