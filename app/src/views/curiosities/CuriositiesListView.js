@@ -23,8 +23,7 @@ define(function(require, exports, module) {
 	function CuriositiesListView() {
 		FeedView.apply(this, arguments);
 		this.max = 10;
-		var showExplanationCard = store.get('showExplanation');
-		if (showExplanationCard == undefined || showExplanationCard) {
+		if (!store.get('hideCuriositiesExplanation')) {
 			this.showExplanationCard();
 		}
 		this.mainContainerSurface = new ContainerSurface({
@@ -60,21 +59,26 @@ define(function(require, exports, module) {
 	};
 
 	CuriositiesListView.prototype.showExplanationCard = function() {
+		this.explanationVisible = true;
 		var curiosityExplanationCard = new CuriosityExplanationCardView();
 		this.explanationRenderController = new RenderController();
 		this.add(new StateModifier({transform: Transform.translate(0, 64, App.zIndex.header)})).add(this.explanationRenderController);
 
 		this.explanationRenderController.show(curiosityExplanationCard, null, function() {
-			this.containerModifierState.set(52 + curiosityExplanationCard.getSize()[1]);
-			this.scrollViewMod.setTransform(Transform.translate(0, this.options.scrollViewYTransform + curiosityExplanationCard.getSize()[1], App.zIndex.feedItem));
+			var explanationCardHeight = curiosityExplanationCard.getSize()[1]
+			this.containerModifierState.set(52 + explanationCardHeight);
+			this.scrollViewMod.setTransform(Transform.translate(0, this.options.scrollViewYTransform + explanationCardHeight, App.zIndex.feedItem));
 		}.bind(this));
 
-		this.on('close-explanation', function() {
-			this.explanationRenderController.hide();
-			store.set('showExplanation', false);
-			this.containerModifierState.set(64);
-			this.scrollViewMod.setTransform(Transform.translate(0, this.options.scrollViewYTransform, App.zIndex.feedItem));
-		}.bind(this));
+		this.on('close-explanation', this.hideExplanationBox);
+	};
+
+	CuriositiesListView.prototype.hideExplanationBox = function() {
+		this.explanationRenderController.hide();
+		this.explanationVisible = false;
+		store.set('hideCuriositiesExplanation', true);
+		this.containerModifierState.set(64);
+		this.scrollViewMod.setTransform(Transform.translate(0, this.options.scrollViewYTransform, App.zIndex.feedItem));
 	};
 
 	CuriositiesListView.prototype.createSearchBar = function() {
@@ -128,6 +132,27 @@ define(function(require, exports, module) {
 		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
 		pillsScrollViewContainer.on('deploy', function() {
 			C.sortClickHandler('.sort-curiosities');
+		}.bind(this));
+
+		var showExplanationSurface = new Surface({
+			size: [50, 50],
+			content: '<i class="fa fa-question-circle"></i>',
+			properties: {
+				backgroundColor: '#efefef',
+				padding: '15px 5px 0px 18px'
+			}
+		});
+
+		this.mainContainerSurface.add(new StateModifier({transform: Transform.translate(App.width - 50, 0, App.zIndex.header + 5)})).add(showExplanationSurface);
+
+		showExplanationSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				if (this.explanationVisible) {
+					this.hideExplanationBox();
+				} else {
+					this.showExplanationCard();
+				}
+			}
 		}.bind(this));
 	};
 

@@ -187,7 +187,7 @@ function initCuriosities() {
 
 	var viewGraph = function(correlation_id) {
 		var c = C.correlationIndex[correlation_id];
-		var new_uri = '/home/graph/curiosities/' + c.description1 + '/' + c.description2;
+		var new_uri = (isMobile ? App.serverUrl : '') + '/home/graph/curiosities/' + c.description1 + '/' + c.description2;
 		window.location = new_uri;
 	};
 
@@ -218,15 +218,15 @@ function initCuriosities() {
 		var relationText;
 
 		if (type == 'triggered') {
-			relationText = 'Could ' + description1 + ' be a trigger of ' + description2;
+			relationText = 'There may be a relationship between ' + description1 + ' and ' + description2 + ', what do you think';
 		} else {
-			relationText = 'Could there be ';
+			relationText = 'There may be ';
 			if (type == 'negative') {
 				relationText += ' an inverse ';
 			} else {
 				relationText += ' a ';
 			}
-			relationText += ' relationship between ' + description1 + ' and ' + description2;
+			relationText += ' relationship between ' + description1 + ' and ' + description2 + ', what do you think';
 		}
 
 		var strengthText;
@@ -398,14 +398,14 @@ function initCuriosities() {
 		search(afterSuccess, q, pageNumber, filter, order1, order2);
 	};
 
-	var processSearchResults = function(searchId, afterSuccess) {
+	var processSearchResults = function(searchId, afterSuccess, pageNumber) {
 		return function(data) {
 			if (!checkData(data))
 				return;
 
 			log( "search results", data.length);
 			C.curiositiesNumSearchResults[searchId] = data.length;
-			if (isMobile && data.length <= 0) {
+			if ((isMobile && data.length <= 0) && pageNumber && pageNumber == 1) {
 				App.pageView.getCurrentView().addListItemsToScrollView([]);
 			}
 			for (var i=0; i < data.length; i++) {
@@ -463,7 +463,7 @@ function initCuriosities() {
 		var url = App.serverUrl + '/correlation/search';
 		log('search more data via AJAX', url);
 		var searchId = getSearchId(q)
-		queuePostJSON('search', url, {q: q, page: pageNumber, filter: filter, order1: order1, order2: order2}, processSearchResults(searchId, afterSuccess));
+		queuePostJSON('search', url, {q: q, page: pageNumber, filter: filter, order1: order1, order2: order2}, processSearchResults(searchId, afterSuccess, pageNumber));
 	};
 
 	var updateUISortOrder = function() {

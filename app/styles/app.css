@@ -2068,7 +2068,8 @@ and (max-device-height: 568px) {
 
 .tagList .fa {
 	color: #cc7299;
-	margin-right: 10px;
+	margin-right: 8px;
+	margin-left: 0px;
 }
 
 .tagList .fa-square-o {
@@ -3108,20 +3109,26 @@ input.cropit-image-zoom-input {
 .explanation-card {
 	color: #a3a3a3;
 	background-color: #fff;
-	padding: 10px 10px 20px 10px;
+	padding: 10px 16px 20px 16px;
 	-webkit-box-shadow: 1px 5px 12px 2px;
 	box-shadow: 1px 5px 12px 2px;
 	position: relative;
 }
 
+.explanation-card.experiment {
+	padding: 10px 13px 20px 13px;
+}
+
 .explanation-card h2 {
 	margin-top: 0px;
+	font-size: 16px;
+	font-weight: 700;
 }
 
 .explanation-card .close {
 	position: absolute;
 	right: 10px;
-	top: 15px;
+	top: 9px;
 }
 
 .explanation-card .fa {
