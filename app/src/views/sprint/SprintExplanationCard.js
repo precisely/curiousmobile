@@ -29,7 +29,7 @@ define(function (require, exports, module) {
 			content: _.template(sprintExplanationTemplate, templateSettings),
 			properties: {
 				backgroundColor: '#efefef',
-				padding: '10px 5px 40px 5px'
+				padding: '10px 10px 40px 10px'
 			}
 		});
 

@@ -97,10 +97,10 @@ define(function(require, exports, module) {
 
 		var showExplanationSurface = new Surface({
 			size: [50, 50],
-			content: '<i class="fa fa-question-circle fa-2x"></i>',
+			content: '<i class="fa fa-question-circle"></i>',
 			properties: {
 				backgroundColor: '#efefef',
-				padding: '10px'
+				padding: '15px 5px 0px 18px'
 			}
 		});
 
