@@ -3107,7 +3107,7 @@ input.cropit-image-zoom-input {
 }
 
 .explanation-card {
-	color: #a3a3a3;
+	color: #5d5d5d;
 	background-color: #fff;
 	padding: 10px 16px 20px 16px;
 	position: relative;
@@ -3127,6 +3127,8 @@ input.cropit-image-zoom-input {
 	position: absolute;
 	right: 10px;
 	top: 9px;
+	opacity: 1;
+	font-size: 16px;
 }
 
 .explanation-card .fa {
