@@ -65,8 +65,9 @@ define(function(require, exports, module) {
 		this.add(new StateModifier({transform: Transform.translate(0, 64, App.zIndex.header)})).add(this.explanationRenderController);
 
 		this.explanationRenderController.show(curiosityExplanationCard, null, function() {
-			this.containerModifierState.set(52 + curiosityExplanationCard.getSize()[1]);
-			this.scrollViewMod.setTransform(Transform.translate(0, this.options.scrollViewYTransform + curiosityExplanationCard.getSize()[1], App.zIndex.feedItem));
+			var explanationCardHeight = curiosityExplanationCard.getSize()[1]
+			this.containerModifierState.set(52 + explanationCardHeight);
+			this.scrollViewMod.setTransform(Transform.translate(0, this.options.scrollViewYTransform + explanationCardHeight, App.zIndex.feedItem));
 		}.bind(this));
 
 		this.on('close-explanation', this.hideExplanationBox);

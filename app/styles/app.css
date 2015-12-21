@@ -2068,7 +2068,8 @@ and (max-device-height: 568px) {
 
 .tagList .fa {
 	color: #cc7299;
-	margin-right: 10px;
+	margin-right: 8px;
+	margin-left: 0px;
 }
 
 .tagList .fa-square-o {
