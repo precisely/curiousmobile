@@ -27,7 +27,7 @@ define(function(require, exports, module) {
 	HomeView.prototype.createView = function() {
 		var logoSurface = new ImageSurface({
 			size: [265, true],
-			content: 'content/images/logo-horizontal.png'
+			content: 'content/images/logo-long.png'
 		});
 
 		var logoModifier = new Modifier({
