@@ -115,13 +115,11 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.pillsScrollViewContainerModifier = new StateModifier({
-			origin: [0, 0],
-			align: [0, 0],
 			transform: Transform.translate(0, 64, App.zIndex.header)
 		});
 
 		var pillsScrollViewContainer = new ContainerSurface({
-			size: [undefined, 50],
+			size: [App.width - 50, 50],
 			properties: {
 				backgroundColor: '#efefef',
 				textAlign: 'center'
@@ -238,9 +236,6 @@ define(function(require, exports, module) {
 		if (!listItems || listItems.length <= 0) {
 			this.itemsAvailable = false;
 			console.log('no more items available');
-			if (this.showExplanationCard) {
-				this.showExplanationCard();
-			}
 			if (this.offset == 0) {
 				var notFoundSurface = new Surface({
 					size: [undefined, true],
@@ -253,6 +248,10 @@ define(function(require, exports, module) {
 				});
 				this.deck.push(notFoundSurface);
 				notFoundSurface.pipe(this.scrollView);
+
+				if (this.showExplanationCard) {
+					this.showExplanationCard();
+				}
 			}
 			return;
 		}
@@ -286,7 +285,6 @@ define(function(require, exports, module) {
 	};
 
 	FeedView.prototype.initScrollView = function() {
-
 		this.deck = [];
 		this.group = '';
 		this.loadMoreItems = true;

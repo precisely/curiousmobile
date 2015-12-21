@@ -102,7 +102,6 @@ define(function (require, exports, module) {
 					password,
 					terms,
 					function (user) {
-						store.set('showExplanation', true);
 						App.pageView.changePage('TutorialView');
 					}.bind(this)
 			)

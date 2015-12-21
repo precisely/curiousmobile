@@ -32,8 +32,7 @@ define(function(require, exports, module) {
 		FeedView.apply(this, arguments);
 		this.max = 10;
 		initSprintView.call(this);
-		var showExplanationCard = store.get('showExplanation');
-		if (showExplanationCard == undefined || showExplanationCard) {
+		if (!store.get('hideSprintExplanation')) {
 			this.showExplanationCard();
 		}
 	}
@@ -75,7 +74,7 @@ define(function(require, exports, module) {
 		});
 
 		var pillsScrollViewContainer = new ContainerSurface({
-			size: [undefined, 50],
+			size: [App.width - 50, 50],
 			properties: {
 				backgroundColor: '#efefef',
 				textAlign: 'center'
@@ -95,6 +94,28 @@ define(function(require, exports, module) {
 		navPills.push(this.createPillsSurface('OWNED'));
 
 		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
+
+		var showExplanationSurface = new Surface({
+			size: [50, 50],
+			content: '<i class="fa fa-question-circle fa-2x"></i>',
+			properties: {
+				backgroundColor: '#efefef',
+				padding: '10px'
+			}
+		});
+
+		this.explanationBoxModifier = new StateModifier({transform: Transform.translate(App.width - 50, 64, App.zIndex.header)});
+		this.add(this.explanationBoxModifier).add(showExplanationSurface);
+
+		showExplanationSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				if (this.explanationVisible) {
+					this.hideExplanationBox();
+				} else {
+					this.showExplanationCard();
+				}
+			}
+		}.bind(this));
 	};
 
 	SprintListView.prototype.showExplanationCard = function() {
@@ -102,17 +123,23 @@ define(function(require, exports, module) {
 		this.sprintRenderController = new RenderController();
 		this.add(new StateModifier({transform: Transform.translate(0, 64, App.zIndex.header)})).add(this.sprintRenderController);
 
-		this.sprintRenderController.show(sprintExplanationCard, null, function() {
+		this.sprintRenderController.show(sprintExplanationCard, function() {
+			this.explanationVisible = true;
 			this.pillsScrollViewContainerModifier.setTransform(Transform.translate(0, 52 + sprintExplanationCard.getSize()[1], App.zIndex.header));
 			this.scrollViewMod.setTransform(Transform.translate(0, 110 + sprintExplanationCard.getSize()[1], App.zIndex.feedItem));
+			this.explanationBoxModifier.setTransform(Transform.translate(App.width - 50, 55 + sprintExplanationCard.getSize()[1], App.zIndex.header));
 		}.bind(this));
 
-		this.on('close-explanation', function() {
-			this.sprintRenderController.hide();
-			store.set('showExplanation', false);
-			this.pillsScrollViewContainerModifier.setTransform(Transform.translate(0, 64, App.zIndex.header));
-			this.scrollViewMod.setTransform(Transform.translate(0, 110, App.zIndex.feedItem));
-		}.bind(this));
+		this.on('close-explanation', this.hideExplanationBox);
+	};
+
+	SprintListView.prototype.hideExplanationBox = function() {
+		this.sprintRenderController.hide();
+		this.explanationVisible = false;
+		store.set('hideSprintExplanation', true);
+		this.pillsScrollViewContainerModifier.setTransform(Transform.translate(0, 64, App.zIndex.header));
+		this.scrollViewMod.setTransform(Transform.translate(0, 110, App.zIndex.feedItem));
+		this.explanationBoxModifier.setTransform(Transform.translate(App.width - 50, 64, App.zIndex.header));
 	};
 
 	SprintListView.prototype.onShow = function(state) {
