@@ -322,7 +322,6 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 					dataType: "json",
 					contentType: contentType,
 					processData: processData,
-					//contentType: (requestMethod == 'PUT') ? 'application/json; charset=UTF-8' : 'application/x-www-form-urlencoded; charset=UTF-8',
 					url: url,
 					data: args,
 					timeout: 20000 + (delay > 0 ? delay : 0)

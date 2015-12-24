@@ -100,7 +100,6 @@ define(function (require, exports, module) {
 					confirmEmail,
 					username,
 					password,
-					terms,
 					function (user) {
 						App.pageView.changePage('TutorialView');
 					}.bind(this)

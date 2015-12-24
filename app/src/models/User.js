@@ -49,7 +49,9 @@ define(function(require, exports, module) {
 					function(data) {
 						if (data['success']) {
 							this.getUserData(data);
-							this.u.addDataReadyCallback(callback);
+							if (callback) {
+								callback();
+							}
 						} else {
 							this.u.showAlert(data.message + ' Please try again or hit Cancel to return to the login screen.');
 						}
@@ -235,9 +237,9 @@ define(function(require, exports, module) {
 				}, null, httpArgs);
 	};
 
-	User.follow = function(followedUserId, successCallback, failCallback) {
+	User.follow = function(args, successCallback, failCallback) {
 		var httpArgs = {requestMethod:'GET'};
-		u.queueJSONAll('Following user', App.serverUrl + '/api/user/action/follow', {id: followedUserId},
+		u.queueJSONAll('Following user', App.serverUrl + '/api/user/action/follow', args,
 				function(data) {
 					if (u.checkData(data)) {
 						if (data.success) {

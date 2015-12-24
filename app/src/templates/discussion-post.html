@@ -38,6 +38,8 @@
 		</div>
 	</div>
 </div>
-<div class="view-more-comments">
-	View More
-</div>
+{{ if (totalPostCount > 5) { }}
+	<div class="view-more-comments">
+		View More
+	</div>
+{{ } }}
