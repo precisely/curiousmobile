@@ -59,6 +59,9 @@ define(function(require, exports, module) {
 	};
 
 	CuriositiesListView.prototype.showExplanationCard = function() {
+		if (this.explanationVisible) {
+			return;
+		}
 		this.explanationVisible = true;
 		var curiosityExplanationCard = new CuriosityExplanationCardView();
 		this.explanationRenderController = new RenderController();

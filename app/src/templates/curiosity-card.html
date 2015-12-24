@@ -1,11 +1,8 @@
 <div id="correlation-template">
-	<i class="fa fa-circle"></i>
 	<div class="row curiosities-row-container" type="{{= type }}" marked="{{= marked }}" data-id="{{= id }}" score="{{= score }}">
-		<div class="curiosities-name">
-			<p class="curiosities-category"> ({{= label }}) </p>
-		</div>
 		<div class="row curiosities-row curiosities-row-top">
 			<div class="col-xs-8 curiosities-description">
+				<i class="fa fa-circle"></i>
 				<p>
 					{{ if (label == 'proportional' || label == 'triggered') { }}
 						There may be a relationship between {{= description1 }} and {{= description2 }}, what do you think?
@@ -15,7 +12,16 @@
 				</p>
 			</div>
 			<div class="col-xs-4 plot-curiosity-chart">
-				<img class="plot-curiosity-chart-image" src="content/images/curiosities/curiosity-chart.png" >
+				{{ if (label == 'inversely proportional') { }}
+					<img class="plot-curiosity-chart-image" src="content/images/curiosities/negative.png" >
+				{{ } else if (label == 'proportional') { }}
+					<img class="plot-curiosity-chart-image" src="content/images/curiosities/positive.png" >
+				{{ } else if (label == 'triggered') { }}
+					<img class="plot-curiosity-chart-image" src="content/images/curiosities/triggered.png" >
+				{{ } }}
+				<div class="curiosities-name">
+					<p class="curiosities-category"> ({{= label }}) </p>
+				</div>
 			</div>
 		</div>
 		<div class="curiosities-row curiosities-row-bottom">

@@ -246,7 +246,7 @@ define(function(require, exports, module) {
 						padding: '10px'
 					}
 				});
-				this.deck.push(notFoundSurface);
+				this.deck.splice(0, 1, notFoundSurface);
 				notFoundSurface.pipe(this.scrollView);
 
 				if (this.showExplanationCard) {

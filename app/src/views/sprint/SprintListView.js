@@ -119,6 +119,9 @@ define(function(require, exports, module) {
 	};
 
 	SprintListView.prototype.showExplanationCard = function() {
+		if (this.explanationVisible) {
+			return;
+		}
 		var sprintExplanationCard = new SprintExplanationCardView();
 		this.sprintRenderController = new RenderController();
 		this.add(new StateModifier({transform: Transform.translate(0, 64, App.zIndex.header)})).add(this.sprintRenderController);

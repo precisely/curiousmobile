@@ -85,7 +85,7 @@ define(function(require, exports, module) {
 	};
 
 	DiscussionDetailView.prototype.loadDetails = function() {
-		console.log('DiscussionDetailView: loadDetails called...');
+		console.log('DiscussionDetailView: loadDetails');
 		this.surfaceList = [];
 		this.scrollView.setPosition(0);
 		var transition = new Transitionable(Transform.translate(0, 75, App.zIndex.feedItem));
@@ -101,6 +101,7 @@ define(function(require, exports, module) {
 		this.add(node);
 		this.scrollView.sequenceFrom(this.surfaceList);
 		this.renderController.show(this.scrollView);
+
 		DiscussionPost.fetch({
 			discussionHash: this.discussionHash
 		}, function(discussionPost) {
@@ -116,8 +117,9 @@ define(function(require, exports, module) {
 		this.itemsAvailable = true;
 		this.offset = 0;
 		var discussionPost = this.discussionPost;
-		var prettyDate = u.prettyDate(new Date(discussionPost.updated));
-		discussionPost.updated = prettyDate;
+		this.totalPostCount = discussionPost.discussionDetails.totalPostCount;
+		var prettyDate = u.prettyDate(new Date(discussionPost.discussionDetails.updated));
+		discussionPost.discussionDetails.updated = prettyDate;
 		var discussionPostSurface = new Surface({
 			size: [undefined, true],
 			properties: {
@@ -221,10 +223,9 @@ define(function(require, exports, module) {
 	};
 
 	DiscussionDetailView.prototype.showComments = function(discussionPost) {
-		if (!discussionPost.posts || discussionPost.posts.length === 0) {
+		if ((this.offset + DiscussionPost.max) >= this.totalPostCount) {
 			this.itemsAvailable = false;
 			$('.view-more-comments').hide();
-			return;
 		}
 		var discussionHash = this.discussionHash;
 
