@@ -15,7 +15,6 @@ define(function(require, exports, module) {
 	var TutorialIntro1Template = require('text!templates/tutorial/tutorial-intro-1.html');
 	var TutorialIntro2Template = require('text!templates/tutorial/tutorial-intro-2.html');
 	var TutorialIntro3Template = require('text!templates/tutorial/tutorial-intro-3.html');
-	var TutorialIntro4Template = require('text!templates/tutorial/tutorial-intro-4.html');
 	var HelpStep1Template = require('text!templates/tutorial/help-step-1.html');
 	var HelpStep2Template = require('text!templates/tutorial/help-step-2.html');
 	var HelpStep3Template = require('text!templates/tutorial/help-step-3.html');
@@ -66,13 +65,12 @@ define(function(require, exports, module) {
 		this.tutorialIntro1 = createStepSurfaces(TutorialIntro1Template);
 		this.tutorialIntro2 = createStepSurfaces(TutorialIntro2Template);
 		this.tutorialIntro3 = createStepSurfaces(TutorialIntro3Template);
-		this.tutorialIntro4 = createStepSurfaces(TutorialIntro4Template);
 		this.step1Surface = createStepSurfaces(HelpStep1Template);
 		this.step2Surface = createStepSurfaces(HelpStep2Template);
 		this.step3Surface = createStepSurfaces(HelpStep3Template);
 		this.getStartedSurface = createStepSurfaces(HelpGetStartedTemplate);
 
-		this.stepsSurfaceList = [this.tutorialIntro1, this.tutorialIntro2, this.tutorialIntro3, this.tutorialIntro4,
+		this.stepsSurfaceList = [this.tutorialIntro1, this.tutorialIntro2, this.tutorialIntro3,
 				this.step1Surface, this.step2Surface, this.step3Surface, this.getStartedSurface];
 		this.step1Surface.on('click', function(event) {
 			var classList;
@@ -166,7 +164,6 @@ define(function(require, exports, module) {
 		this.tutorialIntro1.on('click', tutorialNavigation.bind(this));
 		this.tutorialIntro2.on('click', tutorialNavigation.bind(this));
 		this.tutorialIntro3.on('click', tutorialNavigation.bind(this));
-		this.tutorialIntro4.on('click', tutorialNavigation.bind(this));
 
 		this.currentStepIndex = -1;
 		this.navigate(1);

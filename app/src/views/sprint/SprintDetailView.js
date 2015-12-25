@@ -88,6 +88,8 @@ define(function (require, exports, module) {
 			this.totalParticipants = sprintDetails.totalParticipants;
 			if (sprintDetails.sprint.hasAdmin) {
 				this.showEditIcon();
+			} else {
+				this.removeRightIcon();
 			}
 			if (!this.name) {
 				this.name = sprintDetails.sprint.name;
