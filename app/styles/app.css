@@ -1459,10 +1459,6 @@ button.close {
 	margin-top: 0px;
 }
 
-.intro-content h3 {
-	margin-bottom: 30px;
-}
-
 .help-wizard .sub-heading {
 	color: #fff;
 	font-style: italic;
@@ -1473,6 +1469,7 @@ button.close {
 .help-wizard h4 {
 	color: #fff;
 	line-height: 1.3em;
+	margin-top: 30px;
 }
 
 .help-wizard .questions {

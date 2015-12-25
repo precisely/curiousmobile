@@ -157,7 +157,7 @@ define(function(require, exports, module) {
 			if (e instanceof CustomEvent) {
 				if (_.contains(classList, 'close-discussion')) {
 					this.alert = u.showAlert({
-						message: 'Are you sure to delete discussion ?',
+						message: 'Are you sure you want to delete discussion?',
 						a: 'Yes',
 						b: 'No',
 						onA: function() {
