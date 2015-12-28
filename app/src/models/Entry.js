@@ -436,7 +436,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				if (frequencyBit) {
 					repeatTypeBit = (RepeatType.CONCRETEGHOST_BIT | frequencyBit);
 				} else {
-					repeatTypeBit = (RepeatType.CONCRETEGHOST_BIT);
+					repeatTypeBit = (RepeatType.DAILYCONCRETEGHOST);
 				}
 			}
 			if (isRemind) {

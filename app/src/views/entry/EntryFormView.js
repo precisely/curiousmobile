@@ -127,14 +127,10 @@ define(function(require, exports, module) {
 		this.repeatModifierSurface.on('click', function(e) {
 			var classList = e.srcElement.parentElement.classList;
 			if (e instanceof CustomEvent) {
-				if (_.contains(classList, 'entry-checkbox') || 
-						_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {
-					var repeatEachCheckbox = document.getElementById('confirm-each-repeat');
-					repeatEachCheckbox.checked = !repeatEachCheckbox.checked;
-				} else if (_.contains(classList, 'date-picker-field')) {
-					/*if (cordova) {
+				if (_.contains(classList, 'date-picker-field')) {
+					if (cordova) {
 						cordova.plugins.Keyboard.close();
-					}*/
+					}
 					document.getElementById('entry-description').blur();
 					if(this.dateGridOpen) {
 						this.dateGridRenderController.hide();
@@ -150,8 +146,8 @@ define(function(require, exports, module) {
 						}.bind(this));
 					}
 					this.dateGridOpen = !this.dateGridOpen;
-				} else if (this.setRemind && (_.contains(e.srcElement.classList, 'radio-label-span') ||
-						_.contains(classList, 'repeat-frequency-radio-group'))) {
+				} else if (_.contains(e.srcElement.classList, 'radio-label-span') ||
+						_.contains(classList, 'repeat-frequency-radio-group')) {
 					var labelElement;
 					if (e.srcElement.tagName === 'SPAN') {
 						labelElement = e.srcElement.parentElement;
@@ -159,11 +155,29 @@ define(function(require, exports, module) {
 						labelElement = e.srcElement;
 					}
 					var correspondingRadioInput = labelElement.previousElementSibling;
-					if (correspondingRadioInput.checked) {
+					if (this.setRemind && correspondingRadioInput.checked) {
 						correspondingRadioInput.checked = false;
 						document.getElementById('confirm-each-repeat').checked = false;
 					} else {
 						correspondingRadioInput.checked = true;
+					}
+				} else if (_.contains(e.srcElement.classList, 'checkbox-label-span') ||
+						_.contains(classList, 'entry-checkbox')) {
+					var labelElement;
+					if (e.srcElement.tagName === 'SPAN') {
+						labelElement = e.srcElement.parentElement;
+					} else {
+						labelElement = e.srcElement;
+					}
+					var correspondingCheckboxInput = labelElement.previousElementSibling;
+					if (correspondingCheckboxInput.checked) {
+						correspondingCheckboxInput.checked = false;
+					} else {
+						correspondingCheckboxInput.checked = true;
+						if (this.setRemind && (!document.getElementById('daily').checked && !document.getElementById('weekly').checked &&
+								!document.getElementById('monthly').checked)) {
+							document.getElementById('daily').checked = true;
+						}
 					}
 				} else if (_.contains(e.srcElement.classList, 'create-entry-button')) {
 					this.submit();
