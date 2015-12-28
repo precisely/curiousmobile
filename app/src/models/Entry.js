@@ -429,7 +429,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			} else if (document.getElementById('monthly').checked) {
 				frequencyBit = RepeatType.MONTHLY_BIT;
 			}
-			if (!isRepeat && (frequencyBit || repeatEnd || confirmRepeat)) {
+			if (!isRepeat && (frequencyBit || confirmRepeat)) {
 				isRepeat = true;
 			}
 			if (isRepeat) {

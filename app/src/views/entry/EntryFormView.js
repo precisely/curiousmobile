@@ -150,6 +150,21 @@ define(function(require, exports, module) {
 						}.bind(this));
 					}
 					this.dateGridOpen = !this.dateGridOpen;
+				} else if (this.setRemind && (_.contains(e.srcElement.classList, 'radio-label-span') ||
+						_.contains(classList, 'repeat-frequency-radio-group'))) {
+					var labelElement;
+					if (e.srcElement.tagName === 'SPAN') {
+						labelElement = e.srcElement.parentElement;
+					} else {
+						labelElement = e.srcElement;
+					}
+					var correspondingRadioInput = labelElement.previousElementSibling;
+					if (correspondingRadioInput.checked) {
+						correspondingRadioInput.checked = false;
+						document.getElementById('confirm-each-repeat').checked = false;
+					} else {
+						correspondingRadioInput.checked = true;
+					}
 				} else if (_.contains(e.srcElement.classList, 'create-entry-button')) {
 					this.submit();
 				}
@@ -260,7 +275,7 @@ define(function(require, exports, module) {
 		});
 
 		this.remindSurface = new Surface({
-			content: '<div class="text-center"><i class="fa fa-bell"></i> <br/> Set Alarm</div>',
+			content: '<div class="text-center"><i class="fa fa-bell"></i> <br/> Set Alert</div>',
 			size: [84, 24],
 		});
 
