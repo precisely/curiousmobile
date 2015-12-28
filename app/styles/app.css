@@ -646,7 +646,11 @@ input, textarea {
 }
 
 .submit-post {
-	padding-left: 25px;
+	width: 100%;
+	padding: 10px;
+	background-color: #c04f7f;
+	color: #fff;
+	border-radius: 2px;
 }
 
 .post-area {
@@ -659,10 +663,6 @@ input, textarea {
 	position: relative;
 	left: -20px;
 	top: 7px;
-}
-
-.discussion-post-form {
-	margin: 0 10px;
 }
 
 .df-gutter {

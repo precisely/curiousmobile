@@ -27,7 +27,8 @@ define(function(require, exports, module) {
 		this.postSurface = new Surface({
 			content: _.template(template, this.options, templateSettings),
 			properties: {
-				backgroundColor: 'white'
+				backgroundColor: 'white',
+				padding: '10px'
 			}
 		});
 

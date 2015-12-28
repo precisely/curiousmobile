@@ -227,6 +227,9 @@ define(function(require, exports, module) {
 			this.itemsAvailable = false;
 			$('.view-more-comments').hide();
 		}
+		if (!discussionPost.posts) {
+			return;
+		}
 		var discussionHash = this.discussionHash;
 
 		discussionPost.posts.forEach(function(post) {

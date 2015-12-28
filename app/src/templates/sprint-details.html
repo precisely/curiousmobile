@@ -23,7 +23,7 @@
 		</div>
 		{{ } }}
 		{{ if (isFormView) { }}
-			<input type="text" placeholder="Enter Sprint Title..." id="sprint-title" value="{{= sprint.name }}"></input>
+			<input type="text" placeholder="Enter Experiment Title..." id="sprint-title" value="{{= sprint.name }}"></input>
 		{{ } else { }}
 		<h2>
 			{{= sprint.name }}
@@ -35,7 +35,7 @@
 			INSTRUCTIONS
 		</label>
 		{{ if (isFormView) { }}
-		<textarea placeholder="Enter Sprint Description..." rows="5" id="sprint-description"
+		<textarea placeholder="Enter Experiment Description..." rows="5" id="sprint-description"
 				  value="{{= sprint.description }}">{{= sprint.description }}</textarea>
 		{{ } else { }}
 		<p>
