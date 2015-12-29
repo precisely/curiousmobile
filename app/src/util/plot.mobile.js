@@ -114,6 +114,7 @@ define(function(require, exports, module) {
 			console.log('Line ID: ' + line.id);
 			removePlotLine(this.id, line.id);
 		}
+
 	};
 
 	PlotMobile.prototype.initiateAddLine = function (tagList, isContinuous) {
@@ -176,10 +177,14 @@ define(function(require, exports, module) {
 				}
 				if (!plotLine.isSmoothLine()) {	// If current line clicked is a actual line (parent line)
 					console.log('plotclick: parent of a smoot line with line id: ' + plotLine.id);
-					/*dialogDiv.html(item.series.data[item.dataIndex][2].t + ': <a href="' + plot.properties.showDataUrl(plot.userId, plot.userName, item.datapoint[0])
-							+ '">' + $.datepicker.formatDate('M d', new Date(item.datapoint[0])) + "</a>"
-							+ ' (' + item.datapoint[1] + ')');
-					dialogDiv.dialog({ position: { my: "left+3 bottom-5", at: "left+" + pos.pageX + " top+" + pos.pageY, of: ".container", collision: "fit"}, width: 140, height: 62});*/
+					var monthNames = ["January", "February", "March", "April", "May", "June",
+						"July", "August", "September", "October", "November", "December"
+					];
+					var date = new Date(item.datapoint[0]);
+					u.showAlert({message: item.series.data[item.dataIndex][2].t + ': ' + monthNames[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear()
+								+ ' (' + item.datapoint[1] + ')', tapOnBodyHandler: function() {
+								App.pageView.changePage('TrackView', {entryDate: date});
+							}});
 				}
 			} else {
 				console.log('plotclick: Item not found');

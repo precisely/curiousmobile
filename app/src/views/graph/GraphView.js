@@ -247,10 +247,16 @@ define(function(require, exports, module) {
 		}
 	};
 
-	GraphView.prototype.setScrollView = function (scrollView) {
+	GraphView.prototype.setScrollView = function(scrollView) {
 		this.scrollView = scrollView;
 		this.cardSurface.pipe(this.scrollView);
-	}
+	};
+
+	GraphView.prototype.clearGraph = function() {
+		this.clearPillsSurfaceList();
+		this.tags.splice(0, this.tags.length);
+		this.plot.clearGraphs();
+	};
 
 	module.exports = GraphView;
 });

@@ -109,9 +109,9 @@ define(function(require, exports, module) {
 					} else if (e.srcElement.tagName == 'INPUT' || e.srcElement.tagName == 'TEXTAREA') {
 						e.srcElement.focus();
 					} else if (_.contains(classList, 'add-tags') || _.contains(e.srcElement.parentElement.classList, 'add-tags')) {
-						if (cordova) {
+						/*if (cordova) {
 							cordova.plugins.Keyboard.close();
-						}
+						}*/
 						this.addSprintTagsView = new AddSprintTagsView(this);
 						this.showOverlayContent(this.addSprintTagsView);
 					} else if (_.contains(classList, 'add-participants') || _.contains(e.srcElement.parentElement.classList, 'add-participants')) {

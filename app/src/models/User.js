@@ -122,6 +122,8 @@ define(function(require, exports, module) {
 		var userData = store.get('user');
 		window.App.collectionCache.clear();
 		window.App.stateCache.clear();
+		localStorage.clear();
+		App.pageView.getPage('ChartView').graphView.clearGraph();
 		u.callLogoutCallbacks();
 		if (typeof callback != 'undefined') {
 			callback(userData);

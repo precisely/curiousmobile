@@ -130,8 +130,7 @@ define(function (require, exports, module) {
 						});
 					} else if (e.srcElement.id.indexOf('start-sprint') > -1) {
 						Sprint.start(this.hash, function (data) {
-							$('#stop-sprint').show();
-							$('#start-sprint').hide();
+							this.loadDetails();
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('stop-sprint') > -1) {
 						Sprint.stop(this.hash, function (data) {

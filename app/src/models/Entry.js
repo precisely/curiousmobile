@@ -175,6 +175,8 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				if (text.endsWith(' repeat') || text.endsWith(' pinned') || text.endsWith(' remind')
 					|| text.endsWith(' button')) {
 						text = text.substr(0, text.length - 7);
+					} else if (text.endsWith(' bookmark')) {
+					text = text.substr(0, text.length - 9);
 					}
 
 					if (text.endsWith(' favorite')) {
@@ -184,12 +186,14 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					if (text.startsWith('repeat') || text.startsWith('pinned') || text.startsWith('remind')
 						|| text.startsWith('button')) {
 							text = text.substr(6, text.length);
-						}
+					} else if (text.startsWith('bookmark')) {
+						text = text.substr(8, text.length);
+					}
 
-						if (text.startsWith('favorite')) {
-							text = text.substr(7, text.length);
-						}
-						return text;
+					if (text.startsWith('favorite')) {
+						text = text.substr(7, text.length);
+					}
+					return text;
 			},
 			create: function(callback) {
 				var now = new Date();

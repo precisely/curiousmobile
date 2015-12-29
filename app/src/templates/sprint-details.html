@@ -16,6 +16,7 @@
 				{{ } }}
 			{{ } else { }}
 				<button id="join-sprint" class="sprint-button">Follow</button>
+				<button id="start-sprint" class="prompted-action  sprint-button">Start</button>
 			{{ } }}
 			{{ if (sprint.hasAdmin) { }}
 				<button id="delete-sprint" class="sprint-button">Delete</button>
@@ -66,8 +67,8 @@
 				{{= entry.description }}
 				{{ if (entry.comment.indexOf("repeat") > -1) { }}
 					<i class="fa fa-repeat"></i>
-				{{ } else if (entry.comment.indexOf("pinned") > -1) { }}
-					<i class="fa fa-thumb-tack"></i>
+				{{ } else if ((entry.comment.indexOf("pinned") > -1) || (entry.comment.indexOf("bookmark") > -1)) { }}
+					<i class="fa fa-bookmark"></i>
 				{{ } else if (entry.comment.indexOf("remind") > -1) { }}
 					<i class="fa fa-bell"></i>
 				{{ } }}
@@ -99,11 +100,11 @@
 	</div>
 	{{ if (isFormView && isCreateForm) { }}
 		<button class="full-width-button submit">
-			Create Sprint
+			Create Experiment
 		</button>
 	{{ } else if (isFormView) { }}
 		<button class="full-width-button submit">
-			Update Sprint
+			Update Experiment
 		</button>
 	{{ } else { }}
 		<button class="full-width-button activity">
