@@ -176,7 +176,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					|| text.endsWith(' button')) {
 						text = text.substr(0, text.length - 7);
 					} else if (text.endsWith(' bookmark')) {
-					text = text.substr(0, text.length - 9);
+						text = text.substr(0, text.length - 9);
 					}
 
 					if (text.endsWith(' favorite')) {
