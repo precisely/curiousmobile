@@ -275,9 +275,9 @@ define(function(require, exports, module) {
 
 
 	TrackEntryFormView.prototype.submit = function(e, directlyCreateEntry) {
-		/*if (cordova) {
+		if (cordova) {
 			cordova.plugins.Keyboard.close();
-		}*/
+		}
 		var entry = null;
 		var newText;
 

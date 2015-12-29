@@ -10,7 +10,7 @@ define(function(require, exports, module) {
 	var Modifier = require('famous/core/Modifier');
 	var DraggableView = require("views/widgets/DraggableView");
 	var StateView = require('views/StateView');
-	var AddSprintTagsView = require('views/sprint/AddSprintTagsView');
+	var SprintEntryFormView = require('views/sprint/SprintEntryFormView');
 	var AddSprintParticipantsView = require('views/sprint/AddSprintParticipantsView');
 	var RenderNode = require("famous/core/RenderNode");
 	var RenderController = require('famous/views/RenderController');
@@ -109,10 +109,10 @@ define(function(require, exports, module) {
 					} else if (e.srcElement.tagName == 'INPUT' || e.srcElement.tagName == 'TEXTAREA') {
 						e.srcElement.focus();
 					} else if (_.contains(classList, 'add-tags') || _.contains(e.srcElement.parentElement.classList, 'add-tags')) {
-						/*if (cordova) {
+						if (cordova) {
 							cordova.plugins.Keyboard.close();
-						}*/
-						this.addSprintTagsView = new AddSprintTagsView(this);
+						}
+						this.addSprintTagsView = new SprintEntryFormView(this);
 						this.showOverlayContent(this.addSprintTagsView);
 					} else if (_.contains(classList, 'add-participants') || _.contains(e.srcElement.parentElement.classList, 'add-participants')) {
 						if (cordova) {

@@ -19,19 +19,19 @@ define(function(require, exports, module) {
 	var EventHandler = require('famous/core/EventHandler');
 	var EntryFormView = require('views/entry/EntryFormView');
 
-	function AddSprintTagsView(parentView) {
+	function SprintEntryFormView(parentView) {
 		EntryFormView.apply(this, arguments);
 		this.parentView = parentView;
 	}
 
-	AddSprintTagsView.prototype = Object.create(EntryFormView.prototype);
-	AddSprintTagsView.prototype.constructor = AddSprintTagsView;
+	SprintEntryFormView.prototype = Object.create(EntryFormView.prototype);
+	SprintEntryFormView.prototype.constructor = SprintEntryFormView;
 
 	function _zIndex(argument) {
 		return window.App.zIndex.formView;
 	}
 
-	AddSprintTagsView.prototype._setListeners = function() {
+	SprintEntryFormView.prototype._setListeners = function() {
 		var AutocompleteObj = new Autocomplete();
 		window.autocompleteCache = AutocompleteObj;
 		this.autoCompleteView = new AutocompleteView(AutocompleteObj);
@@ -86,7 +86,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 	}
 
-	AddSprintTagsView.prototype.preShow = function(state) {
+	SprintEntryFormView.prototype.preShow = function(state) {
 		if (state.preShowCheck) {
 			this[state.preShowCheck.name].apply(this, state.preShowCheck.args);
 			if (state.preShowCheck.doNotLoad) {
@@ -95,7 +95,7 @@ define(function(require, exports, module) {
 		}
 		return true;
 	};
-	AddSprintTagsView.prototype.onShow = function(state) {
+	SprintEntryFormView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 		if (!state) {
 			//TODO if no state
@@ -105,7 +105,7 @@ define(function(require, exports, module) {
 		this.loadState(state);
 	};
 
-	AddSprintTagsView.prototype.toggleSuffix = function(suffix) {
+	SprintEntryFormView.prototype.toggleSuffix = function(suffix) {
 		var text = document.getElementById("entry-description").value;
 		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned')) {
 			text = text.substr(0, text.length - 7);
@@ -121,7 +121,7 @@ define(function(require, exports, module) {
 		return text.length > 0;
 	};
 
-	AddSprintTagsView.prototype.submit = function(e, directlyCreateEntry) {
+	SprintEntryFormView.prototype.submit = function(e, directlyCreateEntry) {
 		var entry = null;
 		var newText = document.getElementById("entry-description").value;
 
@@ -158,7 +158,7 @@ define(function(require, exports, module) {
 		this.saveEntry(true);
 	};
 
-	AddSprintTagsView.prototype.saveEntry = function(allFuture) {
+	SprintEntryFormView.prototype.saveEntry = function(allFuture) {
 		var entry = this.entry;
 		entry.save(allFuture, function(resp) {
 			this._eventOutput.emit('form-sprint-entry', resp);
@@ -166,7 +166,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	AddSprintTagsView.prototype.createEntry = function() {
+	SprintEntryFormView.prototype.createEntry = function() {
 		var entry = this.entry;
 		entry.save(function(resp) {
 			this.entry = new Entry(entry);
@@ -174,11 +174,11 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	AddSprintTagsView.prototype.hasFuture = function() {
+	SprintEntryFormView.prototype.hasFuture = function() {
 		var entry = this.entry;
 		return ((entry.isRepeat() && !entry.isRemind()) || entry.isGhost()) && !entry.isTodayOrLater();
 	};
 
-	App.pages[AddSprintTagsView.name] = AddSprintTagsView;
-	module.exports = AddSprintTagsView;
+	App.pages[SprintEntryFormView.name] = SprintEntryFormView;
+	module.exports = SprintEntryFormView;
 });
