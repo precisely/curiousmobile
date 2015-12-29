@@ -152,6 +152,7 @@ define(function(require, exports, module) {
 				var activeLine = plot.getLine(plot.activeLineId);
 				if (activeLine) {
 					activeLine.deactivate();
+					u.closeAlerts();
 				}
 				plot.activeLineId = undefined;
 			}
@@ -168,7 +169,9 @@ define(function(require, exports, module) {
 				plot.deactivateActivatedLine(plotLine);
 				if(plotLine.smoothLine) {	//means there is a smooth line of this accordion line
 					plot.activeLineId = plotLine.smoothLine.id;
-					plotLine.smoothLine.activate();
+					if (plotLine.smoothLine.activate) {
+						plotLine.smoothLine.activate();
+					}
 					console.log('plotclick: activating line id: ' + plotLine.id);
 				} else {
 					plot.activeLineId = plotLine.id;
