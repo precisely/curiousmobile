@@ -94,7 +94,7 @@ define(function(require, exports, module) {
 		navPills.push(this.createPillsSurface('ALL', true));
 		navPills.push(this.createPillsSurface('PEOPLE'));
 		navPills.push(this.createPillsSurface('DISCUSSIONS'));
-		navPills.push(this.createPillsSurface('SPRINTS'));
+		navPills.push(this.createPillsSurface('TRACKATHON'));
 		navPills.push(this.createPillsSurface('OWNED'));
 
 		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
@@ -115,7 +115,7 @@ define(function(require, exports, module) {
 				Search.fetchPeople(args, this.addListItemsToScrollView.bind(this));
 			} else if (lable === 'DISCUSSIONS') {
 				Search.fetchDiscussions(args, this.addListItemsToScrollView.bind(this));
-			} else if (lable === 'SPRINTS') {
+			} else if (lable === 'TRACKATHON') {
 				Search.fetchSprints(args, this.addListItemsToScrollView.bind(this));
 			} else if (lable === 'OWNED') {
 				Search.fetchOwned(args, this.addListItemsToScrollView.bind(this));
