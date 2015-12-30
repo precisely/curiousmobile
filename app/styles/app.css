@@ -836,6 +836,10 @@ button.close {
 	margin-right: 15px;
 }
 
+.terms-check p {
+	display: inline;
+}
+
 .not-loggedin .btn {
 	background: #FC3F28;
 	color: white;
