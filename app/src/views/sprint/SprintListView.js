@@ -58,7 +58,7 @@ define(function(require, exports, module) {
 		});
 
 		this.setRightIcon(this.plusSurface);
-		this.setHeaderLabel('EXPERIMENTS');
+		this.setHeaderLabel('TRACKATHON');
 
 
 		this.plusSurface.on('click', function(e) {

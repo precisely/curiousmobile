@@ -3034,6 +3034,11 @@ input.cropit-image-zoom-input {
 	margin-top: 20px;
 }
 
+.help-body p {
+	font-size: 12px;
+	font-style: italic;
+}
+
 .help-body hr {
 	border-top: 2px solid #d8d8d8;
 	margin: 30px 0px;

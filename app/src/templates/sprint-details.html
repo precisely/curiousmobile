@@ -24,7 +24,7 @@
 		</div>
 		{{ } }}
 		{{ if (isFormView) { }}
-			<input type="text" placeholder="Enter Experiment Title..." id="sprint-title" value="{{= sprint.name }}"></input>
+			<input type="text" placeholder="Enter Trackathon Title..." id="sprint-title" value="{{= sprint.name }}"></input>
 		{{ } else { }}
 		<h2>
 			{{= sprint.name }}
@@ -36,7 +36,7 @@
 			INSTRUCTIONS
 		</label>
 		{{ if (isFormView) { }}
-		<textarea placeholder="Enter Experiment Description..." rows="5" id="sprint-description"
+		<textarea placeholder="Enter Trackathon Description..." rows="5" id="sprint-description"
 				  value="{{= sprint.description }}">{{= sprint.description }}</textarea>
 		{{ } else { }}
 		<p>
@@ -100,11 +100,11 @@
 	</div>
 	{{ if (isFormView && isCreateForm) { }}
 		<button class="full-width-button submit">
-			Create Experiment
+			Create Trackathon
 		</button>
 	{{ } else if (isFormView) { }}
 		<button class="full-width-button submit">
-			Update Experiment
+			Update Trackathon
 		</button>
 	{{ } else { }}
 		<button class="full-width-button activity">

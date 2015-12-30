@@ -11,7 +11,7 @@ define(function(require, exports, module) {
 		header: true,
 		footer: true,
 		helpTemplate: MakeChartTemplate,
-		templateScrollHeight: 650
+		templateScrollHeight: 680
 	};
 	MakeChartHelpView.prototype = Object.create(HelpView.prototype);
 

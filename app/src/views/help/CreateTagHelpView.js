@@ -16,7 +16,7 @@ define(function(require, exports, module) {
 		header: true,
 		footer: true,
 		helpTemplate: CreateTagHelpTemplate,
-		templateScrollHeight: 290
+		templateScrollHeight: 400
 	};
 	CreateTagHelpView.prototype = Object.create(HelpView.prototype);
 
