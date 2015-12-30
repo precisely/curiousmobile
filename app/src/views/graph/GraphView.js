@@ -254,8 +254,12 @@ define(function(require, exports, module) {
 
 	GraphView.prototype.clearGraph = function() {
 		this.clearPillsSurfaceList();
-		this.tags.splice(0, this.tags.length);
-		this.plot.clearGraphs();
+		if (this.tags && this.tags.length) {
+			this.tags.splice(0, this.tags.length);
+		}
+		if (this.plot) {
+			this.plot.clearGraphs();
+		}
 	};
 
 	module.exports = GraphView;

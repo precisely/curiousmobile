@@ -385,7 +385,7 @@ body {
 body p {
 	font-style: normal;
 	font-weight: 300;
-	display: inline; /* You specify the number you see next to the fonts to change from light to bold ie you would put 700 etc. etc. */
+	display: block; /* You specify the number you see next to the fonts to change from light to bold ie you would put 700 etc. etc. */
 	margin-right: 5px;
 	font-size: 16px;
 }
@@ -1434,6 +1434,10 @@ button.close {
 	.help-wizard .navigators {
 		bottom: 60px !important;
 	}
+
+	.help-wizard h4 {
+		margin-top: 0px !important;
+	}
 }
 
 .help-wizard {
@@ -2457,9 +2461,10 @@ and (max-device-height: 568px) {
 .edit-email-notifications .media label {
 	position: absolute;
 	color: #ffffff;
-	font-size: 14px;
+	font-size: 12px;
 	-webkit-appearance: initial;
 	font-weight: 500;
+	margin-top: 3px;
 }
 
 .create-tags {
@@ -2536,6 +2541,7 @@ input.cropit-image-zoom-input {
 
 .edit-external-accounts p {
 	color: #fff;
+	font-size: 12px;
 }
 
 .people-detail .fa-4x {
@@ -2789,6 +2795,7 @@ input.cropit-image-zoom-input {
 	font-weight: 500;
 	margin: 0px;
 	margin-bottom: 10px;
+	display: inline;
 }
 
 #correlation-template .plot-curiosity-chart {
@@ -2802,7 +2809,6 @@ input.cropit-image-zoom-input {
 }
 
 #correlation-template .curiosities-category {
-	width: 150px;
 	font-size: 14px;
 	color: #aaa;
 }

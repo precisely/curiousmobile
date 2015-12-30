@@ -122,8 +122,12 @@ define(function(require, exports, module) {
 		var userData = store.get('user');
 		window.App.collectionCache.clear();
 		window.App.stateCache.clear();
+		var hideSprintExplanation = store.get('hideSprintExplanation');
+		var hideCuriositiesExplanation = store.get('hideCuriositiesExplanation');
 		localStorage.clear();
 		App.pageView.getPage('ChartView').graphView.clearGraph();
+		store.set('hideSprintExplanation', hideSprintExplanation);
+		store.set('hideCuriositiesExplanation', hideCuriositiesExplanation);
 		u.callLogoutCallbacks();
 		if (typeof callback != 'undefined') {
 			callback(userData);

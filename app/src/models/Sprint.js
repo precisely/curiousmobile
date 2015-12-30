@@ -152,7 +152,7 @@ define(function(require, exports, module) {
 	Sprint.start = function(sprintHash, successCallback, failCallback) {
 		var timeZoneName = jstz.determine().name();
 		var now = new Date().toUTCString();
-		u.queueJSON('Stopping Experiment', App.serverUrl + '/api/sprint/action/start?callback=?', u.getCSRFPreventionObject('stopSprintDataCSRF', {
+		u.queueJSON('Stopping Experiment', App.serverUrl + '/api/sprint/action/start?callback=?', u.getCSRFPreventionObject('startSprintDataCSRF', {
 			id: sprintHash,
 			now: now,
 			timeZoneName: timeZoneName

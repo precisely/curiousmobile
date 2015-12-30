@@ -43,9 +43,6 @@ define(function(require, exports, module) {
 				this.setRepeat = !this.setRepeat;
 				this.setPinned = false;
 				if (this.setRepeat) {
-					if (!this.isUpdating) {
-						this.resetRepeatModifierForm();
-					}
 					this.renderController.show(this.repeatModifierSurface);
 				} else {
 					this.renderController.hide();
