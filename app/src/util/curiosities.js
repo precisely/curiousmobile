@@ -56,6 +56,13 @@ function initCuriosities() {
 		return success;
 	};
 
+	if (!isMobile) {
+		$('#curiosity-explanation-card').remove();
+		if (localStorage.getItem('showCuriositiesExplanation')) {
+			showExplanationCard(false);
+		}
+	}
+
 	var initSortOrder = function() {
 		try {
 			C.curiositiesSortOrder = JSON.parse(localStorage['curiositiesSortOrder']);
@@ -405,8 +412,12 @@ function initCuriosities() {
 
 			log( "search results", data.length);
 			C.curiositiesNumSearchResults[searchId] = data.length;
-			if ((isMobile && data.length <= 0) && pageNumber && pageNumber == 1) {
-				App.pageView.getCurrentView().addListItemsToScrollView([]);
+			if (data.length <= 0 && pageNumber && pageNumber == 1) {
+				if (isMobile) {
+					App.pageView.getCurrentView().addListItemsToScrollView([]);
+				} else {
+					showExplanationCard(false);
+				}
 			}
 			for (var i=0; i < data.length; i++) {
 				// Aliases for readability.

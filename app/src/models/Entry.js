@@ -423,16 +423,17 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 		}
 
 		function getRepeatTypeId(isRepeat, isRemind, repeatEnd) {
-			var confirmRepeat = document.getElementById('confirm-each-repeat').checked;
+			var confirmRepeat = document.getElementById('confirm-each-repeat') ? document.getElementById('confirm-each-repeat').checked : false;
 			var frequencyBit, repeatTypeBit;
 
-			if (document.getElementById('daily').checked) {
+			if (document.getElementById('daily') && document.getElementById('daily').checked) {
 				frequencyBit = RepeatType.DAILY_BIT;
-			} else if (document.getElementById('weekly').checked) {
+			} else if (document.getElementById('weekly') && document.getElementById('weekly').checked) {
 				frequencyBit = RepeatType.WEEKLY_BIT;
-			} else if (document.getElementById('monthly').checked) {
+			} else if (document.getElementById('monthly') && document.getElementById('monthly').checked) {
 				frequencyBit = RepeatType.MONTHLY_BIT;
 			}
+
 			if (!isRepeat && (frequencyBit || confirmRepeat)) {
 				isRepeat = true;
 			}
