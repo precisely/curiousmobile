@@ -80,7 +80,6 @@ define(function(require, exports, module) {
 					if (data.success) {
 						successCallback({hash: data.hash});
 					} else {
-						u.showAlert(data.message);
 						if (failCallback) {
 							failCallback();
 						}
@@ -220,7 +219,7 @@ define(function(require, exports, module) {
 		});
 	};
 
-	Sprint.follow = function(sprintHash, successCallback) {
+	Sprint.follow = function(sprintHash, successCallback, failCallback) {
 		var timeZoneName = jstz.determine().name();
 		var now = new Date().toUTCString();
 		u.queueJSON('Unfollow trackathon', App.serverUrl + '/api/sprint/action/join?callback=?', u.getCSRFPreventionObject('leaveSprintDataCSRF', {
@@ -237,6 +236,9 @@ define(function(require, exports, module) {
 				}
 			} else {
 				u.showAlert(data.message);
+				if (failCallback) {
+					failCallback();
+				}
 			}
 		});
 	};

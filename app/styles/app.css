@@ -1695,6 +1695,7 @@ button.close {
 
 .sprint-details .fa {
 	float: none !important;
+	margin-left: 5px;
 }
 
 .sprint-details .participants-wrapper {

@@ -121,6 +121,14 @@ define(function(require, exports, module) {
 		return text.length > 0;
 	};
 
+	SprintEntryFormView.prototype.processSuffix = function(text) {
+		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned') || text.endsWith(' bookmark')) {
+			return text;
+		} else {
+			return text + ' bookmark';
+		}
+	};
+
 	SprintEntryFormView.prototype.submit = function(e, directlyCreateEntry) {
 		var entry = null;
 		var newText = document.getElementById("entry-description").value;
@@ -141,7 +149,7 @@ define(function(require, exports, module) {
 			var newEntry = new Entry();
 			newEntry.set('date', window.App.selectedDate);
 			newEntry.userId = this.parentView.virtualUserId;
-			newEntry.setText(newText);
+			newEntry.setText(this.processSuffix(newText));
 			newEntry.create(function(resp) {
 				if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1 ||
 					newText.indexOf('pinned') > -1 || newText.indexOf('bookmark') > -1) {

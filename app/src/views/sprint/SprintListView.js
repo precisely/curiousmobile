@@ -60,7 +60,6 @@ define(function(require, exports, module) {
 		this.setRightIcon(this.plusSurface);
 		this.setHeaderLabel('TRACKATHON');
 
-
 		this.plusSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				Sprint.create(function(data) {
