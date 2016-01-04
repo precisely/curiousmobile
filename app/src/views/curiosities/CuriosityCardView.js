@@ -39,7 +39,7 @@ define(function(require, exports, module) {
 				if (_.contains(classList, 'bubble')) {
 					var currentElement = e.srcElement;
 					setNoiseOrSignal(currentElement);
-				} else if (_.contains(classList, 'plot-curiosity-chart-image')) {
+				} else {
 					e.preventDefault();
 					e.stopPropagation();
 					App.pageView.changePage('ChartView', {tagsByDescription: [this.templateProperties.description1,

@@ -119,7 +119,7 @@ define(function(require, exports, module) {
 		});
 
 		var pillsScrollViewContainer = new ContainerSurface({
-			size: [App.width - 50, 50],
+			size: (this.constructor.name === 'FeedView') ? [App.width, 50]:[App.width - 50, 50],
 			properties: {
 				backgroundColor: '#efefef',
 				textAlign: 'center'

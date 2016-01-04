@@ -122,6 +122,12 @@ define(function(require, exports, module) {
 		var userData = store.get('user');
 		window.App.collectionCache.clear();
 		window.App.stateCache.clear();
+		var hideSprintExplanation = store.get('hideSprintExplanation');
+		var hideCuriositiesExplanation = store.get('hideCuriositiesExplanation');
+		localStorage.clear();
+		App.pageView.getPage('ChartView').graphView.clearGraph();
+		store.set('hideSprintExplanation', hideSprintExplanation);
+		store.set('hideCuriositiesExplanation', hideCuriositiesExplanation);
 		u.callLogoutCallbacks();
 		if (typeof callback != 'undefined') {
 			callback(userData);
@@ -164,7 +170,6 @@ define(function(require, exports, module) {
 	};
 
 	User.update = function(updatedData, successCallback, failCallback) {
-		updatedData['dateToken'] = new Date().getTime();
 		u.queueJSONAll('Updating user details', App.serverUrl + '/api/user/' + updatedData.id, JSON.stringify(updatedData),
 				function(data) {
 					if (u.checkData(data)) {

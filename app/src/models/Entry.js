@@ -175,6 +175,8 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				if (text.endsWith(' repeat') || text.endsWith(' pinned') || text.endsWith(' remind')
 					|| text.endsWith(' button')) {
 						text = text.substr(0, text.length - 7);
+					} else if (text.endsWith(' bookmark')) {
+						text = text.substr(0, text.length - 9);
 					}
 
 					if (text.endsWith(' favorite')) {
@@ -184,12 +186,14 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					if (text.startsWith('repeat') || text.startsWith('pinned') || text.startsWith('remind')
 						|| text.startsWith('button')) {
 							text = text.substr(6, text.length);
-						}
+					} else if (text.startsWith('bookmark')) {
+						text = text.substr(8, text.length);
+					}
 
-						if (text.startsWith('favorite')) {
-							text = text.substr(7, text.length);
-						}
-						return text;
+					if (text.startsWith('favorite')) {
+						text = text.substr(7, text.length);
+					}
+					return text;
 			},
 			create: function(callback) {
 				var now = new Date();
@@ -419,24 +423,25 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 		}
 
 		function getRepeatTypeId(isRepeat, isRemind, repeatEnd) {
-			var confirmRepeat = document.getElementById('confirm-each-repeat').checked;
+			var confirmRepeat = document.getElementById('confirm-each-repeat') ? document.getElementById('confirm-each-repeat').checked : false;
 			var frequencyBit, repeatTypeBit;
 
-			if (document.getElementById('daily').checked) {
+			if (document.getElementById('daily') && document.getElementById('daily').checked) {
 				frequencyBit = RepeatType.DAILY_BIT;
-			} else if (document.getElementById('weekly').checked) {
+			} else if (document.getElementById('weekly') && document.getElementById('weekly').checked) {
 				frequencyBit = RepeatType.WEEKLY_BIT;
-			} else if (document.getElementById('monthly').checked) {
+			} else if (document.getElementById('monthly') && document.getElementById('monthly').checked) {
 				frequencyBit = RepeatType.MONTHLY_BIT;
 			}
-			if (!isRepeat && (frequencyBit || repeatEnd || confirmRepeat)) {
+
+			if (!isRepeat && (frequencyBit || confirmRepeat)) {
 				isRepeat = true;
 			}
 			if (isRepeat) {
 				if (frequencyBit) {
 					repeatTypeBit = (RepeatType.CONCRETEGHOST_BIT | frequencyBit);
 				} else {
-					repeatTypeBit = (RepeatType.CONCRETEGHOST_BIT);
+					repeatTypeBit = (RepeatType.DAILYCONCRETEGHOST);
 				}
 			}
 			if (isRemind) {

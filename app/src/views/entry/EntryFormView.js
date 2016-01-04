@@ -14,7 +14,6 @@ define(function(require, exports, module) {
 	var AutocompleteView = require("views/AutocompleteView");
 	var Autocomplete = require('models/Autocomplete');
 	var DraggableView = require("views/widgets/DraggableView");
-	var u = require('util/Utils');
 	var store = require('store');
 	var Entry = require('models/Entry');
 	var DateUtil = require('util/DateUtil');
@@ -25,19 +24,18 @@ define(function(require, exports, module) {
 	var repeatModifierTemplate = require('text!templates/repeat-input-modifier.html');
 	var Engine = require('famous/core/Engine');
 
-	function EntryFormView(trackView) {
+	function EntryFormView() {
 		StateView.apply(this, arguments);
-		this.trackView = trackView;
 		this.dateGridOpen = false;
 		var backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
-				background: 'rgba(123, 120, 120, 0.48)'
+				background: (this.constructor.name === 'TrackEntryFormView') ? 'rgba(123, 120, 120, 0.48)' : 'rgb(184, 182, 182)'
 			}
 		});
 		this.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(backgroundSurface);
 		_createForm.call(this);
-		_setListeners.call(this);
+		this._setListeners();
 	}
 
 	EntryFormView.prototype = Object.create(StateView.prototype);
@@ -49,140 +47,6 @@ define(function(require, exports, module) {
 	function _zIndex(argument) {
 		// zIndex calculated on top of the containing surface hence returning 0 will use zIndex of the form container
 		return 1;
-	}
-
-	function _setListeners() {
-		var AutocompleteObj = new Autocomplete();
-		window.autocompleteCache = AutocompleteObj;
-		this.autoCompleteView = new AutocompleteView(AutocompleteObj);
-		this.autoCompleteView.on('updateInputSurface', function() {
-			console.log('update the Input Surface');
-		}.bind(this));
-
-		//update input field
-		this.autoCompleteView.onSelect(function(inputLabel) {
-			console.log(inputLabel);
-			Timer.setTimeout(function() {
-				var inputElement = document.getElementById("entry-description");
-				inputElement.value = inputLabel;
-				inputElement.focus();
-			}.bind(this), 500);
-		}.bind(this));
-
-		this.repeatSurface.on('click', function(e) {
-			console.log("repeatSurface event");
-			if (e instanceof CustomEvent) {
-				this.removeSuffix();
-				this.setRemind = false;
-				this.setRepeat = !this.setRepeat;
-				this.setPinned = false;
-				if (this.setRepeat) {
-					if (!this.isUpdating) {
-						this.resetRepeatModifierForm();
-					}
-					this.renderController.show(this.repeatModifierSurface);
-				} else {
-					this.renderController.hide();
-				}
-				this.toggleSelector(this.repeatSurface);
-			}
-		}.bind(this));
-
-		this.remindSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
-				this.removeSuffix();
-				this.setRemind = !this.setRemind;
-				this.setRepeat = false;
-				this.setPinned = false;
-				if (this.setRemind) {
-					if (!this.isUpdating) {
-						this.resetRepeatModifierForm();
-						this.renderController.show(this.repeatModifierSurface, null, function() {
-							document.getElementById('daily').checked = true;
-							document.getElementById('confirm-each-repeat').checked = true;
-						}.bind(this));
-					} else {
-						this.renderController.show(this.repeatModifierSurface);
-					}
-				} else {
-					this.renderController.hide();
-				}
-				this.toggleSelector(this.remindSurface);
-			}
-		}.bind(this));
-
-		this.pinSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
-				this.removeSuffix();
-				this.setRemind = false;
-				this.setRepeat = false;
-				this.setPinned = !this.setPinned;
-				this.toggleSelector(this.pinSurface);
-				this.renderController.hide();
-				this.dateGridRenderController.hide();
-				this.submit();
-			}
-		}.bind(this));
-
-		this.repeatModifierSurface.on('click', function(e) {
-			var classList = e.srcElement.parentElement.classList;
-			if (e instanceof CustomEvent) {
-				if (_.contains(classList, 'entry-checkbox') || 
-						_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {
-					var repeatEachCheckbox = document.getElementById('confirm-each-repeat');
-					repeatEachCheckbox.checked = !repeatEachCheckbox.checked;
-				} else if (_.contains(classList, 'date-picker-field')) {
-					/*if (cordova) {
-						cordova.plugins.Keyboard.close();
-					}*/
-					document.getElementById('entry-description').blur();
-					if(this.dateGridOpen) {
-						this.dateGridRenderController.hide();
-					} else {
-						var dateGridView = new DateGridView(this.selectedDate || new Date());
-						this.dateGrid = dateGridView;
-						this.dateGridRenderController.show(this.dateGrid);
-						this.dateGrid.on('select-date', function(date) {
-							console.log('CalenderView: Date selected');
-							this.setSelectedDate(date);
-							this.dateGridRenderController.hide();
-							this.dateGridOpen = false;
-						}.bind(this));
-					}
-					this.dateGridOpen = !this.dateGridOpen;
-				} else if (_.contains(e.srcElement.classList, 'create-entry-button')) {
-					this.submit();
-				}
-			}
-		}.bind(this));
-
-		this.on('new-entry', function(resp) {
-			console.log("New Entry - TrackView event");
-			this.resetRepeatModifierForm();
-			this.renderController.hide();
-			var currentListView = this.trackView.currentListView;
-			currentListView.refreshEntries(resp.entries, resp.glowEntry);
-			this.trackView.killEntryForm({ entryDate: resp.glowEntry.date });
-		}.bind(this));
-
-		this.on('update-entry', function(resp) {
-			console.log('EntryListView: Updating an entry');
-			this.resetRepeatModifierForm();
-			this.renderController.hide();
-			var currentListView = this.trackView.currentListView;
-			currentListView.refreshEntries(resp.entries, resp.glowEntry);
-			var state = {};
-			if (resp.glowEntry.changed.date) {
-				state = {
-					entryDate: resp.glowEntry.changed.date
-				}
-			} else {
-				state = {
-					new: false
-				}
-			}
-			this.trackView.killEntryForm(state);
-		}.bind(this));
 	}
 
 	EntryFormView.prototype.setSelectedDate = function(date) {
@@ -260,12 +124,12 @@ define(function(require, exports, module) {
 		});
 
 		this.remindSurface = new Surface({
-			content: '<div class="text-center"><i class="fa fa-bell"></i> <br/> Set Alarm</div>',
+			content: '<div class="text-center"><i class="fa fa-bell"></i> <br/> Set Alert</div>',
 			size: [84, 24],
 		});
 
 		this.pinSurface = new Surface({
-			content: '<div class="text-center"><i class="fa fa-plus-square-o"></i><br/> Make Tag Button</div>',
+			content: '<div class="text-center"><i class="fa fa-plus-square-o"></i><br/> Bookmark</div>',
 			size: [84, 24],
 		});
 
@@ -351,149 +215,10 @@ define(function(require, exports, module) {
 		}
 		return text;
 	};
-	
-	/**
-	 * If form loads in edit mode, this will initialize
-	 * entry modifier form according to properties of current entry
-	 */
-	EntryFormView.prototype.showEntryModifiers = function(arguments) {
-		this.resetRepeatModifierForm();
-		this.renderController.hide();
-		this.selectedDate = null;
-		var entry = this.entry;
-		if (entry.isContinuous()) {
-			this.setRepeat = false;
-			this.setRemind = false;
-			return;
-		}
-
-		var radioSelector;
-		if (entry.isWeekly()) {
-			radioSelector = 'weekly';
-		} else if (entry.isMonthly()) {
-			radioSelector = 'monthly';
-		} else if (entry.isDaily()) {
-			radioSelector = 'daily';
-		}
-
-		this.isUpdating = false;
-		this.setRepeat = entry.isRepeat();
-		this.setRemind = entry.isRemind();
-		if (radioSelector || this.setRemind) {
-			this.isUpdating = true;
-			var setDate = function (entry) {
-				if (entry.get("repeatEnd")) {
-					var repeatEnd = new Date(entry.get("repeatEnd"));
-					this.selectedDate = repeatEnd;
-					this.setSelectedDate(repeatEnd);
-				}
-			}.bind(this);
-			this.renderController.show(this.repeatModifierSurface, null, function () {
-				if (radioSelector) {
-					document.getElementById(radioSelector).checked = true;
-				}
-				if (entry.isGhost()) {
-					document.getElementById('confirm-each-repeat').checked = true;
-				}
-				setDate(entry);
-				if (this.setRemind) {
-					this.toggleSelector(this.remindSurface);
-				} else {
-					this.toggleSelector(this.repeatSurface);
-				}
-			}.bind(this));
-		}
-	};
-
-	EntryFormView.prototype.toggleSelector = function(selectorSurface) {
-		var isHilighted = selectorSurface ? _.contains(selectorSurface.getClassList(), 'highlight-surface') : null;
-		this.pinSurface.removeClass('highlight-surface');
-		this.repeatSurface.removeClass('highlight-surface');
-		this.remindSurface.removeClass('highlight-surface');
-		if (selectorSurface && !isHilighted) {
-			selectorSurface.addClass('highlight-surface');
-		}
-	}
-
-	EntryFormView.prototype.buildStateFromEntry = function(entry) {
-		console.log('entry selected with id: ' + entry.id);
-		this.setPinned = this.setRemind = this.setRepeat = false;
-		this.entry = entry;
-		var directlyCreateEntry = false;
-		if (entry.isContinuous() || ((entry.isRemind() || entry.isRepeat()) && entry.isGhost())) {
-			var tag = entry.get('description');
-			var tagStatsMap = autocompleteCache.tagStatsMap.get(tag);
-			if ((tagStatsMap && tagStatsMap.typicallyNoAmount) || tag.indexOf('start') > -1 ||
-				tag.indexOf('begin') > -1 || tag.indexOf('stop') > -1 || tag.indexOf('end') > -1) {
-				directlyCreateEntry = true;
-			}
-		}
-		var entryText = entry.toString();
-
-		if (entry && entry.isContinuous()) {
-			entryText = this.removeSuffix(entryText);
-		}
-
-		var selectionRange = entry.getSelectionRange();
-		if (selectionRange !== undefined) {
-			if (selectionRange[2]) { // insert space at selectionRange[0]
-				entryText = entryText.substr(0, selectionRange[0] - 1) + " " + entryText.substr(selectionRange[0] - 1);
-			}
-		}
-
-		var state = {
-			viewProperties: {
-				name: 'entry',
-				value: entry,
-				model: 'entry'
-			},
-			form: [{
-				id: 'entry-description',
-				value: entryText,
-				selectionRange: selectionRange,
-				elementType: ElementType.domElement,
-				focus: true,
-			}],
-			postLoadAction: {
-				name: 'showEntryModifiers',
-				args: {entry: entry}
-			}
-		};
-
-		if (directlyCreateEntry) {
-			state.preShowCheck = {
-				name: 'submit',
-				args: [entry, true],
-				doNotLoad: true,
-			}
-		}
-
-		return state;
-	};
 
 	EntryFormView.prototype.blur = function(e) {
 		this.autoCompleteView.hide();
 		this.unsetEntry();
-	};
-
-	EntryFormView.prototype.getCurrentState = function() {
-		var state = BaseView.prototype.getCurrentState.call(this);
-		var inputElement = document.getElementById("entry-description");
-		return {
-			viewProperties: [{
-					name: 'entry',
-					model: 'Entry',
-					value: this.entry,
-				},
-			],
-			form: [{
-				id: 'entry-description',
-				value: inputElement.value,
-				selectionRange: [inputElement.selectionStart, inputElement.selectionEnd],
-				elementType: ElementType.domElement,
-				focus: true,
-			}]
-		};
 	};
 
 	EntryFormView.prototype.setCurrentState = function(state) {
@@ -522,126 +247,6 @@ define(function(require, exports, module) {
 	EntryFormView.prototype.setEntryText = function(text) {
 		if (document.getElementById('entry-description')) {
 			document.getElementById('entry-description').value = '';
-		}
-	};
-
-	EntryFormView.prototype.submit = function(e, directlyCreateEntry) {
-		if (cordova) {
-			cordova.plugins.Keyboard.close();
-		}
-		var entry = null;
-		var newText;
-
-		if (e instanceof Entry && directlyCreateEntry) {
-			entry = e;
-			this.entry = entry;
-			newText = this.removeSuffix(entry.toString());
-
-			// Checking if entry is ghost but not pinned
-			if (entry.isGhost() && !entry.isContinuous()) {
-				this.entry.setText(newText);
-				this.saveEntry(false);
-				return;
-			}
-		} else {
-			entry = this.entry;
-
-			newText = document.getElementById("entry-description").value;
-			if (!newText) {
-				return false;
-			}
-		}
-
-		if (!u.isOnline()) {
-			u.showAlert("You don't seem to be connected. Please wait until you are online to add an entry.");
-			return;
-		}
-
-		var repeatTypeId, repeatEnd;
-
-		if (this.setRepeat || this.setRemind) {
-			var repeatParams = Entry.getRepeatParams(this.setRepeat, this.setRemind, this.selectedDate);
-			repeatTypeId = repeatParams.repeatTypeId;
-			repeatEnd = repeatParams.repeatEnd;
-		} else if (this.setPinned) {
-			repeatTypeId = Entry.RepeatType.CONTINUOUSGHOST;
-		}
-
-		if (!entry || !entry.get('id') || entry.isContinuous()) {
-			var newEntry = new Entry();
-			newEntry.setText(newText);
-			if (repeatTypeId) {
-				newEntry.set("repeatType", repeatTypeId);
-			}
-			if (repeatEnd) {
-				newEntry.set("repeatEnd", repeatEnd);
-			}
-			newEntry.create(function(resp) {
-				if (this.setRepeat || this.setRemind || this.setPinned) {
-					window.App.collectionCache.clear();
-				}
-				this.blur();
-				this._eventOutput.emit('new-entry', resp);
-			}.bind(this));
-			return;
-		} else if ((this['originalText-entry-description'] == newText) && (entry.get("repeatType") == repeatTypeId) && (entry.get("repeatEnd") == repeatEnd)) {
-			console.log("EntryFormView: No changes made");
-			this.blur();
-			this.trackView.killEntryForm(null);
-			return;
-		} else {
-			entry.setText(newText);
-			entry.set("repeatType", repeatTypeId);
-			entry.set("repeatEnd", repeatEnd);
-		}
-
-		if (this.setRepeat || this.setRemind || this.setPinned) {
-			window.App.collectionCache.clear();
-		}
-
-		if (this.hasFuture()) {
-			this.alert = u.showAlert({
-				message: 'Update just this one event or also future events?',
-				a: 'One',
-				b: 'All Future',
-				onA: function() {
-					this.saveEntry(false);
-				}.bind(this),
-				onB: function() {
-					this.saveEntry(true);
-				}.bind(this),
-			});
-			this.autoCompleteView.hide();
-			return;
-		}
-		this.saveEntry(true);
-	};
-
-	EntryFormView.prototype.saveEntry = function(allFuture) {
-		var entry = this.entry;
-		entry.save(allFuture, function(resp) {
-			this._eventOutput.emit('update-entry', resp);
-			this.blur();
-		}.bind(this));
-	};
-
-	EntryFormView.prototype.createEntry = function() {
-		var entry = this.entry;
-		entry.save(function(resp) {
-			this.entry = new Entry(entry);
-			this._eventOutput.emit('new-entry', resp);
-		}.bind(this));
-	};
-
-	EntryFormView.prototype.hasFuture = function() {
-		var entry = this.entry;
-		return ((entry.isRepeat() && !entry.isRemind()) || entry.isGhost()) && !entry.isTodayOrLater();
-	};
-
-	EntryFormView.prototype.resetRepeatModifierForm = function() {
-		this.toggleSelector(null);
-		if (document.getElementById('repeat-modifier-form')) {
-			document.getElementById('repeat-modifier-form').reset();
 		}
 	};
 

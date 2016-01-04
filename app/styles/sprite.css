@@ -52,10 +52,12 @@
 
 .icon-sprints {
 	background-image: url('../content/images/icon-sprints.png');
+	background-size: auto 46px;
 }
 
 .icon-sprints.active {
 	background-image: url('../content/images/icon-sprints-active.png');
+	background-size: auto 45px;
 }
 
 .icon-comment {

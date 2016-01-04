@@ -34,6 +34,7 @@ define(function(require, exports, module) {
 		b: 'Cancel',
 		onA: undefined,
 		onB: undefined,
+		tapOnBodyHandler: undefined
 	};
 
 	function _createAlert() {
@@ -65,7 +66,12 @@ define(function(require, exports, module) {
 					console.log('Event B');
 					this.options.onB.call();
 					u.closeAlerts();
+				} else if (_.contains(classList, 'close')) {
+					u.closeAlerts();
 				} else {
+					if (this.options.tapOnBodyHandler) {
+						this.options.tapOnBodyHandler();
+					}
 					u.closeAlerts();
 				} 
 			}

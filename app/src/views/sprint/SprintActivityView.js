@@ -131,11 +131,15 @@ define(function(require, exports, module) {
 	SprintActivityView.prototype.fetchDiscussions = function(args) {
 		var params = args;
 		this.sprintActivityTitleSurface.setContent(_.template(SprintActivityTitleTemplate, {name: this.name}, templateSettings));
-		// 
+
 		Sprint.listDiscussions(args, addListItemsToScrollView.bind(this), function() {
-			// On fail go back
-			App.pageView.goBack();
-		});
+			Sprint.follow(args.sprintHash, function() {
+				this.fetchDiscussions(args);
+			}.bind(this), function() {
+				this.goBack();
+			}.bind(this));
+		}.bind(this));
+
 		this.scrollView.sequenceFrom(this.deck);
 	};
 

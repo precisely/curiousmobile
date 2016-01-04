@@ -16,7 +16,7 @@ define(function(require, exports, module) {
 	Sprint.max = 10;
 
 	Sprint.create = function(callback) {
-		u.queuePostJSON('Creating Sprints', App.serverUrl + '/api/sprint', u.getCSRFPreventionObject('createSprintCSRF'), 
+		u.queuePostJSON('Creating experiments', App.serverUrl + '/api/sprint', u.getCSRFPreventionObject('createSprintCSRF'),
 		function(data) {
 			if (u.checkData(data)) {
 				callback(data);
@@ -53,7 +53,7 @@ define(function(require, exports, module) {
 	};
 
 	Sprint.show = function(hash, successCallback, failCallback) {
-		u.queueJSON('Getting sprint data', App.serverUrl + '/api/sprint/' + hash + '?callback=?', 
+		u.queueJSON('Getting trackathon data', App.serverUrl + '/api/sprint/' + hash + '?callback=?',
 			u.getCSRFPreventionObject('getSprintData'),
 			function(data) {
 				if (u.checkData(data)) {
@@ -73,15 +73,13 @@ define(function(require, exports, module) {
 	};
 
 	Sprint.update = function(params, successCallback, failCallback) {
-		params['dateToken'] = new Date().getTime();
-		u.queueJSONAll('Updating sprint', App.serverUrl + '/api/sprint/' + params.id + '?' + 
+		u.queueJSONAll('Updating trackathon', App.serverUrl + '/api/sprint/' + params.id + '?' +
 			u.getCSRFPreventionURI('updateSprintDataCSRF'), JSON.stringify(params), 
 			function(data) {
 				if (u.checkData(data)) {
 					if (data.success) {
 						successCallback({hash: data.hash});
 					} else {
-						u.showAlert(data.message);
 						if (failCallback) {
 							failCallback();
 						}
@@ -129,7 +127,7 @@ define(function(require, exports, module) {
 	Sprint.stop = function(sprintHash, successCallback, failCallback) {
 		var timeZoneName = jstz.determine().name();
 		var now = new Date().toUTCString();
-		u.queueJSON('Stopping Sprint', App.serverUrl + '/api/sprint/action/stop?callback=?', u.getCSRFPreventionObject('stopSprintDataCSRF', {
+		u.queueJSON('Stopping Trackathon', App.serverUrl + '/api/sprint/action/stop?callback=?', u.getCSRFPreventionObject('stopSprintDataCSRF', {
 			id: sprintHash,
 			now: now,
 			timeZoneName: timeZoneName
@@ -153,7 +151,7 @@ define(function(require, exports, module) {
 	Sprint.start = function(sprintHash, successCallback, failCallback) {
 		var timeZoneName = jstz.determine().name();
 		var now = new Date().toUTCString();
-		u.queueJSON('Stopping Sprint', App.serverUrl + '/api/sprint/action/start?callback=?', u.getCSRFPreventionObject('stopSprintDataCSRF', {
+		u.queueJSON('Starting Trackathon', App.serverUrl + '/api/sprint/action/start?callback=?', u.getCSRFPreventionObject('startSprintDataCSRF', {
 			id: sprintHash,
 			now: now,
 			timeZoneName: timeZoneName
@@ -177,18 +175,18 @@ define(function(require, exports, module) {
 	Sprint.delete = function(sprintHash, successCallback) {
 		var httpArgs ={requestMethod:'delete'};
 		u.showAlert({
-			message: 'Are you sure to delete this sprint?',
+			message: 'Are you sure to delete this trackathon?',
 			a: 'Yes',
 			b: 'No',
 			onA: function() {
-				u.queueJSONAll('Deleting sprint', App.serverUrl + '/api/sprint/' + sprintHash,
+				u.queueJSONAll('Deleting trackathon', App.serverUrl + '/api/sprint/' + sprintHash,
 						u.getCSRFPreventionObject('deleteSprintDataCSRF'),
 						function(data) {
 							if (!u.checkData(data))
 								return;
 
 							if (!data.success) {
-								u.showAlert('Unable to delete sprint!');
+								u.showAlert('Unable to delete trackathon!');
 							} else if (successCallback) {
 								successCallback();
 							}
@@ -203,7 +201,7 @@ define(function(require, exports, module) {
 	Sprint.unfollow = function(sprintHash, successCallback) {
 		var timeZoneName = jstz.determine().name();
 		var now = new Date().toUTCString();
-		u.queueJSON('Unfollow Sprint', App.serverUrl + '/api/sprint/action/leave?callback=?', u.getCSRFPreventionObject('leaveSprintDataCSRF', {
+		u.queueJSON('Unfollow trackathon', App.serverUrl + '/api/sprint/action/leave?callback=?', u.getCSRFPreventionObject('leaveSprintDataCSRF', {
 			id: sprintHash,
 			now: now,
 			timeZoneName: timeZoneName
@@ -221,10 +219,10 @@ define(function(require, exports, module) {
 		});
 	};
 
-	Sprint.follow = function(sprintHash, successCallback) {
+	Sprint.follow = function(sprintHash, successCallback, failCallback) {
 		var timeZoneName = jstz.determine().name();
 		var now = new Date().toUTCString();
-		u.queueJSON('Unfollow Sprint', App.serverUrl + '/api/sprint/action/join?callback=?', u.getCSRFPreventionObject('leaveSprintDataCSRF', {
+		u.queueJSON('Unfollow trackathon', App.serverUrl + '/api/sprint/action/join?callback=?', u.getCSRFPreventionObject('leaveSprintDataCSRF', {
 			id: sprintHash,
 			now: now,
 			timeZoneName: timeZoneName
@@ -238,6 +236,9 @@ define(function(require, exports, module) {
 				}
 			} else {
 				u.showAlert(data.message);
+				if (failCallback) {
+					failCallback();
+				}
 			}
 		});
 	};

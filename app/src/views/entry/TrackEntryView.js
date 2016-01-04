@@ -101,7 +101,15 @@ define(function(require, exports, module) {
 		var date = new Date(this.entry.date);
 		var time = u.formatAMPM(date);
 		var displayText = this.entry.removeSuffix();
-		if (this.entry.isRemind()) {
+		if (this.entry.isRemind() && this.entry.isRepeat()) {
+			if (this.entry.isDaily()) {
+				return '<div class="help"><i class="fa fa-repeat"></i> Alert + Repeat every day </div>' + displayText;
+			} else if (this.entry.isWeekly()) {
+				return '<div class="help"><i class="fa fa-repeat"></i> Alert + Repeat every week</div>' + displayText;
+			} else if (this.entry.isMonthly()) {
+				return '<div class="help"><i class="fa fa-repeat"></i> Alert + Repeat every month</div>' + displayText;
+			}
+		} else if (this.entry.isRemind()) {
 			return '<div class="help"><i class="fa fa-bell"></i> Alert set </div>' + displayText;
 		} else if (this.entry.isDaily()) {
 			return '<div class="help"><i class="fa fa-repeat"></i> Repeat every day</div>' + displayText;
