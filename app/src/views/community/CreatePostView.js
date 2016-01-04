@@ -27,7 +27,8 @@ define(function(require, exports, module) {
 		this.postSurface = new Surface({
 			content: _.template(template, this.options, templateSettings),
 			properties: {
-				backgroundColor: 'white'
+				backgroundColor: 'white',
+				padding: '10px'
 			}
 		});
 
@@ -42,6 +43,14 @@ define(function(require, exports, module) {
 					this.submit();
 				}
 			}
+		}.bind(this));
+
+		this.postSurface.on('deploy', function(e) {
+			document.getElementById('name').onkeyup = function(e) {
+				if (e.which === 13) {
+					this.submit();
+				}
+			}.bind(this);
 		}.bind(this));
 		this.setBody(this.postSurface);
 	}

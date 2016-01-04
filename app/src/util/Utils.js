@@ -248,16 +248,14 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			}
 			requestMethod = requestMethod || 'GET';
 
-			if (args == undefined || args == null) {
-				args = {
-					dateToken: new Date().getTime()
-				};
-			} else if (requestMethod != 'PUT' && !args['dateToken']) {
-				args['dateToken'] = new Date().getTime();
+			if (url.indexOf('dateToken=') < 0) {
+				if (url.indexOf('?') < 0) {
+					url += '?dateToken=' + new Date().getTime();
+				} else {
+					url += '&dateToken=' + new Date().getTime();
+				}
 			}
-			if (url.indexOf('?') >= 0 && url.indexOf('dateToken=') < 0) {
-				url += '&dateToken=' + new Date().getTime();
-			}
+
 			var wrapSuccessCallback = function(data, msg) {
 				u.spinnerStop();
 				stillRunning = false;

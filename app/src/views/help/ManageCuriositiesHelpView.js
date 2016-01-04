@@ -11,7 +11,7 @@ define(function(require, exports, module) {
 		header: true,
 		footer: true,
 		helpTemplate: CuriositiesTemplate,
-		templateScrollHeight: 450
+		templateScrollHeight: 480
 	};
 	ManageCuriositiesHelpView.prototype = Object.create(HelpView.prototype);
 

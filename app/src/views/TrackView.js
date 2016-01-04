@@ -16,7 +16,7 @@ define(function(require, exports, module) {
 	var Scrollview = require("famous/views/Scrollview");
 	var EntryListView = require('views/entry/EntryListView');
 	var EntryView = require('views/entry/EntryView');
-	var EntryFormView = require('views/entry/EntryFormView');
+	var TrackEntryFormView = require('views/entry/TrackEntryFormView');
 	var CalendarView = require('views/calendar/CalendarView');
 	var Entry = require('models/Entry');
 	var EntryCollection = require('models/EntryCollection');
@@ -29,7 +29,7 @@ define(function(require, exports, module) {
 	function TrackView() {
 		BaseView.apply(this, arguments);
 		this.pageChange = false; //making sure the pageChange even is disregarded on page reload
-		this.entryFormView = new EntryFormView(this);
+		this.entryFormView = new TrackEntryFormView(this);
 		_createBody.call(this);
 		_createCalendar.call(this);
 	}
