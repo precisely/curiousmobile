@@ -9,7 +9,7 @@ define(function (require, exports, module) {
             senderID: "852521907580"
         },
         ios: {
-            sound: false,
+            sound: true,
             vibration: true,
             badge: true,
             clearBadge: true,
