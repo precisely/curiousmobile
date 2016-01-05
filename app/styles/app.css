@@ -2318,6 +2318,16 @@ and (max-device-height: 568px) {
 	height: 100%;
 	background-color: #EFEFEF;
 	padding: 10px;
+	position: relative;
+}
+
+.create-tag-button {
+	position: absolute;
+	bottom: 20px;
+	left: 10px;
+	width: calc(100% - 20px);
+	background-color: transparent;
+	border: 1px solid #000;
 }
 
 .radio-public-private {

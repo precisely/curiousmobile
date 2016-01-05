@@ -124,7 +124,7 @@ define(function(require, exports, module) {
 		});
 
 		this.remindSurface = new Surface({
-			content: '<div class="text-center"><i class="fa fa-bell"></i> <br/> Set Alert</div>',
+			content: '<div class="text-center"><i class="fa fa-bell"></i> <br/>' + ((this.constructor.name === 'TrackEntryFormView') ? ' Set Alert' : ' Daily Alert') + '</div>',
 			size: [84, 24],
 		});
 

@@ -11,7 +11,7 @@ define(function(require, exports, module) {
 		header: true,
 		footer: true,
 		helpTemplate: CreateSprintHelpTemplate,
-		templateScrollHeight: 1180
+		templateScrollHeight: 1360
 	};
 	CreateSprintHelpView.prototype = Object.create(HelpView.prototype);
 

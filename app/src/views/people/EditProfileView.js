@@ -210,6 +210,13 @@ define(function(require, exports, module, store) {
 				}
 			}.bind(this));
 
+			editPeopleSurface.on('keyup', function(e) {
+				var inputType = e.srcElement.type;
+				if ((e.which === 13) && (inputType === 'text' || inputType === 'textarea' || inputType === 'password' || inputType === "radio")) {
+					cordova.plugins.Keyboard.close();	
+				}
+			}.bind(this));
+
 			//interestTagSurface(peopleDetails.user.interestTags);
 			this.tagList = [];
 			this.tagSequentialLayout = new SequentialLayout({
@@ -219,7 +226,7 @@ define(function(require, exports, module, store) {
 			});
 			_.each(peopleDetails.user.interestTags, function(tag) {
 				var tagView = new InterestTagView(tag);
-				var draggableTag = new Draggable( {
+				var draggableTag = new Draggable({
 					xRange: [-100, 0],
 					yRange: [0, 0],
 				});

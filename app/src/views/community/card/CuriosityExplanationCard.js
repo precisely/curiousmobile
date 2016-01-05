@@ -37,9 +37,7 @@ define(function (require, exports, module) {
 			var classList;
 			if (e instanceof CustomEvent) {
 				classList = e.srcElement.classList;
-				if (_.contains(classList, 'close') || _.contains(classList, 'fa')) {
-					App.pageView.getCurrentView()._eventOutput.emit('close-explanation', this);
-				}
+				App.pageView.getCurrentView()._eventOutput.emit('close-explanation', this);
 			}
 		}.bind(this));
 

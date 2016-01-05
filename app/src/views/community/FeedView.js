@@ -67,25 +67,27 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.scrollView._eventOutput.on('onEdge', function() {
-			var currentIndex = this.scrollView.getCurrentIndex();
+		if (this.constructor.name != 'CuriositiesListView') {
+			this.scrollView._eventOutput.on('onEdge', function() {
+				var currentIndex = this.scrollView.getCurrentIndex();
 
-			// Check if end of the page is reached
-			if ((this.scrollView._scroller._onEdge != -1) && this.loadMoreItems && this.itemsAvailable) {
-				this.loadMoreItems = false;
-				this.offset += this.max;
-				var args = {
-					offset: this.offset,
-					max: this.max
-				}
+				// Check if end of the page is reached
+				if ((this.scrollView._scroller._onEdge != -1) && this.loadMoreItems && this.itemsAvailable) {
+					this.loadMoreItems = false;
+					this.offset += this.max;
+					var args = {
+						offset: this.offset,
+						max: this.max
+					}
 
-				if (_.contains(['FeedView', 'SprintListView'], this.constructor.name)) {
-					this.fetchFeedItems(this.currentPill, args);
-				} else {
-					this.fetchSearchResults(args);
+					if (_.contains(['FeedView', 'SprintListView'], this.constructor.name)) {
+						this.fetchFeedItems(this.currentPill, args);
+					} else {
+						this.fetchSearchResults(args);
+					}
 				}
-			}
-		}.bind(this));
+			}.bind(this));
+		}
 
 		this.renderController = new RenderController();
 		// This is to modify renderController so that items in scroll view are not hidden behind footer menu

@@ -22,8 +22,6 @@ define(function(require, exports, module) {
 
 	function PeopleDetailView() {
 		BaseView.apply(this, arguments);
-		this.parentPage = 'FeedView';
-
 		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
 		});

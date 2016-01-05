@@ -28,7 +28,7 @@
 					<button>
 						<img src="content/images/follow.png" alt="follow">Follow
 					</button>
-					{{ if (isAdmin) {  }}
+					{{ if (isAdmin || isPublic) {  }}
 					<button class="share-button">
 							<img src="content/images/share.png" alt="share">Share
 						</button>

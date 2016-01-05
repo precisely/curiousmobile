@@ -51,6 +51,10 @@ define(function(require, exports, module) {
 		this.tagsScrollView = new Scrollview({
 			direction: 1
 		});
+
+		this.backRenderController = new RenderController();
+		this.add(new StateModifier({transform: Transform.translate(35, 0, App.zIndex.header + 5)})).add(this.backRenderController);
+		this.backRenderController.show(this.leftSurface);
 		this.init();
 	}
 	CreateChartView.prototype = Object.create(BaseView.prototype);
@@ -59,7 +63,8 @@ define(function(require, exports, module) {
 	CreateChartView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
-		activeMenu: 'chart'
+		activeMenu: 'chart',
+		noBackButton: true
 	};
 
 	function _createSearchBar() {
@@ -120,7 +125,7 @@ define(function(require, exports, module) {
 	function _createPillsMenu() {
 		var pillsMod = new StateModifier({
 			origin: [0.5, 0.5],
-			transform: Transform.translate(App.width / 2 + 15, 30, App.zIndex.header + 1)
+			transform: Transform.translate(App.width / 2 + 25, 30, App.zIndex.header + 1)
 		});
 		this.add(pillsMod).add(_createPills.call(this));
 	}

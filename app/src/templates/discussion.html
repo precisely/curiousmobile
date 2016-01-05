@@ -32,7 +32,7 @@
 								<span class="footer-label">Follow</span>
 							</button>
 						{{ } }}
-						{{ if (isAdmin) {  }}
+						{{ if (isAdmin || isPublic) {  }}
 							<button class="share-button">
 								<img src="content/images/share.png" alt="share"/>
 								<span class="footer-label">Share</span>
