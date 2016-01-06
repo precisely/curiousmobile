@@ -22,6 +22,7 @@ define(function(require, exports, module) {
 	function SprintEntryFormView(parentView) {
 		EntryFormView.apply(this, arguments);
 		this.parentView = parentView;
+		this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">ADD TAG</button>');
 	}
 
 	SprintEntryFormView.prototype = Object.create(EntryFormView.prototype);

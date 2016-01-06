@@ -109,13 +109,13 @@ define(function(require, exports, module) {
 					} else if (e.srcElement.tagName == 'INPUT' || e.srcElement.tagName == 'TEXTAREA') {
 						e.srcElement.focus();
 					} else if (_.contains(classList, 'add-tags') || _.contains(e.srcElement.parentElement.classList, 'add-tags')) {
-						if (cordova) {
+						if (typeof cordova !== 'undefined') {
 							cordova.plugins.Keyboard.close();
 						}
 						this.addSprintTagsView = new SprintEntryFormView(this);
 						this.showOverlayContent(this.addSprintTagsView);
 					} else if (_.contains(classList, 'add-participants') || _.contains(e.srcElement.parentElement.classList, 'add-participants')) {
-						if (cordova) {
+						if (typeof cordova !== 'undefined') {
 							cordova.plugins.Keyboard.close();
 						}
 						this.addSprintParticipantsView = new AddSprintParticipantsView(this);

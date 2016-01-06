@@ -5,6 +5,7 @@ define(function(require, exports, module) {
 	var DateGridView = require('views/calendar/DateGridView');
 	var BaseView = require('views/BaseView');
 	var Timer = require('famous/utilities/Timer');
+	var Transform = require('famous/core/Transform');
 	var AutocompleteView = require("views/AutocompleteView");
 	var Autocomplete = require('models/Autocomplete');
 	var Entry = require('models/Entry');
@@ -44,8 +45,10 @@ define(function(require, exports, module) {
 				this.setPinned = false;
 				if (this.setRepeat) {
 					this.renderController.show(this.repeatModifierSurface);
+					this.submitButtonModifier.setTransform(Transform.translate(30, 500, 0));
 				} else {
 					this.renderController.hide();
+					this.submitButtonModifier.setTransform(Transform.translate(30, 280, 0));
 				}
 				this.toggleSelector(this.repeatSurface);
 			}
@@ -71,19 +74,25 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
+		this.submitSurface.on('click', function(e) {
+			if (_.contains(e.srcElement.classList, 'create-entry-button')) {
+				this.submit();
+			}
+		}.bind(this));
+
 		this.repeatModifierSurface.on('click', function(e) {
 			var classList = e.srcElement.parentElement.classList;
 			if (e instanceof CustomEvent) {
 				if (_.contains(classList, 'entry-checkbox') ||
-						_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {
+					_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {
 					var repeatEachCheckbox = document.getElementById('confirm-each-repeat');
 					repeatEachCheckbox.checked = !repeatEachCheckbox.checked;
 				} else if (_.contains(classList, 'date-picker-field')) {
-					if (cordova) {
+					if (typeof cordova !== 'undefined') {
 						cordova.plugins.Keyboard.close();
 					}
 					document.getElementById('entry-description').blur();
-					if(this.dateGridOpen) {
+					if (this.dateGridOpen) {
 						this.dateGridRenderController.hide();
 					} else {
 						var dateGridView = new DateGridView(this.selectedDate || new Date());
@@ -97,8 +106,6 @@ define(function(require, exports, module) {
 						}.bind(this));
 					}
 					this.dateGridOpen = !this.dateGridOpen;
-				} else if (_.contains(e.srcElement.classList, 'create-entry-button')) {
-					this.submit();
 				}
 			}
 		}.bind(this));
@@ -109,7 +116,9 @@ define(function(require, exports, module) {
 			this.renderController.hide();
 			var currentListView = this.trackView.currentListView;
 			currentListView.refreshEntries(resp.entries, resp.glowEntry);
-			this.trackView.killEntryForm({ entryDate: resp.glowEntry.date });
+			this.trackView.killEntryForm({
+				entryDate: resp.glowEntry.date
+			});
 		}.bind(this));
 
 		this.on('update-entry', function(resp) {
@@ -161,14 +170,14 @@ define(function(require, exports, module) {
 		this.setRemind = entry.isRemind();
 		if (radioSelector || this.setRemind) {
 			this.isUpdating = true;
-			var setDate = function (entry) {
+			var setDate = function(entry) {
 				if (entry.get("repeatEnd")) {
 					var repeatEnd = new Date(entry.get("repeatEnd"));
 					this.selectedDate = repeatEnd;
 					this.setSelectedDate(repeatEnd);
 				}
 			}.bind(this);
-			this.renderController.show(this.repeatModifierSurface, null, function () {
+			this.renderController.show(this.repeatModifierSurface, null, function() {
 				if (radioSelector) {
 					document.getElementById(radioSelector).checked = true;
 				}
@@ -204,7 +213,7 @@ define(function(require, exports, module) {
 			var tag = entry.get('description');
 			var tagStatsMap = autocompleteCache.tagStatsMap.get(tag);
 			if ((tagStatsMap && tagStatsMap.typicallyNoAmount) || tag.indexOf('start') > -1 ||
-					tag.indexOf('begin') > -1 || tag.indexOf('stop') > -1 || tag.indexOf('end') > -1) {
+				tag.indexOf('begin') > -1 || tag.indexOf('stop') > -1 || tag.indexOf('end') > -1) {
 				directlyCreateEntry = true;
 			}
 		}
@@ -236,7 +245,9 @@ define(function(require, exports, module) {
 			}],
 			postLoadAction: {
 				name: 'showEntryModifiers',
-				args: {entry: entry}
+				args: {
+					entry: entry
+				}
 			}
 		};
 
@@ -258,8 +269,7 @@ define(function(require, exports, module) {
 				name: 'entry',
 				model: 'Entry',
 				value: this.entry,
-			},
-			],
+			}, ],
 			form: [{
 				id: 'entry-description',
 				value: inputElement.value,
@@ -272,7 +282,7 @@ define(function(require, exports, module) {
 
 
 	TrackEntryFormView.prototype.submit = function(e, directlyCreateEntry) {
-		if (cordova) {
+		if (typeof cordova !== 'undefined') {
 			cordova.plugins.Keyboard.close();
 		}
 		var entry = null;
