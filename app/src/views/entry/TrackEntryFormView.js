@@ -74,11 +74,6 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.submitSurface.on('click', function(e) {
-			if (_.contains(e.srcElement.classList, 'create-entry-button')) {
-				this.submit();
-			}
-		}.bind(this));
 
 		this.repeatModifierSurface.on('click', function(e) {
 			var classList = e.srcElement.parentElement.classList;

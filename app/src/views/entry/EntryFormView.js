@@ -172,6 +172,13 @@ define(function(require, exports, module) {
 		this.submitSurface = new Surface({
 			content: '<button type="button" class="full-width-button create-entry-button">CREATE/UPDATE ENTRY</button>',
 		});
+
+		this.submitSurface.on('click', function(e) {
+			if (_.contains(e.srcElement.classList, 'create-entry-button')) {
+				this.submit();
+			}
+		}.bind(this));
+
 		this.submitButtonModifier = new StateModifier({
 			size: [App.width - 60, undefined],
 			transform: Transform.translate(30, 280, _zIndex())
