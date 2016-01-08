@@ -1218,6 +1218,10 @@ button.close {
 	padding: 5px;
 }
 
+.discussion-comment .edit {
+	margin-right: 7px;
+}
+
 .feed-item .discussion .discussion-comment {
 	background-color: #eeeeee;
 	color: #5d5d5d;
@@ -1253,10 +1257,25 @@ button.close {
 	margin: 0px 0px 38px 0px;
 }
 
-.post-comment input {
+.post-comment {
+	margin-left: 30px;
+	margin-right: 30px;
+}
+
+.comment-form img {
+	margin-top: 8px;
+}
+
+.vertical-margin {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.post-comment textarea {
 	width: 100% !important;
-	height: 100%;
 	padding: 10px;
+	resize: none;
+	overflow: hidden;
 }
 
 .discussion-comment .posting-time {

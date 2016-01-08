@@ -19,6 +19,8 @@ define(function(require, exports, module) {
 	var ChartView = require('views/graph/ChartView');
 	var CreateTagHelpView = require('views/help/CreateTagHelpView');
 	var ShareHelpView = require('views/help/ShareHelpView');
+	var AdvancedTagsView = require('views/help/AdvancedTagsView');
+	var RepeatAlertTagsHelpView = require('views/help/RepeatAlertTagsHelpView');
 	var MakeChartHelpView = require('views/help/MakeChartHelpView');
 	var SprintListView = require('views/sprint/SprintListView');
 	var CuriositiesListView = require('views/curiosities/CuriositiesListView');

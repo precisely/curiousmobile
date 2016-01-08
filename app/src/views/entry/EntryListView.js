@@ -297,9 +297,9 @@ define(function(require, exports, module) {
 			classes: ['pin-container'],
 			properties: {
 				backgroundColor: '#ebebeb',
-				padding: '10px',
+				padding: '20px 10px 10px 10px',
 				overflowY: 'hidden',
-				borderBottom: '13px solid #ebebeb'
+				borderBottom: '8px solid #ebebeb'
 			}
 		});
 

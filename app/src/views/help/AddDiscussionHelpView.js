@@ -11,7 +11,7 @@ define(function(require, exports, module) {
 		header: true,
 		footer: true,
 		helpTemplate: AddHelpTemplate,
-		templateScrollHeight: 90
+		templateScrollHeight: 190
 	};
 	AddDiscussionHelpView.prototype = Object.create(HelpView.prototype);
 
