@@ -155,7 +155,9 @@ define(function(require, exports, module) {
 		discussionPostSurface.on('click', function(e) {
 			var classList = e.srcElement.classList;
 			if (e instanceof CustomEvent) {
-				if (_.contains(classList, 'close-discussion')) {
+				if (this.isCommentSelected) {
+					this.unselectComment();
+				} else if (_.contains(classList, 'close-discussion')) {
 					this.alert = u.showAlert({
 						message: 'Are you sure you want to delete discussion?',
 						a: 'Yes',
@@ -183,28 +185,51 @@ define(function(require, exports, module) {
 					}
 				} else if (_.contains(classList, 'view-more-comments')) {
 					this.loadItems();
+				} else if (_.contains(classList, 'follow-button') || _.contains(e.srcElement.parentElement.classList, 'follow-button')) {
+					Discussion.follow({id: this.discussionHash}, function(data) {
+						this.loadDetails();
+					}.bind(this));
+				} else if (_.contains(classList, 'unfollow-button') || _.contains(e.srcElement.parentElement.classList, 'unfollow-button')) {
+					Discussion.follow({id: this.discussionHash, unfollow: true}, function(data) {
+						this.loadDetails();
+					}.bind(this));
 				}
 			}
 		}.bind(this));
 
+		this.addCommentSurface = this.getAddCommentSurface({});
+
+		if(discussionPost.discussionDetails.canWrite) {
+			this.surfaceList.push(this.addCommentSurface);
+			this.addCommentSurface.pipe(this.scrollView);
+		}
+		this.showComments(discussionPost);
+	};
+
+	DiscussionDetailView.prototype.getAddCommentSurface = function(post, currentIndex) {
 		var addCommentSurface = new Surface({
 			size: [undefined, 50],
-			content: _.template(addCommentTemplate, templateSettings),
+			content: _.template(addCommentTemplate, {message: post.message || '', postId: post.id || undefined, 
+					authorAvatarURL: post.authorAvatarURL, commentIndex: currentIndex}, templateSettings),
 			properties: {
-				padding: '0px 10px',
 			}
 		});
+
 		addCommentSurface.on('keyup', function(e) {
 			if (e.keyCode == 13) {
 				this.postComment();
+				return false;
+			} else {
+				// Auto expanding height of the textarea if text overflowes
+				setTimeout(function() {
+					var commentBox = document.getElementById('message');
+				    commentBox.style.cssText = 'height:auto;';
+					commentBox.style.cssText = 'height:' + commentBox.scrollHeight + 'px';
+				}, 0);
 			}
 		}.bind(this));
-		if(discussionPost.discussionDetails.canWrite) {
-			this.surfaceList.push(addCommentSurface);
-			addCommentSurface.pipe(this.scrollView);
-		}
 
-		this.showComments(discussionPost);
+		return addCommentSurface;
 	};
 
 	DiscussionDetailView.prototype.getCurrentState = function() {
@@ -233,70 +258,99 @@ define(function(require, exports, module) {
 		var discussionHash = this.discussionHash;
 
 		discussionPost.posts.forEach(function(post) {
-			post.prettyDate = u.prettyDate(new Date(post.updated));
-			post.isAdmin = post.authorUserId == User.getCurrentUserId();
-			if (post.message) {
-				var commentSurface = new Surface({
-					size: [undefined, true],
-					content: _.template(commentTemplate, post, templateSettings),
-				});
-
-				commentSurface.discussionView = this;
-
-				commentSurface.on('deploy', function() {
-					Timer.every(function() {
-						var size = this.getSize();
-						var width = (size[0] == true) ? this._currTarget.offsetWidth : size[0];
-						var height = (size[1] == true) ? this._currTarget.offsetHeight : size[1];
-						this.setSize([width, height]);
-					}.bind(this), 2);
-				});
-				commentSurface.on('click', function(e) {
-					if (e instanceof CustomEvent) {
-						var classList;
-						classList = e.srcElement.parentElement.classList;
-						if (_.contains(classList, 'delete-post')) {
-							u.showAlert({
-								message: 'Are you sure to delete this comment ?',
-								a: 'Yes',
-								b: 'No',
-								onA: function() {
-									DiscussionPost.deleteComment({
-										postId: post.id
-									}, function(sucess) {
-										console.log('delete success...');
-										this.discussionView.surfaceList.splice(
-											this.discussionView.surfaceList.indexOf(this),
-											1
-										);
-									}.bind(this));
-								}.bind(this),
-								onB: function() {}.bind(this),
-							});
-						}
-					}
-				});
-
-				if (this.isSharedGraph) {
-					this.surfaceList.splice(2, 0, commentSurface);
-				} else {
-					this.surfaceList.splice(1, 0, commentSurface);
-				}
-
-				commentSurface.pipe(this.scrollView);
-			}
-		}.bind(this));
-	}
-
-	DiscussionDetailView.prototype.postComment = function() {
-		var message = document.getElementById('message').value;
-		DiscussionPost.createComment({
-			discussionHash: this.discussionHash,
-			message: message
-		}, function(success) {
-			this.loadDetails();
+			this.renderComment(post);
 		}.bind(this));
 	};
+
+	DiscussionDetailView.prototype.renderComment = function(post) {
+		post.prettyDate = u.prettyDate(new Date(post.updated));
+		post.isAdmin = post.authorUserId == User.getCurrentUserId();
+		if (post.message) {
+			var commentSurface = new Surface({
+				size: [undefined, true],
+				content: _.template(commentTemplate, post, templateSettings),
+			});
+
+			commentSurface.discussionView = this;
+
+			commentSurface.on('deploy', function() {
+				Timer.every(function() {
+					var size = this.getSize();
+					var width = (size[0] == true) ? this._currTarget.offsetWidth : size[0];
+					var height = (size[1] == true) ? this._currTarget.offsetHeight : size[1];
+					this.setSize([width, height]);
+				}.bind(this), 2);
+			});
+			commentSurface.on('click', function(e) {
+				if (e instanceof CustomEvent) {
+					var classList;
+					classList = e.srcElement.parentElement.classList;
+					if (this.discussionView.isCommentSelected) {
+						this.discussionView.unselectComment();
+					} else if (_.contains(classList, 'delete-post')) {
+						u.showAlert({
+							message: 'Are you sure to delete this comment ?',
+							a: 'Yes',
+							b: 'No',
+							onA: function() {
+								DiscussionPost.deleteComment({
+									postId: post.id
+								}, function(sucess) {
+									console.log('delete success...');
+									this.discussionView.surfaceList.splice(
+										this.discussionView.surfaceList.indexOf(this),
+										1
+									);
+								}.bind(this));
+							}.bind(this),
+							onB: function() {}.bind(this),
+						});
+					} else if (_.contains(classList, 'edit-post')) {
+						this.discussionView.isCommentSelected = true;
+						this.discussionView.selectedCommentSurface = commentSurface;
+						this.discussionView.selectionIndex = this.discussionView.surfaceList.indexOf(commentSurface);
+						this.discussionView.surfaceList.splice(this.discussionView.surfaceList.indexOf(this.discussionView.addCommentSurface), 1);
+						this.discussionView.surfaceList.splice(this.discussionView.selectionIndex, 1, this.discussionView.getAddCommentSurface(post, this.discussionView.selectionIndex));
+					}
+				}
+			});
+
+			if (this.isSharedGraph) {
+				this.surfaceList.splice(2, 0, commentSurface);
+			} else {
+				this.surfaceList.splice(1, 0, commentSurface);
+			}
+
+			commentSurface.pipe(this.scrollView);
+		}
+	};
+
+	DiscussionDetailView.prototype.postComment = function() {
+		var messageBox = document.getElementById('message');
+		var message = messageBox.value;
+		var postId = messageBox.dataset.postId;
+		var currentCommentIndex = messageBox.dataset.commentIndex;
+		if (!postId) {
+			DiscussionPost.createComment({
+				discussionHash: this.discussionHash,
+				message: message
+			}, function(success) {
+				this.loadDetails();
+			}.bind(this));
+		} else {
+			DiscussionPost.update({postId: postId, message: message}, function(data) {
+				this.loadDetails();
+			}.bind(this), function(data) {
+			}.bind(this));
+		}
+	};
+
+	DiscussionDetailView.prototype.unselectComment = function() {
+		this.surfaceList.splice(this.selectionIndex, 1, this.selectedCommentSurface);
+		this.surfaceList.push(this.addCommentSurface);
+		this.isCommentSelected = false;
+	}
+
 	App.pages[DiscussionDetailView.name] = DiscussionDetailView;
 	module.exports = DiscussionDetailView;
 });

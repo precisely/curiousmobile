@@ -46,6 +46,14 @@ define(function(require, exports, module) {
 				}
 			}
 		});
+
+		formContainerSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				if (_.contains(e.srcElement.classList, 'create-tag-button')) {
+					this.submit();
+				}
+			}
+		}.bind(this));
 		this.add(mod).add(formContainerSurface);
 	}
 

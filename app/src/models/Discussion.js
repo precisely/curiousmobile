@@ -68,5 +68,24 @@ define(function(require, exports, module) {
 		);
 	};
 
+	Discussion.follow = function(args, successCallback, failCallback) {
+		var httpArgs = {requestMethod: 'GET'};
+		u.queueJSONAll('Following discussion', App.serverUrl + '/api/discussion/action/follow', args,
+				function(data) {
+					if (u.checkData(data)) {
+						if (data.success) {
+							successCallback();
+						} else {
+							u.showAlert(data.message);
+							if (failCallback) {
+								failCallback();
+							}
+						}
+					}
+				}, function(error) {
+					console.log('error: ', error);
+				}, null, httpArgs);
+	};
+
 	module.exports = Discussion;
 });

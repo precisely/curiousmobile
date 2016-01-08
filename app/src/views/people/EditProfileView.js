@@ -21,6 +21,7 @@ define(function(require, exports, module, store) {
 	var AddInterestTagView = require('views/people/AddInterestTagView');
 	var UpdateAvatarView = require('views/people/UpdateAvatarView');
 	var InterestTagView = require('views/people/InterestTagView');
+	var Timer = require('famous/utilities/Timer');
 	var User = require('models/User');
 	var u = require('util/Utils');
 
@@ -126,44 +127,19 @@ define(function(require, exports, module, store) {
 				content: _.template(EditUserProfileTemplate, peopleDetails, templateSettings),
 			});
 
-			this.saveSurface = new Surface({
-				size: [100, 64],
-				content: 'SAVE',
-				properties: {
-					fontSize: '15px',
-					fontWeight: 'normal',
-					color: '#FFF',
-					textAlign: 'center',
-					padding: '21px 0'
-				}
-			});
-
 			this.setHeaderLabel('EDIT PROFILE', '#FFF');
-			this.add(new Modifier({align: [1, 0], origin: [1, 0], transform: Transform.translate(0, 0, App.zIndex.header + 5)})).add(this.saveSurface);
 
-			this.saveSurface.on('click', function(e) {
-				if (e instanceof CustomEvent) {
-					if (this.currentOverlay) {
-						this.addInterestTagView.submit();
-					} else {
-						var formData = $('#userDetailsEdit').serializeObject();
-						formData.id = peopleDetails.user.hash;
-						if ((formData.username !== peopleDetails.user.username) && !formData.password) {
-							u.showAlert('If you change the username, you must set the password as well');
-							return;
-						}
-						if (formData.password && !formData.oldPassword) {
-							u.showAlert('You need to enter old password to set new password');
-							return;
-						} else if (formData.password && (formData.password !== formData.verify_password)) {
-							u.showAlert('New password and verify password fields do not match');
-							return;
-						}
-						User.update(formData, function (state) {
-							App.pageView.changePage('PeopleDetailView', state);
-						});
-					}
-				}
+			this.submitSurface = new Surface({
+				content: '<button type="button" class="full-width-button create-entry-button">Update Profile</button>',
+			});
+			this.submitButtonModifier = new StateModifier({
+				size: [App.width - 40, undefined],
+				transform: Transform.translate(30, 1280, App.zIndex.readView + 72)
+			});
+			this.editProfileContainerSurface.add(this.submitButtonModifier).add(this.submitSurface);
+
+			this.submitSurface.on('click', function(e) {
+				this.saveProfile(peopleDetails);
 			}.bind(this));
 
 			editPeopleSurface.on('click', function(e) {
@@ -210,6 +186,13 @@ define(function(require, exports, module, store) {
 				}
 			}.bind(this));
 
+			editPeopleSurface.on('keyup', function(e) {
+				var inputType = e.srcElement.type;
+				if ((e.which === 13) && (inputType === 'text' || inputType === 'textarea' || inputType === 'password' || inputType === "radio")) {
+					cordova.plugins.Keyboard.close();	
+				}
+			}.bind(this));
+
 			//interestTagSurface(peopleDetails.user.interestTags);
 			this.tagList = [];
 			this.tagSequentialLayout = new SequentialLayout({
@@ -219,7 +202,7 @@ define(function(require, exports, module, store) {
 			});
 			_.each(peopleDetails.user.interestTags, function(tag) {
 				var tagView = new InterestTagView(tag);
-				var draggableTag = new Draggable( {
+				var draggableTag = new Draggable({
 					xRange: [-100, 0],
 					yRange: [0, 0],
 				});
@@ -234,11 +217,17 @@ define(function(require, exports, module, store) {
 			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 1280, 0)})).add(this.tagSequentialLayout);
 
 			// Calculating draggable container height according to the taglist height
-			var draggableView = new DraggableView(this.editProfileContainerSurface, true, 930 + (this.tagList.length * 50));
-			this.renderController.show(draggableView);
+			var draggableView = new DraggableView(this.editProfileContainerSurface, true, 1030 + (this.tagList.length * 50));
+			this.renderController.show(draggableView, null, function() {
+				Timer.every(function() {
+					this.submitButtonModifier.setTransform(Transform.translate(0, (1330 + this.tagList.length * 40),  App.zIndex.readView + 62));
+				}.bind(this));
+			}.bind(this));
 		}.bind(this), function() {
 			App.pageView.goBack();
 		}.bind(this));
+
+
 	};
 
 	function onTap(event) {
@@ -249,6 +238,25 @@ define(function(require, exports, module, store) {
 				event.srcElement.focus();
 			}
 		}
+	}
+
+	EditProfileView.prototype.saveProfile = function(peopleDetails) {
+		var formData = $('#userDetailsEdit').serializeObject();
+		formData.id = peopleDetails.user.hash;
+		if ((formData.username !== peopleDetails.user.username) && !formData.password) {
+			u.showAlert('If you change the username, you must set the password as well');
+			return;
+		}
+		if (formData.password && !formData.oldPassword) {
+			u.showAlert('You need to enter old password to set new password');
+			return;
+		} else if (formData.password && (formData.password !== formData.verify_password)) {
+			u.showAlert('New password and verify password fields do not match');
+			return;
+		}
+		User.update(formData, function (state) {
+			App.pageView.changePage('PeopleDetailView', state);
+		});
 	}
 
 	App.pages['EditProfileView'] = EditProfileView;

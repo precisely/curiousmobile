@@ -1218,6 +1218,10 @@ button.close {
 	padding: 5px;
 }
 
+.discussion-comment .edit {
+	margin-right: 7px;
+}
+
 .feed-item .discussion .discussion-comment {
 	background-color: #eeeeee;
 	color: #5d5d5d;
@@ -1253,16 +1257,36 @@ button.close {
 	margin: 0px 0px 38px 0px;
 }
 
-.post-comment input {
+.post-comment {
+	margin-left: 30px;
+	margin-right: 30px;
+}
+
+.comment-form img {
+	margin-top: 8px;
+}
+
+.vertical-margin {
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.post-comment textarea {
 	width: 100% !important;
-	height: 100%;
 	padding: 10px;
+	resize: none;
+	overflow: hidden;
+	font-size: 12px;
 }
 
 .discussion-comment .posting-time {
 	margin: 12px 0px 0px 10px;
 	font-size: 11px;
 	color: #a8a8a8;
+}
+
+.discussion-comment .actions {
+	margin-top: -35px;
 }
 
 .discussion-comment .add-comment input {
@@ -2318,6 +2342,16 @@ and (max-device-height: 568px) {
 	height: 100%;
 	background-color: #EFEFEF;
 	padding: 10px;
+	position: relative;
+}
+
+.create-tag-button {
+	position: absolute;
+	bottom: 20px;
+	left: 10px;
+	width: calc(100% - 20px);
+	background-color: transparent;
+	border: 1px solid #000;
 }
 
 .radio-public-private {

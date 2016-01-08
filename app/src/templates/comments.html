@@ -1,22 +1,31 @@
 <div class="discussion-comment multiple-comments">
 	<div>
 		<a href="#">
-			<img class="avatar" src="content/images/avatar2.png" alt="avatar">
+			{{ if (authorAvatarURL) { }}
+				<img class="avatar img-circle" height="25" width="25" src="{{= authorAvatarURL }}" alt="avatar">
+			{{ } else { }}
+				<img class="avatar" height="25" width="25" src="content/images/avatar2.png" alt="avatar">
+			{{ } }}
 			<span class="user-name"> 
 				{{= authorName }}
 			</span>
 			<span class="posting-time">{{= prettyDate }}</span>
 		</a>
-		<span class="posting-time" data-time="{{= updated }}"></span>
 		{{ if (isAdmin) { }}
-			<div class="pull-right">
+			<div class="pull-right actions">
+				<span class="edit"> 
+					<a href="#" class="edit-post"> 
+						<i class="fa fa-pencil"></i>
+					</a>
+				</span>
 				<span class="delete"> 
 					<a href="#" class="delete-post"> 
-						<i class="fa fa-times-circle pull-right"></i>
+						<i class="fa fa-times-circle"></i>
 					</a>
 				</span>
 			</div>
 		{{ } }}
+		<span class="posting-time" data-time="{{= updated }}"></span>
 	</div>
 	<div>
 		<p class="without-margin">

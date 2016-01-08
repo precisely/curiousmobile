@@ -33,7 +33,9 @@ define(function(require, exports, module) {
 				background: (this.constructor.name === 'TrackEntryFormView') ? 'rgba(123, 120, 120, 0.48)' : 'rgb(184, 182, 182)'
 			}
 		});
-		this.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(backgroundSurface);
+		this.add(new StateModifier({
+			transform: Transform.translate(0, 0, 0)
+		})).add(backgroundSurface);
 		_createForm.call(this);
 		this._setListeners();
 	}
@@ -53,21 +55,20 @@ define(function(require, exports, module) {
 		var App = window.App;
 		this.selectedDate = date;
 
-		var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 
-				'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+		var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+			'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+		];
 		var monthName = months[date.getMonth()];
-		document.getElementsByClassName('choose-date-input')[0].value = date.getDate() + ' '  + monthName 
-				+ ' ' + date.getFullYear();
+		document.getElementsByClassName('choose-date-input')[0].value = date.getDate() + ' ' + monthName + ' ' + date.getFullYear();
 	}
 
 	function _createForm() {
 		this.clazz = 'EntryFormView';
 
 		var formContainerSurface = new ContainerSurface({
-			size: [undefined, true],
+			size: [undefined, undefined],
 			classes: ['entry-form', 'draggable-container'],
-			properties: {
-			}
+			properties: {}
 		});
 
 		this.inputModifier = new Modifier({
@@ -115,7 +116,7 @@ define(function(require, exports, module) {
 			defaultItemSize: [80, 24],
 		});
 
-		var firstOffset = (App.width - ((84 * 3) + 60))/2;
+		var firstOffset = (App.width - ((84 * 3) + 60)) / 2;
 
 
 		this.repeatSurface = new Surface({
@@ -124,7 +125,7 @@ define(function(require, exports, module) {
 		});
 
 		this.remindSurface = new Surface({
-			content: '<div class="text-center"><i class="fa fa-bell"></i> <br/> Set Alert</div>',
+			content: '<div class="text-center"><i class="fa fa-bell"></i> <br/>' + ((this.constructor.name === 'TrackEntryFormView') ? ' Set Alert' : ' Daily Alert') + '</div>',
 			size: [84, 24],
 		});
 
@@ -144,7 +145,9 @@ define(function(require, exports, module) {
 		});
 		this.buttonsAndHelp.add(sequentialLayout);
 
-		this.formContainerSurface.add(new StateModifier({transform: Transform.translate(firstOffset, 200, _zIndex())})).add(this.buttonsAndHelp);
+		this.formContainerSurface.add(new StateModifier({
+			transform: Transform.translate(firstOffset, 200, _zIndex())
+		})).add(this.buttonsAndHelp);
 
 		this.renderController = new RenderController();
 		this.dateGridRenderController = new RenderController();
@@ -165,11 +168,25 @@ define(function(require, exports, module) {
 			transform: Transform.translate(18, 320, 16)
 		});
 		this.formContainerSurface.add(mod).add(this.renderController);
-		this.formContainerSurface.add(dateGridRenderControllerMod).add(this.dateGridRenderController);
+
+		this.submitSurface = new Surface({
+			content: '<button type="button" class="full-width-button create-entry-button">CREATE/UPDATE ENTRY</button>',
+		});
+		this.submitButtonModifier = new StateModifier({
+			size: [App.width - 60, undefined],
+			transform: Transform.translate(30, 280, _zIndex())
+		});
+
+		this.formContainerSurface.add(this.submitButtonModifier).add(this.submitSurface);
+		this.formContainerSurface.add(new StateModifier({
+			transform: Transform.translate(0, 0, _zIndex() + 1)
+		})).add(dateGridRenderControllerMod).add(this.dateGridRenderController);
 		this.draggableEntryFormView = new DraggableView(this.formContainerSurface, true, 300);
-		this.add(new StateModifier({transform: Transform.translate(0, 0, _zIndex() + 1)})).add(this.draggableEntryFormView);
+		this.add(new StateModifier({
+			transform: Transform.translate(0, 0, _zIndex() + 1)
+		})).add(this.draggableEntryFormView);
 	}
-	
+
 	EntryFormView.prototype.preShow = function(state) {
 		if (state.preShowCheck) {
 			this[state.preShowCheck.name].apply(this, state.preShowCheck.args);

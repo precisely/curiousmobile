@@ -66,7 +66,7 @@ define(function(require, exports, module) {
 			}),
 			function(data) {
 				if (data.success) {
-					u.showAlert('Look for instructions on recovering your account information in your email.');
+					u.showAlert('Password recovery email sent. Please check your email; and be sure to check your spam folder');
 					App.pageView.changePage('LoginView');
 				} else {
 					u.showAlert(data.message + ' Please try again or hit the back button to return to the login screen.');

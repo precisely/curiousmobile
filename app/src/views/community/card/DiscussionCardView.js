@@ -75,18 +75,30 @@ define(function(require, exports, module) {
 					if (window.plugins) {
 						window.plugins.socialsharing.share(null, 'Curious Discussions', null, App.serverUrl + '/home/social/discussion/' + this.discussion.hash);
 					}
+				} else if (_.contains(classList, 'follow-button') || _.contains(e.srcElement.parentElement.classList, 'follow-button')) {
+					Discussion.follow({id: this.discussion.hash}, function(data) {
+						this.viewDetailPage();
+					}.bind(this));
+				} else if (_.contains(classList, 'unfollow-button') || _.contains(e.srcElement.parentElement.classList, 'unfollow-button')) {
+					Discussion.follow({id: this.discussion.hash, unfollow: true}, function(data) {
+						this.viewDetailPage();
+					}.bind(this));
 				} else {
-					var state = {
-						discussionHash: this.discussion.hash,
-						parentPage: this.parentPage
-					};
-					App.pageView.changePage('DiscussionDetailView', state);
+					this.viewDetailPage();
 				}
 			}
 		}.bind(this));
 
  		this.add(this.cardSurface);
  	};
+
+	DiscussionCardView.prototype.viewDetailPage = function() {
+		var state = {
+			discussionHash: this.discussion.hash,
+			parentPage: this.parentPage
+		};
+		App.pageView.changePage('DiscussionDetailView', state);
+	};
 
  	module.exports = DiscussionCardView;
  });

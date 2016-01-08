@@ -66,6 +66,22 @@ define( function(require, exports, module) {
 			}
 		}.bind(this));
 	};
+
+	DiscussionPost.update = function(args, successCallback, failCallback) {
+		u.queueJSONAll("Updating a comment", App.serverUrl + '/api/discussionPost/' + args.postId, 
+		  JSON.stringify(args), function(data) {
+			if (data.success) {
+				successCallback(data);
+			} else {
+				u.showAlert(data.message);
+				if (failCallback) {
+					failCallback();
+				}
+			}
+		}.bind(this), function(error) {
+			u.showAlert('Internal server error occurred');
+		}, null, {requestMethod: 'PUT'});
+	};
 	
 	module.exports = DiscussionPost;
 });
