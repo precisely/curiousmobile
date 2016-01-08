@@ -11,9 +11,8 @@
 			</span>
 			<span class="posting-time">{{= prettyDate }}</span>
 		</a>
-		<span class="posting-time" data-time="{{= updated }}"></span>
 		{{ if (isAdmin) { }}
-			<div class="pull-right">
+			<div class="pull-right actions">
 				<span class="edit"> 
 					<a href="#" class="edit-post"> 
 						<i class="fa fa-pencil"></i>
@@ -26,6 +25,7 @@
 				</span>
 			</div>
 		{{ } }}
+		<span class="posting-time" data-time="{{= updated }}"></span>
 	</div>
 	<div>
 		<p class="without-margin">

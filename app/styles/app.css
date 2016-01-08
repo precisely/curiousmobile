@@ -1276,12 +1276,17 @@ button.close {
 	padding: 10px;
 	resize: none;
 	overflow: hidden;
+	font-size: 12px;
 }
 
 .discussion-comment .posting-time {
 	margin: 12px 0px 0px 10px;
 	font-size: 11px;
 	color: #a8a8a8;
+}
+
+.discussion-comment .actions {
+	margin-top: -35px;
 }
 
 .discussion-comment .add-comment input {
