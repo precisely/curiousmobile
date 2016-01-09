@@ -147,22 +147,7 @@ define(function(require, exports, module, store) {
 					if (this.currentOverlay) {
 						this.addInterestTagView.submit();
 					} else {
-						var formData = $('#userDetailsEdit').serializeObject();
-						formData.id = peopleDetails.user.hash;
-						if ((formData.username !== peopleDetails.user.username) && !formData.password) {
-							u.showAlert('If you change the username, you must set the password as well');
-							return;
-						}
-						if (formData.password && !formData.oldPassword) {
-							u.showAlert('You need to enter old password to set new password');
-							return;
-						} else if (formData.password && (formData.password !== formData.verify_password)) {
-							u.showAlert('New password and verify password fields do not match');
-							return;
-						}
-						User.update(formData, function (state) {
-							App.pageView.changePage('PeopleDetailView', state);
-						});
+						this.saveProfile(peopleDetails);
 					}
 				}
 			}.bind(this));
