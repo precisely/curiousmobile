@@ -127,7 +127,45 @@ define(function(require, exports, module, store) {
 				content: _.template(EditUserProfileTemplate, peopleDetails, templateSettings),
 			});
 
+			this.saveSurface = new Surface({
+				size: [100, 64],
+				content: 'SAVE',
+				properties: {
+					fontSize: '15px',
+					fontWeight: 'normal',
+					color: '#FFF',
+					textAlign: 'center',
+					padding: '21px 0'
+				}
+			});
+
 			this.setHeaderLabel('EDIT PROFILE', '#FFF');
+			this.add(new Modifier({align: [1, 0], origin: [1, 0], transform: Transform.translate(0, 0, App.zIndex.header + 5)})).add(this.saveSurface);
+
+			this.saveSurface.on('click', function(e) {
+				if (e instanceof CustomEvent) {
+					if (this.currentOverlay) {
+						this.addInterestTagView.submit();
+					} else {
+						var formData = $('#userDetailsEdit').serializeObject();
+						formData.id = peopleDetails.user.hash;
+						if ((formData.username !== peopleDetails.user.username) && !formData.password) {
+							u.showAlert('If you change the username, you must set the password as well');
+							return;
+						}
+						if (formData.password && !formData.oldPassword) {
+							u.showAlert('You need to enter old password to set new password');
+							return;
+						} else if (formData.password && (formData.password !== formData.verify_password)) {
+							u.showAlert('New password and verify password fields do not match');
+							return;
+						}
+						User.update(formData, function (state) {
+							App.pageView.changePage('PeopleDetailView', state);
+						});
+					}
+				}
+			}.bind(this));
 
 			this.submitSurface = new Surface({
 				content: '<button type="button" class="full-width-button create-entry-button">Update Profile</button>',

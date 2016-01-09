@@ -101,7 +101,7 @@ define(function (require, exports, module) {
 	//App.serverUrl = "http://localhost:8080";
 	//App.serverUrl = "http://127.0.0.1:8080";
 	//App.serverUrl = "http://192.168.0.108:8080";
-	//App.serverUrl = "http://192.168.1.103:8080";
+	App.serverUrl = "http://192.168.1.104:8080";
 	//App.serverUrl = "http://192.168.1.193:8080";
 	//App.serverUrl = "http://103.17.156.129:8080";
 	//App.serverUrl = "http://114.143.237.122:8080";
@@ -116,7 +116,7 @@ define(function (require, exports, module) {
 	window.App.viewsWithoutSearchIcon = ['TrackView', 'EditProfileView', 'CreateChartView', 'LoginView', 'RegisterView', 'AdvancedTagsView',
 		'ForgotPasswordView', 'CuriositiesListView', 'HelpContentsView', 'CreateTagHelpView', 'HelpContentsView', 'RepeatAlertTagsHelpView',
 		'ShareHelpView', 'MakeChartHelpView', 'TermsView', 'DiscussionDetailView', 'CreateSprintHelpView', 'AddDiscussionHelpView',
-		'ManageCuriositiesHelpView', 'SprintFormView'];
+		'ManageCuriositiesHelpView', 'SprintFormView', 'ExternalDevicesHelpView'];
 	var appView = new AppView();
 	window.App.appView = appView;
 	var mod = new Modifier({

@@ -20,6 +20,7 @@ define(function(require, exports, module) {
 	var CreateTagHelpView = require('views/help/CreateTagHelpView');
 	var ShareHelpView = require('views/help/ShareHelpView');
 	var AdvancedTagsView = require('views/help/AdvancedTagsView');
+	var ExternalDevicesHelpView = require('views/help/ExternalDevicesHelpView');
 	var RepeatAlertTagsHelpView = require('views/help/RepeatAlertTagsHelpView');
 	var MakeChartHelpView = require('views/help/MakeChartHelpView');
 	var SprintListView = require('views/sprint/SprintListView');

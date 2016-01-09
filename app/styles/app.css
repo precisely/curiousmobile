@@ -1782,6 +1782,15 @@ button.close {
 	font-weight: 500;
 }
 
+#device-list p {
+	font-size: 15px;
+	margin-bottom: 10px;
+}
+
+.devices {
+	padding-bottom: 10px;
+}
+
 .profile-detail h4 {
 	color: #696969;
 }

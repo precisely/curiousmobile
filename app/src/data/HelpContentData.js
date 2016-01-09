@@ -24,5 +24,8 @@ define(function(require, exports, module) {
 	}, {
 		title: 'Create a trackathon',
 		destinationPage: 'CreateSprintHelpView'
+	}, {
+		title: 'Linking External Devices and Services (Oura, etc.)',
+		destinationPage: 'ExternalDevicesHelpView'
 	}];
 });

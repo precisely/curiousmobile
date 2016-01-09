@@ -66,5 +66,20 @@
 				{{ } }}
 			</div>
 		</div>
+		<div class="devices">
+			<label class="profile-people-label">
+				DEVICES
+			</label>
+			<div class="media">
+				<div class="media-body" id="device-list">
+					<p> Oura Account: {{= (user.linkedToOura ? 'Linked' : 'Unlinked') }}</p><br>
+					<p> Withings Account: {{= (user.linkedToWithings ? 'Linked' : 'Unlinked') }}</p><br>
+					<p>Fitbit Account: {{= (user.linkedToFitbit ? 'Linked' : 'Unlinked') }}</p><br>
+					<p>Jawbone Account: {{= (user.linkedToJawbone ? 'Linked' : 'Unlinked') }}</p><br>
+					<p>23andMe Account: {{= (user.linkedToTwenty3andMe ? 'Linked' : 'Unlinked') }}</p><br>
+					<p>Moves Account: {{= (user.linkedToMoves ? 'Linked' : 'Unlinked') }}
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
