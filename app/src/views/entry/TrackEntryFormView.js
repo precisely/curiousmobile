@@ -45,10 +45,10 @@ define(function(require, exports, module) {
 				this.setPinned = false;
 				if (this.setRepeat) {
 					this.renderController.show(this.repeatModifierSurface);
-					this.submitButtonModifier.setTransform(Transform.translate(30, 500, 0));
+					this.submitButtonModifier.setTransform(Transform.translate(30, 500, 99));
 				} else {
 					this.renderController.hide();
-					this.submitButtonModifier.setTransform(Transform.translate(30, 280, 0));
+					this.submitButtonModifier.setTransform(Transform.translate(30, 280, 99));
 				}
 				this.toggleSelector(this.repeatSurface);
 			}

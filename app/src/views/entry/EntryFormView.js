@@ -181,7 +181,7 @@ define(function(require, exports, module) {
 
 		this.submitButtonModifier = new StateModifier({
 			size: [App.width - 60, undefined],
-			transform: Transform.translate(30, 280, _zIndex())
+			transform: Transform.translate(30, 280, _zIndex() + 99)
 		});
 
 		this.formContainerSurface.add(this.submitButtonModifier).add(this.submitSurface);
