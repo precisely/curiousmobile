@@ -129,8 +129,11 @@ define(function(require, exports, module) {
 		store.set('hideSprintExplanation', hideSprintExplanation);
 		store.set('hideCuriositiesExplanation', hideCuriositiesExplanation);
 		u.callLogoutCallbacks();
-		if (typeof callback != 'undefined') {
+		if (typeof callback !== 'undefined') {
 			callback(userData);
+		}
+		if (typeof push !== 'undefined') {
+			push.unregister();
 		}
 		store.set('mobileSessionId', false);
 		store.set('user', false);
