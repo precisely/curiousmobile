@@ -60,7 +60,10 @@ define(function(require, exports, module) {
 				this.toggleMenu();
 			}
 			$('.footer-item.active').removeClass('active');
-			$('.footer-item.' + App.pageView.getCurrentView().options.activeMenu).addClass('active');
+			var currentView = App.pageView.getCurrentView();
+			if (typeof currentView !== 'undefined') {
+				$('.footer-item.' + currentView.options.activeMenu).addClass('active');
+			}
 		}.bind(this));
 
 		this.pageView.on('show-menu', function(e) {

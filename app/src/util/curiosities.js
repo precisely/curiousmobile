@@ -273,7 +273,10 @@ function initCuriosities() {
 			var new_row = Mustache.render(correlation_template, templateProperties);
 			$('#correlation-container').append(new_row);
 		} else {
-			App.pageView.getCurrentView().addListItems(templateProperties);
+			var currentView = App.pageView.getCurrentView();
+			if (typeof currentView !== 'undefined') {
+				currentView.addListItems(templateProperties);
+			}
 		}
 	};
 
@@ -414,7 +417,10 @@ function initCuriosities() {
 			C.curiositiesNumSearchResults[searchId] = data.length;
 			if (data.length <= 0 && pageNumber && pageNumber == 1) {
 				if (isMobile) {
-					App.pageView.getCurrentView().addListItemsToScrollView([]);
+					var currentView = App.pageView.getCurrentView();
+					if (typeof currentView !== 'undefined') {
+						currentView.addListItemsToScrollView([]);
+					}
 				} else {
 					showExplanationCard(false);
 				}

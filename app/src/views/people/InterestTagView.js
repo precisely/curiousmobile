@@ -72,7 +72,10 @@ define(function(require, exports, module) {
 
 	InterestTagView.prototype.delete = function() {
 		User.deleteInterestTags(this.entry, function() {
-			App.pageView.getCurrentView().showUserDetailsForm();
+			var currentView = App.pageView.getCurrentView();
+			if (typeof currentView !== 'undefined') {
+				currentView.showUserDetailsForm();
+			}
 		}.bind(this));
 	};
 

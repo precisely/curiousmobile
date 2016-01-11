@@ -37,7 +37,10 @@ define(function (require, exports, module) {
 			var classList;
 			if (e instanceof CustomEvent) {
 				classList = e.srcElement.classList;
-				App.pageView.getCurrentView()._eventOutput.emit('close-explanation', this);
+				var currentView = App.pageView.getCurrentView();
+				if (typeof currentView !== 'undefined') {
+					currentView._eventOutput.emit('close-explanation', this);
+				}
 			}
 		}.bind(this));
 

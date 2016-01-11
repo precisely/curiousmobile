@@ -58,9 +58,12 @@ define(function (require, exports, module) {
 					var formData = new FormData();
 					formData.append("avatar", blob, "avatar.png");
 					User.saveAvatar(formData, function () {
-						App.pageView.getCurrentView().killOverlayContent();
-						App.pageView.getCurrentView().showUserDetailsForm();
-						console.log('********************** profile picture updated ***********************************');
+						var currentView = App.pageView.getCurrentView();
+						if (typeof currentView !== 'undefined') {
+							currentView.killOverlayContent();
+							currentView.showUserDetailsForm();
+							console.log('********************** profile picture updated ***********************************');
+						}
 					});
 				} else if (_.contains(classList, 'choose-image-button')) {
 					$('#cropit-image-input').click();

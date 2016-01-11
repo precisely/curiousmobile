@@ -206,7 +206,10 @@ define(function(require, exports, module) {
 $(document).on('postLineDetails', function(e, tagLine) {
 	var currentPage = App.pageView.getCurrentPage();
 	if (currentPage === 'DiscussionDetailView') {
-		App.pageView.getCurrentView().graphView.createTagsPill(tagLine.id, tagLine.tag, tagLine.color);
+		var currentView = App.pageView.getCurrentView();
+		if (typeof currentView !== 'undefined') {
+			currentView.graphView.createTagsPill(tagLine.id, tagLine.tag, tagLine.color);
+		}
 	} else {
 		App.pageView.getPage('ChartView').graphView.createTagsPill(tagLine.id, tagLine.tag, tagLine.color);
 	}
