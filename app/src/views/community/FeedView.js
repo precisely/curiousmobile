@@ -92,7 +92,7 @@ define(function(require, exports, module) {
 		this.renderController = new RenderController();
 		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
 		this.scrollViewMod = new StateModifier({
-			size: [undefined, App.height - 130],
+			size: [undefined, App.height - 190],
 			transform: Transform.translate(0, this.options.scrollViewYTransform || 110, App.zIndex.feedItem)
 		});
 		this.add(this.scrollViewMod).add(this.renderController);
