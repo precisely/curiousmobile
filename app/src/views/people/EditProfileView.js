@@ -128,14 +128,14 @@ define(function(require, exports, module, store) {
 			});
 
 			this.saveSurface = new Surface({
-				size: [100, 64],
+				size: [90, 64],
 				content: 'SAVE',
 				properties: {
 					fontSize: '15px',
 					fontWeight: 'normal',
 					color: '#FFF',
 					textAlign: 'center',
-					padding: '21px 0'
+					padding: '20px'
 				}
 			});
 

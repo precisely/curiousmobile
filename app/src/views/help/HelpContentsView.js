@@ -22,7 +22,7 @@ define(function(require, exports, module) {
 		});
 		this.add(new StateModifier({transform: Transform.translate(0, 0, 5)})).add(backgroundSurface);
 		this.renderController = new RenderController();
-		this.add(new StateModifier({transform: Transform.translate(0, 64, App.zIndex.contextMenu + 1)})).add(this.renderController);
+		this.add(new StateModifier({transform: Transform.translate(0, 64, App.zIndex.footer - 1)})).add(this.renderController);
 		this.setHeaderLabel('Curious Help');
 		this.initScrollView();
 		this.listContents();
@@ -56,7 +56,7 @@ define(function(require, exports, module) {
 
 	HelpContentsView.prototype.addItemsToList = function(title, destinationPage) {
 		var contentItemSurface = new Surface({
-			size: [undefined, 50],
+			size: [undefined, true],
 			content: '<div class="help-item-bar"><p>' + title + '</p></div>',
 			properties: {
 				backgroundColor: '#f9f9f9',

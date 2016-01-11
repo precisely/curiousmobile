@@ -29,14 +29,16 @@
 				</div>
 				<hr>
 				<div class="text-right buttons">
-					{{ if (!isFollowing) { }}
-						<button class="follow-button">
-							<img src="content/images/follow.png" alt="follow">Follow
-						</button>
-					{{ } else { }}
-						<button class="unfollow-button">
-							<img src="content/images/unfollow.png" alt="follow">Unfollow
-						</button>
+					{{ if (typeof isFollowing !== 'undefined') { }}
+						{{ if (!isFollowing) { }}
+							<button class="follow-button">
+								<img src="content/images/follow.png" alt="follow">Follow
+							</button>
+						{{ } else { }}
+							<button class="unfollow-button">
+								<img src="content/images/unfollow.png" alt="follow">Unfollow
+							</button>
+						{{ } }}
 					{{ } }}
 					{{ if (isAdmin || isPublic) {  }}
 					<button class="share-button">
