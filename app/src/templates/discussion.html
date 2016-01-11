@@ -4,7 +4,7 @@
 			<div class="contents">
 				<div class="row">
 					<div class="col-xs-10 discussion-header">
-						<a href="#">
+						<a href="#" class="discussion-author">
 							<img class="avatar" src="content/images/avatar.png" alt="avatar">
 							<span class="user-name">{{= userName }} </span>
 						</a>
@@ -16,7 +16,7 @@
 					</div>
 				</div>
 				<div class="discussion-title">
-						<a href="#"> 
+					<a href="#"> 
 							<span> {{= name ? name: '(No Title)' }}</span>
 						</a>
 				</div>
@@ -26,18 +26,19 @@
 						{{= prettyDate }}
 					</div>
 					<div class="col-xs-9 buttons">
-						<!-- Need to replace isAdmin check with isFollower, when data comes from search server --!>
-						{{ if (!isAdmin) { }}
-							<button class="follow-button">
-								<img src="content/images/follow.png" alt="follow"/>
-								<span class="footer-label">Follow</span>
-							</button>
-						{{ } else { }}
-							<button class="unfollow-button">
-								<img src="content/images/unfollow.png" alt="unfollow"/>
-								<span class="footer-label">Unfollow</span>
-							</button>
-						{{ } }}
+						{{ if (typeof isFollower !== 'undefined') { }}
+							{{ if (!isFollower) { }}
+								<button class="follow-button">
+									<img src="content/images/follow.png" alt="follow"/>
+									<span class="footer-label">Follow</span>
+								</button>
+							{{ } else { }}
+								<button class="unfollow-button">
+									<img src="content/images/unfollow.png" alt="unfollow"/>
+									<span class="footer-label">Unfollow</span>
+								</button>
+							{{ } }}
+						}}
 						{{ if (isAdmin || isPublic) {  }}
 							<button class="share-button">
 								<img src="content/images/share.png" alt="share"/>

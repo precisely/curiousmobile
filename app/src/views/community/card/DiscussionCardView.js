@@ -56,7 +56,7 @@ define(function(require, exports, module) {
 				classList = e.srcElement.parentElement.classList;
 				if (_.contains(classList, 'close-discussion')) {
 					this.alert = u.showAlert({
-						message: 'Are you sure to delete ' + this.discussion.name + ' ?',
+						message: 'Are you sure you want to delete ' + this.discussion.name + ' ?',
 						a: 'Yes',
 						b: 'No',
 						onA: function() {
@@ -83,8 +83,10 @@ define(function(require, exports, module) {
 					Discussion.follow({id: this.discussion.hash, unfollow: true}, function(data) {
 						this.viewDetailPage();
 					}.bind(this));
+				} else if (_.contains(classList, 'discussion-author') || _.contains(e.srcElement.parentElement.classList, 'discussion-author')) {
+					App.pageView.changePage('PeopleDetailView', {hash: this.discussion.userHash});
 				} else {
-					this.viewDetailPage();
+ 					this.viewDetailPage();
 				}
 			}
 		}.bind(this));

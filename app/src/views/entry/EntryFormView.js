@@ -216,9 +216,12 @@ define(function(require, exports, module) {
 
 	EntryFormView.prototype.toggleSuffix = function(suffix) {
 		var text = document.getElementById("entry-description").value;
-		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned')) {
+		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned') || text.endsWith(' button')) {
 			text = text.substr(0, text.length - 7);
+		} else if (text.endsWith(' bookmark')) {
+			text = text.substr(0, text.length - 9);
 		}
+
 
 		if (typeof suffix != 'undefined') {
 			text += ' ' + suffix;
@@ -230,10 +233,13 @@ define(function(require, exports, module) {
 
 	EntryFormView.prototype.removeSuffix = function(text) {
 		text = text ? text : document.getElementById("entry-description").value;
-		if (text.endsWith(' repeat') || text.endsWith(' pinned') ||
+		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned') ||
 			text.endsWith(' button')) {
 			text = text.substr(0, text.length - 7);
+		} else if (text.endsWith(' bookmark')) {
+			text = text.substr(0, text.length - 9);
 		}
+
 		if (text.endsWith(' favorite')) {
 			text = text.substr(0, text.length - 8);
 		}

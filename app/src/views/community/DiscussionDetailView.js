@@ -159,7 +159,7 @@ define(function(require, exports, module) {
 					this.unselectComment();
 				} else if (_.contains(classList, 'close-discussion')) {
 					this.alert = u.showAlert({
-						message: 'Are you sure you want to delete discussion?',
+						message: 'Are you sure you want to delete this discussion?',
 						a: 'Yes',
 						b: 'No',
 						onA: function() {
@@ -193,6 +193,8 @@ define(function(require, exports, module) {
 					Discussion.follow({id: this.discussionHash, unfollow: true}, function(data) {
 						this.loadDetails();
 					}.bind(this));
+				} else if (_.contains(classList, 'discussion-author') || _.contains(e.srcElement.parentElement.classList, 'discussion-author')) {
+					App.pageView.changePage('PeopleDetailView', {hash: discussionPost.discussionDetails.discussionOwnerHash});
 				}
 			}
 		}.bind(this));
@@ -215,18 +217,21 @@ define(function(require, exports, module) {
 			}
 		});
 
-		addCommentSurface.on('keyup', function(e) {
-			if (e.keyCode == 13) {
+		addCommentSurface.on('keydown', function(e) {
+			if (e.keyCode == 13 && !e.shiftKey) {
 				this.postComment();
-				return false;
-			} else {
-				// Auto expanding height of the textarea if text overflowes
-				setTimeout(function() {
-					var commentBox = document.getElementById('message');
-				    commentBox.style.cssText = 'height:auto;';
-					commentBox.style.cssText = 'height:' + commentBox.scrollHeight + 'px';
-				}, 0);
+				e.preventDefault();
+				e.stopPropagation()
 			}
+		}.bind(this));
+
+		addCommentSurface.on('keyup', function(e) {
+			// Auto expanding height of the textarea if text overflowes
+			setTimeout(function() {
+				var commentBox = document.getElementById('message');
+				commentBox.style.cssText = 'height:auto;';
+				commentBox.style.cssText = 'height:' + commentBox.scrollHeight + 'px';
+			}, 0);
 		}.bind(this));
 
 		return addCommentSurface;
@@ -289,7 +294,7 @@ define(function(require, exports, module) {
 						this.discussionView.unselectComment();
 					} else if (_.contains(classList, 'delete-post')) {
 						u.showAlert({
-							message: 'Are you sure to delete this comment ?',
+							message: 'Are you sure you want to delete this comment?',
 							a: 'Yes',
 							b: 'No',
 							onA: function() {
@@ -311,7 +316,10 @@ define(function(require, exports, module) {
 						this.discussionView.selectionIndex = this.discussionView.surfaceList.indexOf(commentSurface);
 						this.discussionView.surfaceList.splice(this.discussionView.surfaceList.indexOf(this.discussionView.addCommentSurface), 1);
 						this.discussionView.surfaceList.splice(this.discussionView.selectionIndex, 1, this.discussionView.getAddCommentSurface(post, this.discussionView.selectionIndex));
+					} else if (_.contains(classList, 'comment-author') || _.contains(e.srcElement.parentElement.classList, 'comment-author')) {
+						App.pageView.changePage('PeopleDetailView', {hash: post.authorHash});
 					}
+
 				}
 			});
 
