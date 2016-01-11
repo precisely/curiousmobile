@@ -12,25 +12,22 @@ define(function(require, exports, module) {
 			this.u = require('util/Utils');
 			Backbone.Model.apply(this, arguments);
 		},
-		logout: function() {
-			store.set('mobileSessionId', undefined);
-			store.set('user', undefined);
-		},
+		logout: function() {},
 		login: function(username, password, callback) {
 			this.u.queueJSON("logging in",
-					this.u.makeGetUrl('dologinData'),
-					this.u.makeGetArgs({
-						username: username,
-						password: password
-					}),
-					function(data) {
-						if (data['success']) {
-							callback(this.getUserData(data));
-						} else {
-							console.log('username or password not correct....');
-							this.u.showAlert('Username or password not correct, please try again');
-						}
-					}.bind(this));
+				this.u.makeGetUrl('dologinData'),
+				this.u.makeGetArgs({
+					username: username,
+					password: password
+				}),
+				function(data) {
+					if (data['success']) {
+						callback(this.getUserData(data));
+					} else {
+						console.log('username or password not correct....');
+						this.u.showAlert('Username or password not correct, please try again');
+					}
+				}.bind(this));
 
 		},
 		isLoggedIn: function() {
@@ -38,24 +35,24 @@ define(function(require, exports, module) {
 		},
 		register: function(email, confirmEmail, username, password, callback) {
 			this.u.queuePostJSON("creating account",
-					this.u.makePostUrl('doregisterData'),
-					this.u.makePostArgs({
-						email: email,
-						confirm_email: confirmEmail,
-						username: username,
-						password: password,
-						groups: "['announce','curious','curious announce']"
-					}),
-					function(data) {
-						if (data['success']) {
-							this.getUserData(data);
-							if (callback) {
-								callback();
-							}
-						} else {
-							this.u.showAlert(data.message + ' Please try again or hit Cancel to return to the login screen.');
+				this.u.makePostUrl('doregisterData'),
+				this.u.makePostArgs({
+					email: email,
+					confirm_email: confirmEmail,
+					username: username,
+					password: password,
+					groups: "['announce','curious','curious announce']"
+				}),
+				function(data) {
+					if (data['success']) {
+						this.getUserData(data);
+						if (callback) {
+							callback();
 						}
-					}.bind(this)
+					} else {
+						this.u.showAlert(data.message + ' Please try again or hit Cancel to return to the login screen.');
+					}
+				}.bind(this)
 			);
 
 		},
@@ -65,11 +62,11 @@ define(function(require, exports, module) {
 				return this.cache(data.user);
 			} else {
 				this.u.queueJSON("loading login data",
-						this.u.makeGetUrl("getPeopleData"),
-						this.u.makeGetArgs(this.u.getCSRFPreventionObject("getPeopleDataCSRF")),
-						function(data) {
-							this.cache(data[0]);
-						}.bind(this)
+					this.u.makeGetUrl("getPeopleData"),
+					this.u.makeGetArgs(this.u.getCSRFPreventionObject("getPeopleDataCSRF")),
+					function(data) {
+						this.cache(data[0]);
+					}.bind(this)
 				);
 
 			}
@@ -118,150 +115,179 @@ define(function(require, exports, module) {
 		return new User(user);
 	}
 
-	User.logout = function(callback) {
-		var userData = store.get('user');
+	User.clearCache = function() {
+		store.set('mobileSessionId', undefined);
+		store.set('user', undefined);
 		window.App.collectionCache.clear();
 		window.App.stateCache.clear();
 		var hideSprintExplanation = store.get('hideSprintExplanation');
 		var hideCuriositiesExplanation = store.get('hideCuriositiesExplanation');
 		localStorage.clear();
-		App.pageView.getPage('ChartView').graphView.clearGraph();
 		store.set('hideSprintExplanation', hideSprintExplanation);
 		store.set('hideCuriositiesExplanation', hideCuriositiesExplanation);
+		store.set('mobileSessionId', false);
+		store.set('user', false);
+	}
+
+	User.logout = function(callback) {
+		var userData = store.get('user');
 		u.callLogoutCallbacks();
+		if (typeof push !== 'undefined') {
+			push.unregister();
+		} else {
+			User.clearCache();	
+		}
 		if (typeof callback !== 'undefined') {
 			callback(userData);
 		}
-		if (typeof push !== 'undefined') {
-			push.unregister();
-		}
-		store.set('mobileSessionId', false);
-		store.set('user', false);
+		App.pageView.getPage('ChartView').graphView.clearGraph();
 	}
 
 	User.max = 10;
 
 	User.fetch = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
-			max : User.max,
-			offset: args.offset?args.offset:0,
+			max: User.max,
+			offset: args.offset ? args.offset : 0,
 			type: 'people'
 		});
 		u.queueJSON("loading feeds", u.makeGetUrl('getPeopleSocialData', 'search'),
-				u.makeGetArgs(argsToSend), function(data) {
-					if (u.checkData(data)) {
-						callback(data.listItems);
-					}
-				});
+			u.makeGetArgs(argsToSend),
+			function(data) {
+				if (u.checkData(data)) {
+					callback(data.listItems);
+				}
+			});
 	};
 
 	User.show = function(hash, successCallback, failCallback) {
 		u.queueJSON('Getting user data', App.serverUrl + '/api/user/' + hash + '?callback=?',
-				u.getCSRFPreventionObject('getUserData'),
-				function(data) {
-					if (u.checkData(data)) {
-						if (data.success) {
-							successCallback({user: data.user});
-						} else {
-							u.showAlert(data.message);
-							failCallback();
-						}
+			u.getCSRFPreventionObject('getUserData'),
+			function(data) {
+				if (u.checkData(data)) {
+					if (data.success) {
+						successCallback({
+							user: data.user
+						});
+					} else {
+						u.showAlert(data.message);
+						failCallback();
 					}
-				}, function(error) {
-					console.log('error: ', error);
-				});
+				}
+			},
+			function(error) {
+				console.log('error: ', error);
+			});
 	};
 
 	User.update = function(updatedData, successCallback, failCallback) {
 		u.queueJSONAll('Updating user details', App.serverUrl + '/api/user/' + updatedData.id, JSON.stringify(updatedData),
-				function(data) {
-					if (u.checkData(data)) {
-						if (data.success) {
-							successCallback({hash: data.hash});
-						} else {
-							u.showAlert(data.message);
-							if (failCallback) {
-								failCallback();
-							}
+			function(data) {
+				if (u.checkData(data)) {
+					if (data.success) {
+						successCallback({
+							hash: data.hash
+						});
+					} else {
+						u.showAlert(data.message);
+						if (failCallback) {
+							failCallback();
 						}
 					}
-				}, function(error) {
-					console.log('error: ', error);
-				}, null, {requestMethod: 'PUT'});
+				}
+			},
+			function(error) {
+				console.log('error: ', error);
+			}, null, {
+				requestMethod: 'PUT'
+			});
 	};
 
 	User.addInterestTags = function(tags, successCallback, failCallback) {
 		u.queuePostJSON('Adding interest tags', App.serverUrl + '/api/data/action/addInterestTagData', tags,
-				function(data) {
-					if (u.checkData(data)) {
-						if (data.interestTags) {
-							successCallback();
-						} else {
-							u.showAlert(data.message);
-							if (failCallback) {
-								failCallback();
-							}
+			function(data) {
+				if (u.checkData(data)) {
+					if (data.interestTags) {
+						successCallback();
+					} else {
+						u.showAlert(data.message);
+						if (failCallback) {
+							failCallback();
 						}
 					}
-				}, function(error) {
-					console.log('error: ', error);
-				});
+				}
+			},
+			function(error) {
+				console.log('error: ', error);
+			});
 	};
 
 	User.deleteInterestTags = function(tag, successCallback, failCallback) {
-		u.queuePostJSON('Deleting interest tags', App.serverUrl + '/api/data/action/deleteInterestTagData', {userId: this.getCurrentUserId(), tagName: tag},
-				function(data) {
-					if (u.checkData(data)) {
-						if (data.interestTags) {
-							successCallback();
-						} else {
-							u.showAlert(data.message);
-							if (failCallback) {
-								failCallback();
-							}
+		u.queuePostJSON('Deleting interest tags', App.serverUrl + '/api/data/action/deleteInterestTagData', {
+				userId: this.getCurrentUserId(),
+				tagName: tag
+			},
+			function(data) {
+				if (u.checkData(data)) {
+					if (data.interestTags) {
+						successCallback();
+					} else {
+						u.showAlert(data.message);
+						if (failCallback) {
+							failCallback();
 						}
 					}
-				}, function(error) {
-					console.log('error: ', error);
-				});
+				}
+			},
+			function(error) {
+				console.log('error: ', error);
+			});
 	};
 
 	User.saveAvatar = function(updatedData, successCallback, failCallback) {
-		var httpArgs = { processData: false, contentType: false, requestMethod:'POST' };
+		var httpArgs = {
+			processData: false,
+			contentType: false,
+			requestMethod: 'POST'
+		};
 		u.queueJSONAll('Updating user avatar', App.serverUrl + '/api/user/action/saveAvatar', updatedData,
-				function(data) {
-					if (u.checkData(data)) {
-						if (data.success) {
-							successCallback();
-						} else {
-							u.showAlert(data.message);
-							if (failCallback) {
-								failCallback();
-							}
+			function(data) {
+				if (u.checkData(data)) {
+					if (data.success) {
+						successCallback();
+					} else {
+						u.showAlert(data.message);
+						if (failCallback) {
+							failCallback();
 						}
 					}
-				}, function(error) {
-					console.log('error: ', error);
-				}, null, httpArgs);
+				}
+			},
+			function(error) {
+				console.log('error: ', error);
+			}, null, httpArgs);
 	};
 
 	User.follow = function(args, successCallback, failCallback) {
-		var httpArgs = {requestMethod:'GET'};
+		var httpArgs = {
+			requestMethod: 'GET'
+		};
 		u.queueJSONAll('Following user', App.serverUrl + '/api/user/action/follow', args,
-				function(data) {
-					if (u.checkData(data)) {
-						if (data.success) {
-							successCallback();
-						} else {
-							u.showAlert(data.message);
-							if (failCallback) {
-								failCallback();
-							}
+			function(data) {
+				if (u.checkData(data)) {
+					if (data.success) {
+						successCallback();
+					} else {
+						u.showAlert(data.message);
+						if (failCallback) {
+							failCallback();
 						}
 					}
-				}, function(error) {
-					console.log('error: ', error);
-				}, null, httpArgs);
+				}
+			},
+			function(error) {
+				console.log('error: ', error);
+			}, null, httpArgs);
 	};
 
 	module.exports = User;

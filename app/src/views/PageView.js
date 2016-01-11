@@ -98,38 +98,6 @@ define(function(require, exports, module) {
 		this.on('logout', function(e) {
 			User.logout(function(user) {
 				this.changePage('HomeView');
-				push.unregister(function() {
-                    console.log("Unregistering push notification");
-                    if (!window.plugins) {
-                        // for development purposes
-                        store.set('mobileSessionId', undefined);
-                        store.set('user', undefined);
-                        return;
-                    }
-                    console.log("Unregistered Notification");
-                    var token;
-                    if (Utils.supportsLocalStorage()) {
-                        token = localStorage['pushNotificationToken'];
-                    } else {
-                        token = push.pushNotificationToken;
-                    }
-
-                    if (user) {
-                        return;
-                    }
-                    var argsToSend = Utils.getCSRFPreventionObject('registerForPushNotificationCSRF',
-                        {userId:user.id, token:token,deviceType:push.deviceType()});
-                    $.getJSON(Utils.makeGetUrl("unregisterPushNotificationData"), argsToSend,
-                        function(data){
-                            if (Utils.checkData(data)) {
-                                console.log("Notification token removed from the server");
-                            }
-                            console.log("Failed to remove token from the server");
-                        });
-
-                }, function() {
-                    console.log('Failure handler - Unregister push notification');
-                });
 			}.bind(this));
 			console.log('PageView: logout');
 		}.bind(this));
