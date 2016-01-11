@@ -2685,8 +2685,19 @@ input.cropit-image-zoom-input {
 	color: #A2A2A2;
 }
 
+.datepicker-surface .fa {
+	margin-top: 7px;
+	color: rgb(169, 169, 169);
+}
+
 .blank-date-label {
 	color: #A2A2A2;
+	background-color: #fff;
+	padding: 3px 8px;
+	border-radius: 2px;
+	border: 1px solid rgb(195, 195, 195);
+	width: 80px;
+	text-align: center;
 }
 
 .blank-date-label.start-date {

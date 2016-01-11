@@ -136,15 +136,12 @@ define(function(require, exports, module) {
 
 		this.dateLabelSurface = new Surface({
 			size: [200, 28],
-			content: '<span class="blank-date-label start-date">DD/MM/YY</span> - <span class="blank-date-label end-date">DD/MM/YY</span>',
+			classes: ['datepicker-surface'],
+			content: '<span class="blank-date-label start-date">DD/MM/YY</span> <i class="fa fa-minus"></i> <span class="blank-date-label end-date">DD/MM/YY</span>',
 			properties: {
-				border: '1px solid #C3C3C3',
-				borderRadius: '2px',
-				padding: '5px 10px',
 				color: '#6f6f6f',
 				textAlign: 'center',
 				whiteSpace: 'no-wrap',
-				backgroundColor: '#fff',
 				fontSize: '12px'
 			}
 		});
@@ -207,7 +204,7 @@ define(function(require, exports, module) {
 						+ year.substring(2);
 			}
 		}
-		this.dateLabelSurface.setContent('<span class="blank-date-label start-date">' + this.startDateString + '</span> - '
+		this.dateLabelSurface.setContent('<span class="blank-date-label start-date">' + this.startDateString + '</span> <i class="fa fa-minus"></i> '
 				+ '<span class="blank-date-label end-date">' + this.endDateString + '</span>');
 		this.plot.loadAllData();
 
