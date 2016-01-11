@@ -14,6 +14,7 @@ define(function (require, exports, module) {
 	var RegisterTemplate = require('text!templates/registration.html');
 	var store = require('store');
 	var u = require('util/Utils');
+	var push = require('util/Push');
 
 	function RegisterView() {
 		BaseView.apply(this, arguments);
@@ -102,6 +103,7 @@ define(function (require, exports, module) {
 					password,
 					function (user) {
 						App.pageView.changePage('TutorialView');
+						push.register();
 					}.bind(this)
 			)
 		}

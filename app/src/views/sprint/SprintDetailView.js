@@ -134,8 +134,7 @@ define(function (require, exports, module) {
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('stop-sprint') > -1) {
 						Sprint.stop(this.hash, function (data) {
-							$('#stop-sprint').hide();
-							$('#start-sprint').show();
+							this.loadDetails();
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('delete-sprint') > -1) {
 						Sprint.delete(this.hash, function (data) {

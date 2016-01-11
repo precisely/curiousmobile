@@ -123,6 +123,7 @@ define(function(require, exports, module) {
 		var hideSprintExplanation = store.get('hideSprintExplanation');
 		var hideCuriositiesExplanation = store.get('hideCuriositiesExplanation');
 		localStorage.clear();
+		App.pageView.pageMap['TrackView'] = null;
 		store.set('hideSprintExplanation', hideSprintExplanation);
 		store.set('hideCuriositiesExplanation', hideCuriositiesExplanation);
 		store.set('mobileSessionId', false);
@@ -132,7 +133,7 @@ define(function(require, exports, module) {
 	User.logout = function(callback) {
 		var userData = store.get('user');
 		u.callLogoutCallbacks();
-		if (typeof push !== 'undefined') {
+		if (typeof push.pushNotification !== 'undefined') {
 			push.unregister();
 		} else {
 			User.clearCache();	

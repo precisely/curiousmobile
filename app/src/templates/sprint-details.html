@@ -9,10 +9,8 @@
 				<button id="leave-sprint" class="sprint-button">Unfollow</button>
 				{{ if (sprint.hasStarted && !sprint.hasEnded) { }}
 					<button id="stop-sprint" class="sprint-button prompted-action">Stop</button>
-					<button id="start-sprint" class="prompted-action  sprint-button hidden">Start</button>
 				{{ } else { }}
 					<button id="start-sprint" class="prompted-action sprint-button">Start</button>
-					<button id="stop-sprint" class="sprint-button hidden prompted-action">Stop</button>
 				{{ } }}
 			{{ } else { }}
 				<button id="join-sprint" class="sprint-button">Follow</button>

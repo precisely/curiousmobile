@@ -1285,7 +1285,8 @@ button.close {
 }
 
 .discussion-comment .actions {
-	line-height: 10px;	
+	top: -15px;
+	position: relative;
 }
 
 .discussion-comment .add-comment input {
@@ -1339,6 +1340,8 @@ button.close {
 	color: #c04f7f;
 	margin-left: 5px;
 	font-size: 13px;
+	position: relative;
+	top: 3px;
 }
 
 .feed-item .discussion-post .user-name, .discussion-comment .user-name {

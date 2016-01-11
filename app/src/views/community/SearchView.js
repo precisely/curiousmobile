@@ -54,12 +54,15 @@ define(function(require, exports, module) {
 				}
 			}.bind(this);
 
-			document.getElementsByClassName('close-background')[0].onclick = function(e) {
-				if (e instanceof CustomEvent) {
-					e.stopPropagation();
-					this.goBack();
-				}
-			}.bind(this);
+		}.bind(this));
+
+		this.searchBar.on('click', function(e) {
+			var classList;
+			classList = e.srcElement.classList;
+			if (e instanceof CustomEvent && _.contains(classList, 'fa-times')) {
+				e.stopPropagation();
+				document.getElementById('search-input').value = '';
+			}
 		}.bind(this));
 
 		this.add(new StateModifier({
