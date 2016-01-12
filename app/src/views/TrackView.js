@@ -194,7 +194,7 @@ define(function(require, exports, module) {
 		this.entryFormView.dateGridRenderController.hide();
 		BaseView.prototype.killOverlayContent.call(this);
 		this.showMenuButton();
-		this.setHeaderSurface(this.calendarView);
+		this.setHeaderSurface(this.calendarView, new StateModifier({align: [0.5, 0.5], origin: [0.5, 0.5]}));
 		this.preShow(state);
 	}
 

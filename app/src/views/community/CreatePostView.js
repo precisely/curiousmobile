@@ -98,21 +98,26 @@ define(function(require, exports, module) {
 
 	function extractDiscussionNameAndPost(value) {
 		var discussionName, discussionPost;
-		
+
 		// Try to get the first sentence i.e. a line ending with either "." "?" or "!"
 		var firstSentenceData = /^.*?[\.!\?](?:\s|$)/.exec(value);
-			
+
 		if (firstSentenceData) {
 			discussionName = firstSentenceData[0].trim();
 		} else {	// If user has not used any of the above punctuations
 			discussionName = value;
 		}
-			
-		// Trim the entered text max upto the 100 characters and use it as the discussion name/title
-		discussionName = shorten(discussionName, 100).trim();	// See Base.js for "shorten" method
-		// And the rest of the string (if any) will be used as first discussion comment message
-		discussionPost = value.substring(discussionName.length).trim();
-			
+
+		// Trim the entered text max upto the 100 characters and use it as the discussion name/title                                                                                                                                    
+		if (discussionName.length > 100) {                                                                                   
+			discussionName = shorten(discussionName, 100).trim();       // See base.js for "shorten" method                  
+			// And the rest of the string (if any) will be used as first discussion comment message,                         
+			// reducing 3 characters as trailing ellipsis appended at the end of the post title                              
+			discussionPost = value.substring(discussionName.length - 3).trim();                                              
+		} else {                                                                                                             
+			discussionPost = value.substring(discussionName.length).trim();                                                  
+		}
+
 		return {name: discussionName, post: discussionPost};
 	}
 

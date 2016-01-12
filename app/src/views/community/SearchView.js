@@ -24,13 +24,14 @@ define(function(require, exports, module) {
 	SearchView.prototype.constructor = SearchView;
 
 	SearchView.DEFAULT_OPTIONS = {
-		header: false,
-		footer: true
+		header: true,
+		footer: true,
+		noBackButton: true
 	};
 
 	SearchView.prototype.createSearchHeader = function() {
 		this.searchBar = new Surface({
-			size: [undefined, 65],
+			size: [App.width - 50, 64],
 			content: '<div class="search-bar"><i class="fa fa-search fa-2x"></i><input type="text" id="search-input" ' +
 				'placeholder="Type your search here"><span class="close-background  pull-right"><i class="fa fa-times"></i></span></div>',
 			properties: {
@@ -61,13 +62,21 @@ define(function(require, exports, module) {
 			classList = e.srcElement.classList;
 			if (e instanceof CustomEvent && _.contains(classList, 'fa-times')) {
 				e.stopPropagation();
-				document.getElementById('search-input').value = '';
+				var searchInputElement = document.getElementById('search-input');
+				searchInputElement.value = '';
+				searchInputElement.focus();
 			}
 		}.bind(this));
 
 		this.add(new StateModifier({
-			transform: Transform.translate(0, 0, App.zIndex.header)
+			transform: Transform.translate(50, 0, App.zIndex.header + 10)
 		})).add(this.searchBar);
+
+		this.headerBackgroundSurface.setProperties({
+			backgroundColor: '#f14a42'
+		});
+
+		this.hamburgerSurface.setContent('content/images/hamburg-menu-white.png');
 	}
 
 	SearchView.prototype.createSearchPills = function() {
@@ -118,7 +127,7 @@ define(function(require, exports, module) {
 				Search.fetchPeople(args, this.addListItemsToScrollView.bind(this));
 			} else if (lable === 'DISCUSSIONS') {
 				Search.fetchDiscussions(args, this.addListItemsToScrollView.bind(this));
-			} else if (lable === 'TRACKATHON') {
+			} else if (lable === 'TRACKATHONS') {
 				Search.fetchSprints(args, this.addListItemsToScrollView.bind(this));
 			} else if (lable === 'OWNED') {
 				Search.fetchOwned(args, this.addListItemsToScrollView.bind(this));

@@ -35,7 +35,7 @@ define(function(require, exports, module) {
 
 	function _createHeader(date) {
 		var selectDateView = new SelectDateView(date);
-		this.add(selectDateView);
+		this.add(new StateModifier({transform: Transform.translate(-20, 0, 0)})).add(selectDateView);
 		selectDateView.on('toggle-date-grid', function() {
 			console.log("CalendarView: toggle date grid event");
 			this.toggleDateGrid();

@@ -402,8 +402,9 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			if (data == 'login') {
 				if (status != 'cached') {
 					u.showAlert("Session timed out.");
-					User.logout();
-					App.pageView.changePage('LoginView');
+					User.logout(function() {
+						App.pageView.changePage('LoginView');
+					});
 				}
 				return false;
 			}

@@ -75,6 +75,9 @@ define(function(require, exports, module) {
 			var currentUser = new User(user);
 			store.set('user', currentUser);
 			dataReady = true;
+			closedExplanationCardSprint = user.closedExplanationCardTrackathon;
+			store.set('hideCuriositiesExplanation', user.closedExplanationCardCuriousities);
+			store.set('hideSprintExplanation', user.closedExplanationCardTrackathon);
 			this.u.callDataReadyCallbacks();
 			return currentUser;
 		}
@@ -120,12 +123,10 @@ define(function(require, exports, module) {
 		store.set('user', undefined);
 		window.App.collectionCache.clear();
 		window.App.stateCache.clear();
-		var hideSprintExplanation = store.get('hideSprintExplanation');
-		var hideCuriositiesExplanation = store.get('hideCuriositiesExplanation');
 		localStorage.clear();
-		App.pageView.pageMap['TrackView'] = null;
-		store.set('hideSprintExplanation', hideSprintExplanation);
-		store.set('hideCuriositiesExplanation', hideCuriositiesExplanation);
+		var homeView = App.pageView.pageMap['HomeView'];
+		App.pageView.pageMap = [];
+		App.pageView.pageMap['HomeView'] = homeView;
 		store.set('mobileSessionId', false);
 		store.set('user', false);
 	}
@@ -141,7 +142,10 @@ define(function(require, exports, module) {
 		if (typeof callback !== 'undefined') {
 			callback(userData);
 		}
-		App.pageView.getPage('ChartView').graphView.clearGraph();
+		var chartView = App.pageView.getPage('ChartView');
+		if (chartView) {
+			chartView.graphView.clearGraph();
+		}
 	}
 
 	User.max = 10;
@@ -153,12 +157,12 @@ define(function(require, exports, module) {
 			type: 'people'
 		});
 		u.queueJSON("loading feeds", u.makeGetUrl('getPeopleSocialData', 'search'),
-			u.makeGetArgs(argsToSend),
-			function(data) {
-				if (u.checkData(data)) {
-					callback(data.listItems);
-				}
-			});
+		u.makeGetArgs(argsToSend),
+		function(data) {
+			if (u.checkData(data)) {
+				callback(data.listItems);
+			}
+		});
 	};
 
 	User.show = function(hash, successCallback, failCallback) {
@@ -183,25 +187,25 @@ define(function(require, exports, module) {
 
 	User.update = function(updatedData, successCallback, failCallback) {
 		u.queueJSONAll('Updating user details', App.serverUrl + '/api/user/' + updatedData.id, JSON.stringify(updatedData),
-			function(data) {
-				if (u.checkData(data)) {
-					if (data.success) {
-						successCallback({
-							hash: data.hash
-						});
-					} else {
-						u.showAlert(data.message);
-						if (failCallback) {
-							failCallback();
-						}
+		function(data) {
+			if (u.checkData(data)) {
+				if (data.success) {
+					successCallback({
+						hash: data.hash
+					});
+				} else {
+					u.showAlert(data.message);
+					if (failCallback) {
+						failCallback();
 					}
 				}
-			},
-			function(error) {
-				console.log('error: ', error);
-			}, null, {
-				requestMethod: 'PUT'
-			});
+			}
+		},
+		function(error) {
+			console.log('error: ', error);
+		}, null, {
+			requestMethod: 'PUT'
+		});
 	};
 
 	User.addInterestTags = function(tags, successCallback, failCallback) {
@@ -225,24 +229,24 @@ define(function(require, exports, module) {
 
 	User.deleteInterestTags = function(tag, successCallback, failCallback) {
 		u.queuePostJSON('Deleting interest tags', App.serverUrl + '/api/data/action/deleteInterestTagData', {
-				userId: this.getCurrentUserId(),
-				tagName: tag
-			},
-			function(data) {
-				if (u.checkData(data)) {
-					if (data.interestTags) {
-						successCallback();
-					} else {
-						u.showAlert(data.message);
-						if (failCallback) {
-							failCallback();
-						}
+			userId: this.getCurrentUserId(),
+			tagName: tag
+		},
+		function(data) {
+			if (u.checkData(data)) {
+				if (data.interestTags) {
+					successCallback();
+				} else {
+					u.showAlert(data.message);
+					if (failCallback) {
+						failCallback();
 					}
 				}
-			},
-			function(error) {
-				console.log('error: ', error);
-			});
+			}
+		},
+		function(error) {
+			console.log('error: ', error);
+		});
 	};
 
 	User.saveAvatar = function(updatedData, successCallback, failCallback) {
@@ -289,6 +293,22 @@ define(function(require, exports, module) {
 			function(error) {
 				console.log('error: ', error);
 			}, null, httpArgs);
+	};
+
+	User.hideExplanationCard = function(cardType, successCallback) {
+		var actionName = (cardType === 'curiosity') ? 'closeExplanationCardCuriosity' : 'closeExplanationCardTrackathon';
+		u.queueJSON('Closing explanation', '/api/user/action/' + actionName + '?' +
+			u.getCSRFPreventionURI('closeExplanationCardCSRF') + '&callback=?', null, function(data) {
+				if (checkData(data)) {
+					if (data.success) {
+						successCallback()
+					} else {
+						showAlert(data.message);
+					}
+				}
+			}, function(xhr) {
+				console.log(xhr);
+			});
 	};
 
 	module.exports = User;
