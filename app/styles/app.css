@@ -1094,9 +1094,7 @@ button.close {
 
 .feed-item .discussion .discussion-topic .discussion-title {
 	margin: 10px 0px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
+	word-wrap: break-word;
 }
 
 .feed-item .discussion .discussion-topic a, .feed-item .sprint a {
@@ -1163,9 +1161,7 @@ button.close {
 	color: #5d5d5d;
 	text-align: justify;
 	display: block;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	overflow: hidden;
+	word-wrap: break-word;
 }
 
 .feed-item .discussion .discussion-topic hr {
@@ -1434,10 +1430,7 @@ button.close {
 
 .discussion-comment .without-margin {
 	margin-bottom: 10px;
-	overflow: hidden;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-
+	word-wrap: break-word;
 }
 
 .discussion-comment .bottom-margin {
@@ -1638,6 +1631,7 @@ list-style-type: none;
 .alert {
 	padding: 10px;
 	min-height: 50px;
+	word-wrap: break-word;
 }
 
 .alert button {

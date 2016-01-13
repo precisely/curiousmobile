@@ -54,7 +54,13 @@ define(function(require, exports, module) {
 					}
 				}
 			}.bind(this);
+		}.bind(this));
 
+
+		this.searchBar.on('commit', function() {
+			var searchInputElement = document.getElementById('search-input');
+			console.log('focus');
+			searchInputElement.focus();
 		}.bind(this));
 
 		this.searchBar.on('click', function(e) {
@@ -64,7 +70,12 @@ define(function(require, exports, module) {
 				e.stopPropagation();
 				var searchInputElement = document.getElementById('search-input');
 				searchInputElement.value = '';
-				searchInputElement.focus();
+				setTimeout(function() {
+					var searchInputElement = document.getElementById('search-input');
+					searchInputElement.focus();
+				}, 300)
+			} else {
+				return false;
 			}
 		}.bind(this));
 
