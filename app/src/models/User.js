@@ -134,6 +134,10 @@ define(function(require, exports, module) {
 	User.logout = function(callback) {
 		var userData = store.get('user');
 		u.callLogoutCallbacks();
+		var chartView = App.pageView.getPage('ChartView');
+		if (chartView) {
+			chartView.graphView.clearGraph();
+		}
 		if (typeof push.pushNotification !== 'undefined') {
 			push.unregister();
 		} else {
@@ -141,10 +145,6 @@ define(function(require, exports, module) {
 		}
 		if (typeof callback !== 'undefined') {
 			callback(userData);
-		}
-		var chartView = App.pageView.getPage('ChartView');
-		if (chartView) {
-			chartView.graphView.clearGraph();
 		}
 	}
 
