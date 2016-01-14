@@ -119,6 +119,10 @@ define(function(require, exports, module) {
 	}
 
 	User.clearCache = function() {
+		var chartView = App.pageView.getCachedPage('ChartView');
+		if (chartView) {
+			chartView.graphView.clearGraph();
+		}
 		store.set('mobileSessionId', undefined);
 		store.set('user', undefined);
 		window.App.collectionCache.clear();
@@ -134,10 +138,6 @@ define(function(require, exports, module) {
 	User.logout = function(callback) {
 		var userData = store.get('user');
 		u.callLogoutCallbacks();
-		var chartView = App.pageView.getPage('ChartView');
-		if (chartView) {
-			chartView.graphView.clearGraph();
-		}
 		if (typeof push.pushNotification !== 'undefined') {
 			push.unregister();
 		} else {

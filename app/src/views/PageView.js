@@ -235,6 +235,11 @@ define(function(require, exports, module) {
 		return view;
 	};
 
+	PageView.prototype.getCachedPage = function(pageName) {
+		var view = this.pageMap[pageName];
+		return view;
+	};
+
 	/**
 	 * Goes back to the last page in the history
 	 */
