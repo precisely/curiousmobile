@@ -172,6 +172,7 @@ define(function(require, exports, module) {
 					this.setSelectedDate(repeatEnd);
 				}
 			}.bind(this);
+			this.submitButtonModifier.setTransform(Transform.translate(30, 500, App.zIndex.datePicker - 1));
 			this.renderController.show(this.repeatModifierSurface, null, function() {
 				if (radioSelector) {
 					document.getElementById(radioSelector).checked = true;

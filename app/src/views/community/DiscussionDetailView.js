@@ -210,9 +210,9 @@ define(function(require, exports, module) {
 		var addCommentSurface = new Surface({
 			size: [undefined, true],
 			content: _.template(addCommentTemplate, {message: post.message || '', postId: post.id || undefined, 
-					authorAvatarURL: post.authorAvatarURL, commentIndex: currentIndex}, templateSettings),
-			properties: {
-			}
+				authorAvatarURL: post.authorAvatarURL, commentIndex: currentIndex}, templateSettings),
+				properties: {
+				}
 		});
 
 		addCommentSurface.on('keydown', function(e) {
@@ -228,11 +228,14 @@ define(function(require, exports, module) {
 				this.commentScrollPosition = this.scrollView.getPosition();
 				setTimeout(function() {
 					this.setScrollViewPosition();
-				}.bind(this), 300)
+				}.bind(this), 50)
 			}
 		}.bind(this));
 
-		addCommentSurface.on('keyup', this.resizeCommentSurface.bind(this));
+		addCommentSurface.on('keyup', function() {
+			this.resizeCommentSurface();
+			this.setScrollViewPosition();
+		}.bind(this));
 		return addCommentSurface;
 	};
 
@@ -242,17 +245,17 @@ define(function(require, exports, module) {
 			var commentBox = document.getElementById('message');
 			commentBox.style.cssText = 'height:auto;';
 			commentBox.style.cssText = 'height:' + commentBox.scrollHeight + 'px';
-			this.setScrollViewPosition();
 		}.bind(this), 0);
 	};
 
 	DiscussionDetailView.prototype.setScrollViewPosition = function() {
-		if (this.commentScrollPosition) {
+		if (typeof this.commentScrollPosition !== 'undefined') {
 			var commentBox = document.getElementById('message');
-			var value = commentBox.value;
-			var lines = value.split(/\r*\n/);
-			var linesCount = lines.length;
-			this.scrollView.setPosition(this.commentScrollPosition + (linesCount * 17));
+			var boxHeight = commentBox.offsetHeight;
+			var overflowingHeight = boxHeight - 50;
+			if (overflowingHeight > 0) {
+				this.scrollView.setPosition(this.commentScrollPosition + overflowingHeight);
+			}
 		}
 	};
 
@@ -336,6 +339,11 @@ define(function(require, exports, module) {
 						this.discussionView.surfaceList.splice(this.discussionView.surfaceList.indexOf(this.discussionView.addCommentSurface), 1);
 						post.message = post.message.replace(/<br.*?>/g, '\n');
 						this.discussionView.surfaceList.splice(this.discussionView.selectionIndex, 1, this.discussionView.getAddCommentSurface(post, this.discussionView.selectionIndex));
+						setTimeout(function() {
+							this.discussionView.resizeCommentSurface();
+							this.discussionView.commentScrollPosition = this.discussionView.scrollView.getPosition();
+							moveCaretToEnd(document.getElementById('message'));
+						}.bind(this), 50);
 					} else if (_.contains(classList, 'comment-author') || _.contains(e.srcElement.parentElement.classList, 'comment-author')) {
 						App.pageView.changePage('PeopleDetailView', {hash: post.authorHash});
 					}
