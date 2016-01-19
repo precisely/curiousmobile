@@ -10,6 +10,7 @@ define(function(require, exports, module) {
 	var PageView = require('views/PageView');
 	var MenuView = require('views/MenuView');
 	var	MenuData = require('data/MenuData');
+	var	Discussion = require('models/Discussion');
 	function AppView() {
 		View.apply(this, arguments);
 		this.menuToggle = false;
@@ -54,16 +55,11 @@ define(function(require, exports, module) {
 	}
 
 	function _setListeners() {
-
 		this.pageView.on('page-change-complete', function(contents) {
 			if (this.showingMenu) {
 				this.toggleMenu();
 			}
-			$('.footer-item.active').removeClass('active');
-			var currentView = App.pageView.getCurrentView();
-			if (typeof currentView !== 'undefined') {
-				$('.footer-item.' + currentView.options.activeMenu).addClass('active');
-			}
+			Discussion.getNewNotificationCount();
 		}.bind(this));
 
 		this.pageView.on('show-menu', function(e) {

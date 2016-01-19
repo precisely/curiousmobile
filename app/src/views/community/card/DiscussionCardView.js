@@ -30,12 +30,12 @@ define(function(require, exports, module) {
 	};
 
 	function createCard() {
-		var prettyDate = u.prettyDate(new Date(this.discussion.updated));
-		this.discussion.prettyDate = prettyDate;
+		var prettyDate = u.prettyDate(new Date(this.discussion.get("updated")));
+		this.discussion.set("prettyDate", prettyDate);
 
 		this.cardSurface = new Surface({
 			size: [undefined, true],
-			content: _.template(DiscussoinTemplate, this.discussion, templateSettings),
+			content: _.template(DiscussoinTemplate, this.discussion.toJSON(), templateSettings),
 			properties: {
 				padding: '5px 10px 0px 10px'
 			}
@@ -56,12 +56,12 @@ define(function(require, exports, module) {
 				classList = e.srcElement.parentElement.classList;
 				if (_.contains(classList, 'close-discussion')) {
 					this.alert = u.showAlert({
-						message: 'Are you sure you want to delete ' + this.discussion.name + ' ?',
+						message: 'Are you sure you want to delete ' + this.discussion.get("name") + ' ?',
 						a: 'Yes',
 						b: 'No',
 						onA: function() {
 							Discussion.deleteDiscussion({
-								hash: this.discussion.hash
+								hash: this.discussion.get("hash")
 							}, function(success) {
 								console.log('deleted successfully...');
 								this.cardViewCollection.splice(this.cardViewCollection.indexOf(this), 1);
@@ -73,18 +73,18 @@ define(function(require, exports, module) {
 					});
 				} else if (_.contains(classList, 'share-button') || _.contains(e.srcElement.classList, 'share-button')) {
 					if (window.plugins) {
-						window.plugins.socialsharing.share(null, 'Curious Discussions', null, App.serverUrl + '/home/social/discussion/' + this.discussion.hash);
+						window.plugins.socialsharing.share(null, 'Curious Discussions', null, App.serverUrl + '/home/social/discussion/' + this.discussion.get("hash"));
 					}
 				} else if (_.contains(classList, 'follow-button') || _.contains(e.srcElement.parentElement.classList, 'follow-button')) {
-					Discussion.follow({id: this.discussion.hash}, function(data) {
+					Discussion.follow({id: this.discussion.get("hash")}, function(data) {
 						this.viewDetailPage();
 					}.bind(this));
 				} else if (_.contains(classList, 'unfollow-button') || _.contains(e.srcElement.parentElement.classList, 'unfollow-button')) {
-					Discussion.follow({id: this.discussion.hash, unfollow: true}, function(data) {
+					Discussion.follow({id: this.discussion.get("hash"), unfollow: true}, function(data) {
 						this.viewDetailPage();
 					}.bind(this));
 				} else if (_.contains(classList, 'discussion-author') || _.contains(e.srcElement.parentElement.classList, 'discussion-author')) {
-					App.pageView.changePage('PeopleDetailView', {hash: this.discussion.userHash});
+					App.pageView.changePage('PeopleDetailView', {hash: this.discussion.get("userHash")});
 				} else {
  					this.viewDetailPage();
 				}
@@ -96,7 +96,7 @@ define(function(require, exports, module) {
 
 	DiscussionCardView.prototype.viewDetailPage = function() {
 		var state = {
-			discussionHash: this.discussion.hash,
+			discussionHash: this.discussion.get("hash"),
 			parentPage: this.parentPage
 		};
 		App.pageView.changePage('DiscussionDetailView', state);

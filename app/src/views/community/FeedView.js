@@ -133,22 +133,20 @@ define(function(require, exports, module) {
 			origin: [0.5, 0],
 			align: [0.5, 0]
 		});
-		var navPills = [];
-		this.pillsScrollView.sequenceFrom(navPills);
-
-		// Adding navigation pills below header
-		navPills.push(this.createPillsSurface('ALL', true));
-		navPills.push(this.createPillsSurface('PEOPLE'));
-		navPills.push(this.createPillsSurface('DISCUSSIONS'));
-		navPills.push(this.createPillsSurface('OWNED'));
-
+		this.navPills = [];
+		this.pillsScrollView.sequenceFrom(this.navPills);
+		this.renderPills();
 		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
 	};
 
 	FeedView.prototype.createPillsSurface = function(pillFor, active) {
 		var activePill = active ? ' active-pill' : '';
+		var badge = '';
+		if (pillFor === 'NOTIFICATIONS' && App.getNotificationCount()) {
+			badge = '<span class="badge">' + App.getNotificationCount() + '</span>';
+		}
 		var pillSurface = new Surface({
-			content: '<button class="feed-pill btn' + activePill + '" id="' + pillFor + '-pill">' + pillFor + '</button>',
+			content: '<button class="feed-pill btn' + activePill + '" id="' + pillFor + '-pill">' + pillFor + badge + '</button>',
 			size: [true, 50],
 			properties: {
 				backgroundColor: '#efefef',
@@ -206,6 +204,15 @@ define(function(require, exports, module) {
 		}
 	};
 
+	FeedView.prototype.resetNotificationCount = function(isInsideNotification) {
+		if (this.navPills) {
+			this.navPills.splice(1, 1, this.createPillsSurface('NOTIFICATIONS', isInsideNotification));
+		}
+		_.each(App.pageView.pageMap, function(page) {
+			page.resetFooter();
+		});
+	};
+
 	FeedView.prototype.fetchFeedItems = function(lable, args) {
 		this.currentPill = lable;
 		var params = args || {
@@ -229,6 +236,11 @@ define(function(require, exports, module) {
 			User.fetch(params, this.addListItemsToScrollView.bind(this));
 		} else if (lable === 'DISCUSSIONS') {
 			Discussion.fetch(params, this.addListItemsToScrollView.bind(this));
+		} else if (lable === 'NOTIFICATIONS') {
+			Discussion.getNotifications(params, function(listItems) {
+				this.resetNotificationCount(true);
+				this.addListItemsToScrollView(listItems);
+			}.bind(this));
 		} else if (lable === 'OWNED') {
 			Discussion.fetchOwned(params, this.addListItemsToScrollView.bind(this));
 		}
@@ -269,7 +281,8 @@ define(function(require, exports, module) {
 				sprintCardView.setScrollView(this.scrollView);
 
 			} else if (item.type === 'dis') {
-				var discussionCardView = new DiscussionCardView(item, App.pageView.getCurrentPage(), this.deck);
+				var discussion = new Discussion(item);
+				var discussionCardView = new DiscussionCardView(discussion, App.pageView.getCurrentPage(), this.deck);
 				this.deck.push(discussionCardView);
 				discussionCardView.setScrollView(this.scrollView);
 
@@ -284,6 +297,16 @@ define(function(require, exports, module) {
 	FeedView.prototype.refresh = function() {
 		this.initScrollView();
 		this.fetchFeedItems(this.currentPill);
+	};
+
+	FeedView.prototype.renderPills = function() {
+		this.navPills.splice(0, this.navPills.length);
+		// Adding navigation pills below header
+		this.navPills.push(this.createPillsSurface('ALL', true));
+		this.navPills.push(this.createPillsSurface('NOTIFICATIONS'));
+		this.navPills.push(this.createPillsSurface('PEOPLE'));
+		this.navPills.push(this.createPillsSurface('DISCUSSIONS'));
+		this.navPills.push(this.createPillsSurface('OWNED'));
 	};
 
 	FeedView.prototype.initScrollView = function() {

@@ -2561,12 +2561,12 @@ and (max-device-height: 568px) {
 	/* You can specify preview size in CSS */
 	/*  width: 960px;
 	height: 200px;*/
-background-color: #f8f8f8;
-border-radius: 3px;
-height: 200px;
-cursor: move;
-margin: auto;
-width: 185px;
+	background-color: #f8f8f8;
+	border-radius: 3px;
+	height: 200px;
+	cursor: move;
+	margin: auto;
+	width: 185px;
 }
 
 /* Translucent background image */
@@ -3208,4 +3208,23 @@ input.cropit-image-zoom-input {
 
 .explanation-card .fa {
 	color: #4a4a4a;
+}
+
+.badge {
+	background-color: rgb(241, 74, 66);
+	color: #fff;
+}
+
+.icon-feed {
+	position: relative;
+}
+
+.icon-feed .badge {
+	position: absolute;
+	top: 5px;
+	right: -15px;
+}
+
+.feed-pill .badge {
+	margin-left: 5px;
 }
