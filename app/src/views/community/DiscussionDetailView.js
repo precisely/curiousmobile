@@ -77,6 +77,7 @@ define(function(require, exports, module) {
 		if (!state || !state.discussionHash) {
 			return false;
 		}
+		this.isCommentSelected = false;
 		this.discussionHash = state.discussionHash;
 		this.parentPage = state.parentPage || 'FeedView';
 		this.isSharedGraph = false;

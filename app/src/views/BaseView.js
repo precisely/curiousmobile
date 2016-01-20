@@ -53,7 +53,7 @@ define(function(require, exports, module) {
 		});
 
 		var layoutModifier = new Modifier({
-			size: [window.App.width, window.App.height],
+			size: [App.width, App.height],
 		});
 
 		this.add(layoutModifier).add(this.layout);
