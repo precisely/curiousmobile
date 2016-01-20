@@ -73,7 +73,7 @@ define(function(require, exports, module) {
 				setTimeout(function() {
 					var searchInputElement = document.getElementById('search-input');
 					searchInputElement.focus();
-				}, 300)
+				}, 500)
 			} else {
 				return false;
 			}

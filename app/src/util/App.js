@@ -38,9 +38,9 @@ var App = function() {
 	//this.serverUrl = "http://127.0.0.1:8080";
 	//this.serverUrl = "http://192.168.0.108:8080";
 	//this.serverUrl = "http://192.168.1.104:8080";
-	//this.serverUrl = "http://192.168.1.105:8080";
+	this.serverUrl = "http://192.168.1.107:8080";
 	//this.serverUrl = "http://103.17.156.129:8080";
-	this.serverUrl = "http://114.143.237.122:8080";
+	//this.serverUrl = "http://114.143.237.122:8080";
 
 	this.width = window.innerWidth;
 	this.height = window.innerHeight;

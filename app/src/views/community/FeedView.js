@@ -160,7 +160,9 @@ define(function(require, exports, module) {
 				this.initScrollView();
 				this.fetchFeedItems(pillFor);
 				var previousActivePill = document.getElementsByClassName('active-pill');
-				previousActivePill[0].classList.remove('active-pill');
+				if (previousActivePill[0]) {
+					previousActivePill[0].classList.remove('active-pill');
+				}
 				var pillElement = document.getElementById(pillFor + '-pill');
 				pillElement.classList.add('active-pill');
 			}
@@ -204,9 +206,9 @@ define(function(require, exports, module) {
 		}
 	};
 
-	FeedView.prototype.resetNotificationCount = function(isInsideNotification) {
+	FeedView.prototype.resetNotificationCount = function() {
 		if (this.navPills) {
-			this.navPills.splice(1, 1, this.createPillsSurface('NOTIFICATIONS', isInsideNotification));
+			this.navPills.splice(1, 1, this.createPillsSurface('NOTIFICATIONS', this.currentPill === 'NOTIFICATIONS'));
 		}
 		_.each(App.pageView.pageMap, function(page) {
 			page.resetFooter();
@@ -238,7 +240,7 @@ define(function(require, exports, module) {
 			Discussion.fetch(params, this.addListItemsToScrollView.bind(this));
 		} else if (lable === 'NOTIFICATIONS') {
 			Discussion.getNotifications(params, function(listItems) {
-				this.resetNotificationCount(true);
+				Discussion.getNewNotificationCount();
 				this.addListItemsToScrollView(listItems);
 			}.bind(this));
 		} else if (lable === 'OWNED') {

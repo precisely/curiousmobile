@@ -218,7 +218,9 @@ define(function(require, exports, module) {
 	}
 
 	BaseView.prototype.resetFooter = function() {
-		this.footerSurface.setContent(_.template(FooterTemplate, {activeMenu: this.options.activeMenu}, templateSettings));
+		if (this.footerSurface) {
+			this.footerSurface.setContent(_.template(FooterTemplate, {activeMenu: this.options.activeMenu}, templateSettings));
+		}
 	};
 
 	function _setListeners() {}

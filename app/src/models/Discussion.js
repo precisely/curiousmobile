@@ -51,9 +51,9 @@ define(function(require, exports, module) {
 							if (currentView.resetNotificationCount) {
 								currentView.resetNotificationCount();
 							} else {
-								_.each(App.pageView.pageMap, function(page) {
-									page.resetFooter();
-								});
+								for (var i in App.pageView.pageMap) {
+									App.pageView.pageMap[i].resetFooter();
+								}
 							}
 							if (callback) {
 								callback(data);
