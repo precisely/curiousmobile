@@ -43,7 +43,7 @@ var App = function() {
 	this.serverUrl = "http://114.143.237.122:8080";
 
 	this.width = window.innerWidth;
-	this.height = window.innerHeight;
+	this.height = StatusBar.isVisible ? window.innerHeight + 20 : window.innerHeight;
 
 	this.viewsWithoutSearchIcon = ['EditProfileView', 'LoginView', 'RegisterView', 'AdvancedTagsView', 'SearchView',
 		'ForgotPasswordView', 'HelpContentsView', 'CreateTagHelpView', 'HelpContentsView', 'RepeatAlertTagsHelpView',
