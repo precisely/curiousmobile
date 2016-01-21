@@ -67,13 +67,14 @@ define(function(require, exports, module) {
 			var classList;
 			classList = e.srcElement.classList;
 			if (e instanceof CustomEvent && (_.contains(classList, 'fa-times') || _.contains(classList, 'close-background'))) {
-				e.stopPropagation();
+				console.log('clearing search bar');
 				var searchInputElement = document.getElementById('search-input');
 				searchInputElement.value = '';
 				setTimeout(function() {
 					var searchInputElement = document.getElementById('search-input');
 					searchInputElement.focus();
 				}, 500)
+				e.stopPropagation();
 			} else {
 				return false;
 			}
