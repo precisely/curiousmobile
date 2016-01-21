@@ -137,12 +137,14 @@ define(function(require, exports, module) {
 	};
 
 	SprintListView.prototype.hideExplanationBox = function() {
-		this.sprintRenderController.hide();
-		this.explanationVisible = false;
-		store.set('hideSprintExplanation', true);
-		this.pillsScrollViewContainerModifier.setTransform(Transform.translate(0, 64, App.zIndex.header));
-		this.scrollViewMod.setTransform(Transform.translate(0, 110, App.zIndex.feedItem));
-		this.explanationBoxModifier.setTransform(Transform.translate(App.width - 50, 64, App.zIndex.header));
+		User.hideExplanationCard('sprint', function() {
+			this.sprintRenderController.hide();
+			store.set('hideSprintExplanation', true);
+			this.explanationVisible = false;
+			this.pillsScrollViewContainerModifier.setTransform(Transform.translate(0, 64, App.zIndex.header));
+			this.scrollViewMod.setTransform(Transform.translate(0, 110, App.zIndex.feedItem));
+			this.explanationBoxModifier.setTransform(Transform.translate(App.width - 50, 64, App.zIndex.header));
+		}.bind(this));
 	};
 
 	SprintListView.prototype.onShow = function(state) {
@@ -165,9 +167,9 @@ define(function(require, exports, module) {
 	SprintListView.prototype.fetchFeedItems = function(lable, args) {
 		this.currentPill = lable;
 		var params = args || {
-					offset: 0,
-					max: this.max
-				};
+			offset: 0,
+			max: this.max
+		};
 		if (lable === 'ALL') {
 			params.nextSuggestionOffset = this.nextSuggestionOffset;
 			Sprint.fetch(params, this.addListItemsToScrollView.bind(this));

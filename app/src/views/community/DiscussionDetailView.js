@@ -93,14 +93,12 @@ define(function(require, exports, module) {
 		this.renderController.inTransformFrom(transition);
 
 		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
-		var mod = new StateModifier({
+		this.scrollViewControllerMod = new StateModifier({
 			size: [undefined, App.height - 130],
+			transform: Transform.translate(0, 75, App.zIndex.feedItem)
 		});
-		var node = new RenderNode(mod);
-		node.add(this.renderController);
-		this.add(node);
+		this.add(this.scrollViewControllerMod).add(this.scrollView);
 		this.scrollView.sequenceFrom(this.surfaceList);
-		this.renderController.show(this.scrollView);
 
 		DiscussionPost.fetch({
 			discussionHash: this.discussionHash
@@ -210,11 +208,11 @@ define(function(require, exports, module) {
 
 	DiscussionDetailView.prototype.getAddCommentSurface = function(post, currentIndex) {
 		var addCommentSurface = new Surface({
-			size: [undefined, 50],
+			size: [undefined, true],
 			content: _.template(addCommentTemplate, {message: post.message || '', postId: post.id || undefined, 
-					authorAvatarURL: post.authorAvatarURL, commentIndex: currentIndex}, templateSettings),
-			properties: {
-			}
+				authorAvatarURL: post.authorAvatarURL, commentIndex: currentIndex}, templateSettings),
+				properties: {
+				}
 		});
 
 		addCommentSurface.on('keydown', function(e) {
@@ -225,16 +223,40 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		addCommentSurface.on('keyup', function(e) {
-			// Auto expanding height of the textarea if text overflowes
-			setTimeout(function() {
-				var commentBox = document.getElementById('message');
-				commentBox.style.cssText = 'height:auto;';
-				commentBox.style.cssText = 'height:' + commentBox.scrollHeight + 'px';
-			}, 0);
+		addCommentSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				this.commentScrollPosition = this.scrollView.getPosition();
+				setTimeout(function() {
+					this.setScrollViewPosition();
+				}.bind(this), 50)
+			}
 		}.bind(this));
 
+		addCommentSurface.on('keyup', function() {
+			this.resizeCommentSurface();
+			this.setScrollViewPosition();
+		}.bind(this));
 		return addCommentSurface;
+	};
+
+	DiscussionDetailView.prototype.resizeCommentSurface = function() {
+		// Auto expanding height of the textarea if text overflowes
+		setTimeout(function() {
+			var commentBox = document.getElementById('message');
+			commentBox.style.cssText = 'height:auto;';
+			commentBox.style.cssText = 'height:' + commentBox.scrollHeight + 'px';
+		}.bind(this), 0);
+	};
+
+	DiscussionDetailView.prototype.setScrollViewPosition = function() {
+		if (typeof this.commentScrollPosition !== 'undefined') {
+			var commentBox = document.getElementById('message');
+			var boxHeight = commentBox.offsetHeight;
+			var overflowingHeight = boxHeight - 50;
+			if (overflowingHeight > 0) {
+				this.scrollView.setPosition(this.commentScrollPosition + overflowingHeight);
+			}
+		}
 	};
 
 	DiscussionDetailView.prototype.getCurrentState = function() {
@@ -286,6 +308,7 @@ define(function(require, exports, module) {
 					this.setSize([width, height]);
 				}.bind(this), 2);
 			});
+
 			commentSurface.on('click', function(e) {
 				if (e instanceof CustomEvent) {
 					var classList;
@@ -301,7 +324,6 @@ define(function(require, exports, module) {
 								DiscussionPost.deleteComment({
 									postId: post.id
 								}, function(sucess) {
-									console.log('delete success...');
 									this.discussionView.surfaceList.splice(
 										this.discussionView.surfaceList.indexOf(this),
 										1
@@ -315,13 +337,20 @@ define(function(require, exports, module) {
 						this.discussionView.selectedCommentSurface = commentSurface;
 						this.discussionView.selectionIndex = this.discussionView.surfaceList.indexOf(commentSurface);
 						this.discussionView.surfaceList.splice(this.discussionView.surfaceList.indexOf(this.discussionView.addCommentSurface), 1);
+						post.message = post.message.replace(/<br.*?>/g, '\n');
 						this.discussionView.surfaceList.splice(this.discussionView.selectionIndex, 1, this.discussionView.getAddCommentSurface(post, this.discussionView.selectionIndex));
+						setTimeout(function() {
+							this.discussionView.resizeCommentSurface();
+							this.discussionView.commentScrollPosition = this.discussionView.scrollView.getPosition();
+							moveCaretToEnd(document.getElementById('message'));
+						}.bind(this), 50);
 					} else if (_.contains(classList, 'comment-author') || _.contains(e.srcElement.parentElement.classList, 'comment-author')) {
 						App.pageView.changePage('PeopleDetailView', {hash: post.authorHash});
 					}
 
 				}
 			});
+
 
 			if (this.isSharedGraph) {
 				this.surfaceList.splice(2, 0, commentSurface);
@@ -335,7 +364,8 @@ define(function(require, exports, module) {
 
 	DiscussionDetailView.prototype.postComment = function() {
 		var messageBox = document.getElementById('message');
-		var message = messageBox.value;
+		// Formatting carriage returns to new line
+		var message = messageBox.value.replace(/(\r\n|\n|\r)/g,"<br/>");
 		var postId = messageBox.dataset.postId;
 		var currentCommentIndex = messageBox.dataset.commentIndex;
 		if (!postId) {

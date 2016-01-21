@@ -50,12 +50,24 @@ define(function(require, exports, module) {
 	};
 
 	PeopleDetailView.prototype.preShow = function(state) {
+		if (state && state.onLoad) {
+			setTimeout(function() {
+				App.pageView.changePage('FeedView');
+			}, 50);
+			return false;
+		}
 		if (!state || !state.hash) {
 			return false;
 		}
 		this.hash = state.hash;
 		this.showProfile();
 		return true;
+	};
+
+	PeopleDetailView.prototype.getCurrentState = function() {
+		return {
+			viewProperties: {hash: this.hash}
+		};
 	};
 
 	PeopleDetailView.prototype.showProfile = function() {

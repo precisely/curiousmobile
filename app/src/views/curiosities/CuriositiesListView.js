@@ -17,6 +17,7 @@ define(function(require, exports, module) {
 	var CuriosityExplanationCardView = require('views/community/card/CuriosityExplanationCard');
 	var FeedView = require('views/community/FeedView');
 	var curiosities = require('util/curiosities');
+	var User = require('models/User');
 	var store = require('store');
 	var Modifier = require('famous/core/Modifier');
 
@@ -77,11 +78,13 @@ define(function(require, exports, module) {
 	};
 
 	CuriositiesListView.prototype.hideExplanationBox = function() {
-		this.explanationRenderController.hide();
-		this.explanationVisible = false;
-		store.set('hideCuriositiesExplanation', true);
-		this.containerModifierState.set(64);
-		this.scrollViewMod.setTransform(Transform.translate(0, this.options.scrollViewYTransform, App.zIndex.feedItem));
+		User.hideExplanationCard('curiosity', function() {
+			this.explanationRenderController.hide();
+			this.explanationVisible = false;
+			store.set('hideCuriositiesExplanation', true);
+			this.containerModifierState.set(64);
+			this.scrollViewMod.setTransform(Transform.translate(0, this.options.scrollViewYTransform, App.zIndex.feedItem));
+		}.bind(this));
 	};
 
 	CuriositiesListView.prototype.createSearchBar = function() {

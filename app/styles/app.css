@@ -1094,6 +1094,7 @@ button.close {
 
 .feed-item .discussion .discussion-topic .discussion-title {
 	margin: 10px 0px;
+	word-wrap: break-word;
 }
 
 .feed-item .discussion .discussion-topic a, .feed-item .sprint a {
@@ -1160,6 +1161,7 @@ button.close {
 	color: #5d5d5d;
 	text-align: justify;
 	display: block;
+	word-wrap: break-word;
 }
 
 .feed-item .discussion .discussion-topic hr {
@@ -1428,6 +1430,7 @@ button.close {
 
 .discussion-comment .without-margin {
 	margin-bottom: 10px;
+	word-wrap: break-word;
 }
 
 .discussion-comment .bottom-margin {
@@ -1485,7 +1488,7 @@ button.close {
 }
 
 /*.help-wizard .intro-content li {
-	list-style-type: none;
+list-style-type: none;
 }*/
 
 .intro-content h3, .intro-content h5 {
@@ -1628,6 +1631,7 @@ button.close {
 .alert {
 	padding: 10px;
 	min-height: 50px;
+	word-wrap: break-word;
 }
 
 .alert button {
@@ -2555,8 +2559,6 @@ and (max-device-height: 568px) {
 
 .cropit-image-preview {
 	/* You can specify preview size in CSS */
-	/*  width: 960px;
-	  height: 200px;*/
 	background-color: #f8f8f8;
 	border-radius: 3px;
 	height: 200px;

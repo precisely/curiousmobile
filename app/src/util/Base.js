@@ -227,7 +227,7 @@ function shorten(text, maxLength, includeLastWord) {
 		return text.replace(regex, "$1") + '...';
 	} else {
 		var trimmedText = text.substring(0, maxLength + 1);
-		return trimmedText.substring(0, Math.min(trimmedText.length, trimmedText.lastIndexOf(" "))) + '...';
+		return trimmedText +  '...';
 	}
 }
 
@@ -270,4 +270,18 @@ function dataURItoBlob(dataURI) {
 		ia[i] = byteString.charCodeAt(i);
 	}
 	return new Blob([ia], {type:mimeString});
+}
+
+/* 
+ * Moves cursor to the end of the input box
+ */
+function moveCaretToEnd(el) {
+	if (typeof el.selectionStart == "number") {
+		el.selectionStart = el.selectionEnd = el.value.length;
+	} else if (typeof el.createTextRange != "undefined") {
+		el.focus();
+		var range = el.createTextRange();
+		range.collapse(false);
+		range.select();
+	}
 }

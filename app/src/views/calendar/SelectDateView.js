@@ -20,7 +20,7 @@ define(function(require, exports, module) {
 	function _createNavigation(date) {
 		var leftSurface = new Surface({
 			content: '<img src="content/images/left.png" />',	
-			size: [79, 74],
+			size: [50, 74],
 			properties: {
 				textAlign: 'center',
 				paddingTop: '24px',
@@ -29,7 +29,7 @@ define(function(require, exports, module) {
 		});
 
 		var leftModifier = new StateModifier({
-			transform: Transform.translate(-5, 0, window.App.zIndex.datePicker),
+			transform: Transform.translate(30, 0, window.App.zIndex.datePicker),
 		});
 		this.add(leftModifier).add(leftSurface);	
 
@@ -66,14 +66,14 @@ define(function(require, exports, module) {
 		this.add(dateModifier).add(dateSurface);
 
 		var rightModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth - 110, 0, window.App.zIndex.datePicker),
+			transform: Transform.translate(window.innerWidth - 150, 0, window.App.zIndex.datePicker),
 		});
 
 		var rightSurface = new Surface({
 			content: '<img src="content/images/right.png" />',	
-			size: [90, 74],
+			size: [50, 74],
 			properties: {
-				padding: '24px 29px'
+				padding: '24px 0px 24px 29px'
 			}
 		});
 		this.add(rightModifier).add(rightSurface);

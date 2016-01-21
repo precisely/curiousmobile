@@ -159,7 +159,7 @@ define(function(require, exports, module) {
 				textAlign: 'center',
 				paddingTop: '15px',
 				fontSize: '22px',
-				zIndex: 20
+				zIndex: 220
 			}
 		});
 

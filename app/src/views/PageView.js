@@ -77,7 +77,7 @@ define(function(require, exports, module) {
 			this.saveState();
 		}.bind(this));
 		App.coreEventHandler.on('app-resume', function() {
-			this.loadState();
+			this.getStateFromCache();
 		}.bind(this));
 	}
 
@@ -232,6 +232,11 @@ define(function(require, exports, module) {
 			view.pipe(this._eventOutput);
 			this.subViews.push(view);
 		}
+		return view;
+	};
+
+	PageView.prototype.getCachedPage = function(pageName) {
+		var view = this.pageMap[pageName];
 		return view;
 	};
 
