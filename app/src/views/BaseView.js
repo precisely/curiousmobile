@@ -53,7 +53,7 @@ define(function(require, exports, module) {
 		});
 
 		var layoutModifier = new Modifier({
-			size: [window.App.width, window.App.height],
+			size: [App.width, App.height],
 		});
 
 		this.add(layoutModifier).add(this.layout);
@@ -186,7 +186,7 @@ define(function(require, exports, module) {
 			transform: Transform.translate(0, 0, window.App.zIndex.footer)
 		});
 
-		var footerSurface = new Surface({
+		this.footerSurface = new Surface({
 			content: _.template(FooterTemplate, {activeMenu: this.options.activeMenu}, templateSettings),
 			classes: ['footer-surface'],
 			size: [undefined, 50],
@@ -197,7 +197,7 @@ define(function(require, exports, module) {
 			}
 		});
 
-		footerSurface.on('click', function(e) {
+		this.footerSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				console.log('footerSurface event');
 				var pageName = e.srcElement.getAttribute('data');
@@ -214,8 +214,14 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.addLayoutContent(footerModifier, footerSurface, this.layout.footer);
+		this.addLayoutContent(footerModifier, this.footerSurface, this.layout.footer);
 	}
+
+	BaseView.prototype.resetFooter = function() {
+		if (this.footerSurface) {
+			this.footerSurface.setContent(_.template(FooterTemplate, {activeMenu: this.options.activeMenu}, templateSettings));
+		}
+	};
 
 	function _setListeners() {}
 

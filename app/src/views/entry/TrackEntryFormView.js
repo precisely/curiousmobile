@@ -163,7 +163,7 @@ define(function(require, exports, module) {
 		this.isUpdating = false;
 		this.setRepeat = entry.isRepeat();
 		this.setRemind = entry.isRemind();
-		if (radioSelector || this.setRemind) {
+		if (radioSelector || this.setRepeat) {
 			this.isUpdating = true;
 			var setDate = function(entry) {
 				if (entry.get("repeatEnd")) {
@@ -181,13 +181,13 @@ define(function(require, exports, module) {
 					document.getElementById('confirm-each-repeat').checked = true;
 				}
 				setDate(entry);
-				if (this.setRemind) {
-					this.toggleSelector(this.remindSurface);
-				}
-				if (this.setRepeat) {
-					this.toggleSelector(this.repeatSurface);
-				}
 			}.bind(this));
+		}
+		if (this.setRemind) {
+			this.toggleSelector(this.remindSurface);
+		}
+		if (this.setRepeat) {
+			this.toggleSelector(this.repeatSurface);
 		}
 	};
 

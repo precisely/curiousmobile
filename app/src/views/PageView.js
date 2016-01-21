@@ -35,6 +35,7 @@ define(function(require, exports, module) {
 	var push = require('util/Push');
 	var store = require('store');
 	var User = require('models/User');
+	var Discussion = require('models/Discussion');
 
 
 	function PageView() {
@@ -73,11 +74,15 @@ define(function(require, exports, module) {
 
 		this.changePage(this.getCurrentPage(), { onLoad: true });
 
+		App.coreEventHandler.on('device-ready', function() {
+			Discussion.getNewNotificationCount();
+		}.bind(this));
 		App.coreEventHandler.on('app-paused', function() {
 			this.saveState();
 		}.bind(this));
 		App.coreEventHandler.on('app-resume', function() {
 			this.getStateFromCache();
+			Discussion.getNewNotificationCount();
 		}.bind(this));
 	}
 

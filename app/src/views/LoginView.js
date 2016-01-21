@@ -5,6 +5,7 @@ define(function(require, exports, module) {
 	var FastClick = require('famous/inputs/FastClick');
 	var LoginTemplate = require('text!templates/login.html');
 	var User = require('models/User');
+	var Discussion = require('models/Discussion');
 	var u = require('util/Utils');
 	var push = require('util/Push');
 
@@ -86,6 +87,9 @@ define(function(require, exports, module) {
 				function(user) {
 					window.App.currentUser = user;
 					console.log('LoginView: login success');
+					Discussion.getNewNotificationCount(function(data) {
+						App.setNotificationCount(data.totalNotificationCount);
+					});
 					App.pageView.changePage('TrackView', { new: true });
 					push.register();
 				}.bind(this)

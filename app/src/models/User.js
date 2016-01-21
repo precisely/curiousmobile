@@ -297,7 +297,7 @@ define(function(require, exports, module) {
 
 	User.hideExplanationCard = function(cardType, successCallback) {
 		var actionName = (cardType === 'curiosity') ? 'closeExplanationCardCuriosity' : 'closeExplanationCardTrackathon';
-		u.queueJSON('Closing explanation', '/api/user/action/' + actionName + '?' +
+		u.queueJSON('Closing explanation', App.serverUrl + '/api/user/action/' + actionName + '?' +
 			u.getCSRFPreventionURI('closeExplanationCardCSRF') + '&callback=?', null, function(data) {
 				if (checkData(data)) {
 					if (data.success) {

@@ -27,6 +27,7 @@
 
 		<!-- build:js(app/) src/polyfills.js -->
 		<script type="text/javascript" src="src/util/Base.js"></script>
+		<script type="text/javascript" src="src/util/App.js"></script>
 
 		<script type="text/javascript" src="lib/famous-polyfills/functionPrototypeBind.js"></script>
 		<script type="text/javascript" src="lib/famous-polyfills/classList.js"></script>
@@ -94,7 +95,14 @@
 				console.log('index.html:56 Device Ready');
 				StatusBar.hide();
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-
+				function refresh() {
+					if (!App || !App.coreEventHandler) {
+						setTimeout(refresh, 50);
+					} else {
+						App.coreEventHandler.emit('device-ready');
+					}
+				}
+				refresh();
 			}
 
 			function onAppResume() {

@@ -41,6 +41,45 @@ define(function(require, exports, module) {
 				});
 	};
 
+	Discussion.getNewNotificationCount = function(callback) {
+		u.queueJSON("Getting notifications count", u.makeGetUrl('getTotalNotificationsCount', 'search'),
+				function(data) {
+					if (u.checkData(data)) {
+						if (data.success) {
+							App.setNotificationCount(data.totalNotificationCount);
+							var currentView = App.pageView.getCurrentView();
+							if (currentView.resetNotificationCount) {
+								currentView.resetNotificationCount();
+							} else {
+								for (var i in App.pageView.pageMap) {
+									App.pageView.pageMap[i].resetFooter();
+								}
+							}
+							if (callback) {
+								callback(data);
+							}
+						}
+					}
+				});
+	}
+
+	Discussion.getNotifications = function(args, callback) {
+		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
+			max: Discussion.max,
+			offset: args.offset ? args.offset : 0,
+		});
+		u.queueJSON("Getting notifications", u.makeGetUrl('getSocialNotifications', 'search'),
+				u.makeGetArgs(argsToSend),
+				function(data) {
+					if (u.checkData(data)) {
+						if (data.success) {
+							App.setNotificationCount(0);
+						}
+						callback(data.listItems);
+					}
+				});
+	}
+
 	Discussion.fetchOwned = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getOwnedSocialData', {
 			max: Discussion.max,
