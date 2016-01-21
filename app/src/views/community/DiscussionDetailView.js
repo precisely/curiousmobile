@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 	var Transitionable = require('famous/transitions/Transitionable');
 	var FastClick = require('famous/inputs/FastClick');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var Modifier = require("famous/core/Modifier");
 	var u = require('util/Utils');
 	var Utility = require('famous/utilities/Utility');
 	var Scrollview = require('famous/views/Scrollview');
@@ -89,6 +90,8 @@ define(function(require, exports, module) {
 		console.log('DiscussionDetailView: loadDetails');
 		this.surfaceList = [];
 		this.scrollView.setPosition(0);
+		this.isCommentSelected = false;
+		this.commentBoxHeight = 0;
 		var transition = new Transitionable(Transform.translate(0, 75, App.zIndex.feedItem));
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(transition);
@@ -201,7 +204,7 @@ define(function(require, exports, module) {
 		this.addCommentSurface = this.getAddCommentSurface({});
 
 		if(discussionPost.discussionDetails.canWrite) {
-			this.surfaceList.push(this.addCommentSurface);
+			this.surfaceList.push(this.addCommentSurface.node);
 			this.addCommentSurface.pipe(this.scrollView);
 		}
 		this.showComments(discussionPost);
@@ -234,18 +237,37 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		addCommentSurface.on('keyup', function() {
-			this.resizeCommentSurface();
+			this.resizeCommentSurface(addCommentSurface);
 			this.setScrollViewPosition();
 		}.bind(this));
+
+		addCommentSurface.state = new Modifier();
+
+		addCommentSurface.trans = new Transitionable(60);
+
+		addCommentSurface.state.sizeFrom(function(){
+			return [undefined, this.trans.get()];
+		}.bind(addCommentSurface));
+
+		addCommentSurface.node = new RenderNode();
+
+		addCommentSurface.node.add(addCommentSurface.state).add(addCommentSurface);
+		this.initialHeight = 50;
+
 		return addCommentSurface;
 	};
 
-	DiscussionDetailView.prototype.resizeCommentSurface = function() {
+	DiscussionDetailView.prototype.resizeCommentSurface = function(addCommentSurface, setInitialHeight) {
 		// Auto expanding height of the textarea if text overflowes
 		setTimeout(function() {
 			var commentBox = document.getElementById('message');
 			commentBox.style.cssText = 'height:auto;';
 			commentBox.style.cssText = 'height:' + commentBox.scrollHeight + 'px';
+			this.addCommentSurface.trans.halt();
+			addCommentSurface.trans.set(commentBox.scrollHeight + 20);
+			if (setInitialHeight) {
+				this.initialHeight = commentBox.scrollHeight + 20;
+			}
 		}.bind(this), 0);
 	};
 
@@ -253,10 +275,8 @@ define(function(require, exports, module) {
 		if (typeof this.commentScrollPosition !== 'undefined') {
 			var commentBox = document.getElementById('message');
 			var boxHeight = commentBox.offsetHeight;
-			var overflowingHeight = boxHeight - 50;
-			if (overflowingHeight > 0) {
-				this.scrollView.setPosition(this.commentScrollPosition + overflowingHeight);
-			}
+			var overflowingHeight = boxHeight - this.initialHeight;
+			this.scrollView.setPosition(this.commentScrollPosition + overflowingHeight);
 		}
 	};
 
@@ -339,9 +359,11 @@ define(function(require, exports, module) {
 						this.discussionView.selectionIndex = this.discussionView.surfaceList.indexOf(commentSurface);
 						this.discussionView.surfaceList.splice(this.discussionView.surfaceList.indexOf(this.discussionView.addCommentSurface), 1);
 						post.message = post.message.replace(/<br.*?>/g, '\n');
-						this.discussionView.surfaceList.splice(this.discussionView.selectionIndex, 1, this.discussionView.getAddCommentSurface(post, this.discussionView.selectionIndex));
+						var editCommentSurface = this.discussionView.getAddCommentSurface(post, this.discussionView.selectionIndex);
+						this.discussionView.surfaceList.splice(this.discussionView.selectionIndex, 1, editCommentSurface.node);
+						editCommentSurface.pipe(this.discussionView.scrollView);
 						setTimeout(function() {
-							this.discussionView.resizeCommentSurface();
+							this.discussionView.resizeCommentSurface(editCommentSurface, true, true);
 							this.discussionView.commentScrollPosition = this.discussionView.scrollView.getPosition();
 							moveCaretToEnd(document.getElementById('message'));
 						}.bind(this), 50);
@@ -388,6 +410,8 @@ define(function(require, exports, module) {
 		this.surfaceList.splice(this.selectionIndex, 1, this.selectedCommentSurface);
 		this.surfaceList.push(this.addCommentSurface);
 		this.isCommentSelected = false;
+		this.commentBoxHeight = 0;
+		this.initialHeight = 50;
 	}
 
 	App.pages[DiscussionDetailView.name] = DiscussionDetailView;
