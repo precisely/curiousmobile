@@ -15,7 +15,7 @@ define(function(require, exports, module) {
 	};
 
 	queuePostJSON = function(description, url, args, successCallback, failCallback, delay) {
-		u.queuePostJSON(description, url, args, successCallback, failCallback, delay);
+		u.queuePostJSON(description, url, u.getCSRFPreventionObject(null, args), successCallback, failCallback, delay);
 	};
 
 	queueJSON = function(description, url, args, successCallback, failCallback, delay, post, background) {
