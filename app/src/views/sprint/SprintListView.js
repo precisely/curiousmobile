@@ -90,6 +90,7 @@ define(function(require, exports, module) {
 
 		// Adding navigation pills below header
 		navPills.push(this.createPillsSurface('ALL', true));
+		navPills.push(this.createPillsSurface('STARTED'));
 		navPills.push(this.createPillsSurface('OWNED'));
 
 		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
@@ -175,6 +176,8 @@ define(function(require, exports, module) {
 			Sprint.fetch(params, this.addListItemsToScrollView.bind(this));
 		} else if (lable === 'OWNED') {
 			Sprint.fetchOwned(params, this.addListItemsToScrollView.bind(this));
+		} else if (lable === 'STARTED') {
+			Sprint.fetchStarted(params, this.addListItemsToScrollView.bind(this));
 		}
 	};
 

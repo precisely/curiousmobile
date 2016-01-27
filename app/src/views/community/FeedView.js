@@ -265,7 +265,7 @@ define(function(require, exports, module) {
 				this.deck.splice(0, 1, notFoundSurface);
 				notFoundSurface.pipe(this.scrollView);
 
-				if (this.showExplanationCard) {
+				if (this.showExplanationCard && this.currentPill !== 'STARTED') {
 					this.showExplanationCard();
 				}
 			}

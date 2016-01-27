@@ -52,6 +52,19 @@ define(function(require, exports, module) {
 				});
 	};
 
+	Sprint.fetchStarted = function(args, callback) {
+		var argsToSend = u.getCSRFPreventionObject('getStartedSprintData', {
+			max : Sprint.max,
+			offset: args.offset ? args.offset : 0,
+		});
+		u.queueJSON('loading feeds', u.makeGetUrl('getStartedSprintData', 'search'),
+				u.makeGetArgs(argsToSend), function(data) {
+					if (u.checkData(data)) {
+						callback(data.listItems);
+					}
+				});
+	};
+
 	Sprint.show = function(hash, successCallback, failCallback) {
 		u.queueJSON('Getting trackathon data', App.serverUrl + '/api/sprint/' + hash + '?callback=?',
 			u.getCSRFPreventionObject('getSprintData'),
