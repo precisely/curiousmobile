@@ -305,9 +305,9 @@ define(function(require, exports, module) {
 		this.navPills.splice(0, this.navPills.length);
 		// Adding navigation pills below header
 		this.navPills.push(this.createPillsSurface('ALL', true));
+		this.navPills.push(this.createPillsSurface('NOTIFICATIONS'));
 		this.navPills.push(this.createPillsSurface('PEOPLE'));
 		this.navPills.push(this.createPillsSurface('DISCUSSIONS'));
-		this.navPills.push(this.createPillsSurface('NOTIFICATIONS'));
 		this.navPills.push(this.createPillsSurface('OWNED'));
 	};
 

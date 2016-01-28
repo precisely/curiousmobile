@@ -253,6 +253,9 @@ define(function(require, exports, module) {
 		if (parent && (!state || (state && !state.goBackToHistory))) {
 			backTo = parent;
 		}
+		if (backTo === 'EditProfileView') {
+			backTo = 'FeedView';
+		}
 		this.changePage(backTo, state);
 	};
 

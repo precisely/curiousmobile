@@ -175,8 +175,10 @@ define(function(require, exports, module) {
 			daySurface.parent = this;
 
 			daySurface.on('click', function($event) {
-				console.log("daySurface event");
-				this.parent._eventOutput.emit('select-date', this.boundDate);
+				if ($event instanceof CustomEvent) {
+					console.log("daySurface event");
+					this.parent._eventOutput.emit('select-date', this.boundDate);
+				}
 			});
 
 			this.daySurfaces.push(daySurface);
@@ -219,7 +221,6 @@ define(function(require, exports, module) {
 			};
 		}.bind(this));
 
-		// TODO add the today button
 		// Last render controller for the today button	
 		this.todayButton = new Surface({
 			content: 'Today',
@@ -227,11 +228,13 @@ define(function(require, exports, module) {
 			properties: this.options.controlButtonProperties
 		});
 
-		this.todayButton.on('click', function() {
-			console.log("today botton clicked!");
-			var today = new Date();
-			this.changeMonth(today)
-			this._eventOutput.emit('select-date', today);
+		this.todayButton.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				console.log("today botton clicked!");
+				var today = new Date();
+				this.changeMonth(today)
+				this._eventOutput.emit('select-date', today);
+			}
 		}.bind(this));
 		this.todayController = new RenderController();
 
