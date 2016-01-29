@@ -3226,3 +3226,7 @@ input.cropit-image-zoom-input {
 .feed-pill .badge {
 	margin-left: 5px;
 }
+
+.flot-tick-label {
+	font-size: 9px;
+}

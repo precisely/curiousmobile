@@ -230,6 +230,26 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		}
 		return plotDataStr;
 	}
+	this.saveSnapshot = function() {
+		var first = true;
+		var plotDataStr = this.storeSnapshot();
+		if (plotDataStr == null) {
+			this.showAlert("No plotted data to save");
+			return;
+		}
+		var plot = this;
+
+		this.queuePostJSON("sharing graph", this.makePostUrl("saveSnapshotData"), { name: this.getName() + ' (snapshot)', snapshotData: plotDataStr },
+				function(data) {
+					if (this.checkData(data, '', "Error while saving snapshot")) {
+						if (data.success) {
+							window.location = this.makePlainUrl('social#discussions/' + data.discussionHash);
+						} else {
+							this.showAlert(data.message);
+						}
+					}
+				});
+	}
 	this.load = function(plotData) {
 		$(document).trigger(beforeLinePlotEvent);
 		var version = plotData.version;
@@ -354,7 +374,7 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		if (plotLine.showYAxis) {
 			plotLine.activate();
 		}
-
+		
 		return plotLine;
 	}
 
@@ -459,18 +479,16 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 				this.showAlert("Error while loading");
 		});
 	}
-	this.loadSnapshotId = function(id, discussionHash) {
+	this.loadSnapshotId = function(id) {
 		var plot = this;
-		this.queueJSON("loading graph", this.makeGetUrl("loadSnapshotDataId"),
-				this.makeGetArgs({id: id, discussionHash: discussionHash}),
-			function(plotData) {
-				if (this.checkData(plotData)) {
-					plot.loadSnapshot(plotData);
-				} else {
-					this.showAlert("Error while loading");
-					window.location = '/home/index';
-				}
-			});
+		this.queueJSON("loading graph", this.makeGetUrl("loadSnapshotDataId"), this.makeGetArgs({ id:id }), function(plotData) {
+			if (this.checkData(plotData)) {
+				plot.loadSnapshot(plotData);
+			} else {
+				this.showAlert("Error while loading");
+				window.location = '/home/index';
+			}
+		});
 	}
 	this.loadAllData = function() {
 		// redraw left nav
@@ -511,7 +529,7 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 	this.log2 = Math.log(2);
 	this.refreshLinearSliders = function() {
 		this.linearSliders = this.getLinearSliderValues();
-
+		
 		var daysWidth = (this.linearSliders[1] - this.linearSliders[0]) / 86400000;
 		if (daysWidth == 0) {
 			this.rezeroWidth = 0;
@@ -519,7 +537,7 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		}
 		var canonicalWidth = Math.pow(2, Math.floor(Math.log(daysWidth) / this.log2));
 		this.rezeroWidth = (canonicalWidth / 15) * 86400000;
-
+		
 		return this.rezeroWidth;
 	}
 	// redraw plot but don't recompute it, only change min/max if needed
@@ -536,7 +554,7 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 			this.plotOptions['xaxis']['min'] = sliders[0];
 			this.plotOptions['xaxis']['max'] = sliders[1];
 			var span = sliders[1] - sliders[0];
-			this.plotOptions['xaxis']['timeformat'] = span < 172800000 ? '%l%p' : (span > 432000000 ? '%m/%d' : '%m/%d %l%p');
+			this.plotOptions['xaxis']['timeformat'] = span < 172800000 ? '%h%p' : (span > 432000000 ? '%m/%d' : '%m/%d %h%p');
 		}
 
 		this.drawPlot();
@@ -546,7 +564,7 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 	}
 	this.refreshPlot = function() {
 		var minTime = undefined, maxTime = undefined;
-
+		
 		for (var i in this.lines) {
 			var line = this.lines[i];
 
@@ -554,7 +572,7 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 				continue;
 
 			line.calculateMinMaxTime();
-
+			
 			if (minTime == undefined || line.minTime < minTime) minTime = line.minTime;
 			if (maxTime == undefined || line.maxTime > maxTime) maxTime = line.maxTime;
 		}
@@ -563,9 +581,9 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		this.maxTime = maxTime;
 
 		this.refreshLinearSliders();
-
+		
 		var sliders = this.linearSliders;
-
+		
 		for (var i in this.lines) {
 			var line = this.lines[i];
 
@@ -576,7 +594,7 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 			}
 			line.postprocessEntries();
 		}
-
+		
 		if (arrayEmpty(this.lines)) {
 			// no more plot lines, remove graph
 			this.plotArea.html('');
@@ -650,7 +668,7 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 		for (i in this.lines) {
 			var line = this.lines[i];
 			if (line.isHidden()) continue;
-
+			
 			var pData = line.plotData;
 			/* changed to no legend
 			 if (pData != null) {
@@ -723,8 +741,8 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 				},
 				xaxis: {
 					mode: 'time',
-					timeformat: span < 172800000 ? '%l:%M%p' : (span > 432000000 ? '%m/%d' : '%m/%d %l%p'),
-					timezone: 'browser',
+					timeformat: span < 172800000 ? '%h%p' : (span > 432000000 ? '%m/%d' : '%m/%d %h%p'),
+					browsertimezone: true,
 					min: sliders[0],
 					max: sliders[1]
 				},
@@ -911,14 +929,14 @@ function Plot(tagList, userId, userName, plotAreaDivId, store, interactive, prop
 				plotLine.setSmoothDataWidth(1, true);
 			}
 		}
-
+		
 		var plot = this;
-
+		
 		initialTag.fetchAll(function() {
 			plotLine.loadPlotData();
-
+			
 			plot.refreshName();
-
+			
 			plot.store();
 			$(document).trigger(afterLinePlotEvent, [initialTag]);
 		});
@@ -1146,11 +1164,11 @@ function PlotLine(p) {
 	}
 	this.getSaveData = function() {
 		var data = {name:this.name,color:this.color,sumData:this.sumData,
-			tag:this.tag,showYAxis:this.showYAxis,hidden:this.hidden,showLines:this.showLines,isCycle:this.isCycle,
-			isContinuous:this.isContinuous,isFreqLineFlag:this.isFreqLineFlag,showPoints:this.showPoints,fill:this.fill,smoothDataWidth:this.smoothDataWidth,
-			freqDataWidth:this.freqDataWidth,parentLineName:this.parentLine?this.parentLine.name:'',flatten:this.flatten,smoothData:this.smoothLine&&this.smoothDataWidth>0?true:false,
-			freqData:this.freqLine&&this.freqDataWidth>0?true:false,
-			min:this.minSeriesVal,max:this.maxSeriesVal,unitGroupId:this.unitGroupId,valueScale:this.valueScale};
+				tag:this.tag,showYAxis:this.showYAxis,hidden:this.hidden,showLines:this.showLines,isCycle:this.isCycle,
+				isContinuous:this.isContinuous,isFreqLineFlag:this.isFreqLineFlag,showPoints:this.showPoints,fill:this.fill,smoothDataWidth:this.smoothDataWidth,
+				freqDataWidth:this.freqDataWidth,parentLineName:this.parentLine?this.parentLine.name:'',flatten:this.flatten,smoothData:this.smoothLine&&this.smoothDataWidth>0?true:false,
+				freqData:this.freqLine&&this.freqDataWidth>0?true:false,
+				min:this.minSeriesVal,max:this.maxSeriesVal,unitGroupId:this.unitGroupId,valueScale:this.valueScale};
 
 		if (this.minRange != undefined) data.minRange = this.minRange;
 		if (this.maxRange != undefined) data.maxRange = this.maxRange;
@@ -1365,24 +1383,24 @@ function PlotLine(p) {
 		var tagsDebug = this.getTags();
 
 		queuePostJSON("loading graph data", makeGetUrl(method), getCSRFPreventionObject(method + "CSRF", {tags: $.toJSON(this.getTags()),
-					startDate:startDate == null ? "" : startDate.toUTCString(),
-					endDate:endDate == null ? "" : endDate.toUTCString(),
-					timeZoneName:timeZoneName }),
-				function(plotDesc){
-					if (this.checkData(plotDesc)) {
-						plotLine.loadEntries(plotDesc);
-						if (plotLine.smoothLine && plotLine.smoothDataWidth > 0 && plot.interactive)
-							plotLine.smoothLine.entries = undefined;
-						if (plotLine.freqLine && plotLine.freqDataWidth > 0 && plot.interactive)
-							plotLine.freqLine.entries = undefined;
-						plot.removePendingLoad();
-						if (plotLine.postLoadClosure) {
-							var postLoadClosure = plotLine.postLoadClosure;
-							plotLine.postLoadClosure = null;
-							window.setTimeout(postLoadClosure, 0);
-						}
+				startDate:startDate == null ? "" : startDate.toUTCString(),
+				endDate:endDate == null ? "" : endDate.toUTCString(),
+				timeZoneName:timeZoneName }),
+			function(plotDesc){
+				if (this.checkData(plotDesc)) {
+					plotLine.loadEntries(plotDesc);
+					if (plotLine.smoothLine && plotLine.smoothDataWidth > 0 && plot.interactive)
+						plotLine.smoothLine.entries = undefined;
+					if (plotLine.freqLine && plotLine.freqDataWidth > 0 && plot.interactive)
+						plotLine.freqLine.entries = undefined;
+					plot.removePendingLoad();
+					if (plotLine.postLoadClosure) {
+						var postLoadClosure = plotLine.postLoadClosure;
+						plotLine.postLoadClosure = null;
+						window.setTimeout(postLoadClosure, 0);
 					}
-				});
+				}
+			});
 	}
 
 	this.calculateSmoothEntries = function() {
@@ -1394,21 +1412,21 @@ function PlotLine(p) {
 									// been loaded yet
 
 		if (parentEntries.length < 1) return; // don't calculate if parent line has no data
-
+		
 		if (parentEntries.length == 1) {
 			this.entries = parentEntries;
 			return;
 		}
-
+		
 		var data = [];
-
+		
 		var minTime = parentEntries[0][0].getTime()
 		var maxTime = parentEntries[parentEntries.length - 1][0].getTime()
 		var deltaT = maxTime - minTime;
-
+		
 		var lastTime;
 		var lastValues = [];
-
+		
 		for (var i = 0; i < parentEntries.length; ++i) {
 			var entry = parentEntries[i];
 			var time = entry[0].getTime();
@@ -1417,7 +1435,7 @@ function PlotLine(p) {
 				continue; // same data point in a row blows up LOESS algorithm
 			}
 			data.push([time, value]);
-
+			
 			if (time != lastTime) {
 				lastValues = [];
 			}
@@ -1427,49 +1445,49 @@ function PlotLine(p) {
 
 		// loess smoothing
 		var smoothWidth = this.parentLine.smoothDataWidth;
-
+		
 		var bandwidth = 0.25 + 0.75 * (smoothWidth - 1) / 29;
-
+		
 		var results = loess_pairs(data, bandwidth);
 
 		// Generate LOESS interpolation
 		data = [];
-
+		
 		for (i = 0; i < results.length; i++) {
 			data.push([results[i][0], results[i][1]]);
 		}
 
 		/*var entries = [];
-
-		 for (i = 0; i < results.length; i++) {
-		 entries.push([new Date(results[i][0]), results[i][1]]);
-		 }
-		 this.entries = entries;
-		 return;*/
-
+		
+		for (i = 0; i < results.length; i++) {
+			entries.push([new Date(results[i][0]), results[i][1]]);
+		}
+		this.entries = entries;
+		return;*/
+		
 		// smooth with linear interpolation
-
+		
 		var smoothed = Smooth(data, {
-			method: 'linear',
+		    method: 'linear',
 		});
-
+		
 		var dataLen = data.length;
-
+		
 		data = [];
-
+		
 		for (i = 0.0; i <= dataLen - 1.0; i += 0.2) {
 			var item = smoothed(i);
-
+			
 			data.push([item[0], item[1]]);
 		}
-
+		
 		// take moving average
-
+		
 		var movingAverage = function(data, r, third, fourth) {
 			var dataLen = data.length;
-
+			
 			var results = [];
-
+			
 			for (var i = 0; i < dataLen; ++i) {
 				var w = 0;
 				var sum = 0;
@@ -1481,10 +1499,10 @@ function PlotLine(p) {
 				}
 				results.push([new Date(data[i][0]), sum / w, third, fourth]);
 			}
-
+			
 			return results;
 		};
-
+		
 		var entries = movingAverage(data, 10, lineName, 0);
 		this.entries = entries;
 	}
@@ -1729,7 +1747,7 @@ function PlotLine(p) {
 	}
 	this.calculateMinMaxTime = function() {
 		var entries = this.entries;
-
+		
 		var minTime = undefined;
 		var maxTime = undefined;
 
@@ -1748,9 +1766,9 @@ function PlotLine(p) {
 	}
 	this.postprocessEntries = function() {
 		if (!this.entries) return;
-
+		
 		var d1Data = [];
-
+		
 		var entries = this.entries;
 
 		var plotLine = this;
@@ -1764,7 +1782,7 @@ function PlotLine(p) {
 
 		var lastTime = 0;
 		var lastVal = undefined;
-
+		
 		var rezeroWidth = this.plot.rezeroWidth;
 
 		for (var i = 0; i < entries.length; ++i) {
