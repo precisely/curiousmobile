@@ -245,7 +245,7 @@ define(function(require, exports, module) {
 						this.plottedTags.splice(this.plottedTags.indexOf(tag), 1);
 						var currentView = App.pageView.getCurrentView();
 						currentView.tagsToPlot.splice(currentView.tagsToPlot.indexOf(tag), 1)
-						this.pillsView.pillsScrollView.setPosition(0);
+						this.pillsView.pillsScrollView.sequenceFrom(this.pillsSurfaceList);
 					}
 				}
 			}.bind(this));
