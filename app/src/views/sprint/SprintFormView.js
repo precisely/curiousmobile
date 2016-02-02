@@ -78,9 +78,11 @@ define(function(require, exports, module) {
 				content: _.template(SprintEditTemplate, sprintDetails, templateSettings),
 			});
 
-			this.sprintSurface.on('keydown', function(e) {
-				if (cordova && e.keyCode == 13 && e.srcElement.id !== 'sprint-description') {
+			this.sprintSurface.on('keyup', function(e) {
+				if (e.keyCode === 13 && e.srcElement.id !== 'sprint-description') {
 					cordova.plugins.Keyboard.close();
+				} if (e.srcElement.id === 'sprint-description') {
+					this.resizeDescreption();	
 				}
 			}.bind(this));
 
@@ -108,6 +110,9 @@ define(function(require, exports, module) {
 						});
 					} else if (e.srcElement.tagName == 'INPUT' || e.srcElement.tagName == 'TEXTAREA') {
 						e.srcElement.focus();
+						if (e.srcElement.id === 'sprint-description') {
+							this.resizeDescreption();
+						}
 					} else if (_.contains(classList, 'add-tags') || _.contains(e.srcElement.parentElement.classList, 'add-tags')) {
 						if (typeof cordova !== 'undefined') {
 							cordova.plugins.Keyboard.close();
@@ -143,6 +148,15 @@ define(function(require, exports, module) {
 			}
 			document.getElementsByClassName('tags-wrapper')[0].innerHTML += entryItem;
 		}
+	};
+
+	SprintFormView.prototype.resizeDescreption = function() {
+		// Auto expanding height of the textarea if text overflowes
+		setTimeout(function() {
+			var commentBox = document.getElementById('sprint-description');
+			commentBox.style.cssText = 'height:auto;';
+			commentBox.style.cssText = 'height:' + commentBox.scrollHeight + 'px';
+		}.bind(this), 0);
 	};
 
 	SprintFormView.prototype.killAddSprintParticipantsOverlay = function(participant) {
