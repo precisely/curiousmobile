@@ -183,7 +183,7 @@ define(function(require, exports, module) {
 					this.postComment();
 				} else if (_.contains(classList, 'share-button') || _.contains(e.srcElement.parentElement.classList, 'share-button')) {
 					if (window.plugins) {
-						window.plugins.socialsharing.share(null, 'Curious Discussions', null, App.serverUrl + '/home/social/discussion/' + this.discussionHash);
+						window.plugins.socialsharing.share(null, 'Curious Discussions', null, App.serverUrl + '/home/social/discussions/' + this.discussionHash);
 					}
 				} else if (_.contains(classList, 'view-more-comments')) {
 					this.loadItems();
