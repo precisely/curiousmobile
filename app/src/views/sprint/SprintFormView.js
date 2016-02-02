@@ -79,7 +79,7 @@ define(function(require, exports, module) {
 			});
 
 			this.sprintSurface.on('keydown', function(e) {
-				if (cordova && e.keyCode == 13) {
+				if (cordova && e.keyCode == 13 && e.srcElement.id !== 'sprint-description') {
 					cordova.plugins.Keyboard.close();
 				}
 			}.bind(this));

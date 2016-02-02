@@ -1263,6 +1263,11 @@ button.close {
 	margin: 0 20px;
 }
 
+.post-comment .input-group {
+	border-spacing: 10px 0px;
+	margin: 0px -10px;
+}
+
 .comment-form img {
 	margin-top: 8px;
 }
@@ -1278,6 +1283,7 @@ button.close {
 	resize: none;
 	overflow: hidden;
 	font-size: 12px;
+	box-shadow: none;
 }
 
 .discussion-comment .posting-time {
@@ -3229,4 +3235,20 @@ input.cropit-image-zoom-input {
 
 .flot-tick-label {
 	font-size: 9px;
+}
+
+.discussion-comment-message {
+	font-size: 12px;
+	margin: 15px 0px 10px 35px;
+}
+
+#post-comment-button {
+	border: none;
+	background: transparent;
+	border-radius: 2px;
+	border: 1px solid #979797;
+}
+
+.invisible {
+	display: none;
 }

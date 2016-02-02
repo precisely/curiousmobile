@@ -219,20 +219,24 @@ define(function(require, exports, module) {
 				}
 		});
 
-		addCommentSurface.on('keydown', function(e) {
-			if (e.keyCode == 13 && !e.shiftKey) {
-				this.postComment();
-				e.preventDefault();
-				e.stopPropagation()
-			}
-		}.bind(this));
+		addCommentSurface.on('deploy', function(e) {
+			document.getElementById('message').onblur = function() {
+				document.getElementById('add-comment-avatar').classList.remove('invisible');
+			}.bind(this);
+		});
 
 		addCommentSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				this.commentScrollPosition = this.scrollView.getPosition();
-				setTimeout(function() {
-					this.setScrollViewPosition();
-				}.bind(this), 50)
+				if (e.srcElement.id === 'post-comment-button') {
+					document.getElementById('add-comment-avatar').classList.remove('invisible');
+					this.postComment();
+				} else {
+					document.getElementById('add-comment-avatar').classList.add('invisible');
+					this.commentScrollPosition = this.scrollView.getPosition();
+					setTimeout(function() {
+						this.setScrollViewPosition();
+					}.bind(this), 50)
+				}
 			}
 		}.bind(this));
 
@@ -314,6 +318,7 @@ define(function(require, exports, module) {
 		post.prettyDate = u.prettyDate(new Date(post.updated));
 		post.isAdmin = post.authorUserId == User.getCurrentUserId();
 		if (post.message) {
+			post.message = u.parseNewLine(post.message);
 			var commentSurface = new Surface({
 				size: [undefined, true],
 				content: _.template(commentTemplate, post, templateSettings),
@@ -358,7 +363,7 @@ define(function(require, exports, module) {
 						this.discussionView.selectedCommentSurface = commentSurface;
 						this.discussionView.selectionIndex = this.discussionView.surfaceList.indexOf(commentSurface);
 						this.discussionView.surfaceList.splice(this.discussionView.surfaceList.indexOf(this.discussionView.addCommentSurface), 1);
-						post.message = post.message.replace(/<br.*?>/g, '\n');
+						post.message = u.parseDivToNewLine(post.message);
 						var editCommentSurface = this.discussionView.getAddCommentSurface(post, this.discussionView.selectionIndex);
 						this.discussionView.surfaceList.splice(this.discussionView.selectionIndex, 1, editCommentSurface.node);
 						editCommentSurface.pipe(this.discussionView.scrollView);
@@ -388,7 +393,10 @@ define(function(require, exports, module) {
 	DiscussionDetailView.prototype.postComment = function() {
 		var messageBox = document.getElementById('message');
 		// Formatting carriage returns to new line
-		var message = messageBox.value.replace(/(\r\n|\n|\r)/g,"<br/>");
+		var message = messageBox.value;
+		if (!message) {
+			return;
+		}
 		var postId = messageBox.dataset.postId;
 		var currentCommentIndex = messageBox.dataset.commentIndex;
 		if (!postId) {

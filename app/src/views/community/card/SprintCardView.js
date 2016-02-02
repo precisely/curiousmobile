@@ -27,6 +27,7 @@ define(function(require, exports, module) {
 	};
 
 	function createCard() {
+		this.sprint.description = u.parseNewLine(this.sprint.description);
 		this.cardSurface = new Surface({
 			size: [undefined, true],
 			content: _.template(SprintTemplate, this.sprint, templateSettings),

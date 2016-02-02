@@ -546,9 +546,26 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			return strTime;
 		}
 
+		Utils.parseNewLine = function(text) {
+			var lines = text.split("\n");
+			var parsedText = '';
+			_.each(lines, function(line) {
+				if (line) {
+					parsedText += '<div>' + line + '</div>'
+				}
+			});
+			return parsedText || text;
+		}
+
+		Utils.parseDivToNewLine = function(text) {
+			var parsedText = text.replace(/<div>/g, '').replace(/<\/div>/g, "\n");
+			return parsedText;
+		}
+
 		Utils.isAndroid = function() {
 			return device.platform == 'android' || device.platform == 'Android';
 		}
+
 		var device = {};
 		if (/iPhone|iPod|iPad/i.test(navigator.userAgent)) {
 			device.platform = "ios"

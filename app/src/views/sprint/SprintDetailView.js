@@ -94,6 +94,7 @@ define(function (require, exports, module) {
 			if (!this.name) {
 				this.name = sprintDetails.sprint.name;
 			}
+			sprintDetails.sprint.description = u.parseNewLine(sprintDetails.sprint.description);
 			sprintDetails.isFormView = false;
 			var sprintSurface = new Surface({
 				size: [undefined, undefined],
