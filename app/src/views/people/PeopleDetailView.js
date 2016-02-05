@@ -99,6 +99,28 @@ define(function(require, exports, module) {
 							hash: this.hash
 						};
 						App.pageView.changePage('EditProfileView', state);
+					} else if (_.contains(classList, 'link-withings')) {
+						cordova.InAppBrowser.open(App.serverUrl + '/home/registerwithings?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+					} else if (_.contains(classList, 'link-moves')) {
+						cordova.InAppBrowser.open(App.serverUrl + '/home/registermoves?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+					} else if (_.contains(classList, 'link-fitbit')) {
+						cordova.InAppBrowser.open(App.serverUrl + '/home/registerfitbit?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+					} else if (_.contains(classList, 'link-jawbone')) {
+						cordova.InAppBrowser.open(App.serverUrl + '/home/registerjawbone?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+					} else if (_.contains(classList, 'link-twenty3andMe')) {
+						cordova.InAppBrowser.open(App.serverUrl + '/home/register23andme?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+					} else if (_.contains(classList, 'unlink-moves')) {
+						cordova.InAppBrowser.open(App.serverUrl + '/home/unregistermoves?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+					} else if (_.contains(classList, 'unlink-withings')) {
+						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterwithings?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+					} else if (_.contains(classList, 'unlink-fitbit')) {
+						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterfitbit?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+					} else if (_.contains(classList, 'unlink-jawbone')) {
+						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterjawbone?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+					} else if (_.contains(classList, 'link-oura')) {
+						cordova.InAppBrowser.open(App.serverUrl + '/home/registerOura?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+					} else if (_.contains(classList, 'unlink-oura')) {
+						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterOura?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
 					}
 				}
 			}.bind(this));

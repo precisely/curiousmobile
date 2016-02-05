@@ -74,7 +74,8 @@
 					if (responseParameters['message']) {
 						message = decodeURIComponent(responseParameters['message'])
 					}
-					App.pageView.changePage('EditProfileView', {
+					var currentView = App.pageView.getCurrentPage();
+					App.pageView.changePage(currentView, {
 						hash: responseParameters['hash'],
 						message: message
 					});
