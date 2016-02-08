@@ -1481,6 +1481,10 @@ button.close {
 	.help-wizard h4 {
 		margin-top: 0px !important;
 	}
+
+	.flot-tick-label {
+		font-size: 8px !important;
+	}
 }
 
 .help-wizard {

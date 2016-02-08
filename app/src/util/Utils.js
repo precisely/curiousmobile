@@ -562,6 +562,23 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			return parsedText;
 		}
 
+		Utils.oauththirdparty = function(actionName, callback) {
+			u.oauthWindow = window.open(App.serverUrl + '/home/' + actionName + '?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_blank');
+			u.oauthWindow.addEventListener('loadstart', u.checkAuthentication);
+		}
+
+		Utils.checkAuthentication = function(e) {
+			var successIndex = e.url.indexOf('success=true');
+			var failureIndex = e.url.indexOf('success=false');
+			if (successIndex >= 0 || failureIndex >= 0) {
+				u.oauthWindow.removeEventListener('loadstart', u.checkAuthentication);
+				u.oauthWindow.close();
+				App.pageView.getCurrentView().showProfile();
+				var message = decodeURI(e.url.split("message=")[1]);
+				u.showAlert(message);
+			}
+		}
+
 		Utils.isAndroid = function() {
 			return device.platform == 'android' || device.platform == 'Android';
 		}

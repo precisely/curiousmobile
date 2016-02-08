@@ -369,6 +369,7 @@ define(function(require, exports, module) {
 						editCommentSurface.pipe(this.discussionView.scrollView);
 						setTimeout(function() {
 							this.discussionView.resizeCommentSurface(editCommentSurface, true, true);
+							document.getElementById('add-comment-avatar').classList.add('invisible');
 							this.discussionView.commentScrollPosition = this.discussionView.scrollView.getPosition();
 							moveCaretToEnd(document.getElementById('message'));
 						}.bind(this), 50);

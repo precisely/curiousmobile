@@ -75,7 +75,13 @@ define(function(require, exports, module, store) {
 			return false;
 		}
 		this.hash = state.hash;
-		this.showUserDetailsForm();
+		this.showProfile(
+			function() {
+				if (state.lastDraggedPosition) {
+					this.draggableView.setPosition([0, state.lastDraggedPosition, 0])
+				}
+			}.bind(this)
+		);
 		if (state.message) {
 			u.showAlert(state.message);
 		}
@@ -95,14 +101,22 @@ define(function(require, exports, module, store) {
 	};
 
 	EditProfileView.prototype.killInterestTagsForm = function(state) {
+	this.addInterestTagView.clearForm();
 		BaseView.prototype.killOverlayContent.call(this);
 		console.log("overlay killed");
 		this.showMenuButton();
 		this.showBackButton();
 		this.setHeaderLabel('EDIT PROFILE', '#fff');
+		state = state || this.getCurrentState();
+		state.lastDraggedPosition = this.draggableView.getPosition()[1];
 		this.preShow(state);
 	}
 
+	EditProfileView.prototype.getCurrentState = function (argument) {
+		return {
+			hash: this.hash
+		}
+	}
 	EditProfileView.prototype.showProfileUpdateForm = function() {
 		this.showBackButton();
 		this.setHeaderLabel('');
@@ -112,7 +126,7 @@ define(function(require, exports, module, store) {
 		}.bind(this.UpdateAvatarView));
 	}
 
-	EditProfileView.prototype.showUserDetailsForm = function() {
+	EditProfileView.prototype.showProfile = function( callback) {
 		User.show(this.hash, function(peopleDetails) {
 			peopleDetails.user.userID = User.getCurrentUserId();
 
@@ -172,37 +186,30 @@ define(function(require, exports, module, store) {
 					this.editPeopleSurface = editPeopleSurface;
 					if (_.contains(classList, 'new-tag')) {
 						this.showAddInterestTagForm();
-					} else if (_.contains(classList, 'delete-tag')) {
-						var tagName = $('#tagName').serializeObject();
-						var userHash = peopleDetails.user.hash;
-						User.addInterestTags(tagName, userHash, function (state) {
-							App.pages.EditProfileView.prototype.killOverlayContent();
-							App.pageView.changePage('EditProfileView', state);
-						});
 					} else if (_.contains(classList, 'choose-image')) {
 						this.showProfileUpdateForm();
 					} else if (_.contains(classList, 'link-withings')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/registerwithings?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+						u.oauththirdparty('registerwithings');
 					} else if (_.contains(classList, 'link-moves')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/registermoves?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+						u.oauththirdparty('registermoves');
 					} else if (_.contains(classList, 'link-fitbit')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/registerfitbit?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+						u.oauththirdparty('registerfitbit');
 					} else if (_.contains(classList, 'link-jawbone')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/registerjawbone?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+						u.oauththirdparty('registerJawboneUp');
 					} else if (_.contains(classList, 'link-twenty3andMe')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/register23andme?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+						u.oauththirdparty('register23andme');
 					} else if (_.contains(classList, 'unlink-moves')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/unregistermoves?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+						u.oauththirdparty('unregistermoves');
 					} else if (_.contains(classList, 'unlink-withings')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterwithings?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+						u.oauththirdparty('unregisterwithings');
 					} else if (_.contains(classList, 'unlink-fitbit')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterfitbit?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+						u.oauththirdparty('unregisterfitbit');
 					} else if (_.contains(classList, 'unlink-jawbone')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterjawbone?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+						u.oauththirdparty('unregisterJawboneUp');
 					} else if (_.contains(classList, 'link-oura')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/registerOura?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+						u.oauththirdparty('registerOura');
 					} else if (_.contains(classList, 'unlink-oura')) {
-						cordova.InAppBrowser.open(App.serverUrl + '/home/unregisterOura?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_system');
+						u.oauththirdparty('unregisterOura');
 					}
 				} else {
 					e.stopPropagation();
@@ -240,12 +247,15 @@ define(function(require, exports, module, store) {
 			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 1280, 0)})).add(this.tagSequentialLayout);
 
 			// Calculating draggable container height according to the taglist height
-			var draggableView = new DraggableView(this.editProfileContainerSurface, true, 1030 + (this.tagList.length * 50));
-			this.renderController.show(draggableView, null, function() {
+			this.draggableView = new DraggableView(this.editProfileContainerSurface, true, 1030 + (this.tagList.length * 50));
+			this.renderController.show(this.draggableView, null, function() {
 				Timer.every(function() {
 					this.submitButtonModifier.setTransform(Transform.translate(0, (1330 + this.tagList.length * 40),  App.zIndex.readView + 62));
 				}.bind(this));
 			}.bind(this));
+			if (callback) {
+				callback();
+			}
 		}.bind(this), function() {
 			App.pageView.goBack();
 		}.bind(this));
@@ -279,6 +289,7 @@ define(function(require, exports, module, store) {
 		}
 		User.update(formData, function (state) {
 			App.pageView.changePage('PeopleDetailView', state);
+			App.pageView.history.pop();
 		});
 	}
 

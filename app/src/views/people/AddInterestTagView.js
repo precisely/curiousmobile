@@ -57,11 +57,16 @@ define(function(require, exports, module) {
 		this.add(mod).add(formContainerSurface);
 	}
 
+	AddInterestTagView.prototype.clearForm = function() {
+		var tagInputField = document.getElementById('tag-name');
+		if (tagInputField) {
+			tagInputField.value = '';
+		}
+	};
 
 	AddInterestTagView.prototype.submit = function() {
 		User.addInterestTags({tagName: document.getElementById('tag-name').value}, function() {
 			this.parentView.killOverlayContent();
-			this.parentView.showUserDetailsForm();
 		}.bind(this));
 	};
 
