@@ -87,17 +87,17 @@ define(function(require, exports, module) {
 			if (this.graphIsRendered) {
 				this.clearPillsSurfaceList();
 				this.plot.initiateAddLine(this.tags, isAreaChart);
-				this.manageDatePicker();
+				this.addDateFooter();
 			} else {
 				this.on('graph-visible', function() {
 					this.plot.initiateAddLine(this.tags, isAreaChart);
-					this.manageDatePicker();
+					this.addDateFooter();
 				}.bind(this));
 			}
 		}
 	};
 
-	GraphView.prototype.manageDatePicker = function() {
+	GraphView.prototype.addDateFooter = function() {
 		if (App.pageView.getCurrentPage() !== 'DiscussionDetailView') {
 			this.drawDateFooter();
 		} else {
@@ -113,7 +113,7 @@ define(function(require, exports, module) {
 	GraphView.prototype.showDiscussionChart = function(plotDataId, discussionHash) {
 		this.on('graph-visible', function() {
 			this.plot.loadSnapshotId(plotDataId, discussionHash);
-			this.manageDatePicker();
+			this.addDateFooter();
 		}.bind(this));
 	};
 
