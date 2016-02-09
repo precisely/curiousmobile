@@ -119,7 +119,7 @@ define(function(require, exports, module) {
 		navPills.push(this.createPillsSurface('PEOPLE'));
 		navPills.push(this.createPillsSurface('DISCUSSIONS'));
 		navPills.push(this.createPillsSurface('TRACKATHONS'));
-		navPills.push(this.createPillsSurface('OWNED'));
+		navPills.push(this.createPillsSurface('AUTHORED'));
 
 		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
 	};
@@ -141,7 +141,7 @@ define(function(require, exports, module) {
 				Search.fetchDiscussions(args, this.addListItemsToScrollView.bind(this));
 			} else if (lable === 'TRACKATHONS') {
 				Search.fetchSprints(args, this.addListItemsToScrollView.bind(this));
-			} else if (lable === 'OWNED') {
+			} else if (lable === 'AUTHORED') {
 				Search.fetchOwned(args, this.addListItemsToScrollView.bind(this));
 			}
 		}
