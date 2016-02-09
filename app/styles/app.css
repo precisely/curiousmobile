@@ -637,7 +637,9 @@ input, textarea {
 }
 
 .close-discussion .fa {
-	padding: 5px;
+	padding: 10px;
+	margin-top: -10px;
+	margin-right: 2px;
 }
 
 .cancel-post {
@@ -1182,7 +1184,7 @@ button.close {
 
 .discussion-topic .discussion-topic-span {
 	text-align: right;
-	margin-top: -5px;
+	margin-top: -10px;
 }
 
 .discussion-topic .button-box {
@@ -1218,10 +1220,6 @@ button.close {
 .discussion-topic .contents {
 	margin-bottom: 10px;
 	padding: 5px;
-}
-
-.discussion-comment .edit {
-	margin-right: 7px;
 }
 
 .feed-item .discussion .discussion-comment {
@@ -1287,7 +1285,7 @@ button.close {
 }
 
 .discussion-comment .actions {
-	top: -15px;
+	top: -35px;
 	position: relative;
 }
 
@@ -1359,6 +1357,10 @@ button.close {
 
 .multiple-comments {
 	padding: 0 20px;
+}
+
+.multiple-comments .fa {
+	padding: 10px;
 }
 
 #postList {
@@ -1791,7 +1793,7 @@ list-style-type: none;
 
 #device-list p {
 	font-size: 15px;
-	margin-bottom: 10px;
+	margin-bottom: 15px;
 }
 
 .devices {
@@ -2654,12 +2656,12 @@ input.cropit-image-zoom-input {
 
 .search-bar .fa {
 	color: #fff;
+	padding: 7px;
 }
 
 .search-bar .fa-search {
 	color: #cb3933;
 	vertical-align: middle;
-	margin-right: 5px;
 }
 
 .close-background {
@@ -2668,8 +2670,8 @@ input.cropit-image-zoom-input {
 	width: 35px;
 	border-radius: 50%;
 	text-align: center;
-	padding-top: 7px;
 	margin-top: 2px;
+	padding-top: 3px;
 }
 
 #search-input::-webkit-input-placeholder {

@@ -72,12 +72,12 @@
 			</label>
 			<div class="media">
 				<div class="media-body" id="device-list">
-					<p> Oura Account: {{= (user.linkedToOura ? 'Linked' : 'Unlinked') }}</p><br>
-					<p> Withings Account: {{= (user.linkedToWithings ? 'Linked' : 'Unlinked') }}</p><br>
-					<p>Fitbit Account: {{= (user.linkedToFitbit ? 'Linked' : 'Unlinked') }}</p><br>
-					<p>Jawbone Account: {{= (user.linkedToJawbone ? 'Linked' : 'Unlinked') }}</p><br>
-					<p>23andMe Account: {{= (user.linkedToTwenty3andMe ? 'Linked' : 'Unlinked') }}</p><br>
-					<p>Moves Account: {{= (user.linkedToMoves ? 'Linked' : 'Unlinked') }}
+					<p> {{= (user.linkedToOura ? 'Unlink' : 'Link') }} Oura Account</p><br>
+					<p> {{= (user.linkedToWithings ? 'Unlink' : 'Link') }} Withings Account</p><br>
+					<p> {{= (user.linkedToFitbit ? 'Unlink' : 'Link') }} Fitbit Account</p><br>
+					<p> {{= (user.linkedToJawbone ? 'Unlink' : 'Link') }} Jawbone Account</p><br>
+					<p> {{= (user.linkedToTwenty3andMe ? 'Re-Import from' : 'Import from') }} 23andMe Account</p><br>
+					<p> {{= (user.linkedToMoves ? 'Unlink' : 'link') }} Moves Account
 				</div>
 			</div>
 		</div>
