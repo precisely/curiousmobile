@@ -76,25 +76,25 @@
 						<div class="media-body">
 							{{ if (user.linkedToWithings) { }}
 								<p class="unlink-withings">
-									Withings Account: Linked
+									Unlink Withings Account
 								</p><br>
 							{{ } else { }}
-							<p class="link-withings">Withings Account: Unlinked</p><br>
+							<p class="link-withings">Link Withings Account</p><br>
 							{{ } }}
 							{{ if (user.linkedToOura) { }}
-							<p class="unlink-oura">Oura Account: Linked</p><br>
+							<p class="unlink-oura">Unlink Oura Account</p><br>
 							{{ } else { }}
-							<p class="link-oura">Oura Account: Unlinked</p><br>
+							<p class="link-oura">Link Oura Account</p><br>
 							{{ } }}
 							{{ if (!user.linkedToMoves) { }}
-							<p class="link-moves">Moves Account: Unlinked</p><br>
+							<p class="link-moves">Link Moves Account</p><br>
 							{{ } else { }}
-							<p class="unlink-moves">Moves Account: Linked</p><br>
+							<p class="unlink-moves">Unlink Moves Account</p><br>
 							{{ } }}
 							{{ if (!user.linkedToJawbone) { }}
-							<p class="link-jawbone">Jawbone UP Account: Unlinked</p><br>
+							<p class="link-jawbone">Link Jawbone UP Account</p><br>
 							{{ } else { }}
-							<p class="unlink-jawbone">Jawbone UP Account: Linked</p><br>
+							<p class="unlink-jawbone">Unlink Jawbone UP Account</p><br>
 							{{ } }}
 							{{ if (!user.linkedToTwenty3andMe) { }}
 							<p class="link-twenty3andMe">Import from 23andMe Account</p><br>
