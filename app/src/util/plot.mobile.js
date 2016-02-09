@@ -120,15 +120,27 @@ define(function(require, exports, module) {
 	PlotMobile.prototype.initiateAddLine = function (tagList, isContinuous) {
 		var plot = this;
 		this.clearGraphs();
-		_.each(tagList, function (tagListItem) {
-			if (tagListItem instanceof TagGroup) {
-				tagListItem.fetchAll(function () { plot.addLine(tagListItem); });
-			} else {
-				tagListItem.isContinuous = isContinuous;
-				tagListItem.showPoints = false;
-				plot.addLine(tagListItem);
+		var counter = 0;
+		var addLineTimer = setInterval(function(){
+			if (!this.pendingLoads) {
+				if (tagList[counter]) {
+					this.queueAddLine(tagList[counter++], isContinuous);
+				} else {
+					clearInterval(addLineTimer);
+				}
 			}
-		});
+		}.bind(this), 200)
+	};
+
+	PlotMobile.prototype.queueAddLine = function (tagListItem, isContinuous) {
+		if (tagListItem instanceof TagGroup) {
+			tagListItem.fetchAll(function () { plot.addLine(tagListItem); });
+		} else {
+			tagListItem.isContinuous = isContinuous;
+			tagListItem.showPoints = false;
+			
+			this.addLine(tagListItem);
+		}
 	};
 
 	PlotMobile.prototype.drawPlot = function() {

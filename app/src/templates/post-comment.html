@@ -1,7 +1,7 @@
 <div class="post-comment {{= postId ? '' : 'vertical-margins' }}">
 	<form role="form" class="form-inline comment-form" name="commentForm" onSubmit="return false;">
 		<div class="media">
-			<div class="media-left pull-left">
+			<div class="media-left pull-left" id="add-comment-avatar">
 				{{ if (authorAvatarURL) { }}
 					<img class="avatar img-circle" height="25" width="25" src="{{= authorAvatarURL }}" alt="avatar">
 				{{ } else { }}
@@ -9,8 +9,13 @@
 				{{ } }}
 			</div>
 			<div class="media-body">
-				<textarea id="message" name="message" rows="1" data-comment-index="{{= commentIndex }}" 
-						placeholder="Add Comment to this discussion..." data-post-id="{{= postId }}">{{= message }}</textarea>
+				<div class="input-group">
+				<textarea id="message" name="message" rows="1" data-comment-index="{{= commentIndex }}" class="form-control" 
+						placeholder="Add Comment..." data-post-id="{{= postId }}">{{= message }}</textarea>
+					<span class="input-group-btn">
+						<button class="btn btn-default" id="post-comment-button">POST</button>
+					</span>
+				</div>
 			</div>
 		</div>
 	</form>

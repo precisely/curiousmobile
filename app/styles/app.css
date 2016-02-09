@@ -1263,6 +1263,15 @@ button.close {
 	margin: 0 20px;
 }
 
+.post-comment .input-group {
+	border-spacing: 10px 0px;
+	margin: 0px -10px;
+}
+
+.post-comment .input-group-btn {
+	vertical-align: top;
+}
+
 .comment-form img {
 	margin-top: 8px;
 }
@@ -1278,6 +1287,7 @@ button.close {
 	resize: none;
 	overflow: hidden;
 	font-size: 12px;
+	box-shadow: none;
 }
 
 .discussion-comment .posting-time {
@@ -1470,6 +1480,10 @@ button.close {
 
 	.help-wizard h4 {
 		margin-top: 0px !important;
+	}
+
+	.flot-tick-label {
+		font-size: 8px !important;
 	}
 }
 
@@ -3225,4 +3239,24 @@ input.cropit-image-zoom-input {
 
 .feed-pill .badge {
 	margin-left: 5px;
+}
+
+.flot-tick-label {
+	font-size: 9px;
+}
+
+.discussion-comment-message {
+	font-size: 12px;
+	margin: 15px 0px 10px 35px;
+}
+
+#post-comment-button {
+	background: transparent;
+	border-radius: 2px;
+	border: 1px solid #979797;
+	height: 39px;
+}
+
+.invisible {
+	display: none;
 }

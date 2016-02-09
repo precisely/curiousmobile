@@ -72,12 +72,37 @@
 			</label>
 			<div class="media">
 				<div class="media-body" id="device-list">
-					<p> Oura Account: {{= (user.linkedToOura ? 'Linked' : 'Unlinked') }}</p><br>
-					<p> Withings Account: {{= (user.linkedToWithings ? 'Linked' : 'Unlinked') }}</p><br>
-					<p>Fitbit Account: {{= (user.linkedToFitbit ? 'Linked' : 'Unlinked') }}</p><br>
-					<p>Jawbone Account: {{= (user.linkedToJawbone ? 'Linked' : 'Unlinked') }}</p><br>
-					<p>23andMe Account: {{= (user.linkedToTwenty3andMe ? 'Linked' : 'Unlinked') }}</p><br>
-					<p>Moves Account: {{= (user.linkedToMoves ? 'Linked' : 'Unlinked') }}
+					<div class="media">
+						<div class="media-body">
+							{{ if (user.linkedToWithings) { }}
+								<p class="unlink-withings">
+									Withings Account: Linked
+								</p><br>
+							{{ } else { }}
+							<p class="link-withings">Withings Account: Unlinked</p><br>
+							{{ } }}
+							{{ if (user.linkedToOura) { }}
+							<p class="unlink-oura">Oura Account: Linked</p><br>
+							{{ } else { }}
+							<p class="link-oura">Oura Account: Unlinked</p><br>
+							{{ } }}
+							{{ if (!user.linkedToMoves) { }}
+							<p class="link-moves">Moves Account: Unlinked</p><br>
+							{{ } else { }}
+							<p class="unlink-moves">Moves Account: Linked</p><br>
+							{{ } }}
+							{{ if (!user.linkedToJawbone) { }}
+							<p class="link-jawbone">Jawbone UP Account: Unlinked</p><br>
+							{{ } else { }}
+							<p class="unlink-jawbone">Jawbone UP Account: Linked</p><br>
+							{{ } }}
+							{{ if (!user.linkedToTwenty3andMe) { }}
+							<p class="link-twenty3andMe">Import from 23andMe Account</p><br>
+							{{ } else { }}
+							<p class="link-twenty3andMe">Re-import from 23andMe Account</p><br>
+							{{ } }}
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

@@ -82,11 +82,15 @@ define(function(require, exports, module) {
 		var nodePlayer = new RenderNode();
 		nodePlayer.add(this.draggable).add(this.targetSurface);
 		this.add(nodePlayer);
-	}
+	};
+
+	DraggableView.prototype.getPosition = function() {
+		return this.draggable.getPosition();
+	};
 
 	DraggableView.prototype.setPosition = function(position) {
 		this.draggable.setPosition(position);
-	}
+	};
 
 	module.exports = DraggableView;
 });

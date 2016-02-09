@@ -14,6 +14,7 @@ define(function (require, exports, module) {
 	var UpdateAvatarTemplate = require('text!templates/update-avatar.html');
 	var User = require('models/User');
 	var u = require('util/Utils');
+	var EXIF = require('util/exif');
 	var cropit = require('util/jquery.cropit.min');
 
 	function UpdateAvatarView() {

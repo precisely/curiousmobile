@@ -73,7 +73,6 @@ define(function(require, exports, module) {
 			transform: Transform.translate(0, -1, -5)
 		});
 		this.add(pillsViewMod).add(this.pillsView)
-		this.drawDateFooter();
 	};
 
 	GraphView.prototype.clearPillsSurfaceList = function() {
@@ -88,24 +87,36 @@ define(function(require, exports, module) {
 			if (this.graphIsRendered) {
 				this.clearPillsSurfaceList();
 				this.plot.initiateAddLine(this.tags, isAreaChart);
+				this.addDateFooter();
 			} else {
 				this.on('graph-visible', function() {
 					this.plot.initiateAddLine(this.tags, isAreaChart);
+					this.addDateFooter();
 				}.bind(this));
 			}
 		}
 	};
 
-	// Considering height of graph and the date footer, required for scri=ollview in discussion
+	GraphView.prototype.addDateFooter = function() {
+		if (App.pageView.getCurrentPage() !== 'DiscussionDetailView') {
+			this.drawDateFooter();
+		} else {
+			this.graphSurface.setSize([undefined, App.height - 190]);
+		}
+	};
+
+	// Considering height of graph and the date footer, required for scrollview in discussion
 	GraphView.prototype.getSize = function() {
-		return (App.height - 200);
+		return (App.height - 220);
 	};
 
 	GraphView.prototype.showDiscussionChart = function(plotDataId, discussionHash) {
 		this.on('graph-visible', function() {
 			this.plot.loadSnapshotId(plotDataId, discussionHash);
+			this.addDateFooter();
 		}.bind(this));
 	};
+
 	GraphView.prototype.drawDateFooter = function() {
 		startDate = endDate = null;
 
@@ -132,12 +143,12 @@ define(function(require, exports, module) {
 			border: '1px solid #c3c3c3'
 		};
 
-		this.endDateString = this.startDateString = 'DD/MM/YY';
+		this.endDateString = this.startDateString = 'MM/DD/YY';
 
 		this.dateLabelSurface = new Surface({
 			size: [200, 28],
 			classes: ['datepicker-surface'],
-			content: '<span class="blank-date-label start-date">DD/MM/YY</span> <i class="fa fa-minus"></i> <span class="blank-date-label end-date">DD/MM/YY</span>',
+			content: '<span class="blank-date-label start-date">MM/DD/YY</span> <i class="fa fa-minus"></i> <span class="blank-date-label end-date">MM/DD/YY</span>',
 			properties: {
 				color: '#6f6f6f',
 				textAlign: 'center',
@@ -187,20 +198,20 @@ define(function(require, exports, module) {
 		this.selectedDate = date;
 		if (dateType == 'startDate') {
 			if (!date) {
-				this.startDateString = 'DD/MM/YY';
+				this.startDateString = 'MM/DD/YY';
 			} else {
 				var year = date.getFullYear().toString();
-				this.startDateString = ('0' + date.getDate()).slice(-2) + '/'  + ('0' + (date.getMonth()+1)).slice(-2) + '/'
+				this.startDateString = ('0' + (date.getMonth()+1)).slice(-2) + '/' + ('0' + date.getDate()).slice(-2) + '/'  + 
 						+ year.substring(2);
 			}
 			startDate = date;
 		} else {
 			endDate = date;
 			if (!date) {
-				this.endDateString = 'DD/MM/YY';
+				this.endDateString = 'MM/DD/YY';
 			} else {
 				var year = date.getFullYear().toString();
-				this.endDateString = ('0' + date.getDate()).slice(-2) + '/'  + ('0' + (date.getMonth()+1)).slice(-2) + '/'
+				this.endDateString = ('0' + (date.getMonth()+1)).slice(-2) + '/' + ('0' + date.getDate()).slice(-2) + '/'  + 
 						+ year.substring(2);
 			}
 		}
@@ -234,6 +245,7 @@ define(function(require, exports, module) {
 						this.plottedTags.splice(this.plottedTags.indexOf(tag), 1);
 						var currentView = App.pageView.getCurrentView();
 						currentView.tagsToPlot.splice(currentView.tagsToPlot.indexOf(tag), 1)
+						this.pillsView.pillsScrollView.sequenceFrom(this.pillsSurfaceList);
 					}
 				}
 			}.bind(this));

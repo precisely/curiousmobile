@@ -99,6 +99,28 @@ define(function(require, exports, module) {
 							hash: this.hash
 						};
 						App.pageView.changePage('EditProfileView', state);
+					} else if (_.contains(classList, 'link-withings')) {
+						u.oauththirdparty('registerwithings');
+					} else if (_.contains(classList, 'link-moves')) {
+						u.oauththirdparty('registermoves');
+					} else if (_.contains(classList, 'link-fitbit')) {
+						u.oauththirdparty('registerfitbit');
+					} else if (_.contains(classList, 'link-jawbone')) {
+						u.oauththirdparty('registerJawboneUp');
+					} else if (_.contains(classList, 'link-twenty3andMe')) {
+						u.oauththirdparty('register23andme');
+					} else if (_.contains(classList, 'unlink-moves')) {
+						u.oauththirdparty('unregistermoves');
+					} else if (_.contains(classList, 'unlink-withings')) {
+						u.oauththirdparty('unregisterwithings');
+					} else if (_.contains(classList, 'unlink-fitbit')) {
+						u.oauththirdparty('unregisterfitbit');
+					} else if (_.contains(classList, 'unlink-jawbone')) {
+						u.oauththirdparty('unregisterJawboneUp');
+					} else if (_.contains(classList, 'link-oura')) {
+						u.oauththirdparty('registerOura');
+					} else if (_.contains(classList, 'unlink-oura')) {
+						u.oauththirdparty('unregisterOura');
 					}
 				}
 			}.bind(this));

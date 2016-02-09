@@ -111,7 +111,6 @@ define(function(require, exports, module) {
 				if (data.success) {
 					successCallback(data.listItems.discussionList);
 				} else {
-					u.showAlert(data.message);
 					failCallback();
 				}
 			}

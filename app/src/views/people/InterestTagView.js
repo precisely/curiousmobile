@@ -55,10 +55,11 @@ define(function(require, exports, module) {
 			transform: Transform.translate(window.innerWidth, -2, window.App.zIndex.readView + 2)
 		});
 		this.deleteSurface.setProperties({
-			padding: '0px',
-			borderBottom: '1px solid #f6a583'
+			padding: '8px 0px',
+			borderBottom: '1px solid #f6a583',
+			lineHeight: '23px',
 		});
-		this.deleteSurface.setSize([100, 40]);
+		this.deleteSurface.setSize([80, true]);
 		this.add(deleteModifier).add(this.deleteSurface);
 		var entryModifier = new Modifier({
 			transform: Transform.translate(0, 2, 0)
@@ -74,7 +75,7 @@ define(function(require, exports, module) {
 		User.deleteInterestTags(this.entry, function() {
 			var currentView = App.pageView.getCurrentView();
 			if (typeof currentView !== 'undefined') {
-				currentView.showUserDetailsForm();
+				currentView.killOverlayContent();
 			}
 		}.bind(this));
 	};
