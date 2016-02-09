@@ -639,7 +639,7 @@ input, textarea {
 .close-discussion .fa {
 	padding: 10px;
 	margin-top: -10px;
-	margin-right: 2px;
+	margin-right: 3px;
 }
 
 .cancel-post {
@@ -1285,8 +1285,9 @@ button.close {
 }
 
 .discussion-comment .actions {
-	top: -35px;
+	top: -25px;
 	position: relative;
+	margin-right: -10px;
 }
 
 .discussion-comment .add-comment input {
