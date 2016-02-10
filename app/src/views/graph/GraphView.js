@@ -70,7 +70,7 @@ define(function(require, exports, module) {
 		this.pillsSurfaceList = [];
 		this.pillsView = new PillsView(this.pillsSurfaceList);
 		var pillsViewMod = new StateModifier({
-			transform: Transform.translate(0, -1, -5)
+			transform: Transform.translate(0, -1, App.zIndex.header)
 		});
 		this.add(pillsViewMod).add(this.pillsView)
 		this.drawDateFooter();
@@ -213,7 +213,7 @@ define(function(require, exports, module) {
 	GraphView.prototype.createTagsPill = function(lineId, tag, color) {
 		if (tag) {
 			var deleteAffordance = '';
-			if (App.pageView.getCurrentPage() !== 'DiscussionDetailView') {
+			if (App.pageView.getCurrentPage() === 'CreateChartView') {
 				deleteAffordance = '<i class="fa fa-times-circle"></i>';
 			}
 			var pillSurface = new Surface({
@@ -233,7 +233,9 @@ define(function(require, exports, module) {
 						this.pillsSurfaceList.splice(this.pillsSurfaceList.indexOf(pillSurface), 1);
 						this.plottedTags.splice(this.plottedTags.indexOf(tag), 1);
 						var currentView = App.pageView.getCurrentView();
-						currentView.tagsToPlot.splice(currentView.tagsToPlot.indexOf(tag), 1)
+						if (currentView.tagsToPlot) {
+							currentView.tagsToPlot.splice(currentView.tagsToPlot.indexOf(tag), 1)
+						}
 					}
 				}
 			}.bind(this));

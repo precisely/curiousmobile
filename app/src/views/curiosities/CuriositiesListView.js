@@ -34,7 +34,7 @@ define(function(require, exports, module) {
 		this.mainContainerModifier = new Modifier({
 			transform: function() {
 				var yPos = this.containerModifierState.get();
-				return Transform.translate(0, yPos, App.zIndex.header);
+				return Transform.translate(0, yPos, App.zIndex.readView);
 			}.bind(this)
 		});
 		this.add(this.mainContainerModifier).add(this.mainContainerSurface);
@@ -109,7 +109,7 @@ define(function(require, exports, module) {
 	CuriositiesListView.prototype.createCuriositiesPills = function() {
 		this.pillsModifierState = new Transitionable(64);
 		this.pillsScrollViewContainerModifier = new StateModifier({
-			transform: Transform.translate(0, 0, App.zIndex.header)
+			transform: Transform.translate(0, 0, App.zIndex.readView)
 		});
 
 		var pillsScrollViewContainer = new ContainerSurface({
@@ -149,7 +149,7 @@ define(function(require, exports, module) {
 			}
 		});
 
-		this.mainContainerSurface.add(new StateModifier({transform: Transform.translate(App.width - 50, 0, App.zIndex.header + 5)})).add(showExplanationSurface);
+		this.mainContainerSurface.add(new StateModifier({transform: Transform.translate(App.width - 50, 0, App.zIndex.header)})).add(showExplanationSurface);
 
 		showExplanationSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
@@ -237,6 +237,16 @@ define(function(require, exports, module) {
 
 	CuriositiesListView.prototype.getScrollPosition = function() {
 		return this.scrollView.getPosition()
+	};
+
+	CuriositiesListView.prototype.showChartView = function(renderable) {
+		this.showOverlayContent(renderable);
+		this.showBackButton();
+	};
+
+	CuriositiesListView.prototype.killOverlayContent = function() {
+		BaseView.prototype.killOverlayContent.call(this);
+		this.showMenuButton();
 	};
 
 	App.pages[CuriositiesListView.name] = CuriositiesListView;
