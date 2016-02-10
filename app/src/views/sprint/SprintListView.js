@@ -155,6 +155,7 @@ define(function(require, exports, module) {
 	SprintListView.prototype.preShow = function(state) {
 		if (this.deck.length <= 0 || (state && state.new)) {
 			this.initScrollView();
+			this.currentPill = this.currentPill || 'ALL';
 			this.fetchSprints();
 		}
 		return true;
@@ -195,7 +196,7 @@ define(function(require, exports, module) {
 			offset: 0,
 			max: this.max
 		};
-		Sprint.fetch(params, this.addListItemsToScrollView.bind(this));
+		this.fetchFeedItems(this.currentPill, params); 
 		this.scrollView.sequenceFrom(this.deck);
 		this.renderController.show(this.scrollView);
 	};

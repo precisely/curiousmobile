@@ -82,7 +82,7 @@ define(function(require, exports, module) {
 
 				if (_.contains(['FeedView', 'SprintListView'], this.constructor.name)) {
 					this.fetchFeedItems(this.currentPill, args);
-				} if (this.constructor.name === 'CuriositiesListView') {
+				} else if (this.constructor.name === 'CuriositiesListView') {
 					C.handleScroll();
 				} else {
 					this.fetchSearchResults(args);
