@@ -68,27 +68,27 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		if (this.constructor.name != 'CuriositiesListView') {
-			this.scrollView._eventOutput.on('onEdge', function() {
-				var currentIndex = this.scrollView.getCurrentIndex();
+		this.scrollView._eventOutput.on('onEdge', function() {
+			var currentIndex = this.scrollView.getCurrentIndex();
 
-				// Check if end of the page is reached
-				if ((this.scrollView._scroller._onEdge != -1) && this.loadMoreItems && this.itemsAvailable) {
-					this.loadMoreItems = false;
-					this.offset += this.max;
-					var args = {
-						offset: this.offset,
-						max: this.max
-					}
-
-					if (_.contains(['FeedView', 'SprintListView'], this.constructor.name)) {
-						this.fetchFeedItems(this.currentPill, args);
-					} else {
-						this.fetchSearchResults(args);
-					}
+			// Check if end of the page is reached
+			if ((this.scrollView._scroller._onEdge != -1) && this.loadMoreItems && this.itemsAvailable) {
+				this.loadMoreItems = false;
+				this.offset += this.max;
+				var args = {
+					offset: this.offset,
+					max: this.max
 				}
-			}.bind(this));
-		}
+
+				if (_.contains(['FeedView', 'SprintListView'], this.constructor.name)) {
+					this.fetchFeedItems(this.currentPill, args);
+				} if (this.constructor.name === 'CuriositiesListView') {
+					C.handleScroll();
+				} else {
+					this.fetchSearchResults(args);
+				}
+			}
+		}.bind(this));
 
 		this.renderController = new RenderController();
 		// This is to modify renderController so that items in scroll view are not hidden behind footer menu

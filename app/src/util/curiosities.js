@@ -415,13 +415,13 @@ function initCuriosities() {
 
 			log( "search results", data.length);
 			C.curiositiesNumSearchResults[searchId] = data.length;
-			if (data.length <= 0 && pageNumber && pageNumber == 1) {
+			if (data.length <= 0) {
 				if (isMobile) {
 					var currentView = App.pageView.getCurrentView();
 					if (typeof currentView !== 'undefined') {
 						currentView.addListItemsToScrollView([]);
 					}
-				} else {
+				} else if (pageNumber && pageNumber == 1) {
 					showExplanationCard(false);
 				}
 			}
@@ -510,7 +510,7 @@ function initCuriosities() {
 		return (C.curiositiesScrollReady && (docHeight - (scrollPos + pageHeight) < 800) && C.curiositiesScrollReady);
 	};
 
-	var handleScroll = function() {
+	C.handleScroll = function() {
 		// Infinite scroll.
 		if (shouldLoad()) {
 			var q = $('#search-input').val() || '';
@@ -525,7 +525,7 @@ function initCuriosities() {
 		}
 	};
 
-	$(window).on('scroll', handleScroll);
+	$(window).on('scroll', C.handleScroll);
 
 	initSortOrder();
 	C.performSearch();
