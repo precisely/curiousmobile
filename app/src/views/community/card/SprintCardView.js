@@ -32,7 +32,7 @@ define(function(require, exports, module) {
 			size: [undefined, true],
 			content: _.template(SprintTemplate, this.sprint, templateSettings),
 			properties: {
-				padding: '10px'
+				padding: '0px 10px 10px 10px'
 			}
 		});
 

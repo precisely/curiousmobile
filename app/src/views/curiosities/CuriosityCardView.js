@@ -29,7 +29,7 @@ define(function(require, exports, module) {
 			size: [undefined, true],
 			content: _.template(CuriosityCardTemplate, this.templateProperties, templateSettings),
 			properties: {
-				padding: '10px'
+				padding: '0px 10px 10px 10px'
 			}
 		});
 
