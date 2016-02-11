@@ -94,7 +94,7 @@ define(function(require, exports, module) {
 		BaseView.prototype.onShow.call(this);
 		if ((!this.tagsToPlot || !this.tagsToPlot.length) && (!state || !state.tagsByDescription)) {
 			App.pageView.changePage('CreateChartView');
-		} else if (state.triggerLoadGraph) {
+		} else if (state && state.triggerLoadGraph) {
 			this.showLoadGraphOverlay();
 		}
 	};

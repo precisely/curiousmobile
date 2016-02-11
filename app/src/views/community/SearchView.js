@@ -40,7 +40,9 @@ define(function(require, exports, module) {
 		});
 
 		this.searchBar.on('deploy', function() {
-			document.getElementById('search-input').focus();
+			setTimeout(function() {
+				document.getElementById('search-input').focus();
+			}, 500);
 			document.getElementById('search-input').onkeyup = function(e) {
 				if (e.which == 13) {
 					var searchTerm = document.getElementById('search-input').value;
