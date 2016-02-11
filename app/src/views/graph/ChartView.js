@@ -64,7 +64,7 @@ define(function(require, exports, module) {
 		this.add(new StateModifier({transform: Transform.translate(35, 0, App.zIndex.header + 5)})).add(this.backRenderController);
 		this.backRenderController.show(this.leftSurface);
 
-		this.graphView = new GraphView(null, 'plotArea');
+		this.graphView = new GraphView(null, this.options.plotAreaId);
 		this.add(new StateModifier({transform: Transform.translate(0, 65, App.zIndex.readView)})).add(this.graphView);
 		_setHandlers.call(this);
 	}
@@ -74,6 +74,7 @@ define(function(require, exports, module) {
 	ChartView.prototype.constructor = ChartView;
 
 	ChartView.DEFAULT_OPTIONS = {
+		plotAreaId: 'plotArea',
 		header: true,
 		footer: true,
 		activeMenu: 'chart',
@@ -93,6 +94,8 @@ define(function(require, exports, module) {
 		BaseView.prototype.onShow.call(this);
 		if ((!this.tagsToPlot || !this.tagsToPlot.length) && (!state || !state.tagsByDescription)) {
 			App.pageView.changePage('CreateChartView');
+		} else if (state.triggerLoadGraph) {
+			this.showLoadGraphOverlay();
 		}
 	};
 

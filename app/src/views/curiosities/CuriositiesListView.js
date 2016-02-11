@@ -239,16 +239,6 @@ define(function(require, exports, module) {
 		return this.scrollView.getPosition()
 	};
 
-	CuriositiesListView.prototype.showChartView = function(renderable) {
-		this.showOverlayContent(renderable);
-		this.showBackButton();
-	};
-
-	CuriositiesListView.prototype.killOverlayContent = function() {
-		BaseView.prototype.killOverlayContent.call(this);
-		this.showMenuButton();
-	};
-
 	App.pages[CuriositiesListView.name] = CuriositiesListView;
 	module.exports = CuriositiesListView;
 });

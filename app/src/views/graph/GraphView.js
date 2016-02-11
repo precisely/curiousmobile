@@ -213,7 +213,7 @@ define(function(require, exports, module) {
 	GraphView.prototype.createTagsPill = function(lineId, tag, color) {
 		if (tag) {
 			var deleteAffordance = '';
-			if (App.pageView.getCurrentPage() === 'CreateChartView') {
+			if (App.pageView.getCurrentPage() !== 'DiscussionDetailView') {
 				deleteAffordance = '<i class="fa fa-times-circle"></i>';
 			}
 			var pillSurface = new Surface({

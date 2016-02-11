@@ -18,6 +18,7 @@ define(function(require, exports, module) {
 	var SearchView = require('views/community/SearchView');
 	var ChartView = require('views/graph/ChartView');
 	var CreateTagHelpView = require('views/help/CreateTagHelpView');
+	var CuriositiesGraphView = require('views/graph/CuriositiesGraphView');
 	var ShareHelpView = require('views/help/ShareHelpView');
 	var AdvancedTagsView = require('views/help/AdvancedTagsView');
 	var ExternalDevicesHelpView = require('views/help/ExternalDevicesHelpView');
