@@ -9,6 +9,7 @@ define(function(require, exports, module) {
 	var FastClick = require('famous/inputs/FastClick');
 	var CardView = require('views/community/card/CardView');
 	var CuriosityCardTemplate = require('text!templates/curiosity-card.html');
+	var CuriositiesGraphView = require('views/graph/CuriositiesGraphView');
 	var PeopleDetailView = require('views/people/PeopleDetailView');
 	var u = require('util/Utils');
 
@@ -42,8 +43,8 @@ define(function(require, exports, module) {
 				} else {
 					e.preventDefault();
 					e.stopPropagation();
-					App.pageView.changePage('ChartView', {tagsByDescription: [this.templateProperties.description1,
-						this.templateProperties.description2]});
+					App.pageView.changePage('CuriositiesGraphView', {tagsByDescription: [this.templateProperties.description1,
+							this.templateProperties.description2]});
 				}
 			}
 		}.bind(this));
