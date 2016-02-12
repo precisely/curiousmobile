@@ -276,7 +276,6 @@ function dataURItoBlob(dataURI) {
  * Moves cursor to the end of the input box
  */
 function moveCaretToEnd(el) {
-	el.focus();
 	if (typeof el.selectionStart == "number") {
 		el.selectionStart = el.selectionEnd = el.value.length;
 	} else if (typeof el.createTextRange != "undefined") {
@@ -284,4 +283,5 @@ function moveCaretToEnd(el) {
 		range.collapse(false);
 		range.select();
 	}
+	el.focus();
 }

@@ -206,7 +206,7 @@ define(function(require, exports, module) {
 		var scrollModifier = new Modifier();
 		scrollModifier.sizeFrom(function(){
 			if (this.pinnedViews) {
-				return [320,window.App.height - 185 - this.heightOfPins()]
+				return [320,window.App.height - 185 - Math.min(this.heightOfPins(), 140)]
 			} else {
 
 				return [320,window.App.height - 185]

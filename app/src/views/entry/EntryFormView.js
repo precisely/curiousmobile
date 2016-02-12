@@ -174,8 +174,10 @@ define(function(require, exports, module) {
 		});
 
 		this.submitSurface.on('click', function(e) {
-			if (_.contains(e.srcElement.classList, 'create-entry-button')) {
-				this.submit();
+			if (e instanceof CustomEvent) {
+				if (_.contains(e.srcElement.classList, 'create-entry-button')) {
+					this.submit();
+				}
 			}
 		}.bind(this));
 

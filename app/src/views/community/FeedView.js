@@ -118,7 +118,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.pillsScrollViewContainerModifier = new StateModifier({
-			transform: Transform.translate(0, 64, App.zIndex.header)
+			transform: Transform.translate(0, 64, App.zIndex.readView + 5)
 		});
 
 		var pillsScrollViewContainer = new ContainerSurface({

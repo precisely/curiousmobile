@@ -217,7 +217,7 @@ define(function(require, exports, module) {
 
 $(document).on('postLineDetails', function(e, tagLine) {
 	var currentPage = App.pageView.getCurrentPage();
-	if (currentPage === 'DiscussionDetailView') {
+	if (currentPage !== 'ChartView' && currentPage !== 'CreateChartView') {
 		var currentView = App.pageView.getCurrentView();
 		if (typeof currentView !== 'undefined') {
 			currentView.graphView.createTagsPill(tagLine.id, tagLine.tag, tagLine.color);

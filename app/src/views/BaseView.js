@@ -15,6 +15,7 @@ define(function(require, exports, module) {
 	var FastClick = require('famous/inputs/FastClick');
 	var StateView = require('views/StateView');
 	var RenderController = require("famous/views/RenderController");
+	var Timer = require('famous/utilities/Timer');
 	var u = require('util/Utils');
 
 	function BaseView(options) {
@@ -52,11 +53,13 @@ define(function(require, exports, module) {
 			footerSize: 50
 		});
 
-		var layoutModifier = new Modifier({
+		this.layoutModifier = new StateModifier({
 			size: [App.width, App.height],
 		});
 
-		this.add(layoutModifier).add(this.layout);
+
+		this.add(this.layoutModifier).add(this.layout);
+
 		this.bodyRenderController = new RenderController();
 		var bodyModifier = new StateModifier({
 			origin: [0, 0],

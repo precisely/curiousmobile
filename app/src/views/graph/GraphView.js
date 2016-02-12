@@ -70,7 +70,7 @@ define(function(require, exports, module) {
 		this.pillsSurfaceList = [];
 		this.pillsView = new PillsView(this.pillsSurfaceList);
 		var pillsViewMod = new StateModifier({
-			transform: Transform.translate(0, -1, -5)
+			transform: Transform.translate(0, -1, App.zIndex.readView)
 		});
 		this.add(pillsViewMod).add(this.pillsView)
 	};
@@ -236,6 +236,7 @@ define(function(require, exports, module) {
 					textAlign: 'center',
 				}
 			});
+
 			pillSurface.on('click', function(e) {
 				if (e instanceof CustomEvent) {
 					var classList = e.srcElement.classList;
@@ -244,7 +245,9 @@ define(function(require, exports, module) {
 						this.pillsSurfaceList.splice(this.pillsSurfaceList.indexOf(pillSurface), 1);
 						this.plottedTags.splice(this.plottedTags.indexOf(tag), 1);
 						var currentView = App.pageView.getCurrentView();
-						currentView.tagsToPlot.splice(currentView.tagsToPlot.indexOf(tag), 1)
+						if (currentView.tagsToPlot) {
+							currentView.tagsToPlot.splice(currentView.tagsToPlot.indexOf(tag), 1)
+						}
 						this.pillsView.pillsScrollView.sequenceFrom(this.pillsSurfaceList);
 					}
 				}

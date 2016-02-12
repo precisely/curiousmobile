@@ -56,7 +56,7 @@ define(function(require, exports, module) {
 				graphItemSurface.on('click', function(e) {
 					if (e instanceof CustomEvent) {
 						var classList = e.srcElement.classList;
-						var currentView = App.pageView.getCurrentView();
+						var currentView = App.pageView.getPage('ChartView');
 						if (_.contains(classList, 'delete-graph')) {
 							u.showAlert({
 								message: 'Are you sure you want to delete the saved gaph?',
