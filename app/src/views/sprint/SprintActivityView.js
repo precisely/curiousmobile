@@ -18,6 +18,8 @@ define(function(require, exports, module) {
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var DiscussionCardView = require('views/community/card/DiscussionCardView')
 	var Sprint = require('models/Sprint');
+	var Discussion = require('models/Discussion');
+	var NoMoreItemsCardView = require('views/community/card/NoMoreItemsCardView');
 	var u = require('util/Utils');
 
 	function SprintActivityView() {
@@ -60,7 +62,7 @@ define(function(require, exports, module) {
 	SprintActivityView.prototype.initContent = function() {
    		var sequentialLayout = new SequentialLayout({
    			direction: 1,
-   			itemSpacing: 10
+   			itemSpacing: 0
    		});
    		this.renderables = [];
    		sequentialLayout.sequenceFrom(this.renderables);
@@ -68,7 +70,7 @@ define(function(require, exports, module) {
 		this.sprintActivityTitleSurface = new Surface({
 			size: [undefined, true],
 			properties: {
-				zIndex: App.zIndex.readView + 1
+				zIndex: App.zIndex.header + 10
 			}
 		});
 		this.sprintActivityTitleSurface.on('click', function(e) {
@@ -140,7 +142,6 @@ define(function(require, exports, module) {
 			}.bind(this));
 		}.bind(this));
 
-		this.scrollView.sequenceFrom(this.deck);
 	};
 
 	SprintActivityView.prototype.onShow = function(state) {
@@ -160,23 +161,17 @@ define(function(require, exports, module) {
 	};
 
 	function addListItemsToScrollView(listItems) {
-		if (!listItems) {
-			if (this.deck.length == 0) {
-				var noActivityMessage = new Surface({ 
-					content: 'No activity yet.',
-					properties: {
-						padding: '0px 10px',	
-					}
-				});	
-				this.renderController.show(noActivityMessage);
-				return;
-			}
+		if (typeof listItems === undefined || !listItems.length) {
+			var noActivityMessage = new NoMoreItemsCardView(); 
+			this.deck.push(noActivityMessage);
+			noActivityMessage.setScrollView(this.scrollView);
 			this.itemsAvailable = false;
 			console.log('no more items available');
 			return;
 		}
 		listItems.forEach(function(item) {
-			var discussionCardView = new DiscussionCardView(item, 'SprintActivityView', this.deck);
+			var discussion = new Discussion(item);
+			var discussionCardView = new DiscussionCardView(discussion, 'SprintActivityView', this.deck);
 			this.deck.push(discussionCardView);
 			discussionCardView.setScrollView(this.scrollView);
 		}.bind(this));
@@ -189,6 +184,7 @@ define(function(require, exports, module) {
 		this.itemsAvailable = true;
 		this.offset = 0;
 		this.scrollView.setPosition(0);
+		this.scrollView.sequenceFrom(this.deck);
 	};
 
 	App.pages['SprintActivityView'] = SprintActivityView;

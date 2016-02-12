@@ -109,7 +109,7 @@ define(function(require, exports, module) {
 		function(data) {
 			if (u.checkData(data)) {
 				if (data.success) {
-					successCallback(data.listItems.discussionList);
+					successCallback(data.listItems);
 				} else {
 					failCallback();
 				}

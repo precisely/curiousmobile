@@ -3,8 +3,8 @@
 	<div class="discussion">
 		<div class="discussion-topic">
 			<div class="contents">
-				<div class="row">
-					<div class="col-xs-9 discussion-header discussion-post">
+				<div>
+					<div class="discussion-header discussion-post">
 						<a href="#" class="discussion-author">
 							{{ if (discussionOwnerAvatarURL) { }}
 								<img class="avatar img-circle" height="25" width="25" src="{{= discussionOwnerAvatarURL }}" alt="avatar">
@@ -15,7 +15,7 @@
 						</a>
 							<span class="posting-time">{{= updated }}</span>
 					</div>
-					<div class="col-xs-3 discussion-topic-span discussion-header close-discussion" >
+					<div class="discussion-topic-span close-discussion" >
 						{{ if (isAdmin) { }}
 							<i class="fa fa-times-circle"></i>
 						{{ } }}

@@ -22,6 +22,7 @@ define(function(require, exports, module) {
 	var SprintCardView = require('views/community/card/SprintCardView')
 	var PeopleCardView = require('views/community/card/PeopleCardView')
 	var DiscussionCardView = require('views/community/card/DiscussionCardView')
+	var NoMoreItemsCardView = require('views/community/card/NoMoreItemsCardView');
 
 	function FeedView(showSearchView) {
 		BaseView.apply(this, arguments);
@@ -67,27 +68,27 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		if (this.constructor.name != 'CuriositiesListView') {
-			this.scrollView._eventOutput.on('onEdge', function() {
-				var currentIndex = this.scrollView.getCurrentIndex();
+		this.scrollView._eventOutput.on('onEdge', function() {
+			var currentIndex = this.scrollView.getCurrentIndex();
 
-				// Check if end of the page is reached
-				if ((this.scrollView._scroller._onEdge != -1) && this.loadMoreItems && this.itemsAvailable) {
-					this.loadMoreItems = false;
-					this.offset += this.max;
-					var args = {
-						offset: this.offset,
-						max: this.max
-					}
-
-					if (_.contains(['FeedView', 'SprintListView'], this.constructor.name)) {
-						this.fetchFeedItems(this.currentPill, args);
-					} else {
-						this.fetchSearchResults(args);
-					}
+			// Check if end of the page is reached
+			if ((this.scrollView._scroller._onEdge != -1) && this.loadMoreItems && this.itemsAvailable) {
+				this.loadMoreItems = false;
+				this.offset += this.max;
+				var args = {
+					offset: this.offset,
+					max: this.max
 				}
-			}.bind(this));
-		}
+
+				if (_.contains(['FeedView', 'SprintListView'], this.constructor.name)) {
+					this.fetchFeedItems(this.currentPill, args);
+				} else if (this.constructor.name === 'CuriositiesListView') {
+					C.handleScroll();
+				} else {
+					this.fetchSearchResults(args);
+				}
+			}
+		}.bind(this));
 
 		this.renderController = new RenderController();
 		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
@@ -252,19 +253,11 @@ define(function(require, exports, module) {
 		if (!listItems || listItems.length <= 0) {
 			this.itemsAvailable = false;
 			console.log('no more items available');
-			if (this.offset == 0) {
-				var notFoundSurface = new Surface({
-					size: [undefined, true],
-					content: 'No results found',
-					properties: {
-						backgroundColor: 'transparent',
-						color: '#5d5d5d',
-						padding: '10px'
-					}
-				});
-				this.deck.splice(0, 1, notFoundSurface);
-				notFoundSurface.pipe(this.scrollView);
+			var noMoreItemsCardView = new NoMoreItemsCardView();
+			this.deck.push(noMoreItemsCardView);
+			noMoreItemsCardView.setScrollView(this.scrollView);
 
+			if (this.offset == 0) {
 				if (this.showExplanationCard && this.currentPill !== 'STARTED') {
 					this.showExplanationCard();
 				}

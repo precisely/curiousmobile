@@ -631,15 +631,17 @@ input, textarea {
 }
 
 .close-discussion {
-	font-size: 1.5em;
-	padding: 2px;
+	padding: 0px;
 	z-index: 100;
 }
 
 .close-discussion .fa {
-	padding: 10px;
-	margin-top: -10px;
-	margin-right: 3px;
+	padding: 5px;
+	margin-top: -5px;
+	display: block;
+	margin-right: 0px;
+	position: relative;
+	left: 10px;
 }
 
 .cancel-post {
@@ -943,6 +945,7 @@ button.close {
 
 .people-wrapper .user-details-header {
 	margin-bottom: 12px;
+	margin-left: -5px;
 }
 
 .people-wrapper .user-details-header a img {
@@ -966,7 +969,7 @@ button.close {
 	text-transform: capitalize;
 	font-size: 14px;
 	float: right;
-	margin-top: 5px;
+	margin-right: -5;
 }
 
 .people-wrapper .user-details-header .follow {
@@ -982,7 +985,6 @@ button.close {
 }
 
 .people-wrapper .user-details-content {
-	margin: 5px 7px;
 	font-size: 12px;
 	color: #cacaca;
 }
@@ -997,7 +999,7 @@ button.close {
 }
 
 .feed-item .discussion {
-	margin-bottom: 20px;
+	margin-bottom: 9px;
 }
 
 .feed-item .discussion .dark-comment {
@@ -1018,16 +1020,14 @@ button.close {
 .feed-item .discussion .discussion-topic, .feed-item .sprint {
 	background-color: white;
 	color: #5d5d5d;
-	padding: 10px 7px 20px 7px;
 	font-size: 16px;
 }
-
 .feed-item .discussion .discussion-topic {
-	padding: 10px 7px 1px 7px;
+	padding: 15px;
 }
 
 .feed-item .sprint {
-	padding: 10px;
+	padding: 15px;
 	margin-right: 0px;
 }
 
@@ -1045,6 +1045,9 @@ button.close {
 }
 
 .discussion-header {
+	margin-left: -5px;
+	float: left;
+	margin-top: -5px;
 }
 
 .discussion-header li {
@@ -1095,8 +1098,9 @@ button.close {
 }
 
 .feed-item .discussion .discussion-topic .discussion-title {
-	margin: 10px 0px;
+	padding: 10px 0px;
 	word-wrap: break-word;
+	clear: both;
 }
 
 .feed-item .discussion .discussion-topic a, .feed-item .sprint a {
@@ -1113,14 +1117,10 @@ button.close {
 .feed-item .sprint-description {
 	font-size: 14px;
 	margin-top: 10px;
-	height: calc(14px * 1.2 * 2);
 	line-height: 1.2;
-	-webkit-line-clamp: 2;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	display: block;
-	-webkit-box-orient: vertical;
-	display: -webkit-box;
 }
 
 .feed-item .sprint .read-more a {
@@ -1173,18 +1173,13 @@ button.close {
 	margin-top: 0px;
 }
 
-.discussion-topic .contents {
-	margin-bottom: 10px;
-	padding: 5px 14px 5px 10px;
-}
-
 .discussion-topic .contents .row {
 	position: relative;
 }
 
 .discussion-topic .discussion-topic-span {
 	text-align: right;
-	margin-top: -10px;
+	float: right;
 }
 
 .discussion-topic .button-box {
@@ -1217,9 +1212,8 @@ button.close {
 	margin-right: 5px;
 }
 
+// TODO: remove
 .discussion-topic .contents {
-	margin-bottom: 10px;
-	padding: 5px;
 }
 
 .feed-item .discussion .discussion-comment {
@@ -1295,7 +1289,7 @@ button.close {
 }
 
 .discussion-comment .actions {
-	top: -25px;
+	top: -20px;
 	position: relative;
 	margin-right: -10px;
 }
@@ -1371,7 +1365,8 @@ button.close {
 }
 
 .multiple-comments .fa {
-	padding: 10px;
+	padding: 5px;
+	display: inline-block;
 }
 
 #postList {
@@ -1677,6 +1672,11 @@ list-style-type: none;
 	font-size: 14px;
 }
 
+.sprint-activity .sprint-default-label {
+	padding: 0px;
+	margin-left: 15px;
+}
+
 .sprint-details h2 {
 	font-size: 25px;
 	color: #5d5d5d;
@@ -1758,7 +1758,6 @@ list-style-type: none;
 }
 
 .sprint-activity .lower {
-	padding: 5px 0px 5px 10px;
 	background-color: #efefef;
 }
 
@@ -2741,8 +2740,9 @@ input.cropit-image-zoom-input {
 
 #correlation-template {
 	color: #777;
-	padding: 16px;
+	padding: 15px;
 	background-color: #fff;
+	box-shadow: 0px 4px 5px #dddddd;
 }
 
 #correlation-template img.flip-horizontally {

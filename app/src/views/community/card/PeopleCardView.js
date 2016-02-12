@@ -31,7 +31,7 @@ define(function (require, exports, module) {
 			size: [undefined, true],
 			content: _.template(peopleTemplate, this.user, templateSettings),
 			properties: {
-				padding: '10px'
+				padding: '0px 10px 10px 10px'
 			}
 		});
 
