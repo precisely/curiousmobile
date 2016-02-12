@@ -91,6 +91,7 @@ define(function(require, exports, module, store) {
 	EditProfileView.prototype.showAddInterestTagForm = function() {
 		this.showBackButton();
 		this.setHeaderLabel('');
+		this.interestTagFormVisible = true;
 		this.showOverlayContent(this.addInterestTagView, function() {
 			console.log('overlay successfully created');
 		}.bind(this.addInterestTagView));
@@ -101,9 +102,10 @@ define(function(require, exports, module, store) {
 	};
 
 	EditProfileView.prototype.killInterestTagsForm = function(state) {
-	this.addInterestTagView.clearForm();
+		this.addInterestTagView.clearForm();
 		BaseView.prototype.killOverlayContent.call(this);
 		console.log("overlay killed");
+		this.interestTagFormVisible = false;
 		this.showMenuButton();
 		this.showBackButton();
 		this.setHeaderLabel('EDIT PROFILE', '#fff');
@@ -159,7 +161,11 @@ define(function(require, exports, module, store) {
 			this.saveSurface.on('click', function(e) {
 				if (e instanceof CustomEvent) {
 					if (this.currentOverlay) {
-						this.addInterestTagView.submit();
+						if (this.interestTagFormVisible) {
+							this.addInterestTagView.submit();
+						} else {
+							u.showAlert('Tap upload to finish uploading.');
+						}
 					} else {
 						this.saveProfile(peopleDetails);
 					}
@@ -176,7 +182,9 @@ define(function(require, exports, module, store) {
 			this.editProfileContainerSurface.add(this.submitButtonModifier).add(this.submitSurface);
 
 			this.submitSurface.on('click', function(e) {
-				this.saveProfile(peopleDetails);
+				if (e instanceof CustomEvent) {
+					this.saveProfile(peopleDetails);
+				}
 			}.bind(this));
 
 			editPeopleSurface.on('click', function(e) {

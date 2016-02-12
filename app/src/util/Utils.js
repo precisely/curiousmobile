@@ -558,7 +558,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		}
 
 		Utils.parseDivToNewLine = function(text) {
-			var parsedText = text.replace(/<div>/g, '').replace(/<\/div>/g, "\n");
+			var parsedText = text.replace(/<div>/g, '').replace(/<\/div>/g, "\n").replace(/^\s+|\s+$/g, '');;
 			return parsedText;
 		}
 

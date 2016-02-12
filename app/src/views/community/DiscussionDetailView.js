@@ -372,7 +372,7 @@ define(function(require, exports, module) {
 							document.getElementById('add-comment-avatar').classList.add('invisible');
 							this.discussionView.commentScrollPosition = this.discussionView.scrollView.getPosition();
 							moveCaretToEnd(document.getElementById('message'));
-						}.bind(this), 50);
+						}.bind(this), 300);
 					} else if (_.contains(classList, 'comment-author') || _.contains(e.srcElement.parentElement.classList, 'comment-author')) {
 						App.pageView.changePage('PeopleDetailView', {hash: post.authorHash});
 					}
