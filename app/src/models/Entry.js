@@ -228,6 +228,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						callback({
 							entries: entries[0],
 							glowEntry: entries[3],
+							tagStats: entries[2],
 							key: Entry.getCacheKey(baseDate)
 						});
 						//if (entries[2] != null)
@@ -279,7 +280,8 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						Entry.cacheEntries(baseDate, entries[0]);
 						callback({
 							entries: entries[0],
-							glowEntry: this
+							glowEntry: this,
+							tagStats: entries[1] || entries[2]
 						});
 						//if (entries[1] != null)
 							//updateAutocomplete(entries[1][0], entries[1][1],

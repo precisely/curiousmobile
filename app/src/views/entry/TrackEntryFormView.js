@@ -110,6 +110,7 @@ define(function(require, exports, module) {
 			this.resetRepeatModifierForm();
 			this.renderController.hide();
 			var currentListView = this.trackView.currentListView;
+			window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],resp.tagStats[3], resp.tagStats[4])
 			currentListView.refreshEntries(resp.entries, resp.glowEntry);
 			this.trackView.killEntryForm({
 				entryDate: resp.glowEntry.date
@@ -122,6 +123,7 @@ define(function(require, exports, module) {
 			this.renderController.hide();
 			var currentListView = this.trackView.currentListView;
 			currentListView.refreshEntries(resp.entries, resp.glowEntry);
+			window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],resp.tagStats[3], resp.tagStats[4])
 			var state = {};
 			if (resp.glowEntry.changed.date) {
 				state = {
@@ -205,9 +207,10 @@ define(function(require, exports, module) {
 		this.setPinned = this.setRemind = this.setRepeat = false;
 		this.entry = entry;
 		var directlyCreateEntry = false;
-		if (entry.isContinuous() || ((entry.isRemind() || entry.isRepeat()) && entry.isGhost())) {
-			var tag = entry.get('description');
+		if (entry.isContinuous() || ((entry.isRemind() || entry.isRepeat()) && entry.isGhost())) {0
+			var tag = entry.toString();
 			var tagStatsMap = autocompleteCache.tagStatsMap.get(tag);
+            if(!tagStatsMap) tagStatsMap = autocompleteCache.tagStatsMap.getFromText(tag);
 			if ((tagStatsMap && tagStatsMap.typicallyNoAmount) || tag.indexOf('start') > -1 ||
 				tag.indexOf('begin') > -1 || tag.indexOf('stop') > -1 || tag.indexOf('end') > -1) {
 				directlyCreateEntry = true;
