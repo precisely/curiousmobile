@@ -112,9 +112,7 @@ define(function(require, exports, module) {
 			var currentListView = this.trackView.currentListView;
 			window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],resp.tagStats[3], resp.tagStats[4])
 			currentListView.refreshEntries(resp.entries, resp.glowEntry);
-			this.trackView.killEntryForm({
-				entryDate: resp.glowEntry.date
-			});
+			this.trackView.killEntryForm(true);
 		}.bind(this));
 
 		this.on('update-entry', function(resp) {
@@ -134,7 +132,7 @@ define(function(require, exports, module) {
 					new: false
 				}
 			}
-			this.trackView.killEntryForm(state);
+			this.trackView.killEntryForm(true);
 		}.bind(this));
 	}
 
@@ -208,11 +206,11 @@ define(function(require, exports, module) {
 		this.entry = entry;
 		var directlyCreateEntry = false;
 		if (entry.isContinuous() || ((entry.isRemind() || entry.isRepeat()) && entry.isGhost())) {0
-			var tag = entry.toString();
+			var tag = this.removeSuffix(entry.toString());
 			var tagStatsMap = autocompleteCache.tagStatsMap.get(tag);
             if(!tagStatsMap) tagStatsMap = autocompleteCache.tagStatsMap.getFromText(tag);
-			if ((tagStatsMap && tagStatsMap.typicallyNoAmount) || tag.indexOf('start') > -1 ||
-				tag.indexOf('begin') > -1 || tag.indexOf('stop') > -1 || tag.indexOf('end') > -1) {
+			if (!tagStatsMap || (tagStatsMap.typicallyNoAmount || entry.get("amount")) || tag.indexOf('start') > -1 ||
+				tag.indexOf('begin') > -1 || tag.indexOf('stop') > -1 || tag.indexOf('end') > -1 || (entry.isRepeat() && entry.isGhost())) {
 				directlyCreateEntry = true;
 			}
 		}

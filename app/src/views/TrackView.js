@@ -182,7 +182,7 @@ define(function(require, exports, module) {
 		this.killEntryForm();
 	};
 
-	TrackView.prototype.killEntryForm = function(state) {
+	TrackView.prototype.killEntryForm = function(onEntryFormSubmit) {
 		this.entryListContainer.setProperties({
 			webkitFilter: 'blur(0px)',
 			filter: 'blur(0px)'
@@ -195,7 +195,9 @@ define(function(require, exports, module) {
 		BaseView.prototype.killOverlayContent.call(this);
 		this.showMenuButton();
 		this.setHeaderSurface(this.calendarView, new StateModifier({align: [0.5, 0.5], origin: [0.5, 0.5]}));
-		this.preShow(state);
+		if(!onEntryFormSubmit) {
+			this.preShow();
+		}
 	}
 
 	TrackView.prototype.changeDate = function(date, callback, glowEntry) {

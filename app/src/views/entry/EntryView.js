@@ -78,18 +78,18 @@ define(function(require, exports, module) {
 		//Glow surface
 		this.glowSurface = new Surface();
 		this.glowController = new RenderController();
-		this.add(this.glowController);
+		this.glowControllerModifier = new StateModifier({transform: Transform.translate(0, 0, 22)});
+		this.add(this.glowControllerModifier).add(this.glowController);
 	};
 
 	EntryView.prototype.glow = function() {
-		this.glowController.show(this.glowSurface, {
-			duration: 500
-		}, function() {
+		this.glowController.show(this.glowSurface, null
+			, function() {
+				setTimeout(function () {
+					this.glowControllerModifier.setTransform(Transform.translate(0, 0, 0), {duration: 3000});
+					this.glowController.hide();
+				 }.bind(this), 1000);
 		}.bind(this));
-
-		Timer.setTimeout(function () {
-			this.glowController.hide({duration: 500});
-		}.bind(this), 500);
 	}
 
 	EntryView.prototype.glowInit = function (options) {

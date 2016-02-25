@@ -108,6 +108,7 @@ define(function(require, exports, module) {
 		this.draggablePin.subscribe(pinnedEntryView.entrySurface);
 		this.pinnedViews.push(pinnedEntryView);
 		this.entryEventListeners(pinnedEntryView);
+		return pinnedEntryView;
 	}
 
 	EntryListView.prototype.entryEventListeners = function (entryView) {
@@ -271,21 +272,26 @@ define(function(require, exports, module) {
 
 		scrollNode.add(this.scrollView);
 		scrollWrapperSurface.add(scrollNode);
+		var nonBookmarkEntriesCount = 0;
+		var bookmarkEntriesCount = 0;
 		entries.forEach(function(entry) {
 			var addedView = null;
 			if (entry.isContinuous()) {
+				bookmarkEntriesCount++;
 				addedView = this.addPinnedEntry(entry);
 			} else {
+				nonBookmarkEntriesCount++;
 				addedView = this.addEntry(entry);
 			}
 
-            if (this.glowEntry) {
-                if (Number.isFinite(this.glowEntry) && entry.id == this.glowEntry) {
-                    this.glowView = addedView;
-                } else if (entry.id == this.glowEntry.id) {
-                    this.glowView = addedView;
-                }
-            }
+			if (this.glowEntry) {
+				if ((Number.isFinite(this.glowEntry) && entry.id == this.glowEntry) || (entry.id == this.glowEntry.id)) {
+					this.glowView = addedView;
+					if (!entry.isContinuous()) {
+						this.glowView.position = nonBookmarkEntriesCount - 1;
+					}
+				}
+			}
 		}.bind(this));
 
 		this.scrollView.sequenceFrom(this.draggableList);
@@ -347,6 +353,7 @@ define(function(require, exports, module) {
 
 		this.renderController.show(scrollWrapperSurface, {duration:0});
 		if (this.glowView) {
+			this.scrollView.goToPage(this.glowView.position);
 			this.glowView.glow();
 		}
 	};
