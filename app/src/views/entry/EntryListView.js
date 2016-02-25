@@ -289,6 +289,8 @@ define(function(require, exports, module) {
 					this.glowView = addedView;
 					if (!entry.isContinuous()) {
 						this.glowView.position = nonBookmarkEntriesCount - 1;
+					} else {
+						this.glowView.position = bookmarkEntriesCount - 1;
 					}
 				}
 			}
@@ -353,7 +355,13 @@ define(function(require, exports, module) {
 
 		this.renderController.show(scrollWrapperSurface, {duration:0});
 		if (this.glowView) {
-			this.scrollView.goToPage(this.glowView.position);
+			if (this.glowView.entry.isContinuous()) {
+				setTimeout(function(){
+					this.draggablePin.setPosition([0, -this.pinPosition(this.glowView.position), 0]);
+				}.bind(this), 200);
+			} else {
+				this.scrollView.goToPage(this.glowView.position);
+			}
 			this.glowView.glow();
 		}
 	};
@@ -374,11 +382,19 @@ define(function(require, exports, module) {
 		return numberOfRows ? ((numberOfRows * 40) + 15) : 0;
 	};
 
-	EntryListView.prototype.numberOfPinRows = function () {
+	EntryListView.prototype.pinPosition = function (index) {
+		var numberOfRows = this.numberOfPinRows(index);
+		return numberOfRows > 3 ? ((numberOfRows - 2) * 40) : 0;
+	};
+
+	EntryListView.prototype.numberOfPinRows = function (pinIndex) {
 		var numberOfRows = this.pinnedViews.length ? 1 : 0;
 		var rowWidthSoFar = 20;
 		this.pinnedEdgeIndex = [];
 		_.each(this.pinnedViews, function (pinnedView, index) {
+			if (pinIndex <= index) {
+				return;
+			}
 			rowWidthSoFar = rowWidthSoFar + pinnedView.getSize()[0] + 8; //adding padding after the tags
 			if (rowWidthSoFar > (App.width - 10)) {
 				numberOfRows ++;
