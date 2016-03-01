@@ -505,7 +505,8 @@ input, textarea {
 }
 
 .glow {
-	color: #FF935F;
+	color: #ffffff !important;
+	background-color: #FC3F28 !important;
 }
 
 .continuous {
@@ -515,28 +516,16 @@ input, textarea {
 	border-radius: 4px;
 }
 
-.pinned.glow {
-	background-color: #868686;
-}
-
 .repeat {
 	color: #FC3F28;
 	background: #ffffff;
 	border-left: 5px solid #FC3F28;
 }
 
-.repeat.glow {
-	color: #FC3F28;
-}
-
 .remind {
 	color: #C83A6E;
 	background-color: #ffffff;
 	border-left: 5px solid #C83A6E;
-}
-
-.glow.remind {
-	color: #C83A6E;
 }
 
 .entry .help {
@@ -1210,10 +1199,6 @@ button.close {
 	height: 24px;
 	width: auto;
 	margin-right: 5px;
-}
-
-// TODO: remove
-.discussion-topic .contents {
 }
 
 .feed-item .discussion .discussion-comment {
