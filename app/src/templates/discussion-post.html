@@ -31,10 +31,10 @@
 				<div class="text-left disable-button-option">
 				{{ if(isAdmin) { }}
 					{{ if (typeof disableComments === 'undefined' || !disableComments) { }}
-					<input type="checkbox" name="disable-comments" class="repeat-entry-checkbox" value="disable" id="disable-comments-checkbox">
+					<input type="checkbox" name="disable-comments" value="disable" id="disable-comments-checkbox">
 					<label for="disable-comments-checkbox"></label><p>Disable Comments</p>
 					{{ } else { }}
-					<input type="checkbox" name="disable-comments" class="repeat-entry-checkbox" value="disable" id="disable-comments-checkbox" checked>
+					<input type="checkbox" name="disable-comments" value="disable" id="disable-comments-checkbox" checked>
 					<label for="disable-comments-checkbox"></label><p>Disable Comments</p>
 					{{ } }}
 				{{ } }}

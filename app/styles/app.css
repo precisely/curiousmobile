@@ -3270,7 +3270,7 @@ input.cropit-image-zoom-input {
 	font-size: 10px;
 }
 
-.feed-item .disable-button-option p {
+.feed-item .disable-button-option p, .sprint-details .disable-button-option p {
 	font-size: 10px;
 	margin-left: 7px;
 	margin-bottom: 5px;
@@ -3310,4 +3310,17 @@ input.cropit-image-zoom-input {
 	-webkit-transform: rotate(-55deg);
 	-ms-transform: rotate(-55deg);
 	transform: rotate(-55deg);
+}
+
+.sprint-details .disable-button-option p {
+	font-size: 12px;
+	margin-top: 8px;
+}
+
+.sprint-details .disable-button-option {
+	margin-bottom: 10px;
+}
+
+.disable-button-option input {
+	display: none;
 }
