@@ -80,6 +80,28 @@ define(function(require, exports, module) {
 				});
 	}
 
+	Discussion.disableComments = function(args, callback) {
+		var argsToSend = {
+			hash: args.hash,
+			disable: args.disable
+		};
+
+		u.queueJSON("Modifying comment preferences", App.serverUrl + '/home/res',
+				u.makeGetArgs(argsToSend),
+				function(data) {
+					if (u.checkData(data)) {
+						if (data.success) {
+							if (data.message) {
+								u.showAlert(data.message);
+							}
+							callback();
+						} else {
+							u.showAlert(data.message);
+						}
+					}
+				});
+	};
+
 	Discussion.fetchOwned = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getOwnedSocialData', {
 			max: Discussion.max,
@@ -91,7 +113,7 @@ define(function(require, exports, module) {
 					callback(data.listItems);
 				});
 	};
-
+	
 	Discussion.deleteDiscussion = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			userId: User.getCurrentUserId(),

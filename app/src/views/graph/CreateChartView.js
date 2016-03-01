@@ -17,7 +17,6 @@ define(function(require, exports, module) {
 	var Scrollview = require('famous/views/Scrollview');
 	var Utility = require('famous/utilities/Utility');
 	var Engine = require('famous/core/Engine');
-	var PeopleDetailsTemplate = require('text!templates/people-details.html');
 	var Tags = require('models/Tags');
 	var u = require('util/Utils');
 	var treeView = require('util/treeview');

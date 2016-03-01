@@ -102,7 +102,7 @@ define(function (require, exports, module) {
 					username,
 					password,
 					function (user) {
-						App.pageView.changePage('TutorialView');
+						App.pageView.changePage('SprintListView');
 						push.register();
 					}.bind(this)
 			)
