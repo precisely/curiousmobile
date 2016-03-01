@@ -91,12 +91,7 @@ define(function(require, exports, module) {
 				function(data) {
 					if (u.checkData(data)) {
 						if (data.success) {
-							if (data.message) {
-								u.showAlert(data.message);
-							}
 							callback(data.disableComments);
-						} else {
-							u.showAlert(data.message);
 						}
 					}
 				});
@@ -113,7 +108,7 @@ define(function(require, exports, module) {
 					callback(data.listItems);
 				});
 	};
-	
+
 	Discussion.deleteDiscussion = function(args, callback) {
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			userId: User.getCurrentUserId(),

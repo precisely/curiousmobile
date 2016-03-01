@@ -171,6 +171,13 @@ define(function(require, exports, module) {
 	 *
 	 */
 	PageView.prototype.changePage = function(pageName, state) {
+		if (typeof needToShowTutorial !== 'undefined') {
+			if (pageName == 'TrackView' && needToShowTutorial) {
+				this.changePage('TutorialView');
+				needToShowTutorial = false;
+				return;
+			}
+		}
 		var view = this.getPage(pageName);
 		var comingFromPage = this.getCurrentPage();
 

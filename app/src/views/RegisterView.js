@@ -104,6 +104,7 @@ define(function (require, exports, module) {
 					function (user) {
 						App.pageView.changePage('SprintListView');
 						push.register();
+						window.needToShowTutorial = true;
 					}.bind(this)
 			)
 		}

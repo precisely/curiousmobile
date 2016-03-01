@@ -25,7 +25,7 @@ define(function(require, exports, module) {
 
 	function createCard() {
 		this.cardSurface = new Surface({
-			size: [undefined, true],
+			size: [undefined, 200],
 			content: 'No more items',
 			properties: {
 				padding: '10px'

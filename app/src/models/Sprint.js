@@ -87,7 +87,7 @@ define(function(require, exports, module) {
 
 	Sprint.update = function(params, successCallback, failCallback) {
 		u.queueJSONAll('Updating trackathon', App.serverUrl + '/api/sprint/' + params.id + '?' +
-			u.getCSRFPreventionURI('updateSprintDataCSRF'), JSON.stringify(params), 
+			u.getCSRFPreventionURI('updateSprintDataCSRF'), JSON.stringify(params),
 			function(data) {
 				if (u.checkData(data)) {
 					if (data.success) {
@@ -104,8 +104,8 @@ define(function(require, exports, module) {
 	};
 
 	Sprint.listDiscussions = function(args, successCallback, failCallback) {
-		u.queueJSON('Getting more discussions', App.serverUrl + '/api/sprint/action/discussions?callback=?', 
-		u.getCSRFPreventionObject('getSprintData', args), 
+		u.queueJSON('Getting more discussions', App.serverUrl + '/api/sprint/action/discussions?callback=?',
+		u.getCSRFPreventionObject('getSprintData', args),
 		function(data) {
 			if (u.checkData(data)) {
 				if (data.success) {
@@ -116,11 +116,11 @@ define(function(require, exports, module) {
 			}
 		}, function(error) {
 			console.log(error);
-		});	
+		});
 	};
 
 	Sprint.getMoreParticipants = function(args, successCallback, failCallback) {
-		u.queueJSON('Getting more participants', App.serverUrl + '/data/getSprintParticipantsData?callback=?', 
+		u.queueJSON('Getting more participants', App.serverUrl + '/data/getSprintParticipantsData?callback=?',
 		u.getCSRFPreventionObject('getParticipantsData', args),
 		function(data) {
 			if (u.checkData(data)) {
@@ -133,7 +133,7 @@ define(function(require, exports, module) {
 			}
 		}, function(error) {
 			console.log(error);
-		});	
+		});
 	};
 
 	Sprint.stop = function(sprintHash, successCallback, failCallback) {
@@ -261,14 +261,9 @@ define(function(require, exports, module) {
 				function(data) {
 					if (u.checkData(data)) {
 						if (data.success) {
-							if (data.message) {
-								u.showAlert(data.message);
-							}
 							if (callback) {
 								callback(data.disableComments);
 							}
-						} else {
-							u.showAlert(data.message);
 						}
 					}
 				});

@@ -57,8 +57,15 @@ define(function(require, exports, module) {
 			size: [App.width, App.height],
 		});
 
-
 		this.add(this.layoutModifier).add(this.layout);
+
+		Timer.every(function() {
+			if (typeof Keyboard !== 'undefined') {
+				if (!Keyboard.isVisible) {
+					this.layoutModifier.setSize([window.innerWidth, window.innerHeight]);
+				}
+			}
+		}.bind(this), 10);
 
 		this.bodyRenderController = new RenderController();
 		var bodyModifier = new StateModifier({

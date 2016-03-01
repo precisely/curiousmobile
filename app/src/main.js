@@ -71,7 +71,7 @@ define(function(require, exports, module) {
 	});
 	var mainContext = Engine.createContext();
 	window.mainContext = mainContext;
-	
+
 	var appView = new AppView();
 	App.setAppView(appView);
 	var mod = new Modifier({
