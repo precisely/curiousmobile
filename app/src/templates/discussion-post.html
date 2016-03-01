@@ -7,43 +7,54 @@
 					<div class="discussion-header discussion-post">
 						<a href="#" class="discussion-author">
 							{{ if (discussionOwnerAvatarURL) { }}
-								<img class="avatar img-circle" height="25" width="25" src="{{= discussionOwnerAvatarURL }}" alt="avatar">
+							<img class="avatar img-circle" height="25" width="25" src="{{= discussionOwnerAvatarURL }}" alt="avatar">
 							{{ } else { }}
-								<img class="avatar" height="25" width="25" src="content/images/avatar.png" alt="avatar">
+							<img class="avatar" height="25" width="25" src="content/images/avatar.png" alt="avatar">
 							{{ } }}
 							<span class="user-name"> {{= discussionOwner }}</span>
 						</a>
-							<span class="posting-time">{{= updated }}</span>
+						<span class="posting-time">{{= updated }}</span>
 					</div>
 					<div class="discussion-topic-span close-discussion" >
 						{{ if (isAdmin) { }}
-							<i class="fa fa-times-circle"></i>
+						<i class="fa fa-times-circle"></i>
 						{{ } }}
 					</div>
 				</div>
 				<div class="discussion-title">
-						<a href="#"> 
-							<span> {{= discussionTitle ? discussionTitle : '(No Title)' }}</span>
-						</a>
-						<p>{{= firstPost ? firstPost.message : '' }}</p>
+					<a href="#"> 
+						<span> {{= discussionTitle ? discussionTitle : '(No Title)' }}</span>
+					</a>
+					<p>{{= firstPost ? firstPost.message : '' }}</p>
 				</div>
 				<hr>
-				<div class="text-right buttons">
+				<div class="text-left disable-button-option">
+				{{ if(isAdmin) { }}
+					{{ if (typeof disableComments === 'undefined' || !disableComments) { }}
+					<input type="checkbox" name="disable-comments" value="disable" id="disable-comments-checkbox">
+					<label></label><p>Disable Comments</p>
+					{{ } else { }}
+					<input type="checkbox" name="disable-comments" value="disable" id="disable-comments-checkbox" checked>
+					<label></label><p>Disable Comments</p>
+					{{ } }}
+				{{ } }}
+				</div>
+				<div class="buttons">
 					{{ if (typeof isFollowing !== 'undefined') { }}
-						{{ if (!isFollowing) { }}
-							<button class="follow-button">
-								<img src="content/images/follow.png" alt="follow">Follow
-							</button>
-						{{ } else { }}
-							<button class="unfollow-button">
-								<img src="content/images/unfollow.png" alt="follow">Unfollow
-							</button>
-						{{ } }}
+					{{ if (!isFollowing) { }}
+					<button class="follow-button">
+						<img src="content/images/follow.png" alt="follow">Follow
+					</button>
+					{{ } else { }}
+					<button class="unfollow-button">
+						<img src="content/images/unfollow.png" alt="follow">Unfollow
+					</button>
+					{{ } }}
 					{{ } }}
 					{{ if (isAdmin || isPublic) {  }}
 					<button class="share-button">
-							<img src="content/images/share.png" alt="share">Share
-						</button>
+						<img src="content/images/share.png" alt="share">Share
+					</button>
 					{{ } }}
 				</div>
 			</div>
@@ -51,7 +62,7 @@
 	</div>
 </div>
 {{ if (totalPostCount > 5) { }}
-	<div class="view-more-comments">
-		View More
-	</div>
+<div class="view-more-comments">
+	View More
+</div>
 {{ } }}

@@ -197,13 +197,27 @@ define(function(require, exports, module) {
 					}.bind(this));
 				} else if (_.contains(classList, 'discussion-author') || _.contains(e.srcElement.parentElement.classList, 'discussion-author')) {
 					App.pageView.changePage('PeopleDetailView', {hash: discussionPost.discussionDetails.discussionOwnerHash});
+				} else if (_.contains(e.srcElement.parentElement.classList, 'disable-button-option')) {
+					var disableCommentCheckbox = document.getElementById('disable-comments-checkbox');
+					var disable = !disableCommentCheckbox.checked;
+					Discussion.disableComments({hash: this.discussionHash, disable: disable}, function(disableComments) {
+						if (disableComments) {
+							disableCommentCheckbox.checked = true;
+							this.surfaceList.splice(this.surfaceList.indexOf(this.addCommentSurface), 1);
+						} else {
+							disableCommentCheckbox.checked = false;
+							if (this.surfaceList.indexOf(this.addCommentSurface) < 0) {
+								this.surfaceList.push(this.addCommentSurface);
+							}
+						}
+					}.bind(this));
 				}
 			}
 		}.bind(this));
 
 		this.addCommentSurface = this.getAddCommentSurface({});
 
-		if(discussionPost.discussionDetails.canWrite) {
+		if(discussionPost.discussionDetails.canWrite && !discussionPost.discussionDetails.disableComments) {
 			this.surfaceList.push(this.addCommentSurface.node);
 			this.addCommentSurface.pipe(this.scrollView);
 		}

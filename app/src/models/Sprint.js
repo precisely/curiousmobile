@@ -255,5 +255,23 @@ define(function(require, exports, module) {
 		});
 	};
 
+	Sprint.disableComments = function(args, callback) {
+		u.queueJSON("Modifying comment preferences", App.serverUrl + '/api/sprint/action/disableComments',
+				u.makeGetArgs(args),
+				function(data) {
+					if (u.checkData(data)) {
+						if (data.success) {
+							if (data.message) {
+								u.showAlert(data.message);
+							}
+							if (callback) {
+								callback(data.disableComments);
+							}
+						} else {
+							u.showAlert(data.message);
+						}
+					}
+				});
+	}
 	module.exports = Sprint;
 });

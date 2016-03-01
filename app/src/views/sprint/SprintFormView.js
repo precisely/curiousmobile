@@ -125,6 +125,16 @@ define(function(require, exports, module) {
 						}
 						this.addSprintParticipantsView = new AddSprintParticipantsView(this);
 						this.showOverlayContent(this.addSprintParticipantsView);
+					} else if (_.contains(e.srcElement.parentElement.classList, 'disable-button-option')) {
+						var disableCommentCheckbox = document.getElementById('disable-comments-checkbox');
+						var disable = !disableCommentCheckbox.checked;
+						Sprint.disableComments({id: this.hash, disable: disable}, function(disableComments) {
+							if (disableComments) {
+								disableCommentCheckbox.checked = true;
+							} else {
+								disableCommentCheckbox.checked = false;
+							}
+						}.bind(this));
 					} else {
 						document.activeElement.blur();
 						cordova.plugins.Keyboard.close();

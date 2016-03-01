@@ -96,6 +96,17 @@
 			{{ if (totalParticipants > 10) { print('<h5 id="more-participants">See All Participants</h5>'); } }}
 		</div>
 	</div>
+	{{ if (isFormView) { }}
+		<div class="disable-button-option">
+			{{ if (typeof sprint.disableComments === 'undefined' || !sprint.disableComments) { }}
+			<input type="checkbox" name="disable-comments" value="disable" id="disable-comments-checkbox">
+			<label></label><p>Disable Comments</p>
+			{{ } else { }}
+			<input type="checkbox" name="disable-comments" value="disable" id="disable-comments-checkbox" checked>
+			<label></label><p>Disable Comments</p>
+			{{ } }}
+		</div>
+	{{ } }}
 	{{ if (isFormView && isCreateForm) { }}
 		<button class="full-width-button submit">
 			Create Trackathon

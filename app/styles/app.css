@@ -1145,7 +1145,7 @@ button.close {
 	margin-right: 0px;
 }
 
-.feed-item .discussion .discussion-topic p {
+.discussion-topic p {
 	font-style: normal;
 	font-size: 14px;
 	margin: 5px 0px 10px 0px;
@@ -1175,7 +1175,8 @@ button.close {
 }
 
 .discussion-topic .buttons {
-	text-align: right;
+	float: right;
+	display: inline-block;
 }
 
 .discussion-topic .buttons .share-button {
@@ -3246,5 +3247,65 @@ input.cropit-image-zoom-input {
 }
 
 .invisible {
+	display: none;
+}
+
+.disable-button-option {
+	display: inline-block;
+	font-size: 10px;
+}
+
+.feed-item .disable-button-option p, .sprint-details .disable-button-option p {
+	font-size: 10px;
+	margin-left: 7px;
+	margin-bottom: 5px;
+	display: inline-block;
+	font-weight: 500;
+	vertical-align: top;
+	margin-top: 10px;
+}
+
+.disable-button-option label {
+	width: 22px;
+	height: 22px;
+	border-radius: 4px;
+	margin-top: 5px;
+	margin-bottom: 0px;
+	border: 2px solid #d1d1d1;
+	position: relative;
+}
+
+.disable-button-option input[type=checkbox]:checked + label:after {
+	opacity: 1;
+}
+
+.disable-button-option label:after {
+	content: '';
+	width: 15px;
+	height: 8px;
+	border: 3px solid #f48d5b;
+	border-top: none;
+	border-right: none;
+	border-radius: 2px;
+	background: transparent;
+	opacity: 0;
+	position: absolute;
+	top: 4px;
+	left: 2px;
+	-webkit-transform: rotate(-55deg);
+	-ms-transform: rotate(-55deg);
+	transform: rotate(-55deg);
+}
+
+.sprint-details .disable-button-option p {
+	font-size: 12px;
+	margin-top: 8px;
+}
+
+.sprint-details .disable-button-option {
+	margin-bottom: 10px;
+}
+
+.disable-button-option input {
 	display: none;
 }
