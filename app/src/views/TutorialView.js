@@ -14,7 +14,9 @@ define(function(require, exports, module) {
 	var View = require('famous/core/View');
 	var TutorialIntro1Template = require('text!templates/tutorial/tutorial-intro-1.html');
 	var TutorialIntro2Template = require('text!templates/tutorial/tutorial-intro-2.html');
+	var Utility = require('famous/utilities/Utility');
 	var TutorialIntro3Template = require('text!templates/tutorial/tutorial-intro-3.html');
+	var navigatorTemplate = require('text!templates/tutorial/navigator.html');
 	var HelpStep1Template = require('text!templates/tutorial/help-step-1.html');
 	var HelpStep2Template = require('text!templates/tutorial/help-step-2.html');
 	var HelpStep3Template = require('text!templates/tutorial/help-step-3.html');
@@ -27,12 +29,18 @@ define(function(require, exports, module) {
 
 		this.renderController = new RenderController();
 		var mod = new StateModifier({
-			size: [App.width, App.height],
+			size: [App.width, App.height - 100],
 			transform: Transform.translate(0, 0, 16)
 		});
-
+		this.scrollView = new Scrollview({
+			direction: Utility.Direction.Y,
+		});
+		this.currentList = [];
+		this.scrollView.sequenceFrom(this.currentList);
 		this.add(mod).add(this.renderController);
+		this.renderController.show(this.scrollView);
 		this.init();
+		this.setNavigator();
 		Engine.on('keyup', onKeyUp.bind(this));
 		this.on('backToStep1', function() {
 			this.navigate(-1);
@@ -50,73 +58,133 @@ define(function(require, exports, module) {
 
 	function createStepSurfaces(helpStepTemplate) {
 		var stepSurface = new Surface({
-			size: [App.width, App.height],
+			size: [undefined, true],
 			content: _.template(helpStepTemplate, templateSettings),
 			properties: {
-				backgroundColor: '#f48d5b',
-				textAlign: 'center',
+				backgroundColor: '#FF7041',
 				paddingTop: '30px'
 			}
 		});
 		return stepSurface;
 	}
 
+	TutorialView.prototype.setNavigator = function() {
+		this.navigatorSurface = new Surface({
+			size: [undefined, 60],
+			content: _.template(navigatorTemplate, templateSettings),
+			properties: {
+				backgroundColor: '#FF7041',
+				borderTop: '2px solid #fff'
+			}
+		});
+
+		this.navigatorSurface.on('click', function(event) {
+			if (event instanceof CustomEvent) {
+				var classList = event.srcElement.classList;
+				if (this.currentStepIndex === 2) {
+					var value = document.getElementById('sleep-hour-entry').value;
+					var entryId = document.getElementById('sleep-hour-entry').dataset.id;
+					if (_.contains(classList, 'next')) {
+						this.createSleepEntry(value, entryId, function(resp) {
+							if (resp.glowEntry) {
+								document.getElementById('sleep-hour-entry').dataset.id = resp.glowEntry.id;
+							}
+							this.navigate(1);
+						}.bind(this));
+					} else if (_.contains(classList, 'back')) {
+						this.navigate(-1);
+					}
+				} else if (this.currentStepIndex === 3) {
+					var value = document.getElementById('mood-entry').value;
+					var entryId = document.getElementById('mood-entry').dataset.id;
+					if (_.contains(classList, 'back')) {
+						this.navigate(-1);
+					} else if (_.contains(classList, 'next')) {
+						if (value != '') {
+							createSingleEntry.call(this, {value: value, entryId: entryId}, function(resp) {
+								if (resp.glowEntry) {
+									document.getElementById('mood-entry').dataset.id = resp.glowEntry.id;
+								}
+								this.navigate(1);
+							}.bind(this));
+						} else {
+							this.navigate(1);
+						}
+					} 
+				} else if (this.currentStepIndex === 4) {
+					if (_.contains(classList, 'back')) {
+						this.navigate(-1);
+					} else if (_.contains(classList, 'next')) {
+						if (typeof cordova !== 'undefined') {
+							cordova.plugins.Keyboard.close();
+						}
+						createEntries.call(this);
+					} else if (event.srcElement.type === 'text') {
+						event.srcElement.focus();
+					}
+				} else {
+					if (_.contains(classList, 'skip')) {
+						App.pageView.changePage('TrackView', {
+							new: true
+						});
+					} else if (_.contains(classList, 'next')) {
+						this.navigate(1);
+					} else if (_.contains(classList, 'back')) {
+						this.navigate(-1);
+					}
+				}
+			}
+		}.bind(this));
+
+		this.add(new StateModifier({transform: Transform.translate(0, App.height - 110, App.zIndex.header - 1)})).add(this.navigatorSurface);
+	};
+
 	TutorialView.prototype.init = function() {
+		this.backgroundSurface = new Surface({
+			size: [undefined, undefined],
+			properties: {
+				backgroundColor: '#FF7041',
+				zIndex: 5
+			}
+		});
+		this.setBody(this.backgroundSurface);
+		var spareSurface = new Surface({
+			size: [undefined, 30],
+			properties: {
+				backgroundColor: '#FF7041',
+			}
+		});
+		this.currentList.push(spareSurface);
 		this.tutorialIntro1 = createStepSurfaces(TutorialIntro1Template);
 		this.tutorialIntro2 = createStepSurfaces(TutorialIntro2Template);
-		this.tutorialIntro3 = createStepSurfaces(TutorialIntro3Template);
 		this.step1Surface = createStepSurfaces(HelpStep1Template);
 		this.step2Surface = createStepSurfaces(HelpStep2Template);
 		this.step3Surface = createStepSurfaces(HelpStep3Template);
-		this.getStartedSurface = createStepSurfaces(HelpGetStartedTemplate);
 
-		this.stepsSurfaceList = [this.tutorialIntro1, this.tutorialIntro2, this.tutorialIntro3,
-				this.step1Surface, this.step2Surface, this.step3Surface, this.getStartedSurface];
+		this.stepsSurfaceList = [this.tutorialIntro1, this.tutorialIntro2, this.step1Surface, 
+				this.step2Surface, this.step3Surface];
 		this.step1Surface.on('click', function(event) {
 			var classList;
 			if (u.isAndroid() || (event instanceof CustomEvent)) {
 				classList = event.srcElement.classList;
 				var value = document.getElementById('sleep-hour-entry').value;
 				var entryId = document.getElementById('sleep-hour-entry').dataset.id;
-				if (_.contains(classList, 'next-question')) {
-					this.createSleepEntry(value, entryId, function(resp) {
-						if (resp.glowEntry) {
-							document.getElementById('sleep-hour-entry').dataset.id = resp.glowEntry.id;
-						}
-						this.navigate(1);
-					}.bind(this));
-				} else if (_.contains(classList, 'skip-label')) {
+				if (_.contains(classList, 'skip')) {
 					this.createSleepEntry(value, entryId, function(resp) {
 						App.pageView.changePage('TrackView', {
 							new: true
 						});
 					});
-				} else if (_.contains(classList, 'back-label')) {
-					this.navigate(-1);
-				}
+				} 
 			}
 		}.bind(this));
 
 		this.step2Surface.on('click', function(event) {
 			var classList;
-			if (u.isAndroid() || (event instanceof CustomEvent)) {
+			if (event instanceof CustomEvent) {
 				classList = event.srcElement.classList;
-				var value = document.getElementById('mood-entry').value;
-				var entryId = document.getElementById('mood-entry').dataset.id;
-				if (_.contains(classList, 'back-label')) {
-					this.navigate(-1);
-				} else if (_.contains(classList, 'next-question')) {
-					if (value != '') {
-						createSingleEntry.call(this, {value: value, entryId: entryId}, function(resp) {
-							if (resp.glowEntry) {
-								document.getElementById('mood-entry').dataset.id = resp.glowEntry.id;
-							}
-							this.navigate(1);
-						}.bind(this));
-					} else {
-						this.navigate(1);
-					}
-				} else if (_.contains(classList, 'skip-label')) {
+				if (_.contains(classList, 'skip')) {
+					var value = document.getElementById('mood-entry').value;
 					if (value != '') {
 						createSingleEntry.call(this, {value: value, entryId: entryId}, function(resp) {
 							App.pageView.changePage('TrackView', {
@@ -135,25 +203,7 @@ define(function(require, exports, module) {
 		this.step3Surface.on('click', function(event) {
 			var classList;
 			if (u.isAndroid() || (event instanceof CustomEvent)) {
-				classList = event.srcElement.classList;
-				if (_.contains(classList, 'back-label')) {
-					this.navigate(-1);
-				} else if (_.contains(classList, 'next-question')) {
-					if (cordova) {
-						cordova.plugins.Keyboard.close();
-					}
-					createEntries.call(this);
-				} else if (event.srcElement.type === 'text') {
-					event.srcElement.focus();
-				}
-			}
-		}.bind(this));
-
-		this.getStartedSurface.on('click', function(event) {
-			var classList;
-			if (u.isAndroid() || (event instanceof CustomEvent)) {
-				classList = event.srcElement.classList;
-				if (_.contains(classList, 'next-question')) {
+				if (_.contains(classList, 'skip')) {
 					App.pageView.changePage('TrackView', {
 						new: true
 					});
@@ -161,27 +211,22 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.tutorialIntro1.on('click', tutorialNavigation.bind(this));
-		this.tutorialIntro2.on('click', tutorialNavigation.bind(this));
-		this.tutorialIntro3.on('click', tutorialNavigation.bind(this));
+		this.tutorialIntro1.on('click', closeTutorial.bind(this));
+		this.tutorialIntro2.on('click', closeTutorial.bind(this));
 
 		this.currentStepIndex = -1;
 		this.navigate(1);
 
 	};
 
-	function tutorialNavigation(event) {
+	function closeTutorial(event) {
 		var classList;
 		if (u.isAndroid() || (event instanceof CustomEvent)) {
 			classList = event.srcElement.classList;
-			if (_.contains(classList, 'skip-label')) {
+			if (_.contains(classList, 'skip')) {
 				App.pageView.changePage('TrackView', {
 					new: true
 				});
-			} else if (_.contains(classList, 'next-question')) {
-				this.navigate(1);
-			} else if (_.contains(classList, 'back-label')) {
-				this.navigate(-1);
 			}
 		}
 	}
@@ -294,7 +339,9 @@ define(function(require, exports, module) {
 		function(data) {
 			if (u.checkData(data)) {
 				if (data.success) {
-					this.navigate(1);
+					App.pageView.changePage('TrackView', {
+						new: true
+					});
 				} else {
 					u.showAlert(data.message);
 				}
@@ -318,8 +365,30 @@ define(function(require, exports, module) {
 	};
 
 	TutorialView.prototype.navigate = function(indexModifier) {
+		this.scrollView.setPosition(0);
 		this.currentStepIndex += indexModifier;
-		this.renderController.show(this.stepsSurfaceList[this.currentStepIndex]);
+		var currentSurface = this.stepsSurfaceList[this.currentStepIndex];
+		if (this.currentList.length > 1) {
+			this.currentList.splice(0, 1, currentSurface);
+		} else {
+			this.currentList.splice(0, 0, currentSurface);
+		}
+		currentSurface.pipe(this.scrollView);
+		setTimeout(function() {
+			if (this.currentStepIndex == 0) {
+				document.getElementsByClassName('back')[0].style.visibility = "hidden";
+			} else {
+				document.getElementsByClassName('back')[0].style.visibility = "visible";
+			}
+
+			_.each(document.getElementsByClassName('navigation-dots'), function(dot, index){
+				if (index === this.currentStepIndex) {
+					dot.classList.add('active');
+				} else {
+					dot.classList.remove('active');
+				}
+			}.bind(this));
+		}.bind(this), 100);
 	};
 
 	App.pages[TutorialView.name] = TutorialView;
