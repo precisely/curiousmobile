@@ -82,11 +82,11 @@ define(function(require, exports, module) {
 
 	Discussion.disableComments = function(args, callback) {
 		var argsToSend = {
-			hash: args.hash,
+			id: args.hash,
 			disable: args.disable
 		};
 
-		u.queueJSON("Modifying comment preferences", App.serverUrl + '/home/res',
+		u.queueJSON("Modifying comment preferences", App.serverUrl + '/api/discussion/action/disableComments',
 				u.makeGetArgs(argsToSend),
 				function(data) {
 					if (u.checkData(data)) {
@@ -94,7 +94,7 @@ define(function(require, exports, module) {
 							if (data.message) {
 								u.showAlert(data.message);
 							}
-							callback();
+							callback(data.disableComments);
 						} else {
 							u.showAlert(data.message);
 						}

@@ -200,12 +200,15 @@ define(function(require, exports, module) {
 				} else if (_.contains(e.srcElement.parentElement.classList, 'disable-button-option')) {
 					var disableCommentCheckbox = document.getElementById('disable-comments-checkbox');
 					var disable = !disableCommentCheckbox.checked;
-					Discussion.disableComments({hash: this.discussionHash, disable: disable}, function() {
-						disableCommentCheckbox.checked = !disableCommentCheckbox.checked;
-						if (disable) {
+					Discussion.disableComments({hash: this.discussionHash, disable: disable}, function(disableComments) {
+						if (disableComments) {
+							disableCommentCheckbox.checked = true;
 							this.surfaceList.splice(this.surfaceList.indexOf(this.addCommentSurface), 1);
 						} else {
-							this.surfaceList.push(this.addCommentSurface);
+							disableCommentCheckbox.checked = false;
+							if (this.surfaceList.indexOf(this.addCommentSurface) < 0) {
+								this.surfaceList.push(this.addCommentSurface);
+							}
 						}
 					}.bind(this));
 				}

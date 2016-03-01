@@ -256,7 +256,7 @@ define(function(require, exports, module) {
 	};
 
 	Sprint.disableComments = function(args, callback) {
-		u.queueJSON("Modifying comment preferences", App.serverUrl + '/home/res',
+		u.queueJSON("Modifying comment preferences", App.serverUrl + '/api/sprint/action/disableComments',
 				u.makeGetArgs(args),
 				function(data) {
 					if (u.checkData(data)) {
@@ -265,7 +265,7 @@ define(function(require, exports, module) {
 								u.showAlert(data.message);
 							}
 							if (callback) {
-								callback();
+								callback(data.disableComments);
 							}
 						} else {
 							u.showAlert(data.message);
