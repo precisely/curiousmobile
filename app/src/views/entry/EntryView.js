@@ -86,6 +86,8 @@ define(function(require, exports, module) {
 		this.glowController.show(this.glowSurface, null
 			, function() {
 				setTimeout(function () {
+					//Calling just hide() was not allowing the glow surface to persist so modifying the z-Index first and then hiding the glow surface. 
+					//Also since glow surface was displayed on the top of entry surface zIndex had to be given so added a state modifier.
 					this.glowControllerModifier.setTransform(Transform.translate(0, 0, 0), {duration: 3000});
 					this.glowController.hide();
 				 }.bind(this), 1000);

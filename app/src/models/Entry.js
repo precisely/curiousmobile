@@ -281,7 +281,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						callback({
 							entries: entries[0],
 							glowEntry: this,
-							tagStats: entries[1] || entries[2]
+							tagStats: [entries[1], entries[2]]
 						});
 						//if (entries[1] != null)
 							//updateAutocomplete(entries[1][0], entries[1][1],
