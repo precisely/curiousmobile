@@ -102,9 +102,8 @@ define(function (require, exports, module) {
 					username,
 					password,
 					function (user) {
-						App.pageView.changePage('SprintListView');
+						App.pageView.changePage('TutorialView');
 						push.register();
-						window.needToShowTutorial = true;
 					}.bind(this)
 			)
 		}

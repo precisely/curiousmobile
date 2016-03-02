@@ -174,7 +174,11 @@ define(function(require, exports, module) {
 		var classList;
 		if (u.isAndroid() || (event instanceof CustomEvent)) {
 			classList = event.srcElement.classList;
-			if (_.contains(classList, 'skip-label')) {
+			if (_.contains(classList, 'skip-intro')) {
+				this.currentStepIndex = -1;
+				this.navigate(4);
+				return;
+			} else if (_.contains(classList, 'skip-label')) {
 				App.pageView.changePage('TrackView', {
 					new: true
 				});

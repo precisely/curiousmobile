@@ -274,6 +274,14 @@ define(function(require, exports, module) {
 		scrollWrapperSurface.add(scrollNode);
 		var nonBookmarkEntriesCount = 0;
 		var bookmarkEntriesCount = 0;
+        var entriesGroupedByDeviceData = {};
+
+        //Filter out the device data
+
+        entries.forEach(function(entry) {
+
+        }.bind(this));
+
 		entries.forEach(function(entry) {
 			var addedView = null;
 			if (entry.isContinuous()) {

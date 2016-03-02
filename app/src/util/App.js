@@ -1,5 +1,5 @@
 var App = function() {
-	//var u = require('util/Utils');
+	//var u = require('models/User');
 	//var AppView = require('views/AppView');
 
 	this.pages = {};
