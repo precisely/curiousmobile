@@ -15,12 +15,10 @@ define(function(require, exports, module) {
 	var TutorialIntro1Template = require('text!templates/tutorial/tutorial-intro-1.html');
 	var TutorialIntro2Template = require('text!templates/tutorial/tutorial-intro-2.html');
 	var Utility = require('famous/utilities/Utility');
-	var TutorialIntro3Template = require('text!templates/tutorial/tutorial-intro-3.html');
 	var navigatorTemplate = require('text!templates/tutorial/navigator.html');
 	var HelpStep1Template = require('text!templates/tutorial/help-step-1.html');
 	var HelpStep2Template = require('text!templates/tutorial/help-step-2.html');
 	var HelpStep3Template = require('text!templates/tutorial/help-step-3.html');
-	var HelpGetStartedTemplate = require('text!templates/tutorial/help-get-started.html');
 	var Entry = require('models/Entry');
 	var u = require('util/Utils');
 
@@ -202,6 +200,7 @@ define(function(require, exports, module) {
 
 		this.step3Surface.on('click', function(event) {
 			var classList;
+			classList = event.srcElement.classList;
 			if (u.isAndroid() || (event instanceof CustomEvent)) {
 				if (_.contains(classList, 'skip')) {
 					App.pageView.changePage('TrackView', {
@@ -325,7 +324,9 @@ define(function(require, exports, module) {
 			document.getElementById('stretch').value, document.getElementById('metabolic').value];
 		entries = _.filter(entries, Boolean);
 		if (entries.length == 0) {
-			this.navigate(1);
+			App.pageView.changePage('TrackView', {
+				new: true
+			});
 			return false;
 		}
 		var argsToSend = u.getCSRFPreventionObject("addEntryCSRF", {

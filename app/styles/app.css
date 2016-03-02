@@ -1499,7 +1499,7 @@ button.close {
 
 .help-wizard .intro-content .title {
 	color: #fff;
-	font-size: 16px;
+	font-size: 18px;
 	margin-bottom: 20px;
 }
 
@@ -1524,7 +1524,7 @@ list-style-type: none;
 
 .help-wizard .sub-heading {
 	color: #fff;
-	font-weight: 500;
+	font-weight: 300;
 	font-size: 16px;
 }
 
@@ -1532,6 +1532,7 @@ list-style-type: none;
 	color: #fff;
 	line-height: 1.3em;
 	margin-top: 30px;
+	font-weight: 300;
 }
 
 .help-wizard .questions {
@@ -1562,7 +1563,7 @@ list-style-type: none;
 .help-wizard label {
 	margin: 15px 0px 10px 65px;
 	font-weight: 400;
-	font-size: 12px;
+	font-size: 14px;
 	text-align: left;
 	color: #fff;
 }
