@@ -58,9 +58,12 @@ define(function(require, exports, module) {
 
 	function _createBody() {
 		var formContainerSurface = new ContainerSurface({
-			size: [undefined, 69],
+			size: [undefined, 80],
 			properties: {
 				backgroundColor: '#eaeaea',
+				fontSize: '12px',
+				color: 'rgb(113, 113, 113)',
+				paddingBottom: '5px'
 			}
 		});
 
@@ -115,7 +118,7 @@ define(function(require, exports, module) {
 		});
 
 		var entryListModifier = new Modifier({
-			transform: Transform.translate(0, 45, 1),
+			transform: Transform.translate(0, 55, 1),
 		});
 
 		entryListModifier.sizeFrom(function() {
