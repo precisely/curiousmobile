@@ -743,6 +743,8 @@ button.close {
 	border-color: #ffffff;
 	line-height: 25px;
 	font-size: 13px;
+	padding-right: 0px;
+	padding-left: 8px;
 }
 
 /* individual: webkit */

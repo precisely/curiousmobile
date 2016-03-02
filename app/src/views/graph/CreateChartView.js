@@ -17,6 +17,7 @@ define(function(require, exports, module) {
 	var Scrollview = require('famous/views/Scrollview');
 	var Utility = require('famous/utilities/Utility');
 	var Engine = require('famous/core/Engine');
+	var Timer = require('famous/utilities/Timer');
 	var Tags = require('models/Tags');
 	var u = require('util/Utils');
 	var treeView = require('util/treeview');
@@ -81,7 +82,7 @@ define(function(require, exports, module) {
 			if (_.contains(event.srcElement.classList, 'tag-search-input')) {
 				if (event.which != 13) {
 					var searchTerm = document.getElementsByClassName('tag-search-input')[0].value;
-                    searchTerm = searchTerm.toLowerCase();
+					searchTerm = searchTerm.toLowerCase();
 					if (searchTerm === '') {
 						_renderTagsList.call(this, App.tagListWidget.list.listItems.list);
 					} else {
@@ -201,10 +202,13 @@ define(function(require, exports, module) {
 		this.submitFormContainer.add(new Modifier({
 			transform: Transform.translate(115, 5, 0)
 		})).add(createChartSurface);
-		var formContainerMod = new StateModifier({
+		this.formContainerMod = new StateModifier({
 			transform: Transform.translate(0, App.height - 105, App.zIndex.readView + 1)
 		});
-		this.add(formContainerMod).add(this.submitFormContainer);
+		this.add(this.formContainerMod).add(this.submitFormContainer);
+		Timer.every(function() {
+			this.formContainerMod.setTransform(Transform.translate(0, App.height - 105, App.zIndex.readView + 1))
+		}.bind(this), 2);
 	}
 
 	CreateChartView.prototype.init = function() {
