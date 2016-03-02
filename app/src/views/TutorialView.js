@@ -59,7 +59,7 @@ define(function(require, exports, module) {
 			size: [undefined, true],
 			content: _.template(helpStepTemplate, templateSettings),
 			properties: {
-				backgroundColor: '#FF7041',
+				backgroundColor: '#ff6f4c',
 				paddingTop: '30px'
 			}
 		});
@@ -71,7 +71,7 @@ define(function(require, exports, module) {
 			size: [undefined, 60],
 			content: _.template(navigatorTemplate, templateSettings),
 			properties: {
-				backgroundColor: '#FF7041',
+				backgroundColor: '#ff6f4c',
 				borderTop: '2px solid #fff'
 			}
 		});
@@ -141,7 +141,7 @@ define(function(require, exports, module) {
 		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
-				backgroundColor: '#FF7041',
+				backgroundColor: '#ff6f4c',
 				zIndex: 5
 			}
 		});
@@ -149,7 +149,7 @@ define(function(require, exports, module) {
 		var spareSurface = new Surface({
 			size: [undefined, 30],
 			properties: {
-				backgroundColor: '#FF7041',
+				backgroundColor: '#ff6f4c',
 			}
 		});
 		this.currentList.push(spareSurface);

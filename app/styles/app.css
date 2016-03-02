@@ -1482,7 +1482,7 @@ button.close {
 }
 
 .help-wizard {
-	background-color: #FF7041;
+	background-color: #ff6f4c;
 	width: 100%;
 	padding: 10px;
 	height: 100%;
@@ -1494,7 +1494,7 @@ button.close {
 
 .help-wizard .intro-content {
 	padding: 20px;
-	font-weight: 200;
+	font-weight: 400;
 }
 
 .help-wizard .intro-content .title {
@@ -1505,12 +1505,13 @@ button.close {
 
 .help-wizard .intro-content .content-title {
 	color: #fff;
-	font-size: 17px;
+	font-size: 15px;
+	font-weight: 600;
 }
 
 .help-wizard .intro-content p {
 	font-size: 15px;
-	font-weight: 200;
+	font-weight: 400;
 }
 
 /*.help-wizard .intro-content li {
@@ -1524,7 +1525,7 @@ list-style-type: none;
 
 .help-wizard .sub-heading {
 	color: #fff;
-	font-weight: 300;
+	font-weight: 400;
 	font-size: 16px;
 }
 
@@ -1532,7 +1533,16 @@ list-style-type: none;
 	color: #fff;
 	line-height: 1.3em;
 	margin-top: 30px;
-	font-weight: 300;
+	font-weight: 400;
+}
+
+.help-wizard h3 {
+	font-weight: 600;
+}
+
+.help-wizard hr {
+	margin-top: 30px;
+	margin-bottom: 30px;
 }
 
 .help-wizard .questions {
@@ -1562,7 +1572,7 @@ list-style-type: none;
 
 .help-wizard label {
 	margin: 15px 0px 10px 65px;
-	font-weight: 400;
+	font-weight: 500;
 	font-size: 14px;
 	text-align: left;
 	color: #fff;
@@ -1646,6 +1656,10 @@ list-style-type: none;
 .help-wizard .entry-label {
 	text-align: left;
 	margin: 20px 0px;
+}
+
+.help-wizard img {
+	margin: 10px 0px;
 }
 
 .alert {
@@ -3310,11 +3324,11 @@ input.cropit-image-zoom-input {
 .mood-image {
 	width: 100%;
 	text-align: center;
-	margin: 40px 0px 70px 0px;
+	margin: 30px 0px 30px 0px;
 }
 
 .help-wizard .skip {
 	position: absolute;
-	top: 15px;
-	right: 5px;
+	top: 0px;
+	right: 10px;
 }
