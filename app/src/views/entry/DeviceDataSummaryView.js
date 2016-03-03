@@ -8,14 +8,14 @@ define(function(require, exports, module) {
 	var RenderController = require('famous/views/RenderController');
 	var DeviceDataView = require('views/entry/DeviceDataView');
 
-	function EntryViewDeviceData(entry) {
+	function DeviceDataSummaryView(entry) {
 		DeviceDataView.apply(this, arguments);
 	}
 
-	EntryViewDeviceData.prototype = Object.create(DeviceDataView.prototype);
-	EntryViewDeviceData.prototype.constructor = EntryViewDeviceData;
+	DeviceDataSummaryView.prototype = Object.create(DeviceDataView.prototype);
+	DeviceDataSummaryView.prototype.constructor = DeviceDataSummaryView;
 
-	EntryViewDeviceData.DEFAULT_OPTIONS = {};
+	DeviceDataSummaryView.DEFAULT_OPTIONS = {};
 
-	module.exports = EntryViewDeviceData;
+	module.exports = DeviceDataSummaryView;
 });

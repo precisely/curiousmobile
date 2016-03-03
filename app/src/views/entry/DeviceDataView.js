@@ -18,6 +18,7 @@ define(function(require, exports, module) {
 
 	function DeviceDataView(deviceEntries) {
 		EntryReadView.apply(this, arguments);
+		this.options = Object.create(DeviceDataView.DEFAULT_OPTIONS);
 		this.deviceEntries = deviceEntries;
 		this.childrenController = new RenderController();
 		this.childrenSequentialView = new SequentialLayout({
@@ -35,7 +36,7 @@ define(function(require, exports, module) {
 	};
 
 	function _createNode() {
-		var readSurfaceOptions = TrackEntryView.getSurfaceProperties(this.options.lineHeight, this.getDisplayText());
+		var readSurfaceOptions = TrackEntryView.getSurfaceProperties(this.options.lineHeight, [undefined, this.options.entryHeight], this.getDisplayText());
 		this.entrySurface.setOptions(readSurfaceOptions);
 
 		var deleteModifier = new StateModifier({
