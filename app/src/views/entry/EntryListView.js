@@ -382,7 +382,7 @@ define(function(require, exports, module) {
 
 	EntryListView.prototype.heightOfPins = function () {
 		var numberOfRows = this.numberOfPinRows();
-		return numberOfRows ? ((numberOfRows * 40) + 15) : 0;
+		return numberOfRows ? ((numberOfRows * 40) + 15) : 15;
 	};
 
 	EntryListView.prototype.pinPosition = function (index) {

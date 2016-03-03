@@ -195,6 +195,42 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					}
 					return text;
 			},
+
+			saveHelpEntry: function(callback) {
+				var now = new Date();
+				var collectionCache = window.App.collectionCache;
+				var baseDate = window.App.selectedDate || new Date(now.setHours(0, 0, 0, 0));
+				var argsToSend = u.getCSRFPreventionObject("addEntryCSRF", {
+					currentTime: new Date().toUTCString(),
+					userId: this.userId || User.getCurrentUserId(),
+					entryId: this.get('id'),
+					text: this.text,
+					baseDate: baseDate.toUTCString(),
+					timeZoneName: u.getTimezone(),
+					defaultToNow: '1'
+				});
+			
+				u.queueJSON("Adding entry", u.makeGetUrl("createSingleHelpEntrysData"), u.makeGetArgs(argsToSend), 
+						function(entries) {
+							if (u.checkData(entries)) {
+								if (!entries[0]) {
+									u.showAlert("You must enter a time duration, like 'sleep 8 hours 10 mins'");
+									return;
+								}
+								Entry.cacheEntries(baseDate, entries[0]);
+								callback({
+									entries: entries[0],
+									glowEntry: entries[3],
+									key: Entry.getCacheKey(baseDate)
+								});
+							} else {
+								u.showAlert("Error adding entry");
+							}
+						}, function (data) {
+							console.log('Entry creation failed: ' + this.toString());
+						}.bind(this), 0, false, false);
+			}, 
+
 			create: function(callback) {
 				var now = new Date();
 				var collectionCache = window.App.collectionCache;
