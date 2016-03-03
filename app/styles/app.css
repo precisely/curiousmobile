@@ -1459,10 +1459,6 @@ button.close {
 		padding-top: 10px !important;
 	}
 
-	.help-wizard .navigators {
-		bottom: 60px !important;
-	}
-
 	.help-wizard h4 {
 		margin-top: 0px !important;
 	}
@@ -1473,9 +1469,10 @@ button.close {
 }
 
 .help-wizard {
-	background-color: #f48d5b;
+	background-color: #ff6f4c;
 	width: 100%;
-	padding: 10px;
+	padding: 10px 30px;
+	height: 100%;
 }
 
 .help-wizard.intro {
@@ -1483,7 +1480,26 @@ button.close {
 }
 
 .help-wizard .intro-content {
-	padding: 20px;
+	font-weight: 400;
+	padding-top: 20px;
+	padding-bottom: 20px;
+}
+
+.help-wizard .intro-content .title {
+	color: #fff;
+	font-size: 18px;
+	margin-bottom: 20px;
+}
+
+.help-wizard .intro-content .content-title {
+	color: #fff;
+	font-size: 15px;
+	font-weight: 600;
+}
+
+.help-wizard .intro-content p {
+	font-size: 13px;
+	font-weight: 400;
 }
 
 /*.help-wizard .intro-content li {
@@ -1497,20 +1513,31 @@ list-style-type: none;
 
 .help-wizard .sub-heading {
 	color: #fff;
-	font-style: italic;
-	font-weight: 500;
+	font-weight: 400;
 	font-size: 14px;
 }
 
-.help-wizard h4 {
+.help-wizard h4, .help-wizard h3 {
 	color: #fff;
 	line-height: 1.3em;
 	margin-top: 30px;
+	font-weight: 400;
+}
+
+.help-wizard h3 {
+	font-size: 18px;
+	font-weight: 600;
+	margin-top: 20px;
+}
+
+.help-wizard hr {
+	margin-top: 30px;
+	margin-bottom: 30px;
 }
 
 .help-wizard .questions {
 	font-weight: 600;
-	margin: 20px 0px;
+	margin: 20px 0px 10px 0px;
 	color: #fff;
 }
 
@@ -1527,17 +1554,16 @@ list-style-type: none;
 }
 
 .help-wizard input {
-	font-weight: 600;
+	font-weight: 500;
 	border-radius: 2px;
 	color: #8C8C8C;
-	font-style: italic;
 	font-size: 14px;
 }
 
 .help-wizard label {
 	margin: 15px 0px 10px 65px;
-	font-weight: 400;
-	font-size: 12px;
+	font-weight: 500;
+	font-size: 14px;
 	text-align: left;
 	color: #fff;
 }
@@ -1586,7 +1612,7 @@ list-style-type: none;
 }
 
 .help-wizard .next-question {
-	background-color: #e27c4a;
+	background-color: #E4643A;
 	color: white;
 	height: 50px;
 	width: 100%;
@@ -1595,12 +1621,7 @@ list-style-type: none;
 }
 
 .help-wizard .navigators {
-	position: fixed;
-	bottom: 70px;
-	padding-right: 10px;
 	width: 100%;
-	left: 0;
-	padding-left: 10px;
 }
 
 .help-wizard .next-question:active {
@@ -1627,6 +1648,10 @@ list-style-type: none;
 	margin: 20px 0px;
 }
 
+.help-wizard img {
+	margin: 10px 0px;
+}
+
 .alert {
 	padding: 10px;
 	min-height: 50px;
@@ -1638,6 +1663,7 @@ list-style-type: none;
 	padding: 5px 10px;
 	border-radius: 2px;
 	right: 0px !important;
+	margin-left: 10px;
 }
 
 .sprint-details {
@@ -3309,4 +3335,56 @@ input.cropit-image-zoom-input {
 
 .disable-button-option input {
 	display: none;
+}
+
+.tutorial-navigator {
+	color: #ffffff;
+	font-size: 36px;
+	font-weight: 500;
+	width: 100%;
+	text-align: center;
+}
+
+.tutorial-navigator .back {
+	float: left;
+}
+
+.tutorial-navigator .next {
+	float: right;
+}
+
+.tutorial-navigator .navigation-dots {
+	height: 10px;
+	width: 10px;
+	border-radius: 50%;
+	border: 1px solid #fff;
+	margin-left: 2px;
+	display: inline-block;
+	margin-bottom: 5px;
+}
+
+.tutorial-navigator .navigator-text {
+	padding: 5px 10px;
+}
+
+.tutorial-navigator .navigation-dots.active {
+	background-color: #fff;
+}
+
+.tutorial-navigator .dots {
+	text-align: center;
+	display: inline-block;
+}
+
+.mood-image {
+	width: 100%;
+	text-align: center;
+	margin: 0px 0px 20px 0px;
+}
+
+.help-wizard .skip {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	padding: 0px 10px;
 }
