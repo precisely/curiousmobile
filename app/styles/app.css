@@ -1484,7 +1484,7 @@ button.close {
 .help-wizard {
 	background-color: #ff6f4c;
 	width: 100%;
-	padding: 10px;
+	padding: 10px 30px;
 	height: 100%;
 }
 
@@ -1493,8 +1493,9 @@ button.close {
 }
 
 .help-wizard .intro-content {
-	padding: 20px;
 	font-weight: 400;
+	padding-top: 20px;
+	padding-bottom: 20px;
 }
 
 .help-wizard .intro-content .title {
@@ -1510,7 +1511,7 @@ button.close {
 }
 
 .help-wizard .intro-content p {
-	font-size: 15px;
+	font-size: 13px;
 	font-weight: 400;
 }
 
@@ -1526,7 +1527,7 @@ list-style-type: none;
 .help-wizard .sub-heading {
 	color: #fff;
 	font-weight: 400;
-	font-size: 16px;
+	font-size: 14px;
 }
 
 .help-wizard h4, .help-wizard h3 {
@@ -1537,6 +1538,7 @@ list-style-type: none;
 }
 
 .help-wizard h3 {
+	font-size: 18px;
 	font-weight: 600;
 	margin-top: 20px;
 }
@@ -1548,7 +1550,7 @@ list-style-type: none;
 
 .help-wizard .questions {
 	font-weight: 600;
-	margin: 20px 0px;
+	margin: 20px 0px 10px 0px;
 	color: #fff;
 }
 
@@ -1674,6 +1676,7 @@ list-style-type: none;
 	padding: 5px 10px;
 	border-radius: 2px;
 	right: 0px !important;
+	margin-left: 10px;
 }
 
 .sprint-details {
@@ -3288,9 +3291,8 @@ input.cropit-image-zoom-input {
 }
 
 .tutorial-navigator {
-	padding: 15px 10px;
 	color: #ffffff;
-	font-size: 18px;
+	font-size: 36px;
 	font-weight: 500;
 	width: 100%;
 	text-align: center;
@@ -3305,12 +3307,17 @@ input.cropit-image-zoom-input {
 }
 
 .tutorial-navigator .navigation-dots {
-	height: 15px;
-	width: 15px;
+	height: 10px;
+	width: 10px;
 	border-radius: 50%;
 	border: 1px solid #fff;
 	margin-left: 2px;
 	display: inline-block;
+	margin-bottom: 5px;
+}
+
+.tutorial-navigator .navigator-text {
+	padding: 5px 10px;
 }
 
 .tutorial-navigator .navigation-dots.active {
@@ -3325,11 +3332,12 @@ input.cropit-image-zoom-input {
 .mood-image {
 	width: 100%;
 	text-align: center;
-	margin: 30px 0px 30px 0px;
+	margin: 0px 0px 20px 0px;
 }
 
 .help-wizard .skip {
 	position: absolute;
 	top: 0px;
-	right: 10px;
+	right: 0px;
+	padding: 0px 10px;
 }

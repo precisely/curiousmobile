@@ -72,7 +72,6 @@ define(function(require, exports, module) {
 			content: _.template(navigatorTemplate, templateSettings),
 			properties: {
 				backgroundColor: '#ff6f4c',
-				borderTop: '2px solid #fff'
 			}
 		});
 
@@ -82,22 +81,22 @@ define(function(require, exports, module) {
 				if (this.currentStepIndex === 2) {
 					var value = document.getElementById('sleep-hour').value;
 					var entryId = document.getElementById('sleep-hour').dataset.id;
-					if (_.contains(classList, 'next')) {
+					if (_.contains(classList, 'next') || _.contains(event.srcElement.parentElement.classList, 'next')) {
 						this.createSleepEntry(value, entryId, function(resp) {
 							if (resp.glowEntry) {
 								document.getElementById('sleep-hour').dataset.id = resp.glowEntry.id;
 							}
 							this.navigate(1);
 						}.bind(this));
-					} else if (_.contains(classList, 'back')) {
+					} else if (_.contains(classList, 'back') || _.contains(event.srcElement.parentElement.classList, 'back')) {
 						this.navigate(-1);
 					}
 				} else if (this.currentStepIndex === 3) {
 					var value = document.getElementById('mood-box').value;
 					var entryId = document.getElementById('mood-box').dataset.id;
-					if (_.contains(classList, 'back')) {
+					if (_.contains(classList, 'back') || _.contains(event.srcElement.parentElement.classList, 'back')) {
 						this.navigate(-1);
-					} else if (_.contains(classList, 'next')) {
+					} else if (_.contains(classList, 'next') || _.contains(event.srcElement.parentElement.classList, 'next')) {
 						if (value != '' && validateMoodEntry(value)) {
 							createSingleEntry.call(this, {value: value, entryId: entryId}, function(resp) {
 								if (resp.glowEntry) {
@@ -110,9 +109,9 @@ define(function(require, exports, module) {
 						}
 					} 
 				} else if (this.currentStepIndex === 4) {
-					if (_.contains(classList, 'back')) {
+					if (_.contains(classList, 'back') || _.contains(event.srcElement.parentElement.classList, 'back')) {
 						this.navigate(-1);
-					} else if (_.contains(classList, 'next')) {
+					} else if (_.contains(classList, 'next') || _.contains(event.srcElement.parentElement.classList, 'next')) {
 						if (typeof cordova !== 'undefined') {
 							cordova.plugins.Keyboard.close();
 						}
@@ -125,9 +124,9 @@ define(function(require, exports, module) {
 						App.pageView.changePage('TrackView', {
 							new: true
 						});
-					} else if (_.contains(classList, 'next')) {
+					} else if (_.contains(classList, 'next') || _.contains(event.srcElement.parentElement.classList, 'next')) {
 						this.navigate(1);
-					} else if (_.contains(classList, 'back')) {
+					} else if (_.contains(classList, 'back') || _.contains(event.srcElement.parentElement.classList, 'back')) {
 						this.navigate(-1);
 					}
 				}
@@ -167,7 +166,7 @@ define(function(require, exports, module) {
 				classList = event.srcElement.classList;
 				var value = document.getElementById('sleep-hour').value;
 				var entryId = document.getElementById('sleep-hour').dataset.id;
-				if (_.contains(classList, 'skip')) {
+				if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
 					this.createSleepEntry(value, entryId, function(resp) {
 						App.pageView.changePage('TrackView', {
 							new: true
@@ -175,7 +174,7 @@ define(function(require, exports, module) {
 					});
 				} else if (event.srcElement.type === 'text') {
 					if (event.srcElement.value === '') {
-						event.srcElement.value = 'Sleep ';
+						event.srcElement.value = 'sleep ';
 						event.srcElement.focus();
 					}
 				}
@@ -186,7 +185,7 @@ define(function(require, exports, module) {
 			var classList;
 			if (event instanceof CustomEvent) {
 				classList = event.srcElement.classList;
-				if (_.contains(classList, 'skip')) {
+				if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
 					var value = document.getElementById('mood-box').value;
 					if (value != '' && validateMoodEntry(value)) {
 						createSingleEntry.call(this, {value: value, entryId: entryId}, function(resp) {
@@ -212,7 +211,7 @@ define(function(require, exports, module) {
 			var classList;
 			classList = event.srcElement.classList;
 			if (u.isAndroid() || (event instanceof CustomEvent)) {
-				if (_.contains(classList, 'skip')) {
+				if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
 					App.pageView.changePage('TrackView', {
 						new: true
 					});
@@ -236,7 +235,7 @@ define(function(require, exports, module) {
 		var classList;
 		if (u.isAndroid() || (event instanceof CustomEvent)) {
 			classList = event.srcElement.classList;
-			if (_.contains(classList, 'skip')) {
+			if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
 				App.pageView.changePage('TrackView', {
 					new: true
 				});
