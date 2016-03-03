@@ -14,11 +14,11 @@ define(function(require, exports, module) {
 	var View = require('famous/core/View');
 	var TutorialIntro1Template = require('text!templates/tutorial/tutorial-intro-1.html');
 	var TutorialIntro2Template = require('text!templates/tutorial/tutorial-intro-2.html');
-	var TutorialIntro3Template = require('text!templates/tutorial/tutorial-intro-3.html');
+	var Utility = require('famous/utilities/Utility');
+	var navigatorTemplate = require('text!templates/tutorial/navigator.html');
 	var HelpStep1Template = require('text!templates/tutorial/help-step-1.html');
 	var HelpStep2Template = require('text!templates/tutorial/help-step-2.html');
 	var HelpStep3Template = require('text!templates/tutorial/help-step-3.html');
-	var HelpGetStartedTemplate = require('text!templates/tutorial/help-get-started.html');
 	var Entry = require('models/Entry');
 	var u = require('util/Utils');
 
@@ -27,12 +27,18 @@ define(function(require, exports, module) {
 
 		this.renderController = new RenderController();
 		var mod = new StateModifier({
-			size: [App.width, App.height],
+			size: [App.width, App.height - 100],
 			transform: Transform.translate(0, 0, 16)
 		});
-
+		this.scrollView = new Scrollview({
+			direction: Utility.Direction.Y,
+		});
+		this.currentList = [];
+		this.scrollView.sequenceFrom(this.currentList);
 		this.add(mod).add(this.renderController);
+		this.renderController.show(this.scrollView);
 		this.init();
+		this.setNavigator();
 		Engine.on('keyup', onKeyUp.bind(this));
 		this.on('backToStep1', function() {
 			this.navigate(-1);
@@ -50,74 +56,138 @@ define(function(require, exports, module) {
 
 	function createStepSurfaces(helpStepTemplate) {
 		var stepSurface = new Surface({
-			size: [App.width, App.height],
+			size: [undefined, true],
 			content: _.template(helpStepTemplate, templateSettings),
 			properties: {
-				backgroundColor: '#f48d5b',
-				textAlign: 'center',
+				backgroundColor: '#ff6f4c',
 				paddingTop: '30px'
 			}
 		});
 		return stepSurface;
 	}
 
+	TutorialView.prototype.setNavigator = function() {
+		this.navigatorSurface = new Surface({
+			size: [undefined, 60],
+			content: _.template(navigatorTemplate, templateSettings),
+			properties: {
+				backgroundColor: '#ff6f4c',
+			}
+		});
+
+		this.navigatorSurface.on('click', function(event) {
+			if (event instanceof CustomEvent) {
+				var classList = event.srcElement.classList;
+				if (this.currentStepIndex === 2) {
+					var value = document.getElementById('sleep-hour').value;
+					var entryId = document.getElementById('sleep-hour').dataset.id;
+					if (_.contains(classList, 'next') || _.contains(event.srcElement.parentElement.classList, 'next')) {
+						this.createSleepEntry(value, entryId, function(resp) {
+							if (resp.glowEntry) {
+								document.getElementById('sleep-hour').dataset.id = resp.glowEntry.id;
+							}
+							this.navigate(1);
+						}.bind(this));
+					} else if (_.contains(classList, 'back') || _.contains(event.srcElement.parentElement.classList, 'back')) {
+						this.navigate(-1);
+					}
+				} else if (this.currentStepIndex === 3) {
+					var value = document.getElementById('mood-box').value;
+					var entryId = document.getElementById('mood-box').dataset.id;
+					if (_.contains(classList, 'back') || _.contains(event.srcElement.parentElement.classList, 'back')) {
+						this.navigate(-1);
+					} else if (_.contains(classList, 'next') || _.contains(event.srcElement.parentElement.classList, 'next')) {
+						if (value != '' && validateMoodEntry(value)) {
+							createSingleEntry.call(this, {value: value, entryId: entryId}, function(resp) {
+								if (resp.glowEntry) {
+									document.getElementById('mood-box').dataset.id = resp.glowEntry.id;
+								}
+								this.navigate(1);
+							}.bind(this));
+						} else if (!value) {
+							this.navigate(1);
+						}
+					} 
+				} else if (this.currentStepIndex === 4) {
+					if (_.contains(classList, 'back') || _.contains(event.srcElement.parentElement.classList, 'back')) {
+						this.navigate(-1);
+					} else if (_.contains(classList, 'next') || _.contains(event.srcElement.parentElement.classList, 'next')) {
+						if (typeof cordova !== 'undefined') {
+							cordova.plugins.Keyboard.close();
+						}
+						createEntries.call(this);
+					} else if (event.srcElement.type === 'text') {
+						event.srcElement.focus();
+					}
+				} else {
+					if (_.contains(classList, 'skip')) {
+						App.pageView.changePage('TrackView', {
+							new: true
+						});
+					} else if (_.contains(classList, 'next') || _.contains(event.srcElement.parentElement.classList, 'next')) {
+						this.navigate(1);
+					} else if (_.contains(classList, 'back') || _.contains(event.srcElement.parentElement.classList, 'back')) {
+						this.navigate(-1);
+					}
+				}
+			}
+		}.bind(this));
+
+		this.add(new StateModifier({transform: Transform.translate(0, App.height - 110, App.zIndex.header - 1)})).add(this.navigatorSurface);
+	};
+
 	TutorialView.prototype.init = function() {
+		this.backgroundSurface = new Surface({
+			size: [undefined, undefined],
+			properties: {
+				backgroundColor: '#ff6f4c',
+				zIndex: 5
+			}
+		});
+		this.setBody(this.backgroundSurface);
+		var spareSurface = new Surface({
+			size: [undefined, 30],
+			properties: {
+				backgroundColor: '#ff6f4c',
+			}
+		});
+		this.currentList.push(spareSurface);
 		this.tutorialIntro1 = createStepSurfaces(TutorialIntro1Template);
 		this.tutorialIntro2 = createStepSurfaces(TutorialIntro2Template);
-		this.tutorialIntro3 = createStepSurfaces(TutorialIntro3Template);
 		this.step1Surface = createStepSurfaces(HelpStep1Template);
 		this.step2Surface = createStepSurfaces(HelpStep2Template);
 		this.step3Surface = createStepSurfaces(HelpStep3Template);
-		this.getStartedSurface = createStepSurfaces(HelpGetStartedTemplate);
 
-		this.stepsSurfaceList = [this.tutorialIntro1, this.tutorialIntro2, this.tutorialIntro3,
-				this.step1Surface, this.step2Surface, this.step3Surface, this.getStartedSurface];
+		this.stepsSurfaceList = [this.tutorialIntro1, this.tutorialIntro2, this.step1Surface, 
+				this.step2Surface, this.step3Surface];
 		this.step1Surface.on('click', function(event) {
 			var classList;
 			if (u.isAndroid() || (event instanceof CustomEvent)) {
 				classList = event.srcElement.classList;
-				var value = document.getElementById('sleep-hour-entry').value;
-				var entryId = document.getElementById('sleep-hour-entry').dataset.id;
-				if (_.contains(classList, 'next-question')) {
-					this.createSleepEntry(value, entryId, function(resp) {
-						if (resp.glowEntry) {
-							document.getElementById('sleep-hour-entry').dataset.id = resp.glowEntry.id;
-						}
-						this.navigate(1);
-					}.bind(this));
-				} else if (_.contains(classList, 'skip-label')) {
+				var value = document.getElementById('sleep-hour').value;
+				var entryId = document.getElementById('sleep-hour').dataset.id;
+				if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
 					this.createSleepEntry(value, entryId, function(resp) {
 						App.pageView.changePage('TrackView', {
 							new: true
 						});
 					});
-				} else if (_.contains(classList, 'back-label')) {
-					this.navigate(-1);
+				} else if (event.srcElement.type === 'text') {
+					if (event.srcElement.value === '') {
+						event.srcElement.value = 'sleep ';
+						event.srcElement.focus();
+					}
 				}
 			}
 		}.bind(this));
 
 		this.step2Surface.on('click', function(event) {
 			var classList;
-			if (u.isAndroid() || (event instanceof CustomEvent)) {
+			if (event instanceof CustomEvent) {
 				classList = event.srcElement.classList;
-				var value = document.getElementById('mood-entry').value;
-				var entryId = document.getElementById('mood-entry').dataset.id;
-				if (_.contains(classList, 'back-label')) {
-					this.navigate(-1);
-				} else if (_.contains(classList, 'next-question')) {
-					if (value != '') {
-						createSingleEntry.call(this, {value: value, entryId: entryId}, function(resp) {
-							if (resp.glowEntry) {
-								document.getElementById('mood-entry').dataset.id = resp.glowEntry.id;
-							}
-							this.navigate(1);
-						}.bind(this));
-					} else {
-						this.navigate(1);
-					}
-				} else if (_.contains(classList, 'skip-label')) {
-					if (value != '') {
+				if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
+					var value = document.getElementById('mood-box').value;
+					if (value != '' && validateMoodEntry(value)) {
 						createSingleEntry.call(this, {value: value, entryId: entryId}, function(resp) {
 							App.pageView.changePage('TrackView', {
 								new: true
@@ -128,64 +198,47 @@ define(function(require, exports, module) {
 							new: true
 						});
 					}
+				} else if (event.srcElement.type === 'text') {
+					if (event.srcElement.value === '') {
+						event.srcElement.value = 'mood ';
+						event.srcElement.focus();
+					}
 				}
 			}
 		}.bind(this));
 
 		this.step3Surface.on('click', function(event) {
 			var classList;
+			classList = event.srcElement.classList;
 			if (u.isAndroid() || (event instanceof CustomEvent)) {
-				classList = event.srcElement.classList;
-				if (_.contains(classList, 'back-label')) {
-					this.navigate(-1);
-				} else if (_.contains(classList, 'next-question')) {
-					if (cordova) {
-						cordova.plugins.Keyboard.close();
-					}
-					createEntries.call(this);
-				} else if (event.srcElement.type === 'text') {
-					event.srcElement.focus();
-				}
-			}
-		}.bind(this));
-
-		this.getStartedSurface.on('click', function(event) {
-			var classList;
-			if (u.isAndroid() || (event instanceof CustomEvent)) {
-				classList = event.srcElement.classList;
-				if (_.contains(classList, 'next-question')) {
+				if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
 					App.pageView.changePage('TrackView', {
 						new: true
 					});
+				} else if (event.srcElement.type === 'text') {
+					setTimeout(function() {
+						event.srcElement.setSelectionRange(0, event.srcElement.value.length);
+					}, 100);
 				}
 			}
 		}.bind(this));
 
-		this.tutorialIntro1.on('click', tutorialNavigation.bind(this));
-		this.tutorialIntro2.on('click', tutorialNavigation.bind(this));
-		this.tutorialIntro3.on('click', tutorialNavigation.bind(this));
+		this.tutorialIntro1.on('click', closeTutorial.bind(this));
+		this.tutorialIntro2.on('click', closeTutorial.bind(this));
 
 		this.currentStepIndex = -1;
 		this.navigate(1);
 
 	};
 
-	function tutorialNavigation(event) {
+	function closeTutorial(event) {
 		var classList;
 		if (u.isAndroid() || (event instanceof CustomEvent)) {
 			classList = event.srcElement.classList;
-			if (_.contains(classList, 'skip-intro')) {
-				this.currentStepIndex = -1;
-				this.navigate(4);
-				return;
-			} else if (_.contains(classList, 'skip-label')) {
+			if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
 				App.pageView.changePage('TrackView', {
 					new: true
 				});
-			} else if (_.contains(classList, 'next-question')) {
-				this.navigate(1);
-			} else if (_.contains(classList, 'back-label')) {
-				this.navigate(-1);
 			}
 		}
 	}
@@ -194,44 +247,30 @@ define(function(require, exports, module) {
 		var classList;
 		var id = event.srcElement.id;
 		if (id === 'sleep-hour') {
-			var sleepInputElement = document.getElementById('sleep-hour');
 			if (event.which === 13) {
-				var value = document.getElementById('sleep-hour-entry').value;
-				var entryId = document.getElementById('sleep-hour-entry').dataset.id;
+				var value = document.getElementById('sleep-hour').value;
+				var entryId = document.getElementById('sleep-hour').dataset.id;
 				this.createSleepEntry(value, entryId, function(resp) {
 					if (resp.glowEntry) {
-						document.getElementById('sleep-hour-entry').dataset.id = resp.glowEntry.id;
+						document.getElementById('sleep-hour').dataset.id = resp.glowEntry.id;
 					}
 					this.navigate(1);
 				}.bind(this));
-			} else if (sleepInputElement.value === '') {
-				document.getElementById('sleep-entry-label').innerHTML = '';
-				document.getElementById('sleep-hour-entry').value = '';
-			} else {
-				document.getElementById('sleep-entry-label').innerHTML = 'You have just tracked: \'sleep ' + sleepInputElement.value + '\'';
-				document.getElementById('sleep-hour-entry').value = 'sleep ' + sleepInputElement.value;
 			}
 		} else if (id === 'mood-box') {
-			var moodInputElement = document.getElementById('mood-box');
 			if (event.which === 13) {
-				var value = document.getElementById('mood-entry').value;
-				var entryId = document.getElementById('mood-entry').dataset.id;
-				if (value != '') {
+				var value = document.getElementById('mood-box').value;
+				var entryId = document.getElementById('mood-box').dataset.id;
+				if (value != '' && validateMoodEntry(value)) {
 					createSingleEntry.call(this, {value: value, entryId: entryId}, function(resp) {
 						if (resp.glowEntry) {
-							document.getElementById('mood-entry').dataset.id = resp.glowEntry.id;
+							document.getElementById('mood-box').dataset.id = resp.glowEntry.id;
 						}
 						this.navigate(1);
 					}.bind(this));
-				} else {
+				} else if (!value) {
 					this.navigate(1);
 				}
-			} else if (moodInputElement.value === '') {
-				document.getElementById('mood-entry-label').innerHTML = '';
-				document.getElementById('mood-entry').value = '';
-			} else {
-				document.getElementById('mood-entry-label').innerHTML = 'You have just tracked: \'mood ' + moodInputElement.value + '\'';
-				document.getElementById('mood-entry').value = 'mood ' + moodInputElement.value;
 			}
 
 		}else if (event.which === 13) {
@@ -247,14 +286,33 @@ define(function(require, exports, module) {
 		}
 	}
 
+	function validateMoodEntry(value) {
+		if (value && value.indexOf('mood ') != 0) {
+			u.showAlert("You must use the 'mood' tag");
+			document.getElementById('mood-box').value = '';
+			return false;
+		} else {
+			value = value.substring(value.indexOfRegex(/[0-9]/g));
+			var moodValue = value.slice(-1);
+			if (isNaN(moodValue) || !(moodValue > 0 && moodValue < 11)) {
+				u.showAlert("Please enter a number(1-10) to track mood");
+				document.getElementById('mood-box').value = '';
+				return false;
+			}
+		}
+		return true;
+	}
 	TutorialView.prototype.createSleepEntry = function(value, entryId, callback) {
 		if (value != '') {
-			value = value.substring(value.indexOfRegex(/[0-9]/g));
-			if (isNaN(value.charAt(0))) {
+			if (value.indexOf('sleep ') != 0) {
+				u.showAlert("You must use the 'Sleep' tag");
+				document.getElementById('sleep-hour').value = '';
+				return false;
+			}
+			var amountValue = value.substring(value.indexOfRegex(/[0-9]/g));
+			if (isNaN(amountValue.charAt(0))) {
 				u.showAlert("Please enter a duration such as '8 hours'");
 				return false;
-			} else {
-				value = 'sleep ' + value;
 			}
 			createSingleEntry.call(this, {value: value, entryId: entryId}, callback);
 		} else {
@@ -270,11 +328,10 @@ define(function(require, exports, module) {
 
 		if (args.entryId) {
 			entry.setText(args.value + ' ' + u.dateToTimeStr(new Date(), false));
-			entry.save(false, callback);
 		} else {
 			entry.setText(args.value);
-			entry.create(callback);
 		}
+		entry.saveHelpEntry(callback);
 	}
 
 	function createEntries() {
@@ -284,7 +341,9 @@ define(function(require, exports, module) {
 			document.getElementById('stretch').value, document.getElementById('metabolic').value];
 		entries = _.filter(entries, Boolean);
 		if (entries.length == 0) {
-			this.navigate(1);
+			App.pageView.changePage('TrackView', {
+				new: true
+			});
 			return false;
 		}
 		var argsToSend = u.getCSRFPreventionObject("addEntryCSRF", {
@@ -298,7 +357,9 @@ define(function(require, exports, module) {
 		function(data) {
 			if (u.checkData(data)) {
 				if (data.success) {
-					this.navigate(1);
+					App.pageView.changePage('TrackView', {
+						new: true
+					});
 				} else {
 					u.showAlert(data.message);
 				}
@@ -322,8 +383,30 @@ define(function(require, exports, module) {
 	};
 
 	TutorialView.prototype.navigate = function(indexModifier) {
+		this.scrollView.setPosition(0);
 		this.currentStepIndex += indexModifier;
-		this.renderController.show(this.stepsSurfaceList[this.currentStepIndex]);
+		var currentSurface = this.stepsSurfaceList[this.currentStepIndex];
+		if (this.currentList.length > 1) {
+			this.currentList.splice(0, 1, currentSurface);
+		} else {
+			this.currentList.splice(0, 0, currentSurface);
+		}
+		currentSurface.pipe(this.scrollView);
+		setTimeout(function() {
+			if (this.currentStepIndex == 0) {
+				document.getElementsByClassName('back')[0].style.visibility = "hidden";
+			} else {
+				document.getElementsByClassName('back')[0].style.visibility = "visible";
+			}
+
+			_.each(document.getElementsByClassName('navigation-dots'), function(dot, index){
+				if (index === this.currentStepIndex) {
+					dot.classList.add('active');
+				} else {
+					dot.classList.remove('active');
+				}
+			}.bind(this));
+		}.bind(this), 100);
 	};
 
 	App.pages[TutorialView.name] = TutorialView;
