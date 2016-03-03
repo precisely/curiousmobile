@@ -1538,6 +1538,7 @@ list-style-type: none;
 
 .help-wizard h3 {
 	font-weight: 600;
+	margin-top: 20px;
 }
 
 .help-wizard hr {
