@@ -10,6 +10,7 @@ define(function(require, exports, module) {
 	Entry = require('models/Entry'),
 	TrackEntryView = require('views/entry/TrackEntryView'),
 	PinnedView = require('views/entry/PinnedView');
+	var DeviceDataGroupView = require('views/entry/DeviceDataGroupView');
 	var Scrollview = require("famous/views/Scrollview");
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
@@ -78,7 +79,12 @@ define(function(require, exports, module) {
 		});
 
 		var draggableNode = new FixedRenderNode(draggable);
-		var trackEntryView = new TrackEntryView(entry);
+		var trackEntryView;
+		if (entry instanceof Array) {
+		   trackEntryView = new DeviceDataGroupView(entry);
+		} else {
+			trackEntryView = new TrackEntryView(entry)
+		}
 		trackEntryView.pipe(draggable);
 		draggableNode.add(trackEntryView);
 		trackEntryView.pipe(this.scrollView);
@@ -132,6 +138,8 @@ define(function(require, exports, module) {
 	}
 
 	EntryListView.prototype.refreshEntries = function(entries, glowEntry) {
+		var fakeDeviceData = require('data/DeviceData');
+		entries = fakeDeviceData;
 		this.trackEntryViews = [];
 		this.pinnedViews = [];
 		this.draggableList = [];
@@ -278,20 +286,18 @@ define(function(require, exports, module) {
         var entriesGroupedByDeviceData = {};
 
         //Filter out the device data
-
-        entries.forEach(function(entry) {
-
-        }.bind(this));
-
 		entries.forEach(function(entry) {
 			var addedView = null;
-			if (entry.isContinuous()) {
-				bookmarkEntriesCount++;
-				addedView = this.addPinnedEntry(entry);
-			} else if (entry.get('sourceName')) {
+			if (entry.get('sourceName')) {
 				var source = entry.get('sourceName');
 				this.deviceEntries[source] = this.deviceEntries[source] || [];
 				this.deviceEntries[source].push(entry);
+				return;
+			}
+
+			if (entry.isContinuous()) {
+				bookmarkEntriesCount++;
+				addedView = this.addPinnedEntry(entry);
 			} else {
 				nonBookmarkEntriesCount++;
 				addedView = this.addEntry(entry);
@@ -308,6 +314,10 @@ define(function(require, exports, module) {
 				}
 			}
 		}.bind(this));
+
+		for (var device in this.deviceEntries) {
+			this.addEntry(this.deviceEntries[device]);
+		}
 
 		this.scrollView.sequenceFrom(this.draggableList);
 		this.pinnedSequentialLayout.sequenceFrom(this.pinnedViews);

@@ -42,6 +42,10 @@ define(function(require, exports, module) {
 	};
 
 	Discussion.getNewNotificationCount = function(callback) {
+		if (!User.isLoggedIn()) {
+			return;
+		}
+
 		u.queueJSON("Getting notifications count", u.makeGetUrl('getTotalNotificationsCount', 'search'),
 				function(data) {
 					if (u.checkData(data)) {
@@ -64,6 +68,7 @@ define(function(require, exports, module) {
 	}
 
 	Discussion.getNotifications = function(args, callback) {
+		console.log('Getting Notifications from the server');
 		var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 			max: Discussion.max,
 			offset: args.offset ? args.offset : 0,

@@ -26,6 +26,27 @@ define(function(require, exports, module) {
 		lineHeight: 16,
 	};
 
+	TrackEntryView.getSurfaceProperties = function(lineHeight, size, text, classes) {
+		var properties = {
+			padding: '15px 45px 15px 15px',
+			fontSize: lineHeight + 'px',
+			fontWeight: 'lighter',
+			lineHeight: lineHeight + 'px',
+			textOverflow: 'ellipsis',
+			whiteSpace: 'nowrap',
+			overflow: 'hidden',
+			zIndex: 10
+		};
+
+		var readSurfaceOptions = {
+			size: size,
+			content: text,
+			classes: classes,
+			properties: properties
+		};
+		return readSurfaceOptions;
+	}
+
 	function _addSurface() {
 		var repeatTypeAsClass = this.entry.repeatTypeAsClass();
 		var entryTextColor = '#b0366b';
@@ -33,30 +54,14 @@ define(function(require, exports, module) {
 			entryTextColor = 'white';
 		}
 
-		var properties = {
-			padding: '15px 45px 15px 15px',
-			fontSize: this.options.lineHeight + 'px',
-			fontWeight: 'lighter',
-			lineHeight: this.options.lineHeight + 'px',
-			textOverflow: 'ellipsis',
-			whiteSpace: 'nowrap',
-			overflow: 'hidden',
-			zIndex: 10
-		};
-
 		var size = [window.innerWidth, this.options.entryHeight];
+		var readSurfaceOptions = TrackEntryView.getSurfaceProperties(this.options.lineHeight, size, this.getDisplayText(),
+			this.entry.repeatTypeAsClass());
 		if (this.entry.isContinuous()) {
-			properties.margin = '5px';
+			readSurfaceOptions.properties.margin = '5px';
 			size[0] = size[0] - 10;
 			size[1] = size[1] - 10;
 		}
-
-		var readSurfaceOptions = {
-			size: size,
-			content: this.getDisplayText(),
-			classes: this.entry.repeatTypeAsClass(),
-			properties: properties
-		};
 
 		this.entrySurface.setOptions(readSurfaceOptions);
 		this.glowInit(readSurfaceOptions);
