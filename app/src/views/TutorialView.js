@@ -20,6 +20,7 @@ define(function(require, exports, module) {
 	var HelpStep2Template = require('text!templates/tutorial/help-step-2.html');
 	var HelpStep3Template = require('text!templates/tutorial/help-step-3.html');
 	var Entry = require('models/Entry');
+	var Timer = require('famous/utilities/Timer');
 	var u = require('util/Utils');
 
 	function TutorialView() {
@@ -133,7 +134,10 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.add(new StateModifier({transform: Transform.translate(0, App.height - 110, App.zIndex.header - 1)})).add(this.navigatorSurface);
+		Timer.every(function(){
+			this.add(new StateModifier({transform: Transform.translate(0, App.height - 90, App.zIndex.header - 1)})).add(this.navigatorSurface);
+		}.bind(this), 5);
+
 	};
 
 	TutorialView.prototype.init = function() {
