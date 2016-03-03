@@ -32,6 +32,7 @@ define(function(require, exports, module) {
 		this.entries = collection;
 		this.renderController = new RenderController();
 		this.pinnedEntriesController = new RenderController();
+		this.deviceEntries = [];
 
 		this.spinnerSurface = new Surface({
 			content: '<i class="fa fa-spinner fa-spin"> </i>',
@@ -287,6 +288,10 @@ define(function(require, exports, module) {
 			if (entry.isContinuous()) {
 				bookmarkEntriesCount++;
 				addedView = this.addPinnedEntry(entry);
+			} else if (entry.get('sourceName')) {
+				var source = entry.get('sourceName');
+				this.deviceEntries[source] = this.deviceEntries[source] || [];
+				this.deviceEntries[source].push(entry);
 			} else {
 				nonBookmarkEntriesCount++;
 				addedView = this.addEntry(entry);
