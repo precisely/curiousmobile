@@ -724,7 +724,7 @@ button.close {
 	margin-bottom: 6px;
 }
 
-.entry-input-surface .input-group-addon {
+.entry-input-surface .input-group-addon, .tutorial-input-surface .input-group-addon {
 	background: #ffffff;
 	border-color: #ffffff;
 	border-right: 0px;
@@ -732,7 +732,8 @@ button.close {
 	padding-right: 0px;
 }
 
-.entry-input-surface.input-group input, .entry-input-surface.input-group .form-control {
+.entry-input-surface.input-group input, .entry-input-surface.input-group .form-control, 
+.tutorial-input-surface.input-group input, .tutorial-input-surface.input-group .form-control {
 	height: 40px;
 	border: 0;
 	color: #C04F7F;
@@ -747,20 +748,33 @@ button.close {
 	padding-left: 8px;
 }
 
+#entry-description-dummy {
+	color: rgba(192, 79, 127, 0.5);
+}
+
+.tutorial-input-surface .input-group-addon, 
+.tutorial-input-surface.input-group input, .tutorial-input-surface.input-group .form-control {
+	color: #8C8C8C;
+	font-size: 12px;
+	border-radius: 0px;
+}
+
 /* individual: webkit */
 #entry-description::-webkit-input-placeholder {
 	color: #C04F7F !important;
+	opacity: 0.5;
 }
 
 /* individual: mozilla */
 #entry-description::-moz-placeholder {
 	color: #C04F7F !important;
+	opacity: 0.5;
 }
 
 /*HOME*/
 
 .home {
-	color: #FC3F28;
+	color: #fff;
 	text-align: right;
 }
 
@@ -771,7 +785,6 @@ button.close {
 .home ul {
 	list-style: none;
 	font-size: 19px;
-	font-weight: lighter;
 }
 
 .home h1 {
@@ -785,12 +798,16 @@ button.close {
 }
 
 .home-buttons .btn {
-	width: 135px;
-	height: 45px;
-	background-color: #ffffff;
+	width: 49%;
+	height: 100%;
+	background-color: transparent;
 	color: #c04f7f;
 	font-size: 19px;
-	margin-right: 10px;
+	vertical-align: bottom;
+}
+
+.home-buttons .create-account {
+	color: #F53120;
 }
 
 .not-loggedin .form-control {
@@ -933,6 +950,7 @@ button.close {
 	width: 100%;
 	padding: 15px 15px;
 	box-shadow: 0px 4px 5px #dddddd;
+	border-left: 3px solid #ff935f;
 }
 
 .people-wrapper .user-details-header {
@@ -940,9 +958,14 @@ button.close {
 	margin-left: -5px;
 }
 
+.people-wrapper .user-details-header .fa-user {
+	color: #FF935F;
+	font-size: 14px;
+	margin-right: 5px;
+}
+
 .people-wrapper .user-details-header a img {
-	height: 42px;
-	width: 42px;
+	height: 25px;
 }
 
 .people-wrapper .user-details-header a .user-name {
@@ -992,6 +1015,7 @@ button.close {
 
 .feed-item .discussion {
 	margin-bottom: 9px;
+	border-left: 3px solid #c04f7f;
 }
 
 .feed-item .discussion .dark-comment {
@@ -1021,6 +1045,14 @@ button.close {
 .feed-item .sprint {
 	padding: 15px;
 	margin-right: 0px;
+	border-left: 3px solid #F14A42;
+}
+
+.feed-item .sprint img {
+	height: 20px;
+	width: auto;
+	margin-right: 5px;
+	margin-top: -2px;
 }
 
 .feed-item .discussion .discussion-topic .top-left-margin {
@@ -1132,6 +1164,12 @@ button.close {
 	border: 1px #ff935f solid;
 	background-color: #fff;
 	padding: 0px 15px;
+}
+
+.feed-item .discussion .discussion-topic .left-logo {
+	height: 17px;
+	width: 20px;
+	margin-right: 5px;
 }
 
 .feed-item .discussion .discussion-topic .avatar {
@@ -1335,7 +1373,7 @@ button.close {
 	margin-left: 5px;
 	font-size: 13px;
 	position: relative;
-	top: 3px;
+	top: 1px;
 }
 
 .feed-item .discussion-post .user-name, .discussion-comment .user-name {
@@ -1500,7 +1538,7 @@ button.close {
 }
 
 .help-wizard .intro-content p {
-	font-size: 13px;
+	font-size: 15px;
 	font-weight: 400;
 }
 
@@ -1549,7 +1587,7 @@ list-style-type: none;
 }
 
 .help-wizard p {
-	font-size: 12px;
+	font-size: 15px;
 	color: #fff;
 	font-style: normal;
 	font-weight: 500;
@@ -3294,7 +3332,7 @@ input.cropit-image-zoom-input {
 	margin-top: 10px;
 }
 
-.disable-button-option label {
+.disable-button-option label, .final-screen label {
 	width: 22px;
 	height: 22px;
 	border-radius: 4px;
@@ -3304,11 +3342,17 @@ input.cropit-image-zoom-input {
 	position: relative;
 }
 
-.disable-button-option input[type=checkbox]:checked + label:after {
+.final-screen label {
+	margin-left: 0px;
+	margin-right: 10px;
+	border: 2px solid #fff;
+}
+
+.disable-button-option input[type=checkbox]:checked + label:after, .final-screen  input[type=checkbox]:checked + label:after {
 	opacity: 1;
 }
 
-.disable-button-option label:after {
+.disable-button-option label:after, .final-screen label:after {
 	content: '';
 	width: 15px;
 	height: 8px;
@@ -3324,6 +3368,19 @@ input.cropit-image-zoom-input {
 	-webkit-transform: rotate(-55deg);
 	-ms-transform: rotate(-55deg);
 	transform: rotate(-55deg);
+}
+
+.final-screen label:after {
+	border: 3px solid #fff;
+	border-top: none;
+	border-right: none;
+	border-radius: 2px;
+}
+
+.final-screen p {
+	display: inline-block;
+	font-size: 15px;
+	vertical-align: super;
 }
 
 .sprint-details .disable-button-option p {
@@ -3389,4 +3446,23 @@ input.cropit-image-zoom-input {
 	top: 0px;
 	right: 0px;
 	padding: 0px 10px;
+}
+
+.home-buttons {
+	background-color: #fff;
+	opacity: 0.8;
+	height: 100%;
+}
+
+.home-buttons .vertical-bar {
+	background-color: #c04f7f;
+	border: 1px solid #c04f7f;
+	padding-top: 30px;
+	display: inline-block;
+	margin-top: 15px;
+	vertical-align: top;
+}
+
+.tag-options input[type="checkbox"] {
+	display: none;
 }

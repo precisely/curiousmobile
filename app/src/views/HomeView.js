@@ -25,15 +25,21 @@ define(function(require, exports, module) {
 	};
 
 	HomeView.prototype.createView = function() {
+		var backgroundSurface = new ImageSurface({
+			size: [undefined, undefined],
+			content: 'content/images/final-splash.png'
+		});
+
+		this.add(new Modifier({transform: Transform.translate(0, 0, 1)})).add(backgroundSurface);
+
 		var logoSurface = new ImageSurface({
 			size: [265, true],
-			content: 'content/images/logo-long.png'
+			content: 'content/images/logo-long-white-font.png'
 		});
 
 		var logoModifier = new Modifier({
-			origin:[0.5, 0.5],
-			align: [0.5, 0],
-			transform: Transform.translate(0, 80, 0)
+			origin: [1, 0],
+			transform: Transform.translate(App.width - 30, 60, 5)
 		});
 		this.add(logoModifier).add(logoSurface);
 		this.homeSurface = new Surface({
@@ -45,10 +51,10 @@ define(function(require, exports, module) {
 		});
 
 		this.buttonSurface = new Surface({
-			size: [undefined, 200],
+			size: [undefined, 60],
 			content: '<div class="home-buttons">' +
+				'<button type="button" class="btn create-account">Sign Up</button><span class="vertical-bar"></span>' + 
 				'<button type="button" class="btn login">Log In</button>' +
-				'<button type="button" class="btn create-account">Get Started</button>' + 
 				'</div>',
 		});
 
@@ -65,31 +71,17 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.bottomTriangle = new Surface({
-			size: [0,0],
-			properties : {
-				borderTop: '411px solid transparent',
-				borderLeft: '1000px solid #c04f7f',
-				borderBottom: '574px solid transparent',
-			}	
-		});
-
-		this.triangleModifier = new Modifier({
-			transform: Transform.translate(0, App.height - 248, 0)
-		});
-		this.add(this.triangleModifier).add(this.bottomTriangle);
 
 		this.homeSurfaceModifier = new Modifier({
-			origin:[0.5, 0.5],
-			align: [0.5, 0.6],
-			transform: Transform.translate(0, 0, 2)
+			origin: [1, 0],
+			transform: Transform.translate(App.width - 30, 150, 2)
 		});
 		this.add(this.homeSurfaceModifier).add(this.homeSurface);
 
 		this.buttonsModifier = new Modifier({
-			origin:[0.5, 0.5],
+			origin:[0.5, 1],
 			align: [0.5, 1],
-			transform: Transform.translate(20, 5, 4)
+			transform: Transform.translate(0, 0, 4)
 		});
 		this.add(this.buttonsModifier).add(this.buttonSurface);
 	};

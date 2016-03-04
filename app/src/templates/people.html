@@ -1,7 +1,8 @@
 <div class="people-wrapper">
 	<div class="user-details-header">
 		<a href="#">
-			<i class="fa fa-circle"></i>
+			<i class="fa fa-user"></i>
+			<img class="avatar img-circle" src="{{= avatarURL ? avatarURL : 'content/images/avatar.png' }}" alt="avatar">
 			<span class="user-name">{{= name || username }}</span>
 		</a>
 		{{ if (followed) { }}

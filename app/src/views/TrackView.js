@@ -133,10 +133,6 @@ define(function(require, exports, module) {
 		this.entryListContainer = entryListContainer;
 		this.addContent(entryListModifier, entryListContainer);
 
-		if (User.isLoggedIn()) {
-			this.changeDate(new Date());
-		}
-
 		this.on('create-entry', function(e) {
 			console.log('EventHandler: this.trackView.on event: create-entry');
 			var formViewState = this.entryFormView.buildStateFromEntry(new Entry());
@@ -198,9 +194,6 @@ define(function(require, exports, module) {
 		BaseView.prototype.killOverlayContent.call(this);
 		this.showMenuButton();
 		this.setHeaderSurface(this.calendarView, new StateModifier({align: [0.5, 0.5], origin: [0.5, 0.5]}));
-		if(!onEntryFormSubmit) {
-			this.preShow();
-		}
 	}
 
 	TrackView.prototype.changeDate = function(date, callback, glowEntry) {

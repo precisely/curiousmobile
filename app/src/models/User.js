@@ -311,5 +311,21 @@ define(function(require, exports, module) {
 			});
 	};
 
+	User.getSurveyTags = function(callback) {
+		u.queueJSON('Getting survey options', App.serverUrl + '/public/getSurveyOptions?callback=?', null,
+				function(surveyOptions) {
+					callback(surveyOptions);
+				});
+	};
+
+	User.saveTrackingTags = function(surveyOptions, callback) {
+		u.queueJSON('Saving tracking tags', App.serverUrl + 'api/user/action/addTutorialTags',
+			u.getCSRFPreventionObject('saveTrackingTags', {tags: surveyOptions}),
+				function(surveyOptions) {
+					callback(surveyOptions);
+				});
+		
+	};
+
 	module.exports = User;
 });
