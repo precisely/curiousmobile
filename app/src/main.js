@@ -91,6 +91,9 @@ define(function(require, exports, module) {
 
 	touchSync.on('end', function(data) {
 		var movementY = data.position[1];
+		var movementX = data.position[0];
+		var velocityX = data.velocity[0];
+		var currentView = App.pageView.getCurrentView();
 		// Don't show context menu if there is intent to move something
 		if (movementY > 100) {
 			console.log('main.js: ', ' movementy: ', movementY);
@@ -102,6 +105,14 @@ define(function(require, exports, module) {
 					}
 					currentView.refresh();
 				}
+			}
+		} else if (movementX > 100 && velocityX > 0.7) {
+			if (typeof currentView !== 'undefined') {
+				currentView._eventOutput.emit('swiped-right');
+			}
+		} else if (movementX < -100 && velocityX < -0.7) {
+			if (typeof currentView !== 'undefined') {
+				currentView._eventOutput.emit('swiped-left');
 			}
 		}
 	});

@@ -29,7 +29,7 @@ define(function(require, exports, module) {
 				color: '#5E5E5E',
 				padding: '10px',
 				borderRadius: '2px',
-				lineHeight: '13px',
+				lineHeight: '9px',
 				fontSize: '13px',
 				backgroundColor: '#e2e2e2',
 				overflow: 'hidden',

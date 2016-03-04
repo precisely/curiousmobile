@@ -1,0 +1,13 @@
+<div class="help-wizard final-screen">
+	<div class="skip">
+		<img src="content/images/tutorials/skip.png" alt="skip" width="35">
+	</div>
+	<h3 class="questions">My main tracking interests are (choose as many as you like):</h3>
+	{{ _.each(surveyOptions, function(value, key) { }}
+		<div class="tag-options">
+			<input type="checkbox" value="{{= value }}" class="tracking-tags">
+			<label></label><p>{{= key }}</p>
+		</div>
+	{{ }) }}
+	<h4 class="entry-label"><span id="mood-entry-label"></span></h4>
+</div>

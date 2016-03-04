@@ -19,7 +19,9 @@ define(function(require, exports, module) {
 	var HelpStep1Template = require('text!templates/tutorial/help-step-1.html');
 	var HelpStep2Template = require('text!templates/tutorial/help-step-2.html');
 	var HelpStep3Template = require('text!templates/tutorial/help-step-3.html');
+	var HelpStep4Template = require('text!templates/tutorial/help-step-final.html');
 	var Entry = require('models/Entry');
+	var User = require('models/User');
 	var Timer = require('famous/utilities/Timer');
 	var u = require('util/Utils');
 
@@ -36,7 +38,9 @@ define(function(require, exports, module) {
 		});
 		this.currentList = [];
 		this.scrollView.sequenceFrom(this.currentList);
-		this.add(mod).add(this.renderController);
+		Timer.every(function(){
+			this.add(mod).add(this.renderController);
+		}.bind(this), 5);
 		this.renderController.show(this.scrollView);
 		this.init();
 		this.setNavigator();
@@ -44,6 +48,12 @@ define(function(require, exports, module) {
 		this.on('backToStep1', function() {
 			this.navigate(-1);
 		});
+		this.on('swiped-right', function() {
+			this.navigate(-1);
+		}.bind(this));
+		this.on('swiped-left', function() {
+			this.navigate(1);
+		}.bind(this));
 	}
 
 	TutorialView.prototype = Object.create(BaseView.prototype);
@@ -55,10 +65,10 @@ define(function(require, exports, module) {
 		footer: true,
 	};
 
-	function createStepSurfaces(helpStepTemplate) {
+	function createStepSurfaces(helpStepTemplate, templateData) {
 		var stepSurface = new Surface({
 			size: [undefined, true],
-			content: _.template(helpStepTemplate, templateSettings),
+			content: templateData ? _.template(helpStepTemplate, templateData, templateSettings) : _.template(helpStepTemplate, templateSettings),
 			properties: {
 				backgroundColor: '#ff6f4c',
 				paddingTop: '30px'
@@ -99,7 +109,7 @@ define(function(require, exports, module) {
 						this.navigate(-1);
 					} else if (_.contains(classList, 'next') || _.contains(event.srcElement.parentElement.classList, 'next')) {
 						if (value != '' && validateMoodEntry(value)) {
-							createSingleEntry.call(this, {value: value, entryId: entryId}, function(resp) {
+							createSingleEntry.call(this, {value: 'mood ' + value, entryId: entryId}, function(resp) {
 								if (resp.glowEntry) {
 									document.getElementById('mood-box').dataset.id = resp.glowEntry.id;
 								}
@@ -120,6 +130,22 @@ define(function(require, exports, module) {
 					} else if (event.srcElement.type === 'text') {
 						event.srcElement.focus();
 					}
+				} else if (this.currentStepIndex === 5) {
+					if (_.contains(classList, 'back') || _.contains(event.srcElement.parentElement.classList, 'back')) {
+						this.navigate(-1);
+					} else if (_.contains(classList, 'next') || _.contains(event.srcElement.parentElement.classList, 'next')) {
+						var tagOptions = [];
+						_.each(document.getElementsByClassName('tracking-tags'), function(element) {
+							if (element.checked) {
+								tagOptions.push(element.value);
+							}
+						});
+						User.saveTrackingTags(tagOptions, function(data) {
+							App.pageView.changePage('TrackView', {
+								new: true
+							});
+						}.bind(this));
+					}
 				} else {
 					if (_.contains(classList, 'skip')) {
 						App.pageView.changePage('TrackView', {
@@ -134,10 +160,7 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		Timer.every(function(){
-			this.add(new StateModifier({transform: Transform.translate(0, App.height - 90, App.zIndex.header - 1)})).add(this.navigatorSurface);
-		}.bind(this), 5);
-
+		this.add(new StateModifier({transform: Transform.translate(0, App.height - 110, App.zIndex.header - 1)})).add(this.navigatorSurface);
 	};
 
 	TutorialView.prototype.init = function() {
@@ -164,6 +187,26 @@ define(function(require, exports, module) {
 
 		this.stepsSurfaceList = [this.tutorialIntro1, this.tutorialIntro2, this.step1Surface, 
 				this.step2Surface, this.step3Surface];
+		User.getSurveyTags(function(surveyOptions) {
+			this.step4Surface = createStepSurfaces(HelpStep4Template, {surveyOptions: surveyOptions});
+			this.stepsSurfaceList.push(this.step4Surface);
+			this.step4Surface.on('click', function(event) {
+				var classList;
+				classList = event.srcElement.classList;
+				if (u.isAndroid() || (event instanceof CustomEvent)) {
+					if (_.contains(classList, 'tag-options')) {
+						event.srcElement.firstElementChild.checked = !event.srcElement.firstElementChild.checked;
+					} else if( _.contains(event.srcElement.parentElement.classList, 'tag-options')) {
+						event.srcElement.parentElement.firstElementChild.checked = !event.srcElement.parentElement.firstElementChild.checked;
+					} else if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
+						App.pageView.changePage('TrackView', {
+							new: true
+						});
+					}
+				}
+			}.bind(this));
+		}.bind(this));
+
 		this.step1Surface.on('click', function(event) {
 			var classList;
 			if (u.isAndroid() || (event instanceof CustomEvent)) {
@@ -176,11 +219,6 @@ define(function(require, exports, module) {
 							new: true
 						});
 					});
-				} else if (event.srcElement.type === 'text') {
-					if (event.srcElement.value === '') {
-						event.srcElement.value = 'sleep ';
-						event.srcElement.focus();
-					}
 				}
 			}
 		}.bind(this));
@@ -192,7 +230,7 @@ define(function(require, exports, module) {
 				if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
 					var value = document.getElementById('mood-box').value;
 					if (value != '' && validateMoodEntry(value)) {
-						createSingleEntry.call(this, {value: value, entryId: entryId}, function(resp) {
+						createSingleEntry.call(this, {value: 'mood ' + value, entryId: entryId}, function(resp) {
 							App.pageView.changePage('TrackView', {
 								new: true
 							});
@@ -201,11 +239,6 @@ define(function(require, exports, module) {
 						App.pageView.changePage('TrackView', {
 							new: true
 						});
-					}
-				} else if (event.srcElement.type === 'text') {
-					if (event.srcElement.value === '') {
-						event.srcElement.value = 'mood ';
-						event.srcElement.focus();
 					}
 				}
 			}
@@ -232,7 +265,6 @@ define(function(require, exports, module) {
 
 		this.currentStepIndex = -1;
 		this.navigate(1);
-
 	};
 
 	function closeTutorial(event) {
@@ -266,7 +298,7 @@ define(function(require, exports, module) {
 				var value = document.getElementById('mood-box').value;
 				var entryId = document.getElementById('mood-box').dataset.id;
 				if (value != '' && validateMoodEntry(value)) {
-					createSingleEntry.call(this, {value: value, entryId: entryId}, function(resp) {
+					createSingleEntry.call(this, {value: 'mood ' + value, entryId: entryId}, function(resp) {
 						if (resp.glowEntry) {
 							document.getElementById('mood-box').dataset.id = resp.glowEntry.id;
 						}
@@ -291,33 +323,20 @@ define(function(require, exports, module) {
 	}
 
 	function validateMoodEntry(value) {
-		if (value && value.indexOf('mood ') != 0) {
-			u.showAlert("You must use the 'mood' tag");
+		if (isNaN(value)) {
+			u.showAlert("Please enter a number(1-10) to track mood");
 			document.getElementById('mood-box').value = '';
 			return false;
-		} else {
-			value = value.substring(value.indexOfRegex(/[0-9]/g));
-			var moodValue = value.slice(-1);
-			if (isNaN(moodValue) || !(moodValue > 0 && moodValue < 11)) {
-				u.showAlert("Please enter a number(1-10) to track mood");
-				document.getElementById('mood-box').value = '';
-				return false;
-			}
 		}
 		return true;
 	}
 	TutorialView.prototype.createSleepEntry = function(value, entryId, callback) {
 		if (value != '') {
-			if (value.indexOf('sleep ') != 0) {
-				u.showAlert("You must use the 'Sleep' tag");
-				document.getElementById('sleep-hour').value = '';
-				return false;
-			}
-			var amountValue = value.substring(value.indexOfRegex(/[0-9]/g));
-			if (isNaN(amountValue.charAt(0))) {
+			if (isNaN(value.charAt(0))) {
 				u.showAlert("Please enter a duration such as '8 hours'");
 				return false;
 			}
+			value = 'sleep ' + value;
 			createSingleEntry.call(this, {value: value, entryId: entryId}, callback);
 		} else {
 			callback([]);
@@ -345,9 +364,7 @@ define(function(require, exports, module) {
 			document.getElementById('stretch').value, document.getElementById('metabolic').value];
 		entries = _.filter(entries, Boolean);
 		if (entries.length == 0) {
-			App.pageView.changePage('TrackView', {
-				new: true
-			});
+			this.navigate(1);
 			return false;
 		}
 		var argsToSend = u.getCSRFPreventionObject("addEntryCSRF", {
@@ -361,9 +378,7 @@ define(function(require, exports, module) {
 		function(data) {
 			if (u.checkData(data)) {
 				if (data.success) {
-					App.pageView.changePage('TrackView', {
-						new: true
-					});
+					this.navigate(1);
 				} else {
 					u.showAlert(data.message);
 				}
@@ -387,6 +402,10 @@ define(function(require, exports, module) {
 	};
 
 	TutorialView.prototype.navigate = function(indexModifier) {
+		if ((this.currentStepIndex === 0 && indexModifier === -1) || 
+				(this.currentStepIndex === 5 && indexModifier === 1)) {
+			return false;
+		}
 		this.scrollView.setPosition(0);
 		this.currentStepIndex += indexModifier;
 		var currentSurface = this.stepsSurfaceList[this.currentStepIndex];
