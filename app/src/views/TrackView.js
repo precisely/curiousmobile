@@ -29,7 +29,7 @@ define(function(require, exports, module) {
 	function TrackView() {
 		BaseView.apply(this, arguments);
 		this.pageChange = false; //making sure the pageChange even is disregarded on page reload
-		this.entryFormView = new TrackEntryFormView(this);
+		this.entryFormView = new TrackEntryFormView({trackView: this});
 		_createBody.call(this);
 		_createCalendar.call(this);
 	}

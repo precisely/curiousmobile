@@ -11,9 +11,9 @@ define(function(require, exports, module) {
 	var Entry = require('models/Entry');
 	var u = require('util/Utils');
 
-	function TrackEntryFormView(trackView) {
+	function TrackEntryFormView(options) {
 		EntryFormView.apply(this, arguments);
-		this.trackView = trackView;
+		this.trackView = options.trackView;
 		this.dateGridOpen = false;
 	}
 

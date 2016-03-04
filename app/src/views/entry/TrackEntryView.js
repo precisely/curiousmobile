@@ -12,7 +12,7 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 	var Entry = require('models/Entry');
 
-	function TrackEntryView(entry) {
+	function TrackEntryView(options) {
 		EntryReadView.apply(this, arguments);
 		this.menu = 'entry';
 		_addSurface.call(this);
@@ -24,28 +24,20 @@ define(function(require, exports, module) {
 	TrackEntryView.DEFAULT_OPTIONS = {
 		entryHeight: 55,
 		lineHeight: 16,
+		readSurfaceOptions : {
+			size: [window.innerWidth, 55],
+			properties: {
+				fontSize: 16 + 'px',
+				padding: '15px 45px 15px 15px',
+				fontWeight: 'lighter',
+				lineHeight: 16 + 'px',
+				textOverflow: 'ellipsis',
+				whiteSpace: 'nowrap',
+				overflow: 'hidden',
+				zIndex: 10
+			}
+		}
 	};
-
-	TrackEntryView.getSurfaceProperties = function(lineHeight, size, text, classes) {
-		var properties = {
-			padding: '15px 45px 15px 15px',
-			fontSize: lineHeight + 'px',
-			fontWeight: 'lighter',
-			lineHeight: lineHeight + 'px',
-			textOverflow: 'ellipsis',
-			whiteSpace: 'nowrap',
-			overflow: 'hidden',
-			zIndex: 10
-		};
-
-		var readSurfaceOptions = {
-			size: size,
-			content: text,
-			classes: classes,
-			properties: properties
-		};
-		return readSurfaceOptions;
-	}
 
 	function _addSurface() {
 		var repeatTypeAsClass = this.entry.repeatTypeAsClass();
@@ -55,8 +47,9 @@ define(function(require, exports, module) {
 		}
 
 		var size = [window.innerWidth, this.options.entryHeight];
-		var readSurfaceOptions = TrackEntryView.getSurfaceProperties(this.options.lineHeight, size, this.getDisplayText(),
-			this.entry.repeatTypeAsClass());
+		var readSurfaceOptions = this.options.readSurfaceOptions;
+		readSurfaceOptions.content = this.getDisplayText();
+		readSurfaceOptions.classes = this.entry.repeatTypeAsClass();
 		if (this.entry.isContinuous()) {
 			readSurfaceOptions.properties.margin = '5px';
 			size[0] = size[0] - 10;

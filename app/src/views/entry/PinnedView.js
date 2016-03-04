@@ -8,7 +8,7 @@ define(function(require, exports, module) {
 	var Timer = require('famous/utilities/Timer');
 	var FastClick = require('famous/inputs/FastClick');
 
-	function PinnedView(entry) {
+	function PinnedView(options) {
 		EntryView.apply(this, arguments);
 		this.menu = 'pinnedEntry';
 		_createView.call(this);

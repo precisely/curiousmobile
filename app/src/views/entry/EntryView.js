@@ -13,9 +13,9 @@ define(function(require, exports, module) {
 
 	var entrySurface = null;
 
-	function EntryView(entry) {
+	function EntryView(options) {
 		View.apply(this, arguments);
-		this.entry = entry;
+		this.entry = options.entry;
 		_createView.call(this);
 	}
 

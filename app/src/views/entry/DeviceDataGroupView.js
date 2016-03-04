@@ -7,9 +7,12 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var RenderController = require('famous/views/RenderController');
 	var DeviceDataView = require('views/entry/DeviceDataView');
-	function DeviceDataGroupView(entries) {
+	var DeviceDataSummaryView = require('views/entry/DeviceDataSummaryView');
+
+	function DeviceDataGroupView(options) {
 		DeviceDataView.apply(this, arguments);
-		this.expanded = true;
+		this.collapsed = false;
+		this.expand();
 	}
 
 	DeviceDataGroupView.prototype = Object.create(DeviceDataView.prototype);
@@ -19,14 +22,25 @@ define(function(require, exports, module) {
 
 	DeviceDataGroupView.prototype.getDisplayText = function () {
 		var text = this.getTriangle();
-		return text + ' ' + this.deviceEntries[0].get('sourceName');
+		return text + ' ' + this.entries.at(0).get('sourceName');
 	};
 
-	DeviceDataGroupView.prototype.groupEntries = function (param) {
-		this.deviceEntries.each(function(entry) {
-			var currentGroup = this.groupedEntries[entry.description] = this.groupedEntries[entry.description] || [];
+	DeviceDataGroupView.prototype.group = function () {
+		this.entries.each(function(entry) {
+			if (!entry.get('normalizedAmounts')) {
+				return;
+			}
+			var currentGroup = this.groupedData[entry.get('description')] =
+				this.groupedData[entry.get('description')] || [];
 			currentGroup.push(entry);
-		});
+		}.bind(this));
+	};
+
+	DeviceDataGroupView.prototype.createChildren = function () {
+		for (var i in this.groupedData) {
+			var groupedEntry = this.groupedData[i];
+			 this.children.push(new DeviceDataSummaryView({entry: groupedEntry}));
+		}
 	};
 	module.exports = DeviceDataGroupView;
 });

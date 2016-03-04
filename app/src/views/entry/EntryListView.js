@@ -81,9 +81,9 @@ define(function(require, exports, module) {
 		var draggableNode = new FixedRenderNode(draggable);
 		var trackEntryView;
 		if (entry instanceof Array) {
-		   trackEntryView = new DeviceDataGroupView(entry);
+		   trackEntryView = new DeviceDataGroupView({entry: entry});
 		} else {
-			trackEntryView = new TrackEntryView(entry)
+			trackEntryView = new TrackEntryView({entry: entry})
 		}
 		trackEntryView.pipe(draggable);
 		draggableNode.add(trackEntryView);
@@ -111,7 +111,7 @@ define(function(require, exports, module) {
 	}
 
 	EntryListView.prototype.addPinnedEntry = function (entry) {
-		var pinnedEntryView = new PinnedView(entry);
+		var pinnedEntryView = new PinnedView({entry: entry});
 		this.draggablePin.subscribe(pinnedEntryView.entrySurface);
 		this.pinnedViews.push(pinnedEntryView);
 		this.entryEventListeners(pinnedEntryView);
