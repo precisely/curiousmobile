@@ -35,7 +35,9 @@ define(function(require, exports, module) {
 			console.log('Entry was clicked');
 		});
 		this.on('trigger-delete-entry', this.delete.bind(this));
-		this.add(this.entrySurface);
+		if (!this.options.doNotAddEntrySurface) {
+			this.add(this.entrySurface);
+		}
 		this.touchSync = new TouchSync(function() {
 			return position;
 		});

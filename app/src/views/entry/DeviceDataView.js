@@ -19,9 +19,8 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 
 	function DeviceDataView(options) {
+		options.doNotAddEntrySurface = true;
 		EntryReadView.apply(this, arguments);
-		this.options = Object.create(DeviceDataView.DEFAULT_OPTIONS);
-		this.entrySurface = new ContainerSurface();
 		this.childrenController = new RenderController();
 		this.groupedData = [];
 		this.childrenSequentialView = new SequentialLayout({
@@ -47,16 +46,13 @@ define(function(require, exports, module) {
 
 	function _createNode() {
 		var readSurfaceOptions = _.extend({}, TrackEntryView.DEFAULT_OPTIONS.readSurfaceOptions);
-		this.transitionalHeight = new Transitionable(55);
-		readSurfaceOptions.size =  [window.innerWidth, this.transitionalHeight];
+		readSurfaceOptions.size =  [window.innerWidth, 55];
 		readSurfaceOptions.content = this.getDisplayText();
 		readSurfaceOptions.classes = ['entry'];
-		this.deviceDataSurface = new Surface();
-		this.deviceDataSurface.setOptions(readSurfaceOptions);
-		this.entrySurface.add(this.deviceDataSurface);
-		this.deviceDataSurface.pipe(this);
-		this.deviceDataSurface.pipe(this.touchSync);
-		this.entrySurface.pipe(this);
+		this.entryContainerSurface = new ContainerSurface();
+		this.entrySurface.setOptions(readSurfaceOptions);
+		this.entryContainerSurface.add(this.entrySurface);
+		this.entryContainerSurface.pipe(this);
 		var deleteModifier = new StateModifier({
 			transform: Transform.translate(window.innerWidth, -2, window.App.zIndex.readView + 2)
 		});
@@ -73,8 +69,8 @@ define(function(require, exports, module) {
 		var childrenModifier = new StateModifier({
 			transform: Transform.translate(0, 55, App.zIndex.readView + 2)
 		});
-		this.add(entryModifier).add(this.entrySurface);
-		this.entrySurface.add(childrenModifier).add(this.childrenController);
+		this.add(entryModifier).add(this.entryContainerSurface);
+		this.entryContainerSurface.add(childrenModifier).add(this.childrenController);
 	}
 
 	DeviceDataView.prototype.getTriangle = function () {
@@ -88,19 +84,17 @@ define(function(require, exports, module) {
 	DeviceDataView.prototype.select = function() {
 		if(this.collapsed) {
 			this.childrenController.show(this.childrenSequentialView);
-			this.transitionalHeight.set((this.children.length + 1) * 55);
 		} else {
-			this.transitionalHeight.set(55);
 			this.childrenController.hide();
 		}
 		this.collapsed = !this.collapsed;
-		this.deviceDataSurface.setContent(this.getDisplayText());
+		this.entrySurface.setContent(this.getDisplayText());
 	};
 
 	DeviceDataView.prototype.expand = function () {
 		this.childrenController.show(this.childrenSequentialView);
 		this.collapsed = false;
-		this.deviceDataSurface.setContent(this.getDisplayText());
+		this.entrySurface.setContent(this.getDisplayText());
 	};
 
 	DeviceDataView.prototype.delete = function() {

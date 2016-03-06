@@ -46,8 +46,8 @@ define(function(require, exports, module) {
 			entryTextColor = 'white';
 		}
 
-		var size = [window.innerWidth, this.options.entryHeight];
 		var readSurfaceOptions = this.options.readSurfaceOptions;
+		readSurfaceOptions.size = [window.innerWidth, this.options.entryHeight];
 		readSurfaceOptions.content = this.getDisplayText();
 		readSurfaceOptions.classes = this.entry.repeatTypeAsClass();
 		if (this.entry.isContinuous()) {
