@@ -142,8 +142,6 @@ define(function(require, exports, module) {
 	}
 
 	EntryListView.prototype.refreshEntries = function(entries, glowEntry) {
-		var fakeDeviceData = require('data/DeviceData');
-		entries = fakeDeviceData;
 		this.trackEntryViews = [];
 		this.pinnedViews = [];
 		this.draggableList = [];
