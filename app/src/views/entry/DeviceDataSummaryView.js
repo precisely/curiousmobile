@@ -12,6 +12,7 @@ define(function(require, exports, module) {
 
 	function DeviceDataSummaryView(options) {
 		DeviceDataView.apply(this, arguments);
+		this.pipe(options.scrollView);
 	}
 
 	DeviceDataSummaryView.prototype = Object.create(DeviceDataView.prototype);
@@ -74,14 +75,16 @@ define(function(require, exports, module) {
 
 	DeviceDataSummaryView.prototype.createChildren = function () {
 		this.entries.each(function(entry) {
-			this.children.push(new TrackEntryView({
-					entry: entry,
-					readSurfaceOptions : {
-						properties: {
-							padding:'15px 45px 15px 46px'
-						}
+			var childView = new TrackEntryView({
+				entry: entry,
+				readSurfaceOptions : {
+					properties: {
+						padding:'15px 45px 15px 46px'
 					}
-				}));
+				}
+			});
+			childView.pipe(this.options.scrollView);
+			this.children.push(childView);
 		}.bind(this));
 	};
 	module.exports = DeviceDataSummaryView;

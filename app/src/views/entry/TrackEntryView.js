@@ -47,7 +47,7 @@ define(function(require, exports, module) {
 		}
 
 		var readSurfaceOptions = this.options.readSurfaceOptions;
-		readSurfaceOptions.size = [window.innerWidth, this.options.entryHeight];
+		this.size = readSurfaceOptions.size = [window.innerWidth, this.options.entryHeight];
 		readSurfaceOptions.content = this.getDisplayText();
 		readSurfaceOptions.classes = this.entry.repeatTypeAsClass();
 		if (this.entry.isContinuous()) {
@@ -85,7 +85,7 @@ define(function(require, exports, module) {
 		this.add(deleteModifier).add(this.deleteSurface);
 
 		var entryModifier = new Modifier({
-			transform: Transform.translate(0, 0, window.App.zIndex.readView + 5)
+			transform: Transform.translate(0, 0, window.App.zIndex.readView + 500)
 		});
 		this.add(entryModifier).add(this.entrySurface);
 	}
@@ -94,6 +94,10 @@ define(function(require, exports, module) {
 		this.entry = entry;
 		this.entrySurface.setContent(this.entry.toString());
 	}
+
+	TrackEntryView.prototype.getSize = function () {
+		return this.size;
+	};
 
 	EntryReadView.prototype.getDisplayText = function() {
 		var date = new Date(this.entry.date);

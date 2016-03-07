@@ -82,7 +82,8 @@ define(function(require, exports, module) {
 		var draggableNode = new FixedRenderNode(draggable);
 		var trackEntryView;
 		if (entry instanceof Array) {
-		   trackEntryView = new DeviceDataGroupView({entry: entry});
+		   trackEntryView = new DeviceDataGroupView({entry: entry,
+			   entryZIndex: App.zIndex.readView + 2, scrollView: this.scrollView});
 		} else {
 			trackEntryView = new TrackEntryView({entry: entry})
 		}
@@ -232,55 +233,11 @@ define(function(require, exports, module) {
 		});
 
 		var scrollNode = new RenderNode(scrollModifier);
-		this.scrollView = new Scrollview({
+		this.scrollView = new FlexScrollView({
 			direction: 1,
 			defaultitemsize: [320, 55],
-			autoPipeEvents: true,
 			itemspacing: 0,
 		});
-
-
-		this.scrollView.trans = new Transitionable(0);
-
-		// Vertical offset this.scrollView will start load at
-		this.scrollView.refreshOffset = 80;
-
-		// Reset scroller to default behavior
-		this.scrollView.reset = function(){
-			this.scrollView._scroller.positionFrom(this.scrollView.getPosition.bind(this.scrollView));
-		}.bind(this);
-
-		this.scrollView.sync.on('start',function(){
-
-			this.scrollView.trans.halt();
-
-			var pos = this.scrollView.trans.get()
-
-			if (pos != 0) this.scrollView.setPosition(pos);
-
-			this.scrollView.reset()
-
-		}.bind(this));
-
-		this.scrollView.sync.on('end',function(){
-
-			var pos = this.scrollView.getPosition();
-
-			if (pos < (-this.scrollView.refreshOffset)) {
-
-				this.scrollView.trans.halt();
-				this.scrollView.trans.set(pos);
-
-				this.scrollView._scroller.positionFrom(function(){
-					return this.scrollView.trans.get();
-				}.bind(this));
-				this.renderController.hide({duration:0});
-				this.renderController.show(this.spinnerSurface, {duration: 0});
-			} else {
-				this.scrollView.trans.halt();
-				this.scrollView.trans.set(0);
-			}
-		}.bind(this));
 
 		scrollNode.add(this.scrollView);
 		scrollWrapperSurface.add(scrollNode);
