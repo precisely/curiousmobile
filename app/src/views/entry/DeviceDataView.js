@@ -68,14 +68,13 @@ define(function (require, exports, module) {
 
 	function _createNode() {
 		var entrySurfaceOptions = this.options.readSurfaceOptions;
-		entrySurfaceOptions.size = [window.innerWidth, true];
+		entrySurfaceOptions.size = [window.innerWidth, 55];
 		entrySurfaceOptions.content = this.getDisplayText();
 		entrySurfaceOptions.classes = ['entry'];
 		this.entryContainerSurface = new ContainerSurface();
 		this.entrySurface.setOptions(entrySurfaceOptions);
 		this.entryModifier = new StateModifier({size: [window.innerWidth, 55]});
 		Timer.every(function() {
-			this.entrySurface.setSize(this.getSize());
 			this.entryContainerSurface.setSize(this.getSize());
 		}.bind(this), 1);
 
@@ -93,7 +92,7 @@ define(function (require, exports, module) {
 		this.deleteSurface.setSize([80, true]);
 		this.add(deleteModifier).add(this.deleteSurface);
 		this.entryContainerModifier = new StateModifier({
-			transform: Transform.translate(0, 2, this.options.entryZIndex)
+			transform: Transform.translate(0, 0, this.options.entryZIndex)
 		});
 		var childrenModifier = new StateModifier({
 			transform: Transform.translate(0, 55, App.zIndex.readView + 2)
