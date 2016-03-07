@@ -65,7 +65,7 @@ define(function(require, exports, module) {
 					this.layoutModifier.setSize([window.innerWidth, window.innerHeight]);
 				}
 			}
-		}.bind(this), 10);
+		}.bind(this), 5);
 
 		this.bodyRenderController = new RenderController();
 		var bodyModifier = new StateModifier({

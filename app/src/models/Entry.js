@@ -254,7 +254,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				argsToSend.text = argsToSend.text.replace('Remind', 'remind');
 				argsToSend.text = argsToSend.text.replace('Button', 'button');
 
-				u.queueJSON("adding new entry", u.makeGetUrl("addEntrySData"), u.makeGetArgs(argsToSend), function(
+				u.backgroundJSON("adding new entry", u.makeGetUrl("addEntrySData"), u.makeGetArgs(argsToSend), function(
 				entries) {
 					if (u.checkData(entries)) {
 						if (entries[1] != null) {
@@ -300,7 +300,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					argsToSend.repeatEnd = this.get('repeatEnd') ? new Date(this.get('repeatEnd')).toUTCString() : null;
 				}
 
-				u.queueJSON("saving entry", u.makeGetUrl("updateEntrySData"), u.makeGetArgs(argsToSend),
+				u.backgroundJSON("saving entry", u.makeGetUrl("updateEntrySData"), u.makeGetArgs(argsToSend),
 				function(entries) {
 					if (entries == "") {
 						return;

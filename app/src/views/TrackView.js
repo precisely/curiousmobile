@@ -164,6 +164,9 @@ define(function(require, exports, module) {
 		BaseView.prototype.preShow.call(this);
 		if (state && (state.entryDate)) {
 			EntryCollection.clearCache();
+			if (this.calendarView.getSelectedDate().setHours(0, 0, 0) !== state.entryDate.setHours(0, 0, 0)) {
+				return true;
+			}
 			this.calendarView.setSelectedDate(state.entryDate);
 			this.changeDate(state.entryDate, null, state.entryId);
 		} else {

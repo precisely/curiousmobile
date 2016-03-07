@@ -10,6 +10,11 @@ var showAlert, queuePostJSON, queueJSON, makeGetUrl, getCSRFPreventionObject, ma
 window.App = new App();
 define(function(require, exports, module) {
 	var u = require('util/Utils');
+	var Timer = require('famous/utilities/Timer');
+	Timer.every(function() {
+		App.width = window.innerWidth;
+		App.height = window.innerHeight;
+	}, 100);
 	showAlert = function(alertMessage) {
 		u.showAlert(alertMessage);
 	};
@@ -58,6 +63,7 @@ define(function(require, exports, module) {
 	var Modifier = require('famous/core/Modifier');
 	var EventHandler = require('famous/core/EventHandler');
 	var AppView = require('views/AppView');
+
 	App.setCacheAndCoreEeventHandlers(EventHandler, Cache);
 
 	var start = 0;

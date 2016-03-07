@@ -162,9 +162,6 @@ define(function(require, exports, module) {
 
 		this.navigationModifier = new StateModifier({transform: Transform.translate(0, App.height - 110, App.zIndex.header - 1)});
 		this.add(this.navigationModifier).add(this.navigatorSurface);
-		Timer.every(function(){
-			this.navigationModifier.setTransform(Transform.translate(0, window.innerHeight - 110, App.zIndex.header - 1));
-		}.bind(this), 1);
 	};
 
 	TutorialView.prototype.init = function() {
