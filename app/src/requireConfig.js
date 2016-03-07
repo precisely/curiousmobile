@@ -10,11 +10,11 @@ require.config({
 		underscore: {
 			exports: '_',
 			init: function () {
-				this._.extend(this._.templateSettings, {
-					interpolate: /\{\{(.+?)\}\}/g
-				});
-				return this._;
-			}
+			this._.extend(this._.templateSettings, {
+				interpolate: /\{\{(.+?)\}\}/g
+			});
+			return this._;
+		}
 		}
 	},
 	paths: {
@@ -32,8 +32,13 @@ require.config({
 		jscache: '../lib/jscache/cache',
 		'exoskeleton.localStorage': '../lib/exoskeleton.localStorage/backbone.localStorage',
 		bootstrap: '../lib/bootstrap/dist/js/bootstrap',
-		'Entry': './models/Entry'
+		Entry: './models/Entry',
+		'angular-resource': '../lib/angular-resource/angular-resource',
+		angularjs: '../lib/angularjs/angular',
+		'famous-flex': '../lib/famous-flex/src'
 	},
-	packages: []
+	packages: [
+
+	]
 });
 require(['jquery', 'main']);

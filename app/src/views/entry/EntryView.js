@@ -1,6 +1,6 @@
 define(function(require, exports, module) {
 	'use strict';
-	var View = require('famous/core/View');
+	var SizeAwareView = require('famous/views/SizeAwareView');
 	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
 	var Timer = require('famous/utilities/Timer');
@@ -13,13 +13,13 @@ define(function(require, exports, module) {
 
 	var entrySurface = null;
 
-	function EntryView(entry) {
-		View.apply(this, arguments);
-		this.entry = entry;
+	function EntryView(options) {
+		SizeAwareView.apply(this, arguments);
+		this.entry = options.entry;
 		_createView.call(this);
 	}
 
-	EntryView.prototype = Object.create(View.prototype);
+	EntryView.prototype = Object.create(SizeAwareView.prototype);
 	EntryView.prototype.constructor = EntryView;
 
 	EntryView.DEFAULT_OPTIONS = {};
@@ -35,7 +35,9 @@ define(function(require, exports, module) {
 			console.log('Entry was clicked');
 		});
 		this.on('trigger-delete-entry', this.delete.bind(this));
-		this.add(this.entrySurface);
+		if (!this.options.doNotAddEntrySurface) {
+			this.add(this.entrySurface);
+		}
 		this.touchSync = new TouchSync(function() {
 			return position;
 		});
@@ -46,11 +48,7 @@ define(function(require, exports, module) {
 			this.start = Date.now();
 			// Show context menu after the timeout regardless of tap end
 			this.touchTimeout = setTimeout(function() {
-				App.pageView._eventOutput.emit('show-context-menu', {
-					menu: this.menu,
-					target: this,
-					eventArg: this.entry
-				});
+
 			}.bind(this), 500)
 		}.bind(this));
 
@@ -69,10 +67,21 @@ define(function(require, exports, module) {
 			var movementY = Math.abs(data.position[1]);
 			var timeDelta = this.end - this.start;
 			// If the intent is to just select don't show context menu
-			if (timeDelta < 500 && movementX < 8 && movementY < 8) {
-				clearTimeout(this.touchTimeout);
-				this.select();
+			if (movementX < 8 && movementY < 8) {
+				if (timeDelta < 500) {
+					clearTimeout(this.touchTimeout);
+					this.select();
+					return;
+				}
+				if (timeDelta > 600) {
+					App.pageView._eventOutput.emit('show-context-menu', {
+						menu: this.menu,
+						target: this,
+						eventArg: this.entry
+					});
+				}
 			}
+
 		}.bind(this));
 
 		//Glow surface

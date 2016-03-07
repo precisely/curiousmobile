@@ -12,7 +12,7 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 	var Entry = require('models/Entry');
 
-	function EntryReadView(entry, properties) {
+	function EntryReadView(options) {
 		EntryView.apply(this, arguments);
 		this.menu = 'entry';
 		_addSurface.call(this);

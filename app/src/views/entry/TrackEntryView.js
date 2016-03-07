@@ -12,7 +12,7 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 	var Entry = require('models/Entry');
 
-	function TrackEntryView(entry) {
+	function TrackEntryView(options) {
 		EntryReadView.apply(this, arguments);
 		this.menu = 'entry';
 		_addSurface.call(this);
@@ -24,6 +24,19 @@ define(function(require, exports, module) {
 	TrackEntryView.DEFAULT_OPTIONS = {
 		entryHeight: 55,
 		lineHeight: 16,
+		readSurfaceOptions : {
+			size: [window.innerWidth, 55],
+			properties: {
+				fontSize: 16 + 'px',
+				padding: '15px 45px 15px 15px',
+				fontWeight: 'lighter',
+				lineHeight: 16 + 'px',
+				textOverflow: 'ellipsis',
+				whiteSpace: 'nowrap',
+				overflow: 'hidden',
+				zIndex: 10
+			}
+		}
 	};
 
 	function _addSurface() {
@@ -33,30 +46,15 @@ define(function(require, exports, module) {
 			entryTextColor = 'white';
 		}
 
-		var properties = {
-			padding: '15px 45px 15px 15px',
-			fontSize: this.options.lineHeight + 'px',
-			fontWeight: 'lighter',
-			lineHeight: this.options.lineHeight + 'px',
-			textOverflow: 'ellipsis',
-			whiteSpace: 'nowrap',
-			overflow: 'hidden',
-			zIndex: 10
-		};
-
-		var size = [window.innerWidth, this.options.entryHeight];
+		var readSurfaceOptions = this.options.readSurfaceOptions;
+		this.size = readSurfaceOptions.size = [window.innerWidth, this.options.entryHeight];
+		readSurfaceOptions.content = this.getDisplayText();
+		readSurfaceOptions.classes = this.entry.repeatTypeAsClass();
 		if (this.entry.isContinuous()) {
-			properties.margin = '5px';
+			readSurfaceOptions.properties.margin = '5px';
 			size[0] = size[0] - 10;
 			size[1] = size[1] - 10;
 		}
-
-		var readSurfaceOptions = {
-			size: size,
-			content: this.getDisplayText(),
-			classes: this.entry.repeatTypeAsClass(),
-			properties: properties
-		};
 
 		this.entrySurface.setOptions(readSurfaceOptions);
 		this.glowInit(readSurfaceOptions);
@@ -87,7 +85,7 @@ define(function(require, exports, module) {
 		this.add(deleteModifier).add(this.deleteSurface);
 
 		var entryModifier = new Modifier({
-			transform: Transform.translate(0, 0, window.App.zIndex.readView + 5)
+			transform: Transform.translate(0, 0, window.App.zIndex.readView + 500)
 		});
 		this.add(entryModifier).add(this.entrySurface);
 	}
@@ -96,6 +94,10 @@ define(function(require, exports, module) {
 		this.entry = entry;
 		this.entrySurface.setContent(this.entry.toString());
 	}
+
+	TrackEntryView.prototype.getSize = function () {
+		return this.size;
+	};
 
 	EntryReadView.prototype.getDisplayText = function() {
 		var date = new Date(this.entry.date);
