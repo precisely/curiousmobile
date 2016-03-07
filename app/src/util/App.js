@@ -46,6 +46,7 @@ var App = function() {
 	this.width = window.innerWidth;
 	this.height = window.innerHeight;
 
+
 	this.viewsWithoutSearchIcon = ['EditProfileView', 'LoginView', 'RegisterView', 'AdvancedTagsView', 'SearchView',
 		'ForgotPasswordView', 'HelpContentsView', 'CreateTagHelpView', 'HelpContentsView', 'RepeatAlertTagsHelpView',
 		'ShareHelpView', 'MakeChartHelpView', 'TermsView', 'DiscussionDetailView', 'CreateSprintHelpView', 'AddDiscussionHelpView',
