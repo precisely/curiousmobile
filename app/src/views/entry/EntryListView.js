@@ -79,12 +79,14 @@ define(function(require, exports, module) {
 			yRange: [0, 0],
 		});
 
-		var draggableNode = new FixedRenderNode(draggable);
+		var draggableNode;
 		var trackEntryView;
 		if (entry instanceof Array) {
+			draggableNode = new RenderNode(draggable);
 		   trackEntryView = new DeviceDataGroupView({entry: entry,
 			   entryZIndex: App.zIndex.readView + 2, scrollView: this.scrollView});
 		} else {
+			draggableNode = new FixedRenderNode(draggable);
 			trackEntryView = new TrackEntryView({entry: entry})
 		}
 		trackEntryView.pipe(draggable);
