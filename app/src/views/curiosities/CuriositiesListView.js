@@ -141,7 +141,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		var showExplanationSurface = new Surface({
-			size: [50, 50],
+			size: [50, 49],
 			content: '<i class="fa fa-question-circle"></i>',
 			properties: {
 				backgroundColor: '#efefef',

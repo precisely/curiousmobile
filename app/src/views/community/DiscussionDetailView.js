@@ -159,7 +159,7 @@ define(function(require, exports, module) {
 			if (e instanceof CustomEvent) {
 				if (this.isCommentSelected) {
 					this.unselectComment();
-				} else if (_.contains(classList, 'close-discussion')) {
+				} else if (_.contains(classList, 'close-discussion') || _.contains(e.srcElement.parentElement.classList, 'close-discussion')) {
 					this.alert = u.showAlert({
 						message: 'Are you sure you want to delete this discussion?',
 						a: 'Yes',
@@ -355,7 +355,7 @@ define(function(require, exports, module) {
 					classList = e.srcElement.parentElement.classList;
 					if (this.discussionView.isCommentSelected) {
 						this.discussionView.unselectComment();
-					} else if (_.contains(classList, 'delete-post')) {
+					} else if (_.contains(classList, 'delete-post') || _.contains(e.srcElement.parentElement.classList, 'delete-post')) {
 						u.showAlert({
 							message: 'Are you sure you want to delete this comment?',
 							a: 'Yes',
