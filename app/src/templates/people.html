@@ -2,8 +2,8 @@
 	<div class="user-details-header">
 		<a href="#">
 			<i class="fa fa-user"></i>
-			<img class="avatar img-circle" src="{{= avatarURL ? avatarURL : 'content/images/avatar.png' }}" alt="avatar">
-			<span class="user-name">{{= name || username }}</span>
+			<img class="avatar img-circle" src="{{- avatarURL ? avatarURL : 'content/images/avatar.png' }}" alt="avatar">
+			<span class="user-name">{{- name || username }}</span>
 		</a>
 		{{ if (followed) { }}
 		<button class="unfollow">UNFOLLOW</button>
@@ -13,7 +13,7 @@
 	</div>
 	<div class="user-details-content">
 		<span>Interest Tags:</span>
-		<span class="label-value">{{= (interestTagsString == '') ? 'No Tags' : interestTagsString }}</span>
+		<span class="label-value">{{- (interestTagsString == '') ? 'No Tags' : interestTagsString }}</span>
 	</div>
 	<!--<div class="user-details-content">
 		<span>Public Sprints:</span>
@@ -21,13 +21,13 @@
 			&lt;!&ndash; Using an empty list and keeping the code for now. Can be removed if user's sprints “user.sprints”
 				 are not going to be used in the future. &ndash;&gt;
 			{{ _.each([], function(sprint, index) { }}
-				{{= sprint.name }}
+				{{- sprint.name }}
 				{{ if (index < sprints.length - 1) { print(', '); } }}
 			{{ }) }}
 		</span>
 	</div>-->
 	<div class="user-details-content">
 		<span>Start Date:</span>
-		<span class="label-value">{{= created }}</span>
+		<span class="label-value">{{- created }}</span>
 	</div>
 </div>

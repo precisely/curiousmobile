@@ -5,7 +5,7 @@
 			{{ if (user.avatarURL == null) { }}
 				<i class="fa fa-circle fa-4x"></i>
 			{{ } else { }}
-				<img src="{{= user.avatarURL }}" class="img-circle">
+				<img src="{{- user.avatarURL }}" class="img-circle">
 			{{ } }}
 			<button type="button" class="choose-image">Choose Image</button>
 		</div>
@@ -16,7 +16,7 @@
 				</label>
 				<div class="media">
 					<div class="media-body">
-						<input type="text" name="name" id= "user-name" value="{{= user.name }}"/>
+						<input type="text" name="name" id= "user-name" value="{{- user.name }}"/>
 						<div class="radio-public-private">
 							<input type="radio" class="name-radio-public" name="name-radio" id="name-public-id" value="public" checked>
 							<label for="name-public-id" class="name-public-label">Public</label>
@@ -35,7 +35,7 @@
 						{{ if (user.bio === "") { }}
 							<textarea name="bio"></textarea>
 						{{ } else { }}
-							<textarea name="bio">{{= user.bio }}</textarea>
+							<textarea name="bio">{{- user.bio }}</textarea>
 						{{ } }}
 						<div class="radio-public-private">
 							<input type="radio" class="bio-radio-public" name="bio-radio" id="bio-public-id" value="public" checked>
@@ -52,7 +52,7 @@
 				</label>
 				<div class="media">
 					<div class="media-body">
-						<input type="text" name="username" value="{{= user.username }}"/>
+						<input type="text" name="username" value="{{- user.username }}"/>
 					</div>
 				</div>
 			</div>
@@ -63,7 +63,7 @@
 				</label>
 				<div class="media">
 					<div class="media-body">
-						<input type="text" name="email" value="{{= user.email }}"/>
+						<input type="text" name="email" value="{{- user.email }}"/>
 					</div>
 				</div>
 			</div>
@@ -153,7 +153,7 @@
 					{{ } else { }}
 					<div class="media-body" id="public-interest-tags">
 						{{ _.each(user.interestTags, function(interestTags) { }}
-						<p> {{= interestTags }}</p><hr><br>
+						<p> {{- interestTags }}</p><hr><br>
 						{{ }) }}
 					</div>
 					{{ } }}

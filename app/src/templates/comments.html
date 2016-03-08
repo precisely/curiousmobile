@@ -2,14 +2,14 @@
 	<div>
 		<a href="#" class="comment-author">
 			{{ if (authorAvatarURL) { }}
-				<img class="avatar img-circle" height="25" width="25" src="{{= authorAvatarURL }}" alt="avatar">
+				<img class="avatar img-circle" height="25" width="25" src="{{- authorAvatarURL }}" alt="avatar">
 			{{ } else { }}
 				<img class="avatar" height="25" width="25" src="content/images/avatar2.png" alt="avatar">
 			{{ } }}
 			<span class="user-name"> 
-				{{= authorName }}
+				{{- authorName }}
 			</span>
-			<span class="posting-time">{{= prettyDate }}</span>
+			<span class="posting-time">{{- prettyDate }}</span>
 		</a>
 		{{ if (isAdmin) { }}
 			<div class="pull-right actions">
@@ -25,9 +25,9 @@
 				</span>
 			</div>
 		{{ } }}
-		<span class="posting-time" data-time="{{= updated }}"></span>
+		<span class="posting-time" data-time="{{- updated }}"></span>
 	</div>
 	<div class="without-margin clearfix discussion-comment-message">
-		{{= message }}
+		{{- message }}
 	</div>
 </div>

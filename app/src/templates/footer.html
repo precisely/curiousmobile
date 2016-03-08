@@ -1,15 +1,15 @@
 <div class="footer container-fluid">
 	<div class="row">
-		<div data="TrackView" class="col-xs-2 footer-item track icon icon-track {{= (activeMenu === 'track') ? 'active': '' }}">
+		<div data="TrackView" class="col-xs-2 footer-item track icon icon-track {{- (activeMenu === 'track') ? 'active': '' }}">
 		</div>
-		<div data="ChartView" class="col-xs-2 footer-item chart icon icon-chart {{= (activeMenu === 'chart') ? 'active': '' }}">
+		<div data="ChartView" class="col-xs-2 footer-item chart icon icon-chart {{- (activeMenu === 'chart') ? 'active': '' }}">
 		</div>
-		<div data="FeedView" class="col-xs-2 footer-item feed icon icon-feed {{= (activeMenu === 'feed') ? 'active': '' }}">
-			{{= App.getNotificationCount() ? '<span class="badge">' + App.getNotificationCount() + '</span>' : '' }}
+		<div data="FeedView" class="col-xs-2 footer-item feed icon icon-feed {{- (activeMenu === 'feed') ? 'active': '' }}">
+			{{- App.getNotificationCount() ? '<span class="badge">' + App.getNotificationCount() + '</span>' : '' }}
 		</div>
-		<div data="SprintListView" class="col-xs-2 footer-item sprint icon icon-sprints {{= (activeMenu === 'sprint') ? 'active': '' }}">
+		<div data="SprintListView" class="col-xs-2 footer-item sprint icon icon-sprints {{- (activeMenu === 'sprint') ? 'active': '' }}">
 		</div>
-		<div data="CuriositiesListView" class="col-xs-2 footer-item curiosities icon icon-signals {{= (activeMenu === 'curiosities') ? 'active': '' }}">
+		<div data="CuriositiesListView" class="col-xs-2 footer-item curiosities icon icon-signals {{- (activeMenu === 'curiosities') ? 'active': '' }}">
 		</div>
 	</div>
 </div>

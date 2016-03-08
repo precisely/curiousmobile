@@ -7,13 +7,13 @@
 					<div class="discussion-header discussion-post">
 						<a href="#" class="discussion-author">
 							{{ if (discussionOwnerAvatarURL) { }}
-							<img class="avatar img-circle" height="25" width="25" src="{{= discussionOwnerAvatarURL }}" alt="avatar">
+							<img class="avatar img-circle" height="25" width="25" src="{{- discussionOwnerAvatarURL }}" alt="avatar">
 							{{ } else { }}
 							<img class="avatar" height="25" width="25" src="content/images/avatar.png" alt="avatar">
 							{{ } }}
-							<span class="user-name"> {{= discussionOwner }}</span>
+							<span class="user-name"> {{- discussionOwner }}</span>
 						</a>
-						<span class="posting-time">{{= updated }}</span>
+						<span class="posting-time">{{- updated }}</span>
 					</div>
 					<div class="discussion-topic-span close-discussion" >
 						{{ if (isAdmin) { }}
@@ -23,9 +23,9 @@
 				</div>
 				<div class="discussion-title">
 					<a href="#"> 
-						<span> {{= discussionTitle ? discussionTitle : '(No Title)' }}</span>
+						<span> {{- discussionTitle ? discussionTitle : '(No Title)' }}</span>
 					</a>
-					<p>{{= firstPost ? firstPost.message : '' }}</p>
+					<p>{{- firstPost ? firstPost.message : '' }}</p>
 				</div>
 				<hr>
 				<div class="text-left disable-button-option">

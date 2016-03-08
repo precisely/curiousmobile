@@ -1,9 +1,9 @@
 <div class="people-detail draggable-container">
 	<div class="upper-body">
 		<i class="fa fa-circle fa-4x"></i>
-		<h2>{{= user.name || user.username }}</h2>
+		<h2>{{- user.name || user.username }}</h2>
 		<button>FOLLOW</button>
-		<p>{{= user.bio }}</p>
+		<p>{{- user.bio }}</p>
 	</div>
 	<div class="lower-body">
 		<div class="public-interests">
@@ -15,7 +15,7 @@
 					<img src="content/images/tag.png" height="30" width="auto">
 				</div>
 				<div class="media-body">
-					<p> {{= (user.interestTags.length == 0) ? "No Tags" : user.interestTags.join(", ") }}</p>
+					<p> {{- (user.interestTags.length == 0) ? "No Tags" : user.interestTags.join(", ") }}</p>
 				</div>
 			</div>
 		</div>
@@ -40,8 +40,8 @@
 					<img src="content/images/sprint-icon.png" height="30" width="auto">
 				</div>
 				<div class="media-body">
-					<h4 class="media-heading">{{= sprint.name }}</h4>
-					<p>{{= sprint.description }}</p>
+					<h4 class="media-heading">{{- sprint.name }}</h4>
+					<p>{{- sprint.description }}</p>
 				</div>
 			</div>
 			{{ })} }}
@@ -57,8 +57,8 @@
 					<i class="fa fa-circle fa-2x"></i>
 				</div>
 				<div class="media-body">
-					<h4 class="media-heading">{{= group.name }}</h4>
-					<p>{{= group.description }}</p>
+					<h4 class="media-heading">{{- group.name }}</h4>
+					<p>{{- group.description }}</p>
 				</div>
 			</div>
 			{{ }) }}

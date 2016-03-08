@@ -6,8 +6,8 @@
 					<div class="discussion-header">
 						<a href="#" class="discussion-author">
 							<img class="left-logo" src="content/images/feed/feed-left.png" alt="avatar">
-							<img class="avatar img-circle" src="{{= userAvatarURL ? userAvatarURL : 'content/images/avatar.png' }}" alt="avatar">
-							<span class="user-name">{{= userName }} </span>
+							<img class="avatar img-circle" src="{{- userAvatarURL ? userAvatarURL : 'content/images/avatar.png' }}" alt="avatar">
+							<span class="user-name">{{- userName }} </span>
 						</a>
 					</div>
 					<div class="discussion-topic-span close-discussion">
@@ -18,13 +18,13 @@
 				</div>
 				<div class="discussion-title">
 					<a href="#"> 
-							<span> {{= name ? name: '(No Title)' }}</span>
+							<span> {{- name ? name: '(No Title)' }}</span>
 						</a>
 				</div>
 				<hr>
 				<div class="row">
 					<div class="col-xs-3 posting-time"">
-						{{= prettyDate }}
+						{{- prettyDate }}
 					</div>
 					<div class="text-right col-xs-9 buttons">
 						{{ if (typeof isFollower !== 'undefined') { }}
@@ -51,8 +51,8 @@
 								<img src="content/images/comment.png" alt="comment" /> 
 								<span class="footer-label">Comment</span>
 							{{ } else { }}
-							<div class="dark-comment comment-button" data-total-comments="{{= totalComments }}">
-								{{= totalComments }}</div>
+							<div class="dark-comment comment-button" data-total-comments="{{- totalComments }}">
+								{{- totalComments }}</div>
 								<span class="footer-label">Comment</span>
 							{{ } }}
 						</button>

@@ -5,10 +5,10 @@
 		{{ if (user.avatarURL == null) { }}
 			<i class="fa fa-circle fa-4x"></i>
 		{{ } else { }}
-			<img src="{{= user.avatarURL }}" class="img-circle">
+			<img src="{{- user.avatarURL }}" class="img-circle">
 		{{ } }}
-		<h2>{{= user.username }}</h2>
-		<p>{{= user.description }}</p>
+		<h2>{{- user.username }}</h2>
+		<p>{{- user.description }}</p>
 	</div>
 	<div class="lower-body">
 		<div class="public-email">
@@ -17,7 +17,7 @@
 			</label>
 			<div class="media">
 				<div class="media-body">
-						<p> {{= user.email }}</p>
+						<p> {{- user.email }}</p>
 				</div>
 			</div>
 		</div>
@@ -31,7 +31,7 @@
 					{{ if (user.bio === "") { }}
 						<p>This user has not provided any bio.</p>
 					{{ } else { }}
-						<p> {{= user.bio }}</p>
+						<p> {{- user.bio }}</p>
 					{{ } }}
 				</div>
 			</div>
@@ -43,7 +43,7 @@
 			</label>
 			<div class="media">
 				<div class="media-body">
-					<p> {{= user.username }}</p>
+					<p> {{- user.username }}</p>
 				</div>
 			</div>
 		</div>
@@ -60,7 +60,7 @@
 				{{ } else { }}
 					<div class="media-body" id="public-interest-tags">
 						{{ _.each(user.interestTags, function(interestTags) { }}
-							<p> {{= interestTags }}</p><br>
+							<p> {{- interestTags }}</p><br>
 						{{ }) }}
 					</div>
 				{{ } }}
