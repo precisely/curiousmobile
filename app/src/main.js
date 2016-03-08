@@ -142,7 +142,8 @@ define(function(require, exports, module) {
 //
 window.templateSettings = {
 	evaluate: /\{\{(.+?)\}\}/g,
-	interpolate: /\{\{=(.+?)\}\}/g
+	interpolate: /\{\{=(.+?)\}\}/g,
+	escape: /\{\{-(.+?)\}\}/g
 };
 
 window.ElementType = {
