@@ -121,6 +121,8 @@ define(function(require, exports, module) {
 						u.oauththirdparty('registerOura');
 					} else if (_.contains(classList, 'unlink-oura')) {
 						u.oauththirdparty('unregisterOura');
+					} else if (_.contains(classList, 'email-link')) {
+						User.sendVerificationLink();
 					}
 				}
 			}.bind(this));

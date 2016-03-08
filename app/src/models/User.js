@@ -327,5 +327,20 @@ define(function(require, exports, module) {
 		
 	};
 
+	User.sendVerificationLink = function() {
+		u.queueJSON('Resending verification link', App.serverUrl + '/home/dosendverifyData:callback=?', null,
+				function(data) {
+					if (!checkData(data)) {
+						return false;
+					}
+					if (data.success) {
+						u.showAlert('Email verification link sent');
+					} else {
+						u.showAlert(data.message);
+					}
+				}
+		);
+	}
+
 	module.exports = User;
 });

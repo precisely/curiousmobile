@@ -3466,3 +3466,7 @@ input.cropit-image-zoom-input {
 .tag-options input[type="checkbox"] {
 	display: none;
 }
+
+.resend-email-link {
+	text-align: center;
+}
