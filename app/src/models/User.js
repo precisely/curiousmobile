@@ -319,7 +319,7 @@ define(function(require, exports, module) {
 	};
 
 	User.saveTrackingTags = function(surveyOptions, callback) {
-		u.queueJSON('Saving tracking tags', App.serverUrl + 'api/user/action/addTutorialTags',
+		u.queueJSON('Saving tracking tags', App.serverUrl + '/api/user/action/addTutorialTags',
 			u.getCSRFPreventionObject('saveTrackingTags', {tags: surveyOptions}),
 				function(surveyOptions) {
 					callback(surveyOptions);
@@ -328,7 +328,7 @@ define(function(require, exports, module) {
 	};
 
 	User.sendVerificationLink = function() {
-		u.queueJSON('Resending verification link', App.serverUrl + '/home/dosendverifyData:callback=?', null,
+		u.queueJSON('Resending verification link', App.serverUrl + '/home/dosendverifyData?callback=?', null,
 				function(data) {
 					if (!checkData(data)) {
 						return false;

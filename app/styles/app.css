@@ -618,6 +618,17 @@ input, textarea {
 	left: 10px;
 	font-weight: 500;
 }
+.date-picker-text {
+	font-size: 22px;
+	margin: 0 5px;
+	width: 122px;
+	display: inline-block;
+	text-align: center;
+}
+
+.date-picker-month, .date-picker-year {
+	padding: 7px;
+}
 
 .close-discussion {
 	padding: 0px;

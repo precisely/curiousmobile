@@ -344,7 +344,7 @@ define(function(require, exports, module) {
 	DateGridView.prototype.changeYear = function(year) {
 		var yearDate = this.currentMonth;
 		if (!isNaN(year) && year > 1969 && year < 10000) {
-			yearDate = this.currentMonth = new Date(year, yearDate.getMonth() + 1, yearDate.getDate());
+			yearDate = this.currentMonth = new Date(year, yearDate.getMonth(), yearDate.getDate());
 		} else {
 			return;
 		}

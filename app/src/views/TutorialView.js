@@ -18,7 +18,6 @@ define(function(require, exports, module) {
 	var navigatorTemplate = require('text!templates/tutorial/navigator.html');
 	var HelpStep1Template = require('text!templates/tutorial/help-step-1.html');
 	var HelpStep2Template = require('text!templates/tutorial/help-step-2.html');
-	var HelpStep3Template = require('text!templates/tutorial/help-step-3.html');
 	var HelpStep4Template = require('text!templates/tutorial/help-step-final.html');
 	var Entry = require('models/Entry');
 	var User = require('models/User');
@@ -127,17 +126,6 @@ define(function(require, exports, module) {
 					if (_.contains(classList, 'back') || _.contains(event.srcElement.parentElement.classList, 'back')) {
 						this.navigate(-1);
 					} else if (_.contains(classList, 'next') || _.contains(event.srcElement.parentElement.classList, 'next')) {
-						if (typeof cordova !== 'undefined') {
-							cordova.plugins.Keyboard.close();
-						}
-						createEntries.call(this);
-					} else if (event.srcElement.type === 'text') {
-						event.srcElement.focus();
-					}
-				} else if (this.currentStepIndex === 5) {
-					if (_.contains(classList, 'back') || _.contains(event.srcElement.parentElement.classList, 'back')) {
-						this.navigate(-1);
-					} else if (_.contains(classList, 'next') || _.contains(event.srcElement.parentElement.classList, 'next')) {
 						var tagOptions = [];
 						_.each(document.getElementsByClassName('tracking-tags'), function(element) {
 							if (element.checked) {
@@ -191,10 +179,9 @@ define(function(require, exports, module) {
 		this.tutorialIntro2 = createStepSurfaces(TutorialIntro2Template);
 		this.step1Surface = createStepSurfaces(HelpStep1Template);
 		this.step2Surface = createStepSurfaces(HelpStep2Template);
-		this.step3Surface = createStepSurfaces(HelpStep3Template);
 
 		this.stepsSurfaceList = [this.tutorialIntro1, this.tutorialIntro2, this.step1Surface, 
-				this.step2Surface, this.step3Surface];
+				this.step2Surface];
 		User.getSurveyTags(function(surveyOptions) {
 			this.step4Surface = createStepSurfaces(HelpStep4Template, {surveyOptions: surveyOptions});
 			this.stepsSurfaceList.push(this.step4Surface);
@@ -241,21 +228,6 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.step3Surface.on('click', function(event) {
-			var classList;
-			classList = event.srcElement.classList;
-			if (event instanceof CustomEvent) {
-				if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
-					App.pageView.changePage('TrackView', {
-						new: true
-					});
-				} else if (event.srcElement.type === 'text') {
-					setTimeout(function() {
-						event.srcElement.setSelectionRange(0, event.srcElement.value.length);
-					}, 100);
-				}
-			}
-		}.bind(this));
 
 		this.tutorialIntro1.on('click', closeTutorial.bind(this));
 		this.tutorialIntro2.on('click', closeTutorial.bind(this));
@@ -400,7 +372,7 @@ define(function(require, exports, module) {
 
 	TutorialView.prototype.navigate = function(indexModifier) {
 		if ((this.currentStepIndex === 0 && indexModifier === -1) || 
-				(this.currentStepIndex === 5 && indexModifier === 1)) {
+				(this.currentStepIndex === 4 && indexModifier === 1)) {
 			return false;
 		}
 		this.currentStepIndex += indexModifier;
