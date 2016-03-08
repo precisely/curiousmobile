@@ -1,11 +1,14 @@
-<select class="datepicker-month" id="select-month">
-	{{ _.each(months, function(month, index) { }}
-	<option value="{{= index + 1 }}" {{= (index + 1) === currentMonth ? 'selected' : '' }}> {{= month }}</option>
-	{{ }) }}
-</select>
+<a class="date-picker-year" id="year-prev">
+	<i class="fa fa-chevron-left"></i><i class="fa fa-chevron-left"></i>
+</a>
+<a class="date-picker-month" id="month-prev">
+	<i class="fa fa-chevron-left"></i>
+</a>
+<span class="date-picker-text"> {{= month.substring(0, 3) + ' ' + year }} </span>
+<a class="date-picker-month" id="month-next" href="#">
+	<i class="fa fa-chevron-right"></i>
+</a>
+<a class="date-picker-year" id="year-next">
+	<i class="fa fa-chevron-right"></i><i class="fa fa-chevron-right"></i>
+</a>
 
-<select class="datepicker-year" id="select-year">
-	{{ _.each(years, function(year, index) { }}
-	<option value="{{= year }}" {{= year === currentYear ? 'selected' : '' }}> {{= year }}</option>
-	{{ }) }}
-</select>
