@@ -14,7 +14,7 @@ define(function(require, exports, module) {
 	Timer.every(function() {
 		App.width = window.innerWidth;
 		App.height = window.innerHeight;
-	}, 100);
+	}, 10);
 	showAlert = function(alertMessage) {
 		u.showAlert(alertMessage);
 	};

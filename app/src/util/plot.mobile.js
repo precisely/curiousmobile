@@ -169,7 +169,53 @@ define(function(require, exports, module) {
 				plot.activeLineId = undefined;
 			}
 		});
-		plotArea.off("plothover");
+		plotArea.off("plotclick");
+		plotArea.on("plotclick", function(event, pos, item) {
+			if (item) {
+				var now = new Date().getTime();
+				//if (plot.lastItemClicked == null) {
+				//	plot.lastItemClicked = item;
+				//	plot.lastItemClickTime = now;
+				//} else if (plot.lastItemClicked.datapoint[0] == item.datapoint[0] && plot.lastItemClicked.pageY == item.pageY
+				//			&& now - plot.lastItemClickTime < 1000 && now - plot.lastItemClickTime > 30) {
+				//	plot.lastItemClicked = null;
+				//	plot.lastItemClickTime = null;
+				//	if (plot.interactive) {
+				//		plot.properties.showData(plot.userId, plot.userName, item.datapoint[0]);
+				//	}
+				//	return;
+				//}
+				plot.lastItemClicked = item;
+				plot.lastItemClickTime = now;
+				var dialogDiv = plot.getDialogDiv();
+				var plotLine = plot.plotData[item.seriesIndex]['plotLine'];
+				plot.ignoreClick = true;
+				plot.deactivateActivatedLine(plotLine);
+				if (plotLine.hasSmoothLine()) {	//means there is a smooth line of this accordion line
+					plot.activeLineId = plotLine.smoothLine.id;
+					plotLine.smoothLine.activate();
+					console.log('plotclick: activating line id: ' + plotLine.id);
+				} else {
+					plot.activeLineId = plotLine.id;
+					plotLine.activate();
+					console.log('plotclick: activating line id: ' + plotLine.id);
+				}
+				if (!plotLine.isSmoothLine()) {	// If current line clicked is a actual line (parent line)
+					console.log('plotclick: parent of a smooth line with line id: ' + plotLine.id);
+					var monthNames = ["January", "February", "March", "April", "May", "June",
+						"July", "August", "September", "October", "November", "December"
+					];
+					var date = new Date(item.datapoint[0]);
+					u.showAlert({message: item.series.data[item.dataIndex][2].t + ': ' + monthNames[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear()
+								+ ' (' + item.datapoint[1] + ')', tapOnBodyHandler: function() {
+								App.pageView.changePage('TrackView', {entryDate: date});
+							}});
+				}
+			} else {
+				console.log('plotclick: Item not found');
+			}
+		});
+		/*plotArea.off("plothover");
 		plotArea.on("plothover", function(event, pos, item) {
 			if (item) {
 				var now = new Date().getTime();
@@ -204,7 +250,7 @@ define(function(require, exports, module) {
 			} else {
 				console.log('plotclick: Item not found');
 			}
-		});
+		});*/
 
 		this.store();
 	}

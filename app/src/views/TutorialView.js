@@ -160,7 +160,10 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.navigationModifier = new StateModifier({transform: Transform.translate(0, App.height - 110, App.zIndex.header - 1)});
+		this.navigationModifier = new Modifier();
+		this.navigationModifier.transformFrom(function() {
+			return Transform.translate(0, App.height - 110, App.zIndex.header - 1);
+		});
 		this.add(this.navigationModifier).add(this.navigatorSurface);
 	};
 
@@ -194,7 +197,7 @@ define(function(require, exports, module) {
 			this.step4Surface.on('click', function(event) {
 				var classList;
 				classList = event.srcElement.classList;
-				if (u.isAndroid() || (event instanceof CustomEvent)) {
+				if (event instanceof CustomEvent) {
 					if (_.contains(classList, 'tag-options')) {
 						event.srcElement.firstElementChild.checked = !event.srcElement.firstElementChild.checked;
 					} else if( _.contains(event.srcElement.parentElement.classList, 'tag-options')) {
@@ -210,7 +213,7 @@ define(function(require, exports, module) {
 
 		this.step1Surface.on('click', function(event) {
 			var classList;
-			if (u.isAndroid() || (event instanceof CustomEvent)) {
+			if (event instanceof CustomEvent) {
 				classList = event.srcElement.classList;
 				var value = document.getElementById('sleep-hour').value;
 				var entryId = document.getElementById('sleep-hour').dataset.id;
@@ -248,7 +251,7 @@ define(function(require, exports, module) {
 		this.step3Surface.on('click', function(event) {
 			var classList;
 			classList = event.srcElement.classList;
-			if (u.isAndroid() || (event instanceof CustomEvent)) {
+			if (event instanceof CustomEvent) {
 				if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
 					App.pageView.changePage('TrackView', {
 						new: true
@@ -407,7 +410,6 @@ define(function(require, exports, module) {
 				(this.currentStepIndex === 5 && indexModifier === 1)) {
 			return false;
 		}
-		this.scrollView.setPosition(0);
 		this.currentStepIndex += indexModifier;
 		var currentSurface = this.stepsSurfaceList[this.currentStepIndex];
 		if (this.currentList.length > 1) {
@@ -430,7 +432,8 @@ define(function(require, exports, module) {
 					dot.classList.remove('active');
 				}
 			}.bind(this));
-		}.bind(this), 100);
+			this.scrollView.setPosition(0);
+		}.bind(this), 200);
 	};
 
 	App.pages[TutorialView.name] = TutorialView;

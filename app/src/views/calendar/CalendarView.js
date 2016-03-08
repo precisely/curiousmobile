@@ -84,7 +84,9 @@ define(function(require, exports, module) {
 
 	CalendarView.prototype.toggleDateGrid = function() {
 		if (typeof this.showingDateGrid == 'undefined' || !this.showingDateGrid) {
-			this.renderController.show(this.dateGrid);
+			this.dateGrid.changeMonth(this.selectedDate.getMonth() + 1);
+			this.renderController.show(this.dateGrid, null, function() {
+			}.bind(this));
 			this.showingDateGrid = true;
 		} else {
 			this.renderController.hide();

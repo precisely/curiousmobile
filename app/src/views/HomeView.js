@@ -25,12 +25,18 @@ define(function(require, exports, module) {
 	};
 
 	HomeView.prototype.createView = function() {
+		//var transitionableHeight = new Transitionable(App.height);
 		var backgroundSurface = new ImageSurface({
-			size: [undefined, undefined],
 			content: 'content/images/final-splash.png'
 		});
+		var backgroundModifier = new Modifier({
+			transform: Transform.translate(0, 0, 1)
+		});
 
-		this.add(new Modifier({transform: Transform.translate(0, 0, 1)})).add(backgroundSurface);
+		backgroundModifier.sizeFrom(function () {
+			return [App.width, App.height];
+		});
+		this.add(backgroundModifier).add(backgroundSurface);
 
 		var logoSurface = new ImageSurface({
 			size: [265, true],
@@ -78,10 +84,9 @@ define(function(require, exports, module) {
 		});
 		this.add(this.homeSurfaceModifier).add(this.homeSurface);
 
-		this.buttonsModifier = new Modifier({
-			origin:[0.5, 1],
-			align: [0.5, 1],
-			transform: Transform.translate(0, 0, 4)
+		this.buttonsModifier = new Modifier();
+		this.buttonsModifier.transformFrom(function() {
+			return Transform.translate(0, App.height - 60, 4);
 		});
 		this.add(this.buttonsModifier).add(this.buttonSurface);
 	};

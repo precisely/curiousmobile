@@ -1,0 +1,11 @@
+<select class="datepicker-month" id="select-month">
+	{{ _.each(months, function(month, index) { }}
+	<option value="{{= index + 1 }}" {{= (index + 1) === currentMonth ? 'selected' : '' }}> {{= month }}</option>
+	{{ }) }}
+</select>
+
+<select class="datepicker-year" id="select-year">
+	{{ _.each(years, function(year, index) { }}
+	<option value="{{= year }}" {{= year === currentYear ? 'selected' : '' }}> {{= year }}</option>
+	{{ }) }}
+</select>

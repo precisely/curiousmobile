@@ -4,6 +4,8 @@ define(function(require, exports, module) {
 	var Surface = require('famous/core/Surface');
 	var FastClick = require('famous/inputs/FastClick');
 	var LoginTemplate = require('text!templates/login.html');
+	var Transform = require('famous/core/Transform');
+	var StateModifier = require('famous/modifiers/StateModifier');
 	var User = require('models/User');
 	var Discussion = require('models/Discussion');
 	var u = require('util/Utils');
@@ -27,7 +29,7 @@ define(function(require, exports, module) {
 	function _createView(argument) {
 		var template = LoginTemplate;
 		this.loginSurface = new Surface({
-			size: [undefined, 270],
+			size: [undefined, undefined],
 			content: _.template(template, this.options, templateSettings),
 			properties: {
 				backgroundColor: 'white'
@@ -57,7 +59,7 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.setBody(this.loginSurface);
+		this.add(new StateModifier({transform: Transform.translate(0, 64, App.zIndex.readView)})).add(this.loginSurface);
 		this.setHeaderLabel('LOGIN');
 	}
 

@@ -4,6 +4,7 @@ define(function(require, exports, module) {
 	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
+	var Scrollview = require('famous/views/Scrollview');
 	var Modifier = require('famous/core/Modifier');
 	var DraggableView = require("views/widgets/DraggableView");
 	var u = require('util/Utils');
@@ -39,11 +40,17 @@ define(function(require, exports, module) {
 		});
 		this.add(new StateModifier({transform: Transform.translate(0, 0, 5)})).add(backgroundSurface);
 		var bodySurface = new Surface({
-			size: [undefined, undefined],
+			size: [undefined, true],
 			content: _.template(TermsTemplate, templateSettings)
 		});
-		this.draggableView = new DraggableView(bodySurface, true, 15100);
-		this.setBody(this.draggableView);
+		var spareSurface = new Surface({
+			size: [undefined, 150]
+		});
+		this.scrollView = new Scrollview();
+		this.scrollView.sequenceFrom([bodySurface, spareSurface]);
+		bodySurface.pipe(this.scrollView);
+		spareSurface.pipe(this.scrollView);
+		this.setBody(this.scrollView);
 	};
 
 	TermsView.prototype.preShow = function(state) {

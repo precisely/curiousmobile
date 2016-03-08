@@ -7,6 +7,7 @@ define(function(require, exports, module) {
 	var RenderController = require("famous/views/RenderController");
 	var Transitionable = require('famous/transitions/Transitionable');
 	var SequentialLayout = require("famous/views/SequentialLayout");
+	var dateGridHeader = require("text!templates/date/date-header.html");
 	var u = require('util/Utils');
 	var DateUtil = require('util/DateUtil');
 	function DateGridView(date, withClearButton) {
@@ -15,6 +16,7 @@ define(function(require, exports, module) {
 		this.selectedDate = date;
 		this.withClearButton = withClearButton;
 		this.currentMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+		this.currentYear = new Date(date.getFullYear(), date.getMonth(), 1);
 		_createMonthHeader.call(this, this.currentMonth);
 		_createMonthGrid.call(this);
 	}
@@ -44,7 +46,6 @@ define(function(require, exports, module) {
 	/**
 	* Creates the header to change month
 	*/
-
 	function _createMonthHeader(date) {
 		if (typeof date == 'undefined') {
 			date = new Date();
@@ -77,34 +78,46 @@ define(function(require, exports, module) {
 		});
 
 		var leftModifier = new StateModifier({
-			transform: Transform.translate(10, 0, _zIndex() + 1),
+			transform: Transform.translate(10, 0, _zIndex() + 5),
 		});
 		this.add(leftModifier).add(leftSurface);
 
 		leftSurface.on('click', function(e) {
 			if ((e instanceof CustomEvent)) {
 				console.log("leftSurface event");
-				this.changeMonth(-1);
+				this.navigateMonth(-1);
 			}
 		}.bind(this));
 
 		var monthSurface = new Surface({
-			size: [undefined, true],
-			content: DateUtil.getMonth(date) + ' ' + date.getFullYear(),
+			size: [true, true],
+			content: this.getMonthHeaderTemplate(),
 			properties: {
 				fontSize: '20px',
 			}
 		});
 
 		var monthModifier = new StateModifier({
-			transform: Transform.translate(70, 10, _zIndex() + 1)
+			transform: Transform.translate(70, 10, _zIndex() + 5)
 		});
 
 		this.add(monthModifier).add(monthSurface);
 		this.monthSurface = monthSurface;
 
+		this.monthSurface.on('deploy', function() {
+			var monthSelect = document.getElementById('select-month');
+			var yearSelect = document.getElementById('select-year');
+			monthSelect.onchange = function() {
+				this.changeMonth(monthSelect.options[monthSelect.selectedIndex].value);
+			}.bind(this)
+
+			yearSelect.onchange = function() {
+				this.changeYear(yearSelect.options[yearSelect.selectedIndex].value);
+			}.bind(this)
+		}.bind(this));
+
 		var rightModifier = new StateModifier({
-			transform: Transform.translate(245, 5, _zIndex() + 1),
+			transform: Transform.translate(245, 5, _zIndex() + 5),
 		});
 
 		var rightSurface = new Surface({
@@ -118,7 +131,7 @@ define(function(require, exports, module) {
 		rightSurface.on('click', function(e) {
 			if ((e instanceof CustomEvent)) {
 				console.log("rightSurface event");
-				this.changeMonth(1);
+				this.navigateMonth(1);
 			}
 		}.bind(this));
 	}
@@ -232,7 +245,7 @@ define(function(require, exports, module) {
 			if (e instanceof CustomEvent) {
 				console.log("today botton clicked!");
 				var today = new Date();
-				this.changeMonth(today)
+				this.navigateMonth(today)
 				this._eventOutput.emit('select-date', today);
 			}
 		}.bind(this));
@@ -254,6 +267,16 @@ define(function(require, exports, module) {
 
 		this.renderDates(new Date());
 	}
+
+	DateGridView.prototype.getMonthHeaderTemplate = function(date) {
+	date = date || this.selectedDate;
+		var years = [];
+		for (var i = 2010, len = 2020; i < len; i++) {
+			years.push(i);
+		}
+		return  _.template(dateGridHeader, {months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'],
+					years: years, currentMonth: date.getMonth() + 1, currentYear: date.getFullYear()}, templateSettings);
+	};
 
 	DateGridView.prototype.setClearButton = function() {
 		this.clearButton = new Surface({
@@ -327,17 +350,52 @@ define(function(require, exports, module) {
 	DateGridView.prototype.getLeadDays = function(date) {
 		var firstDate = DateUtil.getFirstDayOfMonth(date);
 		return firstDate.getDay();
-	}
+	};
 
-	DateGridView.prototype.changeMonth = function(num) {
+	DateGridView.prototype.changeMonth = function(month) {
 		var monthDate = this.currentMonth;
-		if (num instanceof Date) {
-			this.currentMonth = num;
+		if (!isNaN(month) && month >= 1 && month <= 12) {
+			monthDate = this.currentMonth = new Date(monthDate.getFullYear(), month - 1, monthDate.getDate());
 		} else {
-			this.currentMonth = new Date(monthDate.getFullYear(), monthDate.getMonth() + num, monthDate.getDate());
+			return;
 		}
-		this.monthSurface.setContent(DateUtil.getMonth(this.currentMonth) + ' ' + this.currentMonth.getFullYear());
-		this.renderDates(this.currentMonth);
+		this.monthSurface.setContent(this.getMonthHeaderTemplate(monthDate));
+		this.renderDates(monthDate);
+	};
+
+	DateGridView.prototype.changeYear = function(year) {
+		var yearDate = this.currentMonth;
+		if (!isNaN(year) && year > 1969 && year < 10000) {
+			yearDate = this.currentMonth = new Date(year, yearDate.getMonth() + 1, yearDate.getDate());
+		} else {
+			return;
+		}
+		this.monthSurface.setContent(this.getMonthHeaderTemplate(yearDate));
+		this.renderDates(yearDate);
+	};
+
+	DateGridView.prototype.navigateMonth = function(num) {
+		if (num instanceof Date) {
+			this.changeMonth(num.getMonth() + 1);
+		} else {
+			var monthNum = this.currentMonth.getMonth() + 1 + num;
+			this.changeMonth(monthNum);
+		}
+	};
+
+	DateGridView.prototype.getFirstDayOfCurrentDate  = function () {
+		return new Date(this.selectedDate.getFullYear(),this.selectedDate.getMonth(), 1);
+	};
+
+	DateGridView.prototype.changeYear = function(num) {
+		var yearDate = this.getFirstDayOfCurrentDate();
+		if (num instanceof Date) {
+			yearDate = num;
+		} else {
+			yearDate = new Date(monthDate.getFullYear(), monthDate.getMonth() + num, monthDate.getDate());
+		}
+		this.monthSurface.setContent(DateUtil.getMonth(yearDate) + ' ' + yearDate.getFullYear());
+		this.renderDates(yearDate);
 	}
 
 	DateGridView.prototype.setSelectedDate = function (date) {

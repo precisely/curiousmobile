@@ -709,7 +709,7 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 					},
 					yaxes: yaxes,
 					grid: {
-						hoverable: true,
+						hoverable: false,
 						clickable: true,
 						autoHighlight: true,
 						mouseActiveRadius: 5
@@ -736,7 +736,7 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 					},
 					yaxes: yaxes,
 					grid: {
-						hoverable: true,
+						hoverable: false,
 						clickable: true,
 						autoHighlight: true,
 						mouseActiveRadius: 5
@@ -914,7 +914,7 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 
 			if ((!plotLine.isContinuous) && (!plotLine.hasSmoothLine())) {
 				plotLine.postLoadClosure = function() {
-					plotLine.setSmoothDataWidth(1, true);
+					plotLine.setSmoothDataWidth(4, true);
 				}
 			}
 
@@ -1392,90 +1392,114 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 		}
 
 		this.calculateSmoothEntries = function() {
-			var parentLine = this.parentLine;
-			var lineName = parentLine.name;
-			var parentEntries = parentLine.entries;
+		var parentLine = this.parentLine;
+		var lineName = parentLine.name;
+		var entries = parentLine.entries;
 
-			if (!parentEntries) return; // don't calculate if parent line hasn't
-			// been loaded yet
+		if (!entries) return; // don't calculate if parent line hasn't
+									// been loaded yet
 
-			if (parentEntries.length < 1) return; // don't calculate if parent line has no data
-
-			if (parentEntries.length == 1) {
-				this.entries = parentEntries;
-				return;
+		if (entries.length < 1) return; // don't calculate if parent line has no data
+		
+		if (entries.length == 1) {
+			this.entries = parentEntries;
+			return;
+		}
+		
+		var segments = []; // break smoothing into segments
+		
+		var reZero = (parentLine.isFreqLineFlag || parentLine.isContinuous) ? false : (parentLine.isSmoothLine() ? false : !parentLine.isContinuous);
+		
+		var minTime = entries[0][0].getTime()
+		var maxTime = entries[entries.length - 1][0].getTime()
+		var deltaT = maxTime - minTime;
+		
+		var lastTime;
+		
+		var rezeroWidth = this.plot.rezeroWidth;
+		var slopeWidth = Math.floor(rezeroWidth / 10);
+		if (slopeWidth == 0) slopeWidth = 1;
+		
+		var data = [];
+		segments.push(data);
+		
+		for (var i = 0; i < entries.length; ++i) {
+			var entry = entries[i];
+			var nextEntry;
+			var time = entry[0].getTime();
+			var value = entry[1];
+			if (i > 0 && time == lastTime && lastValues.indexOf(value) >= 0) {
+				continue; // same data point in a row blows up LOESS algorithm
+			}
+			var nextRezero = 0;
+			if (i + 1 >= entries.length)
+				nextEntry = null;
+			else {
+				nextEntry = entries[i+1];
+				var nextTime = nextEntry[0].getTime();
+				if (nextTime - time >= 2 * rezeroWidth) {
+					nextRezero = 1;
+				}
+			}
+			// if space between two data points >= 2 * rezero width, create new smoothing segment
+			if (reZero && (time - lastTime >= 2 * rezeroWidth)) {
+				data = [];
+				segments.push(data);
 			}
 
-			var data = [];
-
-			var minTime = parentEntries[0][0].getTime()
-			var maxTime = parentEntries[parentEntries.length - 1][0].getTime()
-			var deltaT = maxTime - minTime;
-
-			var lastTime;
-			var lastValues = [];
-
-			for (var i = 0; i < parentEntries.length; ++i) {
-				var entry = parentEntries[i];
-				var time = entry[0].getTime();
-				var value = entry[1];
-				if (i > 0 && time == lastTime && lastValues.indexOf(value) >= 0) {
-					continue; // same data point in a row blows up LOESS algorithm
-				}
-				data.push([time, value]);
-
-				if (time != lastTime) {
-					lastValues = [];
-				}
-				lastTime = time;
-				lastValues.push(value);
+			data.push([time, value]);
+			
+			lastTime = time;
+		}
+		
+		var retVal = [];
+		
+		for (var j = 0; j < segments.length; ++j) {
+			data = segments[j];
+			
+			if (data.length == 0)
+				continue;
+			
+			if (data.length == 1) {
+				retVal.push([new Date(data[i][0]), sum / w, lineName, 0]);
+				continue;
 			}
-
+			
 			// loess smoothing
 			var smoothWidth = this.parentLine.smoothDataWidth;
-
-			var bandwidth = 0.25 + 0.75 * (smoothWidth - 1) / 29;
-
+			
+			var bandwidth = 0.001 + 0.05 * (smoothWidth - 1) / 29;
+			
 			var results = loess_pairs(data, bandwidth);
 
 			// Generate LOESS interpolation
 			data = [];
-
+			
 			for (i = 0; i < results.length; i++) {
 				data.push([results[i][0], results[i][1]]);
 			}
 
-			/*var entries = [];
-
-			for (i = 0; i < results.length; i++) {
-			entries.push([new Date(results[i][0]), results[i][1]]);
-			}
-			this.entries = entries;
-			return;*/
-
-			// smooth with linear interpolation
-
 			var smoothed = Smooth(data, {
-				method: 'linear',
+			    method: 'linear',
 			});
-
+			
 			var dataLen = data.length;
-
+			
 			data = [];
-
+			
 			for (i = 0.0; i <= dataLen - 1.0; i += 0.2) {
 				var item = smoothed(i);
-
+				
 				data.push([item[0], item[1]]);
 			}
-
+			
 			// take moving average
-
+			
 			var movingAverage = function(data, r, third, fourth) {
 				var dataLen = data.length;
-
+				
 				var results = [];
-
+				
 				for (var i = 0; i < dataLen; ++i) {
 					var w = 0;
 					var sum = 0;
@@ -1485,15 +1509,25 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 						w += weight;
 						sum += data[j][1] * weight;
 					}
-					results.push([new Date(data[i][0]), sum / w, third, fourth]);
+					results.push([new Date(data[i][0]), sum / w]);
 				}
-
+				
 				return results;
 			};
-
-			var entries = movingAverage(data, 10, lineName, 0);
-			this.entries = entries;
+			
+			var averaged = movingAverage(data, 10, lineName, 0);
+			
+			for (i = 0; i < averaged.length; ++i) {
+				retVal.push([averaged[i][0], averaged[i][1], lineName, 0]);
+			}
+			
+			if (segments.length > j + 1)
+				retVal.push([new Date(averaged[averaged.length - 1][0].getTime() + slopeWidth), null, '', 0]);
 		}
+
+		this.entries = retVal;
+	}
+
 		this.calculateFreqEntries = function() {
 			var parentLine = this.parentLine;
 			var parentEntries = parentLine.entries;
