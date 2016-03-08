@@ -151,12 +151,6 @@ var numJSONCalls = 0;
 var pendingJSONCalls = [];
 
 
-var App = {};
-App.CSRF = {};
-window.App = App;
-App.CSRF.SyncTokenKeyName = "SYNCHRONIZER_TOKEN"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_KEY
-App.CSRF.SyncTokenUriName = "SYNCHRONIZER_URI"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_URI
-
 /*
  * Curious data json return value check
  */

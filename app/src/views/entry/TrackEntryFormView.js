@@ -111,8 +111,7 @@ define(function(require, exports, module) {
 			this.renderController.hide();
 			var currentListView = this.trackView.currentListView;
 			window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],resp.tagStats[3], resp.tagStats[4])
-			currentListView.refreshEntries(resp.entries, resp.glowEntry);
-			this.trackView.killEntryForm(true);
+			this.trackView.preShow({entryDate: resp.glowEntry.date, entryId: resp.glowEntry.id});
 		}.bind(this));
 
 		this.on('update-entry', function(resp) {
@@ -127,17 +126,7 @@ define(function(require, exports, module) {
 			if (resp.tagStats[1]) {
 				window.autocompleteCache.update(resp.tagStats[1][0], resp.tagStats[1][1], resp.tagStats[1][2],resp.tagStats[1][3], resp.tagStats[1][4])
 			}
-			var state = {};
-			if (resp.glowEntry.changed.date) {
-				state = {
-					entryDate: resp.glowEntry.changed.date
-				}
-			} else {
-				state = {
-					new: false
-				}
-			}
-			this.trackView.killEntryForm(true);
+			this.trackView.preShow({entryDate: resp.glowEntry.date, entryId: resp.glowEntry.id});
 		}.bind(this));
 	}
 
@@ -336,6 +325,7 @@ define(function(require, exports, module) {
 			if (repeatEnd) {
 				newEntry.set("repeatEnd", repeatEnd);
 			}
+			this.trackView.killEntryForm(true);
 			newEntry.create(function(resp) {
 				if (this.setRepeat || this.setRemind || this.setPinned) {
 					window.App.collectionCache.clear();
@@ -379,6 +369,7 @@ define(function(require, exports, module) {
 
 	TrackEntryFormView.prototype.saveEntry = function(allFuture) {
 		var entry = this.entry;
+		this.trackView.killEntryForm(true);
 		entry.save(allFuture, function(resp) {
 			this._eventOutput.emit('update-entry', resp);
 			this.blur();
@@ -387,6 +378,7 @@ define(function(require, exports, module) {
 
 	TrackEntryFormView.prototype.createEntry = function() {
 		var entry = this.entry;
+		this.trackView.killEntryForm(true);
 		entry.save(function(resp) {
 			this.entry = new Entry(entry);
 			this._eventOutput.emit('new-entry', resp);
