@@ -13,7 +13,7 @@
 							{{ } }}
 							<span class="user-name"> {{- discussionOwner }}</span>
 						</a>
-						<span class="posting-time">{{- updated }}</span>
+						<span class="posting-time">{{= updated }}</span>
 					</div>
 					<div class="discussion-topic-span close-discussion" >
 						{{ if (isAdmin) { }}
@@ -25,7 +25,7 @@
 					<a href="#"> 
 						<span> {{- discussionTitle ? discussionTitle : '(No Title)' }}</span>
 					</a>
-					<p>{{- firstPost ? firstPost.message : '' }}</p>
+					<p>{{= firstPost ? firstPost.message : '' }}</p>
 				</div>
 				<hr>
 				<div class="text-left disable-button-option">

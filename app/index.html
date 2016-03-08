@@ -98,9 +98,11 @@
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 				window.Keyboard = cordova.plugins.Keyboard;
 				function refresh() {
-					if (!App || !App.coreEventHandler) {
+					if (!App || !App.coreEventHandler || !StatusBar || StatusBar.isVisible()) {
 						setTimeout(refresh, 500);
 					} else {
+						App.width = window.innerWidth;
+						App.height = window.innerHeight;
 						App.coreEventHandler.emit('device-ready');
 					}
 				}

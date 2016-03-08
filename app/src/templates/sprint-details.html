@@ -35,10 +35,10 @@
 		</label>
 		{{ if (isFormView) { }}
 		<textarea placeholder="Enter Trackathon Description..." rows="5" id="sprint-description"
-				  value="{{- sprint.description }}">{{- sprint.description }}</textarea>
+				  value="{{= sprint.description }}">{{- sprint.description }}</textarea>
 		{{ } else { }}
 		<p>
-			{{- sprint.description }}
+			{{= sprint.description }}
 		</p>
 		{{ } }}
 	</div>

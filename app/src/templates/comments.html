@@ -9,7 +9,7 @@
 			<span class="user-name"> 
 				{{- authorName }}
 			</span>
-			<span class="posting-time">{{- prettyDate }}</span>
+			<span class="posting-time">{{= prettyDate }}</span>
 		</a>
 		{{ if (isAdmin) { }}
 			<div class="pull-right actions">
@@ -25,9 +25,8 @@
 				</span>
 			</div>
 		{{ } }}
-		<span class="posting-time" data-time="{{- updated }}"></span>
 	</div>
 	<div class="without-margin clearfix discussion-comment-message">
-		{{- message }}
+		{{= message }}
 	</div>
 </div>

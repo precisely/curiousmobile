@@ -11,10 +11,7 @@ window.App = new App();
 define(function(require, exports, module) {
 	var u = require('util/Utils');
 	var Timer = require('famous/utilities/Timer');
-	Timer.every(function() {
-		App.width = window.innerWidth;
-		App.height = window.innerHeight;
-	}, 10);
+	//}, 10);
 	showAlert = function(alertMessage) {
 		u.showAlert(alertMessage);
 	};

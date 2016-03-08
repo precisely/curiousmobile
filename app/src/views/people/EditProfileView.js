@@ -239,7 +239,7 @@ define(function(require, exports, module, store) {
 				defaultItemSize: [undefined, 24],
 			});
 			_.each(peopleDetails.user.interestTags, function(tag) {
-				var tagView = new InterestTagView(tag);
+				var tagView = new InterestTagView({entry: tag});
 				var draggableTag = new Draggable({
 					xRange: [-100, 0],
 					yRange: [0, 0],
@@ -252,14 +252,12 @@ define(function(require, exports, module, store) {
 			}.bind(this));
 			this.tagSequentialLayout.sequenceFrom(this.tagList);
 			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(editPeopleSurface);
-			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 1280, 0)})).add(this.tagSequentialLayout);
+			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 1240, 0)})).add(this.tagSequentialLayout);
 
 			// Calculating draggable container height according to the taglist height
 			this.draggableView = new DraggableView(this.editProfileContainerSurface, true, 1030 + (this.tagList.length * 50));
 			this.renderController.show(this.draggableView, null, function() {
-				Timer.every(function() {
 					this.submitButtonModifier.setTransform(Transform.translate(0, (1330 + this.tagList.length * 40),  App.zIndex.readView + 62));
-				}.bind(this));
 			}.bind(this));
 			if (callback) {
 				callback();
