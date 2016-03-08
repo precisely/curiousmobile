@@ -29,8 +29,7 @@ define(function(require, exports, module) {
 		BaseView.apply(this, arguments);
 
 		this.renderController = new RenderController();
-		var mod = new StateModifier({
-			size: [App.width, App.height - 100],
+		var mod = new Modifier({
 			transform: Transform.translate(0, 0, 16)
 		});
 		this.scrollView = new Scrollview({
@@ -38,9 +37,12 @@ define(function(require, exports, module) {
 		});
 		this.currentList = [];
 		this.scrollView.sequenceFrom(this.currentList);
-		Timer.every(function(){
-			this.add(mod).add(this.renderController);
-		}.bind(this), 5);
+		mod.sizeFrom(function() {
+			return [App.width, App.height - 100]
+		});
+
+		this.add(mod).add(this.renderController);
+
 		this.renderController.show(this.scrollView);
 		this.init();
 		this.setNavigator();

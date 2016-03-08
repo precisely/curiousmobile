@@ -51,11 +51,11 @@ define(function(require, exports, module) {
 
 		this.on('form-sprint-entry', function(resp) {
 			var createdEntry = resp.glowEntry;
-			console.log('Entry comment: ' + createdEntry.comment);
-			var icon = (createdEntry.comment.indexOf('repeat') > -1) ? '<i class="fa fa-repeat"></i>' : 
-					(createdEntry.comment.indexOf('remind') > -1) ? '<i class="fa fa-bell"></i>' : 
-					((createdEntry.comment.indexOf('bookmark') > -1) || (createdEntry.comment.indexOf('pinned') > -1)) ? '<i class="fa fa-bookmark"></i>' : '';
-			var entryItem = '<button class="entry-button">' + createdEntry.description + icon + '</button>';
+			console.log('Entry comment: ' + createdEntry.get('comment'));
+			var icon = (createdEntry.get('comment').indexOf('repeat') > -1) ? '<i class="fa fa-repeat"></i>' : 
+					(createdEntry.get('comment').indexOf('remind') > -1) ? '<i class="fa fa-bell"></i>' : 
+					((createdEntry.get('comment').indexOf('bookmark') > -1) || (createdEntry.get('comment').indexOf('pinned') > -1)) ? '<i class="fa fa-bookmark"></i>' : '';
+			var entryItem = '<button class="entry-button">' + createdEntry.get('description') + icon + '</button>';
 			this.parentView.killAddSprintTagsOverlay(entryItem);
 		}.bind(this));
 
