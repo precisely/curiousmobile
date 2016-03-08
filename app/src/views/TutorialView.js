@@ -34,6 +34,8 @@ define(function(require, exports, module) {
 		});
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.Y,
+			friction: 0.06,
+			edgeDamp: 0.5
 		});
 		this.currentList = [];
 		this.scrollView.sequenceFrom(this.currentList);
@@ -178,13 +180,13 @@ define(function(require, exports, module) {
 			}
 		});
 		this.setBody(this.backgroundSurface);
-		var spareSurface = new Surface({
+		this.spareSurface = new Surface({
 			size: [undefined, 30],
 			properties: {
 				backgroundColor: '#ff6f4c',
 			}
 		});
-		this.currentList.push(spareSurface);
+		this.currentList.push(this.spareSurface);
 		this.tutorialIntro1 = createStepSurfaces(TutorialIntro1Template);
 		this.tutorialIntro2 = createStepSurfaces(TutorialIntro2Template);
 		this.step1Surface = createStepSurfaces(HelpStep1Template);
@@ -220,10 +222,8 @@ define(function(require, exports, module) {
 				var value = document.getElementById('sleep-hour').value;
 				var entryId = document.getElementById('sleep-hour').dataset.id;
 				if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
-					this.createSleepEntry(value, entryId, function(resp) {
-						App.pageView.changePage('TrackView', {
-							new: true
-						});
+					App.pageView.changePage('TrackView', {
+						new: true
 					});
 				}
 			}
@@ -234,18 +234,9 @@ define(function(require, exports, module) {
 			if (event instanceof CustomEvent) {
 				classList = event.srcElement.classList;
 				if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
-					var value = document.getElementById('mood-box').value;
-					if (value != '' && validateMoodEntry(value)) {
-						createSingleEntry.call(this, {value: 'mood ' + value, entryId: entryId}, function(resp) {
-							App.pageView.changePage('TrackView', {
-								new: true
-							});
-						});
-					} else {
-						App.pageView.changePage('TrackView', {
-							new: true
-						});
-					}
+					App.pageView.changePage('TrackView', {
+						new: true
+					});
 				}
 			}
 		}.bind(this));
@@ -414,12 +405,11 @@ define(function(require, exports, module) {
 		}
 		this.currentStepIndex += indexModifier;
 		var currentSurface = this.stepsSurfaceList[this.currentStepIndex];
-		if (this.currentList.length > 1) {
-			this.currentList.splice(0, 1, currentSurface);
-		} else {
-			this.currentList.splice(0, 0, currentSurface);
-		}
+		this.currentList = [currentSurface, this.spareSurface];
+		this.scrollView.sequenceFrom(this.currentList);
+		this.scrollView.setPosition(0);
 		currentSurface.pipe(this.scrollView);
+		this.spareSurface.pipe(this.scrollView);
 		setTimeout(function() {
 			if (this.currentStepIndex == 0) {
 				document.getElementsByClassName('back')[0].style.visibility = "hidden";
@@ -434,8 +424,7 @@ define(function(require, exports, module) {
 					dot.classList.remove('active');
 				}
 			}.bind(this));
-			this.scrollView.setPosition(0);
-		}.bind(this), 200);
+		}.bind(this), 300);
 	};
 
 	App.pages[TutorialView.name] = TutorialView;

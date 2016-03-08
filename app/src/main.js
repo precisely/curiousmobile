@@ -11,7 +11,12 @@ window.App = new App();
 define(function(require, exports, module) {
 	var u = require('util/Utils');
 	var Timer = require('famous/utilities/Timer');
-	//}, 10);
+	Timer.every(function() {
+		App.width = window.innerWidth;
+		if (!App.height || window.innerHeight > App.height) {
+			App.height = window.innerHeight;
+		}
+	}, 10);
 	showAlert = function(alertMessage) {
 		u.showAlert(alertMessage);
 	};

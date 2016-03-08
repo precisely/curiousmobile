@@ -52,6 +52,10 @@ define(function(require, exports, module) {
 	}
 
 	EntryFormView.prototype.setSelectedDate = function(date) {
+		if (!date) {
+			document.getElementsByClassName('choose-date-input')[0].value = '';
+			return;
+		}
 		var App = window.App;
 		this.selectedDate = date;
 

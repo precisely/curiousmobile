@@ -27,6 +27,9 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			}
 			var alert = new AlertView(options);
 			u.alertViewsOpen.push(alert);
+			if (typeof cordova	!== 'undefined') {
+				cordova.plugins.Keyboard.close();	
+			}
 			return alert;
 		};
 

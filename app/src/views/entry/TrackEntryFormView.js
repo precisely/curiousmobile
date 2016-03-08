@@ -44,7 +44,9 @@ define(function(require, exports, module) {
 				this.setRepeat = !this.setRepeat;
 				this.setPinned = false;
 				if (this.setRepeat) {
-					this.renderController.show(this.repeatModifierSurface);
+					this.renderController.show(this.repeatModifierSurface, null, function() {
+						this.setSelectedDate(this.selectedDate);
+					}.bind(this));
 					this.submitButtonModifier.setTransform(Transform.translate(30, 500, App.zIndex.datePicker - 1));
 				} else {
 					this.renderController.hide();

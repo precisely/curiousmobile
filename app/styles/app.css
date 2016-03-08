@@ -1628,7 +1628,7 @@ list-style-type: none;
 }
 
 #sleep-hour, #mood-box {
-	padding: 10px;
+	padding: 10px 10px 10px 3px;
 	height: 50px;
 	width: 100%;
 }
@@ -1673,6 +1673,19 @@ list-style-type: none;
 	font-size: 12px;
 }
 
+.help-wizard input:focus::-webkit-input-placeholder { 
+	color: transparent;
+}
+
+.help-wizard input:focus::-moz-placeholder { 
+	color: transparent;
+}
+.help-wizard input:focus:-moz-placeholder { 
+	color: transparent;
+}
+.help-wizard input:focus:-ms-input-placeholder { 
+	color: transparent;
+}
 .help-wizard .range-box {
 	width: 100%;
 }

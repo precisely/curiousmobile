@@ -1402,7 +1402,7 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 		if (entries.length < 1) return; // don't calculate if parent line has no data
 		
 		if (entries.length == 1) {
-			this.entries = parentEntries;
+			this.entries = entries;
 			return;
 		}
 		

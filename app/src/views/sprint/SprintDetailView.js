@@ -82,8 +82,9 @@ define(function (require, exports, module) {
 		return true;
 	};
 
-	SprintDetailView.prototype.loadDetails = function () {
+	SprintDetailView.prototype.loadDetails = function (args) {
 		this.participantsOffset = 10;
+		args = args || {started: null, stopped: null};
 		Sprint.show(this.hash, function (sprintDetails) {
 			this.totalParticipants = sprintDetails.totalParticipants;
 			if (sprintDetails.sprint.hasAdmin) {
@@ -96,6 +97,8 @@ define(function (require, exports, module) {
 			}
 			sprintDetails.sprint.description = u.parseNewLine(sprintDetails.sprint.description);
 			sprintDetails.isFormView = false;
+			sprintDetails.sprint.hasStarted = args.started;
+			sprintDetails.sprint.hasEnded = args.stopped;
 			var sprintSurface = new Surface({
 				size: [undefined, undefined],
 				content: _.template(SprintDetailsTemplate, sprintDetails, templateSettings),
@@ -131,11 +134,11 @@ define(function (require, exports, module) {
 						});
 					} else if (e.srcElement.id.indexOf('start-sprint') > -1) {
 						Sprint.start(this.hash, function (data) {
-							this.loadDetails();
+							this.loadDetails({started: true});
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('stop-sprint') > -1) {
 						Sprint.stop(this.hash, function (data) {
-							this.loadDetails();
+							this.loadDetails({stopped: true});
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('delete-sprint') > -1) {
 						Sprint.delete(this.hash, function (data) {
