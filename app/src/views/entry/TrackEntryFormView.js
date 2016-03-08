@@ -111,7 +111,8 @@ define(function(require, exports, module) {
 			this.renderController.hide();
 			var currentListView = this.trackView.currentListView;
 			window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],resp.tagStats[3], resp.tagStats[4])
-			this.trackView.preShow({entryDate: resp.glowEntry.date, entryId: resp.glowEntry.id});
+			Entry.cacheEntries(resp.glowEntry.date, resp.entries);
+			this.trackView.preShow({data: resp, fromServer: true});
 		}.bind(this));
 
 		this.on('update-entry', function(resp) {
@@ -119,14 +120,14 @@ define(function(require, exports, module) {
 			this.resetRepeatModifierForm();
 			this.renderController.hide();
 			var currentListView = this.trackView.currentListView;
-			currentListView.refreshEntries(resp.entries, resp.glowEntry);
 			if (resp.tagStats[0]) {
 				window.autocompleteCache.update(resp.tagStats[0][0], resp.tagStats[0][1], resp.tagStats[0][2],resp.tagStats[0][3], resp.tagStats[0][4])
 			}
 			if (resp.tagStats[1]) {
 				window.autocompleteCache.update(resp.tagStats[1][0], resp.tagStats[1][1], resp.tagStats[1][2],resp.tagStats[1][3], resp.tagStats[1][4])
 			}
-			this.trackView.preShow({entryDate: resp.glowEntry.date, entryId: resp.glowEntry.id});
+			Entry.cacheEntries(resp.glowEntry.date, resp.entries);
+			this.trackView.preShow({data: resp, fromServer: true});
 		}.bind(this));
 	}
 

@@ -87,7 +87,7 @@ define(function(require, exports, module) {
 		//Glow surface
 		this.glowSurface = new Surface();
 		this.glowController = new RenderController();
-		this.glowControllerModifier = new StateModifier({transform: Transform.translate(0, 0, 22)});
+		this.glowControllerModifier = new StateModifier({transform: Transform.translate(0, 0, 555)});
 		this.add(this.glowControllerModifier).add(this.glowController);
 	};
 

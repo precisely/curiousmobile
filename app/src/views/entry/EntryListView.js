@@ -12,7 +12,6 @@ define(function(require, exports, module) {
 	PinnedView = require('views/entry/PinnedView');
 	var DeviceDataGroupView = require('views/entry/DeviceDataGroupView');
 	var Scrollview = require("famous/views/Scrollview");
-	var FlexScrollView = require('famous-flex/FlexScrollView');
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var RenderNode = require('famous/core/RenderNode');
@@ -142,8 +141,6 @@ define(function(require, exports, module) {
 	}
 
 	EntryListView.prototype.refreshEntries = function(entries, glowEntry) {
-		var fakeDeviceData = require('data/DeviceData');
-		entries = fakeDeviceData;
 		this.trackEntryViews = [];
 		this.pinnedViews = [];
 		this.draggableList = [];

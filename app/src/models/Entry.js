@@ -263,7 +263,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						Entry.cacheEntries(baseDate, entries[0]);
 						callback({
 							entries: entries[0],
-							glowEntry: entries[3],
+							glowEntry: new Entry(entries[3]),
 							tagStats: entries[2],
 							key: Entry.getCacheKey(baseDate)
 						});

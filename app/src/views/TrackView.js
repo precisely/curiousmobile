@@ -162,13 +162,13 @@ define(function(require, exports, module) {
 
 	TrackView.prototype.preShow = function(state) {
 		BaseView.prototype.preShow.call(this);
-		if (state && (state.entryDate)) {
-			EntryCollection.clearCache();
-			if (this.calendarView.getSelectedDate().setHours(0, 0, 0) !== state.entryDate.setHours(0, 0, 0)) {
+		if (state && state.fromServer) {
+			var glowEntryDate = state.data.glowEntry.get("date");
+			if (this.calendarView.getSelectedDate().setHours(0, 0, 0) !== new Date(glowEntryDate).setHours(0, 0, 0)) {
 				return true;
 			}
-			this.calendarView.setSelectedDate(state.entryDate);
-			this.changeDate(state.entryDate, null, state.entryId);
+			var updatedEntries = EntryCollection.getFromCache(glowEntryDate);
+			this.currentListView.refreshEntries(state.data.entries, state.data.glowEntry);
 		} else {
 			EntryCollection.clearCache();
 			this.changeDate(this.calendarView.selectedDate);
