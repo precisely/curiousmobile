@@ -3565,3 +3565,12 @@ input.cropit-image-zoom-input {
 #share-button-popover .popover {
 	width: 153px;
 }
+
+.bookmark-plus {
+	font-size: 16px;
+	font-weight: bolder;
+	display: inline-block;
+	padding: 7px 10px 0px 10px;
+	vertical-align: top;
+	margin-top: -10px;
+}

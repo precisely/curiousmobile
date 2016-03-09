@@ -123,9 +123,11 @@ define(function(require, exports, module) {
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
 		this.formContainerSurface = formContainerSurface;
 
-		this.showEntryButtons();
+		if (!this.justBookmark) {
+			this.showEntryButtons();
+		}
 		this.submitSurface = new Surface({
-			content: '<button type="button" class="full-width-button create-entry-button">CREATE/UPDATE ENTRY</button>'
+			content: '<button type="button" class="full-width-button create-entry-button">CREATE/UPDATE ENTRY</button>',
 		});
 
 		this.submitSurface.on('click', function(e) {
@@ -160,7 +162,6 @@ define(function(require, exports, module) {
 		});
 
 		this.firstOffset = (App.width - ((84 * 3) + 60)) / 2;
-
 		this.repeatSurface = new Surface({
 			content: '<div class="text-center"><i class="fa fa-repeat"></i> <br/> Set Repeat</div>',
 			size: [84, 24]
@@ -186,6 +187,7 @@ define(function(require, exports, module) {
 			}
 		});
 		this.buttonsAndHelp.add(sequentialLayout);
+		this.buttonsRenderController.show(this.buttonsAndHelp);
 
 		this.buttonsModifier = new StateModifier({
 			transform: Transform.translate(this.firstOffset, 100, _zIndex())
@@ -225,12 +227,18 @@ define(function(require, exports, module) {
 		}
 		return true;
 	};
+
 	EntryFormView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 		console.log('FormView: on-show ' + state);
 		if (!state) {
 			//TODO if no state
 			App.pageView.changePage(this.parentPage);
+			return;
+		} else if (state && state.createJustBookmark) {
+			this.setPinned = true;
+			this.buttonsRenderController.hide();
+			this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">CREATE BOOKMARK</button>');
 			return;
 		}
 		this.loadState(state);
