@@ -1,5 +1,6 @@
 /*globals require*/
 require.config({
+	urlArgs: "ver=4",
 	shim: {
 		exoskeleton: {
 			deps: [

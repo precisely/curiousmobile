@@ -74,9 +74,9 @@ define(function (require, exports, module) {
 		this.entryContainerSurface = new ContainerSurface();
 		this.entrySurface.setOptions(entrySurfaceOptions);
 		this.entryModifier = new StateModifier({size: [window.innerWidth, 55]});
-		Timer.every(function() {
-			this.entryContainerSurface.setSize(this.getSize());
-		}.bind(this), 1);
+		//Timer.every(function() {
+		//	this.entryContainerSurface.setSize(this.getSize());
+		//}.bind(this), 1);
 
 		this.entryContainerSurface.add(this.entrySurface);
 		this.entrySurface.pipe(this.options.scrollView);

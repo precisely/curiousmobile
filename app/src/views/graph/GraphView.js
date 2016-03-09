@@ -236,7 +236,7 @@ define(function(require, exports, module) {
 					textAlign: 'center',
 				}
 			});
-
+			pillSurface.lineId = lineId;
 			pillSurface.on('click', function(e) {
 				if (e instanceof CustomEvent) {
 					var classList = e.srcElement.classList;
@@ -249,6 +249,23 @@ define(function(require, exports, module) {
 							currentView.tagsToPlot.splice(currentView.tagsToPlot.indexOf(tag), 1)
 						}
 						this.pillsView.pillsScrollView.sequenceFrom(this.pillsSurfaceList);
+					} else {
+						var plotLine = this.plot.getLine(lineId);
+						var plot = this.plot;
+						plot.deactivateActivatedLine(plotLine);
+						if (plotLine.hasSmoothLine()) {	//means there is a smooth line of this accordion line
+							if (plot.activeLineId == plotLine.smoothLine.id) {
+								plotLine.smoothLine.deactivate();
+								return;
+							}
+							plot.activeLineId = plotLine.smoothLine.id;
+							plotLine.smoothLine.activate();
+							console.log('plotclick: activating line id: ' + plotLine.id);
+						} else {
+							plot.activeLineId = plotLine.id;
+							plotLine.activate();
+							console.log('plotclick: activating line id: ' + plotLine.id);
+						}
 					}
 				}
 			}.bind(this));

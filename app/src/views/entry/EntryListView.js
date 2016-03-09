@@ -34,16 +34,6 @@ define(function(require, exports, module) {
 		this.renderController = new RenderController();
 		this.pinnedEntriesController = new RenderController();
 		this.deviceEntries = [];
-
-		this.spinnerSurface = new Surface({
-			content: '<i class="fa fa-spinner fa-spin"> </i>',
-			size: [320, 40],
-			properties: {
-				textAlign: 'center',
-				color: 'black'
-			}
-		});
-
 		_createList.call(this, this.entries, glowEntry);
 	}
 
@@ -236,6 +226,8 @@ define(function(require, exports, module) {
 			direction: 1,
 			defaultitemsize: [320, 55],
 			itemspacing: 0,
+			friction: 0.06,
+			edgeDamp: 0.5
 		});
 
 		this.scrollView.trans = new Transitionable(0);
@@ -272,8 +264,6 @@ define(function(require, exports, module) {
 				this.scrollView._scroller.positionFrom(function(){
 					return this.scrollView.trans.get();
 				}.bind(this));
-				this.renderController.hide({duration:0});
-				this.renderController.show(this.spinnerSurface, {duration: 0});
 			} else {
 				this.scrollView.trans.halt();
 				this.scrollView.trans.set(0);

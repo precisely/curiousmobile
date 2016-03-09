@@ -47,9 +47,10 @@ define(function(require, exports, module) {
 			var groupedUnitData = this.groupedData[unit];
 			var shouldSum;
 			var amount = 0;
+			var calculatedAmount;
 			for (var i in groupedUnitData) {
 				var unitData = groupedUnitData[i];
-				var calculatedAmount = this.aggregatedUnitAmounts[aggregateIndex];
+				calculatedAmount = this.aggregatedUnitAmounts[aggregateIndex];
 				if (calculatedAmount) {
 					amount = calculatedAmount.amount;
 				}
@@ -64,6 +65,7 @@ define(function(require, exports, module) {
 			if (!shouldSum) {
 				calculatedAmount.amount = calculatedAmount.amount / groupedUnitData.length;
 			}
+			calculatedAmount.amount = calculatedAmount.amount.toFixed(calculatedAmount.precision);
 			aggregateIndex++;
 		}
 	};

@@ -516,7 +516,7 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 				return;
 			}
 			var canonicalWidth = Math.pow(2, Math.floor(Math.log(daysWidth) / this.log2));
-			this.rezeroWidth = (canonicalWidth / 8) * 86400000;
+			this.rezeroWidth = (canonicalWidth / 4) * 86400000;
 			if (this.rezeroWidth > 86400000)
 				this.rezeroWidth = 86400000;
 
@@ -632,7 +632,7 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 						line.scaleMin = min - deltaDiff;
 						line.scaleMax = min + newDelta;
 					} else if (logDelta < logMin - 1 && (min > 0)) {
-						// variation of data is much smaller than minimum value, set minimum to 
+						// variation of data is much smaller than minimum value, set minimum to
 						// nearest increment below min
 						var logMin = Math.log(max) / Math.LN10;
 						var logMin = Math.log(min) / Math.LN10;
@@ -1400,29 +1400,29 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 									// been loaded yet
 
 		if (entries.length < 1) return; // don't calculate if parent line has no data
-		
+
 		if (entries.length == 1) {
 			this.entries = entries;
 			return;
 		}
-		
+
 		var segments = []; // break smoothing into segments
-		
+
 		var reZero = (parentLine.isFreqLineFlag || parentLine.isContinuous) ? false : (parentLine.isSmoothLine() ? false : !parentLine.isContinuous);
-		
+
 		var minTime = entries[0][0].getTime()
 		var maxTime = entries[entries.length - 1][0].getTime()
 		var deltaT = maxTime - minTime;
-		
+
 		var lastTime;
-		
+
 		var rezeroWidth = this.plot.rezeroWidth;
 		var slopeWidth = Math.floor(rezeroWidth / 10);
 		if (slopeWidth == 0) slopeWidth = 1;
-		
+
 		var data = [];
 		segments.push(data);
-		
+
 		for (var i = 0; i < entries.length; ++i) {
 			var entry = entries[i];
 			var nextEntry;
@@ -1448,33 +1448,33 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 			}
 
 			data.push([time, value]);
-			
+
 			lastTime = time;
 		}
-		
+
 		var retVal = [];
-		
+
 		for (var j = 0; j < segments.length; ++j) {
 			data = segments[j];
-			
+
 			if (data.length == 0)
 				continue;
-			
+
 			if (data.length == 1) {
 				retVal.push([new Date(data[0][0]), data[0][1], lineName, 0]);
 				continue;
 			}
-			
+
 			// loess smoothing
 			var smoothWidth = this.parentLine.smoothDataWidth;
-			
+
 			var bandwidth = 0.001 + 0.05 * (smoothWidth - 1) / 29;
-			
+
 			var results = loess_pairs(data, bandwidth);
 
 			// Generate LOESS interpolation
 			data = [];
-			
+
 			for (i = 0; i < results.length; i++) {
 				data.push([results[i][0], results[i][1]]);
 			}
@@ -1482,24 +1482,24 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 			var smoothed = Smooth(data, {
 			    method: 'linear',
 			});
-			
+
 			var dataLen = data.length;
-			
+
 			data = [];
-			
+
 			for (i = 0.0; i <= dataLen - 1.0; i += 0.2) {
 				var item = smoothed(i);
-				
+
 				data.push([item[0], item[1]]);
 			}
-			
+
 			// take moving average
-			
+
 			var movingAverage = function(data, r, third, fourth) {
 				var dataLen = data.length;
-				
+
 				var results = [];
-				
+
 				for (var i = 0; i < dataLen; ++i) {
 					var w = 0;
 					var sum = 0;
@@ -1511,16 +1511,16 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 					}
 					results.push([new Date(data[i][0]), sum / w]);
 				}
-				
+
 				return results;
 			};
-			
+
 			var averaged = movingAverage(data, 10, lineName, 0);
-			
+
 			for (i = 0; i < averaged.length; ++i) {
 				retVal.push([averaged[i][0], averaged[i][1], lineName, 0]);
 			}
-			
+
 			if (segments.length > j + 1)
 				retVal.push([new Date(averaged[averaged.length - 1][0].getTime() + slopeWidth), null, '', 0]);
 		}
