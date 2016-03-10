@@ -230,7 +230,6 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 				}
 				return plotDataStr;
 		}
-
 		this.load = function(plotData) {
 			$(document).trigger(beforeLinePlotEvent);
 			var version = plotData.version;
@@ -462,7 +461,7 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 		}
 		this.loadSnapshotId = function(id, discussionHash) {
 			var plot = this;
-			this.queueJSON("loading graph", this.makeGetUrl("loadSnapshotDataId"), this.makeGetArgs({ id: id, discussionHash: discussionHash}), function(plotData) {
+			this.queueJSON("loading graph", this.makeGetUrl("loadSnapshotDataId"), this.makeGetArgs({ id:id, discussionHash:discussionHash }), function(plotData) {
 				if (this.checkData(plotData)) {
 					plot.loadSnapshot(plotData);
 				} else {
@@ -632,7 +631,7 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 						line.scaleMin = min - deltaDiff;
 						line.scaleMax = min + newDelta;
 					} else if (logDelta < logMin - 1 && (min > 0)) {
-						// variation of data is much smaller than minimum value, set minimum to
+						// variation of data is much smaller than minimum value, set minimum to 
 						// nearest increment below min
 						var logMin = Math.log(max) / Math.LN10;
 						var logMin = Math.log(min) / Math.LN10;
@@ -730,7 +729,7 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 					xaxis: {
 						mode: 'time',
 						timeformat: includeYear ? (span > 432000000 ? '%m/%d/%y' : '%m/%d/%y %l%p') : (span > 432000000 ? '%m/%d' : '%m/%d %l%p'),
-						browsertimezone: true,
+						timezone: 'browser',
 						min: sliders[0],
 						max: sliders[1]
 					},
@@ -1323,14 +1322,6 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 		}
 		this.yAxisVisible = function() {
 			//if (this.parentLine) return (this.parentLine.hidden || this.parentLine.activated) && this.parentLine.showYAxis;
-			if (this.hasSmoothLine()) {
-				if (this.smoothDataWidth == 0 && this.showYAxis) {
-					if (this.freqLine)
-						return this.freqDataWidth == 0 && this.showYAxis;
-				}
-			}
-			if (this.freqLine)
-				return this.freqDataWidth == 0 && this.showYAxis;
 			return this.showYAxis;
 		}
 		/**
@@ -1392,142 +1383,155 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 		}
 
 		this.calculateSmoothEntries = function() {
-		var parentLine = this.parentLine;
-		var lineName = parentLine.name;
-		var entries = parentLine.entries;
+			var parentLine = this.parentLine;
+			var lineName = parentLine.name;
+			var entries = parentLine.entries;
 
-		if (!entries) return; // don't calculate if parent line hasn't
-									// been loaded yet
+			if (!entries) return; // don't calculate if parent line hasn't
+			// been loaded yet
 
-		if (entries.length < 1) return; // don't calculate if parent line has no data
+			if (entries.length < 1) return; // don't calculate if parent line has no data
 
-		if (entries.length == 1) {
-			this.entries = entries;
-			return;
-		}
-
-		var segments = []; // break smoothing into segments
-
-		var reZero = (parentLine.isFreqLineFlag || parentLine.isContinuous) ? false : (parentLine.isSmoothLine() ? false : !parentLine.isContinuous);
-
-		var minTime = entries[0][0].getTime()
-		var maxTime = entries[entries.length - 1][0].getTime()
-		var deltaT = maxTime - minTime;
-
-		var lastTime;
-
-		var rezeroWidth = this.plot.rezeroWidth;
-		var slopeWidth = Math.floor(rezeroWidth / 10);
-		if (slopeWidth == 0) slopeWidth = 1;
-
-		var data = [];
-		segments.push(data);
-
-		for (var i = 0; i < entries.length; ++i) {
-			var entry = entries[i];
-			var nextEntry;
-			var time = entry[0].getTime();
-			var value = entry[1];
-			if (i > 0 && time == lastTime && lastValues.indexOf(value) >= 0) {
-				continue; // same data point in a row blows up LOESS algorithm
+			if (entries.length == 1) {
+				this.entries = entries;
+				return;
 			}
-			var nextRezero = 0;
-			if (i + 1 >= entries.length)
-				nextEntry = null;
-			else {
-				nextEntry = entries[i+1];
-				var nextTime = nextEntry[0].getTime();
-				if (nextTime - time >= 2 * rezeroWidth) {
-					nextRezero = 1;
+
+			var segments = []; // break smoothing into segments
+
+			var reZero = (parentLine.isFreqLineFlag || parentLine.isContinuous) ? false : (parentLine.isSmoothLine() ? false : !parentLine.isContinuous);
+
+			var minTime = entries[0][0].getTime()
+			var maxTime = entries[entries.length - 1][0].getTime()
+			var deltaT = maxTime - minTime;
+
+			var lastTime;
+
+			var rezeroWidth = this.plot.rezeroWidth;
+			var slopeWidth = Math.floor(rezeroWidth / 10);
+			if (slopeWidth == 0) slopeWidth = 1;
+
+			var data = [];
+			segments.push(data);
+
+			var lastTime;
+			var lastValues = [];
+
+			for (var i = 0; i < entries.length; ++i) {
+				var entry = entries[i];
+				var nextEntry;
+				var time = entry[0].getTime();
+				var value = entry[1];
+				if (i > 0 && time == lastTime && lastValues.indexOf(value) >= 0) {
+					continue; // same data point in a row blows up LOESS algorithm
 				}
+				if (reZero) {
+					var nextRezero = 0;
+					if (i + 1 >= entries.length)
+						nextEntry = null;
+					else {
+						nextEntry = entries[i+1];
+						var nextTime = nextEntry[0].getTime();
+						if (nextTime - time >= 2 * rezeroWidth) {
+							nextRezero = 1;
+						}
+					}
+					// if space between two data points >= 2 * rezero width, create new smoothing segment
+					if (time - lastTime >= 2 * rezeroWidth) {
+						data = [];
+						segments.push(data);
+					}
+				}
+
+				if (time != lastTime) {
+					lastValues = [];
+					data.push([time, value]);
+				} else {
+					var total = 0;
+					for (var j = 0; j < lastValues.length; ++j) {
+						total += lastValues[j];
+					}
+					data[data.length - 1] = [time, total / lastValues.length];
+				}
+				lastTime = time;
+				lastValues.push(value);
 			}
-			// if space between two data points >= 2 * rezero width, create new smoothing segment
-			if (reZero && (time - lastTime >= 2 * rezeroWidth)) {
+
+			var retVal = [];
+
+			for (var j = 0; j < segments.length; ++j) {
+				data = segments[j];
+
+				if (data.length == 0)
+					continue;
+
+				if (data.length == 1) {
+					retVal.push([new Date(data[0][0]), data[0][1], lineName, 0]);
+					continue;
+				}
+
+				// loess smoothing
+				var smoothWidth = this.parentLine.smoothDataWidth;
+
+				var bandwidth = 0.001 + 0.05 * (smoothWidth - 1) / 29;
+
+				var results = loess_pairs(data, bandwidth);
+
+				// Generate LOESS interpolation
 				data = [];
-				segments.push(data);
-			}
 
-			data.push([time, value]);
+				for (i = 0; i < results.length; i++) {
+					data.push([results[i][0], results[i][1]]);
+				}
 
-			lastTime = time;
-		}
+				var smoothed = Smooth(data, {
+					method: 'linear',
+				});
 
-		var retVal = [];
-
-		for (var j = 0; j < segments.length; ++j) {
-			data = segments[j];
-
-			if (data.length == 0)
-				continue;
-
-			if (data.length == 1) {
-				retVal.push([new Date(data[0][0]), data[0][1], lineName, 0]);
-				continue;
-			}
-
-			// loess smoothing
-			var smoothWidth = this.parentLine.smoothDataWidth;
-
-			var bandwidth = 0.001 + 0.05 * (smoothWidth - 1) / 29;
-
-			var results = loess_pairs(data, bandwidth);
-
-			// Generate LOESS interpolation
-			data = [];
-
-			for (i = 0; i < results.length; i++) {
-				data.push([results[i][0], results[i][1]]);
-			}
-
-			var smoothed = Smooth(data, {
-			    method: 'linear',
-			});
-
-			var dataLen = data.length;
-
-			data = [];
-
-			for (i = 0.0; i <= dataLen - 1.0; i += 0.2) {
-				var item = smoothed(i);
-
-				data.push([item[0], item[1]]);
-			}
-
-			// take moving average
-
-			var movingAverage = function(data, r, third, fourth) {
 				var dataLen = data.length;
 
-				var results = [];
+				data = [];
 
-				for (var i = 0; i < dataLen; ++i) {
-					var w = 0;
-					var sum = 0;
-					var limit = i + r < dataLen ? i + r : dataLen - 1;
-					for (var j = (i - r > 0 ? i - r : 0); j <= limit; ++j) {
-						var weight = Math.pow(.6, Math.abs(i-j));
-						w += weight;
-						sum += data[j][1] * weight;
-					}
-					results.push([new Date(data[i][0]), sum / w]);
+				for (i = 0.0; i <= dataLen - 1.0; i += 0.2) {
+					var item = smoothed(i);
+
+					data.push([item[0], item[1]]);
 				}
 
-				return results;
-			};
+				// take moving average
 
-			var averaged = movingAverage(data, 10, lineName, 0);
+				var movingAverage = function(data, r, third, fourth) {
+					var dataLen = data.length;
 
-			for (i = 0; i < averaged.length; ++i) {
-				retVal.push([averaged[i][0], averaged[i][1], lineName, 0]);
+					var results = [];
+
+					for (var i = 0; i < dataLen; ++i) {
+						var w = 0;
+						var sum = 0;
+						var limit = i + r < dataLen ? i + r : dataLen - 1;
+						for (var j = (i - r > 0 ? i - r : 0); j <= limit; ++j) {
+							var weight = Math.pow(.6, Math.abs(i-j));
+							w += weight;
+							sum += data[j][1] * weight;
+						}
+						results.push([new Date(data[i][0]), sum / w]);
+					}
+
+					return results;
+				};
+
+				var averaged = movingAverage(data, 10, lineName, 0);
+
+				for (i = 0; i < averaged.length; ++i) {
+					retVal.push([averaged[i][0], averaged[i][1], lineName, 0]);
+				}
+
+				if (segments.length > j + 1)
+					retVal.push([new Date(averaged[averaged.length - 1][0].getTime() + slopeWidth), null, '', 0]);
 			}
 
-			if (segments.length > j + 1)
-				retVal.push([new Date(averaged[averaged.length - 1][0].getTime() + slopeWidth), null, '', 0]);
+			this.entries = retVal;
 		}
-
-		this.entries = retVal;
-	}
-
 		this.calculateFreqEntries = function() {
 			var parentLine = this.parentLine;
 			var parentEntries = parentLine.entries;
@@ -1777,6 +1781,9 @@ var plotColorClass =	{'#FF6633':'orange', '#990066':'eggplant', '#5BCDFC':'malib
 		}
 		this.calculateMinMaxTime = function() {
 			var entries = this.entries;
+
+			if (entries == undefined)
+				return;
 
 			var minTime = undefined;
 			var maxTime = undefined;
