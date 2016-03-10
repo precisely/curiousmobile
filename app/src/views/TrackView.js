@@ -13,6 +13,7 @@ define(function(require, exports, module) {
 	var Modifier = require('famous/core/Modifier');
 	var RenderController = require("famous/views/RenderController");
 	var RenderNode = require('famous/core/RenderNode');
+	var FastClick = require('famous/inputs/FastClick');
 	var Utility = require("famous/utilities/Utility");
 	var Scrollview = require("famous/views/Scrollview");
 	var EntryListView = require('views/entry/EntryListView');

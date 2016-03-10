@@ -238,7 +238,9 @@ define(function(require, exports, module) {
 		} else if (state && state.createJustBookmark) {
 			this.setPinned = true;
 			this.buttonsRenderController.hide();
+			this.renderController.hide();
 			this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">CREATE BOOKMARK</button>');
+			this.submitButtonModifier.setTransform(Transform.translate(30, 200, App.zIndex.datePicker - 1));
 			return;
 		}
 		this.loadState(state);
