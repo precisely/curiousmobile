@@ -58,6 +58,20 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
+		this.shareButton = new Surface({
+			size: [true, true],
+			content: '<img height="30" src="content/images/share-red.png">',
+		});
+
+		this.shareButton.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				this.graphView.plot.saveSnapshot();
+			}
+		}.bind(this));
+
+		this.shareButtonRenderController = new RenderController();
+		this.add(new StateModifier({transform: Transform.translate(15, App.height - 95, App.zIndex.header)})).add(this.shareButtonRenderController);
+
 		this.setHeaderLabel('CHART');
 		this.setRightIcon(this.optionsSurface);
 		this.backRenderController = new RenderController();
@@ -113,6 +127,8 @@ define(function(require, exports, module) {
 					this.tagsToPlot.push(App.tagListWidget.list.searchItemByDescription(state.tagsByDescription[1]));
 					this.init(false);
 				}.bind(this));
+			} else if (state.shareDiscussion) {
+				this.shareButtonRenderController.show(this.shareButton);
 			}
 		}
 		return true;
@@ -171,4 +187,3 @@ define(function(require, exports, module) {
 	App.pages['ChartView'] = ChartView;
 	module.exports = ChartView;
 });
-

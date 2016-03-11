@@ -87,7 +87,11 @@ define(function(require, exports, module) {
 		this.inputSurface.on('click', function(e) {
 			console.log('TrackView: Clicking on dummy input surface');
 			if (e instanceof CustomEvent) {
-				this._eventOutput.emit('create-entry');
+				if (_.contains(e.srcElement.classList, 'bookmark-plus')) {
+					this.showEntryFormView({createJustBookmark: true});
+				} else if (_.contains(e.srcElement.classList, 'input-placeholder')) {
+					this._eventOutput.emit('create-entry');
+				}
 			}
 		}.bind(this));
 

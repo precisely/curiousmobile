@@ -21,7 +21,7 @@ define(function(require, exports, module) {
 		footer: false,
 	};
 
-	function _createView(argument) {
+	function _createView() {
 		var template = PostTemplate;
 		this.setHeaderLabel('CREATE DISCUSSION');
 		this.postSurface = new Surface({
@@ -59,12 +59,21 @@ define(function(require, exports, module) {
 		document.forms["postForm"]["name"].value = '';
 	};
 
+	CreatePostView.prototype.onShow = function(state) {
+		BaseView.prototype.onShow.call(this);
+		this.hashTag = '';
+		if (state && state.hashTag) {
+			this.hashTag = state.hashTag;
+		}
+	}
+
 	CreatePostView.prototype.submit = function() {
 		var value = document.forms["postForm"]["name"].value;
 		if (!value) {
 			u.showAlert("Topic is a required field!");
 		} else {
 			var extractedData = extractDiscussionNameAndPost(value);
+			extractedData.name += this.hashTag ? '\n' + this.hashTag : '';
 			Discussion.post(
 				extractedData.name,
 				extractedData.post,
@@ -73,7 +82,7 @@ define(function(require, exports, module) {
 					console.log('Posted a new discussion');
 					// Indicating this is a new like state so list gets reloaded
 					u.spinnerStart();
-					setTimeout(function(){ 
+					setTimeout(function(){
 						u.spinnerStop();
 						App.pageView.changePage('FeedView', {
 							new: true
@@ -108,14 +117,14 @@ define(function(require, exports, module) {
 			discussionName = value;
 		}
 
-		// Trim the entered text max upto the 100 characters and use it as the discussion name/title                                                                                                                                    
-		if (discussionName.length > 100) {                                                                                   
-			discussionName = shorten(discussionName, 100).trim();       // See base.js for "shorten" method                  
-			// And the rest of the string (if any) will be used as first discussion comment message,                         
-			// reducing 3 characters as trailing ellipsis appended at the end of the post title                              
-			discussionPost = value.substring(discussionName.length - 3).trim();                                              
-		} else {                                                                                                             
-			discussionPost = value.substring(discussionName.length).trim();                                                  
+		// Trim the entered text max upto the 100 characters and use it as the discussion name/title
+		if (discussionName.length > 100) {
+			discussionName = shorten(discussionName, 100).trim();       // See base.js for "shorten" method
+			// And the rest of the string (if any) will be used as first discussion comment message,
+			// reducing 3 characters as trailing ellipsis appended at the end of the post title
+			discussionPost = value.substring(discussionName.length - 3).trim();
+		} else {
+			discussionPost = value.substring(discussionName.length).trim();
 		}
 
 		return {name: discussionName, post: discussionPost};
