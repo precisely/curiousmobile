@@ -187,7 +187,6 @@ define(function(require, exports, module) {
 			}
 		});
 		this.buttonsAndHelp.add(sequentialLayout);
-		this.buttonsRenderController.show(this.buttonsAndHelp);
 
 		this.buttonsModifier = new StateModifier({
 			transform: Transform.translate(this.firstOffset, 100, _zIndex())
@@ -241,6 +240,7 @@ define(function(require, exports, module) {
 			this.renderController.hide();
 			this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">CREATE BOOKMARK</button>');
 			this.submitButtonModifier.setTransform(Transform.translate(30, 200, App.zIndex.datePicker - 1));
+			this.submitButtonRenderController.show(this.submitSurface);
 			return;
 		}
 		this.loadState(state);
