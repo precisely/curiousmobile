@@ -194,10 +194,15 @@ define(function(require, exports, module) {
 		});
 		$('#entry-description').val('');
 		this.entryFormView.dateGridRenderController.hide();
+		this.entryFormView.renderController.hide();
+		this.entryFormView.buttonsRenderController.hide();
+		this.entryFormView.submitButtonRenderController.hide();
+		this.entryFormView.deleteButtonRenderController.hide();
+		this.entryFormView.batchMoveUpModifiers();
 		BaseView.prototype.killOverlayContent.call(this);
 		this.showMenuButton();
 		this.setHeaderSurface(this.calendarView, new StateModifier({align: [0.5, 0.5], origin: [0.5, 0.5]}));
-	}
+	};
 
 	TrackView.prototype.changeDate = function(date, callback, glowEntry) {
 		date = u.getMidnightDate(date);
@@ -229,11 +234,11 @@ define(function(require, exports, module) {
 				duration: 0
 			}, callback);
 		}.bind(this));
-	}
+	};
 
 	TrackView.prototype.getSelectedDate = function() {
 		return this.calendarView.getSelectedDate();
-	}
+	};
 
 	TrackView.prototype.showEntryFormView = function(state) {
 		var continueShowForm = this.entryFormView.preShow(state);
@@ -252,11 +257,11 @@ define(function(require, exports, module) {
 				this.onShow(state);
 			}.bind(this.entryFormView));
 		}
-	}
+	};
 
 	TrackView.prototype.buildStateFromEntry = function(entry) {
 		return this.entryFormView.buildStateFromEntry(entry);
-	}
+	};
 
 	TrackView.prototype.getCurrentState = function() {
 		if (this.currentOverlay == 'EntryFormView') {
@@ -270,7 +275,7 @@ define(function(require, exports, module) {
 		} else {
 			return {new: true};
 		}
-	}
+	};
 
 	App.pages[TrackView.name] = TrackView;
 	module.exports = TrackView;

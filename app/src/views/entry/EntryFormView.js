@@ -106,7 +106,16 @@ define(function(require, exports, module) {
 				this.trackView.killEntryForm(null);
 			} else {
 				enteredKey = e.srcElement.value;
-				this.autoCompleteView.getAutocompletes(enteredKey);
+				if (!enteredKey && this.modifiersMovedDown) {
+					this.batchMoveUpModifiers();
+				}
+				this.autoCompleteView.getAutocompletes(enteredKey, function(surfaceList) {
+					if (surfaceList && surfaceList.length > 1 && !this.modifiersMovedDown) {
+						this.batchMoveDownModifiers();
+					} else if (this.modifiersMovedDown) {
+						this.batchMoveUpModifiers();
+					}
+				}.bind(this));
 				formContainerSurface.add(this.autoCompleteView);
 			}
 		}.bind(this));
@@ -114,6 +123,36 @@ define(function(require, exports, module) {
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
 		this.formContainerSurface = formContainerSurface;
 
+		this.showEntryButtons();
+		this.submitSurface = new Surface({
+			content: '<button type="button" class="full-width-button create-entry-button">CREATE/UPDATE ENTRY</button>'
+		});
+
+		this.submitSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				if (_.contains(e.srcElement.classList, 'create-entry-button')) {
+					this.submit();
+				}
+			}
+		}.bind(this));
+
+		this.submitButtonModifier = new StateModifier({
+			size: [App.width - 60, undefined],
+			transform: Transform.translate(30, 180, App.zIndex.datePicker -1)
+		});
+
+		this.submitButtonRenderController = new RenderController();
+		this.submitButtonRenderController.show(this.submitSurface);
+		this.formContainerSurface.add(this.submitButtonModifier).add(this.submitButtonRenderController);
+
+		this.draggableEntryFormView = new DraggableView(this.formContainerSurface, true, 300);
+		this.add(new StateModifier({
+			transform: Transform.translate(0, 0, _zIndex() + 1)
+		})).add(this.draggableEntryFormView);
+	}
+
+	EntryFormView.prototype.showEntryButtons = function() {
+		this.buttonsRenderController = new RenderController();
 		var sequentialLayout = new SequentialLayout({
 			direction: 0,
 			itemSpacing: 30,
@@ -121,7 +160,6 @@ define(function(require, exports, module) {
 		});
 
 		var firstOffset = (App.width - ((84 * 3) + 60)) / 2;
-
 
 		this.repeatSurface = new Surface({
 			content: '<div class="text-center"><i class="fa fa-repeat"></i> <br/> Set Repeat</div>',
@@ -149,9 +187,10 @@ define(function(require, exports, module) {
 		});
 		this.buttonsAndHelp.add(sequentialLayout);
 
-		this.formContainerSurface.add(new StateModifier({
-			transform: Transform.translate(firstOffset, 200, _zIndex())
-		})).add(this.buttonsAndHelp);
+		this.buttonsModifier = new StateModifier({
+			transform: Transform.translate(firstOffset, 100, _zIndex())
+		});
+		this.formContainerSurface.add(this.buttonsModifier).add(this.buttonsRenderController);
 
 		this.renderController = new RenderController();
 		this.dateGridRenderController = new RenderController();
@@ -164,41 +203,18 @@ define(function(require, exports, module) {
 			}
 		});
 
-		var mod = new StateModifier({
+		this.repeatControllerModifier = new StateModifier({
 			size: [App.width, undefined],
-			transform: Transform.translate(0, 240, _zIndex())
+			transform: Transform.translate(0, 140, _zIndex())
 		});
-		var dateGridRenderControllerMod = new StateModifier({
-			transform: Transform.translate(18, 320, 16)
+		this.dateGridRenderControllerMod = new StateModifier({
+			transform: Transform.translate(18, 220, 16)
 		});
-		this.formContainerSurface.add(mod).add(this.renderController);
-
-		this.submitSurface = new Surface({
-			content: '<button type="button" class="full-width-button create-entry-button">CREATE/UPDATE ENTRY</button>',
-		});
-
-		this.submitSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
-				if (_.contains(e.srcElement.classList, 'create-entry-button')) {
-					this.submit();
-				}
-			}
-		}.bind(this));
-
-		this.submitButtonModifier = new StateModifier({
-			size: [App.width - 60, undefined],
-			transform: Transform.translate(30, 280, App.zIndex.datePicker -1)
-		});
-
-		this.formContainerSurface.add(this.submitButtonModifier).add(this.submitSurface);
+		this.formContainerSurface.add(this.repeatControllerModifier).add(this.renderController);
 		this.formContainerSurface.add(new StateModifier({
 			transform: Transform.translate(0, 0, _zIndex() + 1)
-		})).add(dateGridRenderControllerMod).add(this.dateGridRenderController);
-		this.draggableEntryFormView = new DraggableView(this.formContainerSurface, true, 300);
-		this.add(new StateModifier({
-			transform: Transform.translate(0, 0, _zIndex() + 1)
-		})).add(this.draggableEntryFormView);
-	}
+		})).add(this.dateGridRenderControllerMod).add(this.dateGridRenderController);
+	};
 
 	EntryFormView.prototype.preShow = function(state) {
 		if (state.preShowCheck) {
@@ -283,6 +299,30 @@ define(function(require, exports, module) {
 	EntryFormView.prototype.setEntryText = function(text) {
 		if (document.getElementById('entry-description')) {
 			document.getElementById('entry-description').value = '';
+		}
+	};
+
+	EntryFormView.prototype.batchMoveUpModifiers = function() {
+		this.modifiersMovedDown = false;
+		this.buttonsModifier.setTransform(Transform.translate(0, 100, _zIndex()));
+		this.repeatControllerModifier.setTransform(Transform.translate(0, 140, _zIndex()));
+		this.dateGridRenderControllerMod.setTransform(Transform.translate(18, 220, 16));
+		var yTransformSubmitButtonModifier = this.submitButtonModifier.getTransform()[13];
+		if (yTransformSubmitButtonModifier > 150) {
+			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] - 100, App.zIndex.datePicker - 1));
+			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] - 100, App.zIndex.header - 1));
+		}
+	};
+
+	EntryFormView.prototype.batchMoveDownModifiers = function() {
+		this.modifiersMovedDown = true;
+		this.buttonsModifier.setTransform(Transform.translate(0, 200, _zIndex()));
+		this.repeatControllerModifier.setTransform(Transform.translate(0, 240, _zIndex()));
+		this.dateGridRenderControllerMod.setTransform(Transform.translate(18, 320, 16));
+		var yTransformSubmitButtonModifier = this.submitButtonModifier.getTransform()[13];
+		if (yTransformSubmitButtonModifier < 500) {
+			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 100, App.zIndex.datePicker - 1));
+			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 100, App.zIndex.header - 1));
 		}
 	};
 

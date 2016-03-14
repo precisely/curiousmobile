@@ -10,11 +10,15 @@ define(function(require, exports, module) {
 	var Autocomplete = require('models/Autocomplete');
 	var Entry = require('models/Entry');
 	var u = require('util/Utils');
+	var Surface = require('famous/core/Surface');
+	var RenderController = require("famous/views/RenderController");
+	var StateModifier = require('famous/modifiers/StateModifier');
 
 	function TrackEntryFormView(options) {
 		EntryFormView.apply(this, arguments);
 		this.trackView = options.trackView;
 		this.dateGridOpen = false;
+		this.createDeleteButton();
 	}
 
 	TrackEntryFormView.prototype = Object.create(EntryFormView.prototype);
@@ -34,6 +38,7 @@ define(function(require, exports, module) {
 				var inputElement = document.getElementById("entry-description");
 				inputElement.value = inputLabel;
 				inputElement.focus();
+				this.batchMoveUpModifiers();
 			}.bind(this), 500);
 		}.bind(this));
 
@@ -47,10 +52,12 @@ define(function(require, exports, module) {
 					this.renderController.show(this.repeatModifierSurface, null, function() {
 						this.setSelectedDate(this.selectedDate);
 					}.bind(this));
-					this.submitButtonModifier.setTransform(Transform.translate(30, 500, App.zIndex.datePicker - 1));
+					this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.datePicker - 1));
+					this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 220, App.zIndex.header - 1));
 				} else {
 					this.renderController.hide();
-					this.submitButtonModifier.setTransform(Transform.translate(30, 280, App.zIndex.datePicker - 1));
+					this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] - 220, App.zIndex.datePicker - 1));
+					this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] - 220, App.zIndex.header - 1));
 				}
 				this.toggleSelector(this.repeatSurface);
 			}
@@ -131,13 +138,59 @@ define(function(require, exports, module) {
 			Entry.cacheEntries(resp.glowEntry.date, resp.entries);
 			this.trackView.preShow({data: resp, fromServer: true});
 		}.bind(this));
-	}
 
+		this.on('delete-entry', function(resp) {
+			this.trackView.killEntryForm();
+			if (resp && resp.fail) {
+				u.showAlert('Could not delete entry');
+			}
+			this.trackView.currentListView.refreshEntries(resp);
+		}.bind(this));
+	};
+
+	TrackEntryFormView.prototype.createDeleteButton = function() {
+		this.deleteButtonSurface = new Surface({
+			content: '<button type="button" class="full-width-button create-entry-button">DELETE ENTRY</button>',
+			size: [undefined, true]
+		});
+
+		this.deleteButtonSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				this.entry.delete(function(data) {
+					this._eventOutput.emit('delete-entry', data);
+				}.bind(this));
+			}
+		}.bind(this));
+
+		this.deleteButtonRenderController = new RenderController();
+		this.deleteButtonModifier = new StateModifier({
+			size: [App.width - 60, undefined],
+			transform: Transform.translate(30, 250, App.zIndex.header - 1)
+		});
+		this.formContainerSurface.add(this.deleteButtonModifier).add(this.deleteButtonRenderController);
+	};
 	/**
 	 * If form loads in edit mode, this will initialize
 	 * entry modifier form according to properties of current entry
 	 */
 	TrackEntryFormView.prototype.showEntryModifiers = function(args) {
+		var buttonName = 'CREATE ENTRY';
+		var isInEditMode = false;
+
+		if (this.entry.get('id')) {
+			buttonName = 'UPDATE ENTRY';
+			isInEditMode = true;
+		}
+
+		this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">' + buttonName + '</button>');
+		this.submitButtonModifier.setTransform(Transform.translate(30,180, App.zIndex.datePicker - 1));
+
+		if (isInEditMode) {
+			this.deleteButtonModifier.setTransform(Transform.translate(30, 230, App.zIndex.datePicker - 1));
+		}
+
+		this.buttonsRenderController.show(this.buttonsAndHelp);
+		this.submitButtonRenderController.show(this.submitSurface);
 		this.resetRepeatModifierForm();
 		this.renderController.hide();
 		this.selectedDate = null;
@@ -169,7 +222,8 @@ define(function(require, exports, module) {
 					this.setSelectedDate(repeatEnd);
 				}
 			}.bind(this);
-			this.submitButtonModifier.setTransform(Transform.translate(30, 500, App.zIndex.datePicker - 1));
+			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.datePicker - 1));
+			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 220, App.zIndex.header - 1));
 			this.renderController.show(this.repeatModifierSurface, null, function() {
 				if (radioSelector) {
 					document.getElementById(radioSelector).checked = true;
@@ -186,6 +240,11 @@ define(function(require, exports, module) {
 		if (this.setRepeat) {
 			this.toggleSelector(this.repeatSurface);
 		}
+		this.buttonsRenderController.show(this.buttonsAndHelp);
+
+		if (isInEditMode) {
+			this.deleteButtonRenderController.show(this.deleteButtonSurface);
+		}
 	};
 
 	TrackEntryFormView.prototype.toggleSelector = function(selectorSurface) {
@@ -195,14 +254,14 @@ define(function(require, exports, module) {
 		} else if (selectorSurface && isHilighted) {
 			selectorSurface.removeClass('highlight-surface');
 		}
-	}
+	};
 
 	TrackEntryFormView.prototype.buildStateFromEntry = function(entry) {
-		console.log('entry selected with id: ' + entry.id);
+		console.log('Build state for entry with id: ' + entry.id);
 		this.setPinned = this.setRemind = this.setRepeat = false;
 		this.entry = entry;
 		var directlyCreateEntry = false;
-		if (entry.isContinuous() || ((entry.isRemind() || entry.isRepeat()) && entry.isGhost())) {0
+		if (entry.isContinuous() || ((entry.isRemind() || entry.isRepeat()) && entry.isGhost())) {
 			var tag = this.removeSuffix(entry.toString());
 			var tagStatsMap = autocompleteCache.tagStatsMap.get(tag);
 			if (!tagStatsMap) {

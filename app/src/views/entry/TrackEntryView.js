@@ -93,7 +93,7 @@ define(function(require, exports, module) {
 	TrackEntryView.prototype.setEntry = function(entry) {
 		this.entry = entry;
 		this.entrySurface.setContent(this.entry.toString());
-	}
+	};
 
 	TrackEntryView.prototype.getSize = function () {
 		return this.size;
