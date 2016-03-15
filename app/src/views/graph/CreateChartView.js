@@ -265,6 +265,8 @@ define(function(require, exports, module) {
 	}
 
 	CreateChartView.prototype.preShow = function(state) {
+		this.searchBox.setContent('<div class="tag-search-div input-group input-group-lg"><i class="input-group-addon fa fa-search fa-2x"></i>' +
+			'<input type="text" class="form-control tag-search-input" placeholder="Search Tags"></div>');
 		if (state && state.selectedTags) {
 			this.selectedTags = state.selectedTags.slice(0);
 		}

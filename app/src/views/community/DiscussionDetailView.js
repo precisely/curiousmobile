@@ -203,10 +203,12 @@ define(function(require, exports, module) {
 					Discussion.disableComments({hash: this.discussionHash, disable: disable}, function(disableComments) {
 						if (disableComments) {
 							disableCommentCheckbox.checked = true;
-							this.surfaceList.splice(this.surfaceList.indexOf(this.addCommentSurface), 1);
+							if (!discussionPost.discussionDetails.isAdmin) {
+								this.surfaceList.splice(this.surfaceList.indexOf(this.addCommentSurface), 1);
+							}
 						} else {
 							disableCommentCheckbox.checked = false;
-							if (this.surfaceList.indexOf(this.addCommentSurface) < 0) {
+							if (!document.getElementsByClassName('comment-form')) {
 								this.surfaceList.push(this.addCommentSurface);
 							}
 						}
@@ -217,7 +219,7 @@ define(function(require, exports, module) {
 
 		this.addCommentSurface = this.getAddCommentSurface({});
 
-		if(discussionPost.discussionDetails.canWrite && !discussionPost.discussionDetails.disableComments) {
+		if (discussionPost.discussionDetails.isAdmin || (discussionPost.discussionDetails.canWrite && !discussionPost.discussionDetails.disableComments)) {
 			this.surfaceList.push(this.addCommentSurface.node);
 			this.addCommentSurface.pipe(this.scrollView);
 		}

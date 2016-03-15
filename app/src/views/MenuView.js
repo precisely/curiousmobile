@@ -13,6 +13,14 @@ define(function(require, exports, module) {
 	function MenuView() {
 		View.apply(this, arguments);
 
+		var backgroundSurface = new Surface({
+			size: [App.width - 50, undefined],
+			properties: {
+				backgroundColor: '#ffffff',
+			}
+		});
+		this.backgroundModifier = new StateModifier({transform: Transform.behind});
+		this.add(this.backgroundModifier).add(backgroundSurface);
 		_createMenuItems.call(this);
 
 	}

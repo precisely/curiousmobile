@@ -36,7 +36,7 @@ define(function(require, exports, module) {
 		onSelectCallback = callback;
 	};
 
-	AutocompleteView.prototype.getAutocompletes = function(enteredKey) {
+	AutocompleteView.prototype.getAutocompletes = function(enteredKey, callback) {
 		this.surfaceList = [];
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.Y,
@@ -49,11 +49,11 @@ define(function(require, exports, module) {
 		enteredKey = enteredKey.toLowerCase().trim();
 		this.addItem({label:enteredKey}, 0, false)
 		this.AutocompleteObj.fetch(enteredKey, function(autocompletes) {
-			this.processAutocompletes(autocompletes, enteredKey);
+			this.processAutocompletes(autocompletes, enteredKey, callback);
 		}.bind(this));
 	}
 
-	AutocompleteView.prototype.processAutocompletes = function(autocompletes, enteredKey) {
+	AutocompleteView.prototype.processAutocompletes = function(autocompletes, enteredKey, callback) {
 		if (autocompletes) {
 			autocompletes.forEach(function(autocomplete, index) {
 				var isLastItem = false;
@@ -68,6 +68,10 @@ define(function(require, exports, module) {
 		}
 		this.scrollView.sequenceFrom(this.surfaceList);
 		this.renderController.show(this.scrollView);
+
+		if (callback) {
+			callback(this.surfaceList);
+		}
 	};
 
 	AutocompleteView.prototype.addItem = function(autocomplete, i, isLastItem) {
