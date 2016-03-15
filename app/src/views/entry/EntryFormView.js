@@ -310,7 +310,7 @@ define(function(require, exports, module) {
 		var yTransformSubmitButtonModifier = this.submitButtonModifier.getTransform()[13];
 		if (yTransformSubmitButtonModifier > 150) {
 			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] - 100, App.zIndex.formView));
-			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] - 100, App.zIndex.formView));
+			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] - 100, App.zIndex.formView + 2));
 		}
 	};
 
@@ -322,7 +322,7 @@ define(function(require, exports, module) {
 		var yTransformSubmitButtonModifier = this.submitButtonModifier.getTransform()[13];
 		if (yTransformSubmitButtonModifier < 500) {
 			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 100, App.zIndex.formView));
-			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 100, App.zIndex.formView));
+			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 100, App.zIndex.formView + 2));
 		}
 	};
 

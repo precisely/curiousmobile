@@ -114,7 +114,9 @@ define(function(require, exports, module) {
 
 
 		this.plusSurface.on('click', function(e) {
-			App.pageView.changePage(CreatePostView.name);
+			if (e instanceof CustomEvent) {
+				App.pageView.changePage(CreatePostView.name);
+			}
 		}.bind(this));
 
 		this.pillsScrollViewContainerModifier = new StateModifier({
