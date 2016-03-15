@@ -138,7 +138,7 @@ define(function(require, exports, module) {
 
 		this.submitButtonModifier = new StateModifier({
 			size: [App.width - 60, undefined],
-			transform: Transform.translate(30, 180, App.zIndex.datePicker -1)
+			transform: Transform.translate(30, 180, App.zIndex.formView)
 		});
 
 		this.submitButtonRenderController = new RenderController();
@@ -147,7 +147,7 @@ define(function(require, exports, module) {
 
 		this.draggableEntryFormView = new DraggableView(this.formContainerSurface, true, 300);
 		this.add(new StateModifier({
-			transform: Transform.translate(0, 0, _zIndex() + 1)
+			transform: Transform.translate(0, 0, 0)
 		})).add(this.draggableEntryFormView);
 	}
 
@@ -309,8 +309,8 @@ define(function(require, exports, module) {
 		this.dateGridRenderControllerMod.setTransform(Transform.translate(18, 220, 16));
 		var yTransformSubmitButtonModifier = this.submitButtonModifier.getTransform()[13];
 		if (yTransformSubmitButtonModifier > 150) {
-			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] - 100, App.zIndex.datePicker - 1));
-			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] - 100, App.zIndex.header - 1));
+			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] - 100, App.zIndex.formView));
+			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] - 100, App.zIndex.formView));
 		}
 	};
 
@@ -321,8 +321,8 @@ define(function(require, exports, module) {
 		this.dateGridRenderControllerMod.setTransform(Transform.translate(18, 320, 16));
 		var yTransformSubmitButtonModifier = this.submitButtonModifier.getTransform()[13];
 		if (yTransformSubmitButtonModifier < 500) {
-			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 100, App.zIndex.datePicker - 1));
-			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 100, App.zIndex.header - 1));
+			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 100, App.zIndex.formView));
+			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 100, App.zIndex.formView));
 		}
 	};
 

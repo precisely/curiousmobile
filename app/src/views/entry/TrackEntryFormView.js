@@ -52,12 +52,12 @@ define(function(require, exports, module) {
 					this.renderController.show(this.repeatModifierSurface, null, function() {
 						this.setSelectedDate(this.selectedDate);
 					}.bind(this));
-					this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.datePicker - 1));
-					this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 220, App.zIndex.header - 1));
+					this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.formView));
+					this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 220, App.zIndex.formView));
 				} else {
 					this.renderController.hide();
-					this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] - 220, App.zIndex.datePicker - 1));
-					this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] - 220, App.zIndex.header - 1));
+					this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] - 220, App.zIndex.formView));
+					this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] - 220, App.zIndex.formView));
 				}
 				this.toggleSelector(this.repeatSurface);
 			}
@@ -165,7 +165,7 @@ define(function(require, exports, module) {
 		this.deleteButtonRenderController = new RenderController();
 		this.deleteButtonModifier = new StateModifier({
 			size: [App.width - 60, undefined],
-			transform: Transform.translate(30, 250, App.zIndex.header - 1)
+			transform: Transform.translate(30, 250, App.zIndex.formView)
 		});
 		this.formContainerSurface.add(this.deleteButtonModifier).add(this.deleteButtonRenderController);
 	};
@@ -183,10 +183,10 @@ define(function(require, exports, module) {
 		}
 
 		this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">' + buttonName + '</button>');
-		this.submitButtonModifier.setTransform(Transform.translate(30,180, App.zIndex.datePicker - 1));
+		this.submitButtonModifier.setTransform(Transform.translate(30,180, App.zIndex.formView));
 
 		if (isInEditMode) {
-			this.deleteButtonModifier.setTransform(Transform.translate(30, 230, App.zIndex.datePicker - 1));
+			this.deleteButtonModifier.setTransform(Transform.translate(30, 230, App.zIndex.formView));
 		}
 
 		this.buttonsRenderController.show(this.buttonsAndHelp);
@@ -222,8 +222,8 @@ define(function(require, exports, module) {
 					this.setSelectedDate(repeatEnd);
 				}
 			}.bind(this);
-			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.datePicker - 1));
-			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 220, App.zIndex.header - 1));
+			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.formView));
+			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 220, App.zIndex.formView));
 			this.renderController.show(this.repeatModifierSurface, null, function() {
 				if (radioSelector) {
 					document.getElementById(radioSelector).checked = true;

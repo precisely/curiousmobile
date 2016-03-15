@@ -255,7 +255,11 @@ define(function(require, exports, module) {
 						plot.deactivateActivatedLine(plotLine);
 						if (plotLine.hasSmoothLine()) {	//means there is a smooth line of this accordion line
 							if (plot.activeLineId == plotLine.smoothLine.id) {
-								plotLine.smoothLine.deactivate();
+								var activeLine = plot.getLine(plot.activeLineId);
+								if (activeLine) {
+									activeLine.deactivate();
+								}
+								plot.activeLineId = undefined;
 								return;
 							}
 							plot.activeLineId = plotLine.smoothLine.id;
