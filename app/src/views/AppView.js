@@ -84,10 +84,15 @@ define(function(require, exports, module) {
 
 	AppView.prototype.slideRight = function() {
 		this.pageModifier.setTransform(Transform.translate(this.options.openPosition, 0, 0), this.options.transition);
+		this.menuView.backgroundModifier.setTransform(Transform.translate(0, 0, App.zIndex.menu - 5), {
+			duration: 900,
+			curve: 'easeOut'
+		});
 	};
 
 	AppView.prototype.slideLeft = function() {
 		this.pageModifier.setTransform(Transform.translate(0, 0, 0), this.options.transition);
+		this.menuView.backgroundModifier.setTransform(Transform.translate(0, 0, 0));
 	};
 
 	AppView.prototype.getSelectedDate = function () {

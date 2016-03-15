@@ -208,7 +208,7 @@ define(function(require, exports, module) {
 							}
 						} else {
 							disableCommentCheckbox.checked = false;
-							if (this.surfaceList.indexOf(this.addCommentSurface) < 0) {
+							if (!document.getElementsByClassName('comment-form')) {
 								this.surfaceList.push(this.addCommentSurface);
 							}
 						}
@@ -219,7 +219,7 @@ define(function(require, exports, module) {
 
 		this.addCommentSurface = this.getAddCommentSurface({});
 
-		if(discussionPost.discussionDetails.isAdmin || (discussionPost.discussionDetails.canWrite && !discussionPost.discussionDetails.disableComments)) {
+		if (discussionPost.discussionDetails.isAdmin || (discussionPost.discussionDetails.canWrite && !discussionPost.discussionDetails.disableComments)) {
 			this.surfaceList.push(this.addCommentSurface.node);
 			this.addCommentSurface.pipe(this.scrollView);
 		}

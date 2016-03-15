@@ -8,7 +8,7 @@ var App = function() {
 	this.CSRF.SyncTokenUriName = "SYNCHRONIZER_URI"; // From org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerTokensHolder.TOKEN_URI
 
 	this.zIndex = {
-		menu: 1,
+		menu: 59,
 		readView: 16,
 		feedItem: 16,
 		pinned: 0,

@@ -38,7 +38,9 @@ define(function(require, exports, module) {
 				var inputElement = document.getElementById("entry-description");
 				inputElement.value = inputLabel;
 				inputElement.focus();
-				this.batchMoveUpModifiers();
+				if (this.modifiersMovedDown) {
+					this.batchMoveUpModifiers();
+				}
 			}.bind(this), 500);
 		}.bind(this));
 
