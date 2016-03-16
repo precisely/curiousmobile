@@ -32,12 +32,11 @@ require.config({
 		jstzdetect: '../lib/jstzdetect/jstz.min',
 		jscache: '../lib/jscache/cache',
 		'exoskeleton.localStorage': '../lib/exoskeleton.localStorage/backbone.localStorage',
-		bootstrap: '../lib/bootstrap/dist/js/bootstrap',
 		Entry: './models/Entry',
 		'angular-resource': '../lib/angular-resource/angular-resource',
 		angularjs: '../lib/angularjs/angular',
-		'famous-flex': '../lib/famous-flex/src',
 		'Autolinker': '../lib/Autolinker.js/dist/Autolinker.min'
+		bootstrap: '../lib/bootstrap/dist/js/bootstrap.min',
 	},
 	packages: [
 

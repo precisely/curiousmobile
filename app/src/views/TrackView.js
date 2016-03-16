@@ -2,6 +2,7 @@ define(function(require, exports, module) {
 	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
+	require('jquery');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Transform = require('famous/core/Transform');
 	var Transitionable = require("famous/transitions/Transitionable");
@@ -21,7 +22,9 @@ define(function(require, exports, module) {
 	var Entry = require('models/Entry');
 	var EntryCollection = require('models/EntryCollection');
 	var User = require('models/User');
+	var store = require('store');
 	var u = require('util/Utils');
+	require('bootstrap');
 	var DateUtil = require('util/DateUtil');
 	var inputSurfaceTemplate = require('text!templates/input-surface-dummy.html');
 
@@ -32,6 +35,7 @@ define(function(require, exports, module) {
 		this.entryFormView = new TrackEntryFormView({trackView: this});
 		_createBody.call(this);
 		_createCalendar.call(this);
+		_createTrackathonPopup.call(this);
 	}
 
 	TrackView.prototype = Object.create(BaseView.prototype);
@@ -43,6 +47,20 @@ define(function(require, exports, module) {
 		noBackButton: true,
 		reloadOnResume: true,
 		activeMenu: 'track'
+	};
+
+	function _createTrackathonPopup() {
+		this.trackathonTooltip = new Surface({
+			size: [80, 30],
+			content: '<div class="tooltip top" role="tooltip"> <div class="tooltip-arrow">' +
+					'</div> <div class="tooltip-inner"> Tooltip on the top </div> </div>',
+			properties: {
+
+			}
+		});
+
+		this.tooltipRenderController = new RenderController();
+
 	};
 
 	function _getDefaultDates(date) {
@@ -158,6 +176,17 @@ define(function(require, exports, module) {
 
 	TrackView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
+		if (this.currentListView && this.currentListView.draggableList.length && !store.get('trackathonVisited')) {
+			this.showPopover();
+		}
+	};
+
+	TrackView.prototype.showPopover = function() {
+		$('#trackathon-menu').popover('show');
+	};
+
+	TrackView.prototype.hidePopover = function() {
+		$('#trackathon-menu').popover('hide');
 	};
 
 	TrackView.prototype.preShow = function(state) {

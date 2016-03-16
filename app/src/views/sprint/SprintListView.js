@@ -150,6 +150,9 @@ define(function(require, exports, module) {
 
 	SprintListView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
+		User.markTrackathonVisited(function() {
+			App.pageView.getPage('TrackView').hidePopover();
+		});
 	}
 
 	SprintListView.prototype.preShow = function(state) {
@@ -196,13 +199,13 @@ define(function(require, exports, module) {
 			offset: 0,
 			max: this.max
 		};
-		this.fetchFeedItems(this.currentPill, params); 
+		this.fetchFeedItems(this.currentPill, params);
 		this.scrollView.sequenceFrom(this.deck);
 		this.renderController.show(this.scrollView);
 	};
 
 	SprintListView.prototype.getScrollPosition = function() {
-		return this.scrollView.getPosition()	
+		return this.scrollView.getPosition()
 	};
 
 	App.pages[SprintListView.name] = SprintListView;

@@ -210,6 +210,10 @@ define(function(require, exports, module) {
 		this.footerSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				console.log('footerSurface event');
+				if (_.contains(e.srcElement.classList, 'popover-content')) {
+					App.pageView.getPage('TrackView').hidePopover();
+					return;
+				}
 				var pageName = e.srcElement.getAttribute('data');
 				e.data = pageName;
 				if (e.data == 'TrackView' || e.data == 'FeedView') {

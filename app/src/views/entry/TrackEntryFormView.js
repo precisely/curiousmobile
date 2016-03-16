@@ -10,6 +10,7 @@ define(function(require, exports, module) {
 	var Autocomplete = require('models/Autocomplete');
 	var Entry = require('models/Entry');
 	var u = require('util/Utils');
+	var store = require('store');
 	var Surface = require('famous/core/Surface');
 	var RenderController = require("famous/views/RenderController");
 	var StateModifier = require('famous/modifiers/StateModifier');
@@ -124,10 +125,13 @@ define(function(require, exports, module) {
 			window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],resp.tagStats[3], resp.tagStats[4])
 			Entry.cacheEntries(resp.glowEntry.date, resp.entries);
 			this.trackView.preShow({data: resp, fromServer: true});
+			if (!store.get('trackathonVisited')) {
+				this.trackView.showPopover();
+			}
 		}.bind(this));
 
 		this.on('update-entry', function(resp) {
-			console.log('EntryListView: Updating an entry');
+			console.log('EntryListView: Updating an entry ');
 			this.resetRepeatModifierForm();
 			this.renderController.hide();
 			var currentListView = this.trackView.currentListView;
@@ -139,6 +143,9 @@ define(function(require, exports, module) {
 			}
 			Entry.cacheEntries(resp.glowEntry.date, resp.entries);
 			this.trackView.preShow({data: resp, fromServer: true});
+			if (!store.get('trackathonVisited')) {
+				this.trackView.showPopover();
+			}
 		}.bind(this));
 
 		this.on('delete-entry', function(resp) {

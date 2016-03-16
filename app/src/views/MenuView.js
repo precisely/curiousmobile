@@ -14,7 +14,7 @@ define(function(require, exports, module) {
 		View.apply(this, arguments);
 
 		var backgroundSurface = new Surface({
-			size: [App.width - 50, undefined],
+			size: [280, undefined],
 			properties: {
 				backgroundColor: '#ffffff',
 			}
