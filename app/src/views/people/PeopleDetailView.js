@@ -83,9 +83,10 @@ define(function(require, exports, module) {
 					background: '-webkit-linear-gradient(top,  #f14d43 0%, #f48157 100%)'
 				});
 			}
+			var parsedTemplate = _.template(profileTemplate, peopleDetails, templateSettings);
 			var peopleSurface = new Surface({
 				size: [undefined, undefined],
-				content: _.template(profileTemplate, peopleDetails, templateSettings),
+				content: u.getParsedInAppBrowserSupportedURL(parsedTemplate),
 				properties: {
 				}
 			});

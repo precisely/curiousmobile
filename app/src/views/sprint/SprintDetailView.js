@@ -99,9 +99,10 @@ define(function (require, exports, module) {
 			sprintDetails.isFormView = false;
 			sprintDetails.sprint.hasStarted = args.started;
 			sprintDetails.sprint.hasEnded = args.stopped;
+			var parsedTemplate = _.template(SprintDetailsTemplate, sprintDetails, templateSettings);
 			var sprintSurface = new Surface({
 				size: [undefined, undefined],
-				content: _.template(SprintDetailsTemplate, sprintDetails, templateSettings),
+				content: u.getParsedInAppBrowserSupportedURL(parsedTemplate),
 				properties: {}
 			});
 
