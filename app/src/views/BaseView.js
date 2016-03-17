@@ -211,7 +211,9 @@ define(function(require, exports, module) {
 			if (e instanceof CustomEvent) {
 				console.log('footerSurface event');
 				if (_.contains(e.srcElement.classList, 'popover-content')) {
-					App.pageView.getPage('TrackView').hidePopover();
+					var trackView = App.pageView.getPage('TrackView');
+					trackView.hidePopover();
+					trackView.isPopoverVisible = false;
 					return;
 				}
 				var pageName = e.srcElement.getAttribute('data');
@@ -265,6 +267,9 @@ define(function(require, exports, module) {
 		if (this.headerRightIconController) {
 			this.rightIconsList.splice(this.rightIconsList.indexOf(this.searchOptionSurface), 1);
 		}
+	}
+
+	BaseView.prototype.preChangePage = function() {
 	}
 
 	BaseView.prototype.onShow = function(state) {

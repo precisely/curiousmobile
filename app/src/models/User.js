@@ -78,7 +78,7 @@ define(function(require, exports, module) {
 			closedExplanationCardSprint = user.closedExplanationCardTrackathon;
 			store.set('hideCuriositiesExplanation', user.closedExplanationCardCuriousities);
 			store.set('hideSprintExplanation', user.closedExplanationCardTrackathon);
-			store.set('hideSprintExplanation', user.hasVisitedTrackathon);
+			store.set('trackathonVisited', user.hasVisitedTrackathon);
 			this.u.callDataReadyCallbacks();
 			return currentUser;
 		}

@@ -125,9 +125,7 @@ define(function(require, exports, module) {
 			window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],resp.tagStats[3], resp.tagStats[4])
 			Entry.cacheEntries(resp.glowEntry.date, resp.entries);
 			this.trackView.preShow({data: resp, fromServer: true});
-			if (!store.get('trackathonVisited')) {
-				this.trackView.showPopover();
-			}
+			this.trackView.showPopover();
 		}.bind(this));
 
 		this.on('update-entry', function(resp) {
@@ -143,9 +141,7 @@ define(function(require, exports, module) {
 			}
 			Entry.cacheEntries(resp.glowEntry.date, resp.entries);
 			this.trackView.preShow({data: resp, fromServer: true});
-			if (!store.get('trackathonVisited')) {
-				this.trackView.showPopover();
-			}
+			this.trackView.showPopover();
 		}.bind(this));
 
 		this.on('delete-entry', function(resp) {

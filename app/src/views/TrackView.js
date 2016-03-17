@@ -35,7 +35,6 @@ define(function(require, exports, module) {
 		this.entryFormView = new TrackEntryFormView({trackView: this});
 		_createBody.call(this);
 		_createCalendar.call(this);
-		_createTrackathonPopup.call(this);
 	}
 
 	TrackView.prototype = Object.create(BaseView.prototype);
@@ -47,20 +46,6 @@ define(function(require, exports, module) {
 		noBackButton: true,
 		reloadOnResume: true,
 		activeMenu: 'track'
-	};
-
-	function _createTrackathonPopup() {
-		this.trackathonTooltip = new Surface({
-			size: [80, 30],
-			content: '<div class="tooltip top" role="tooltip"> <div class="tooltip-arrow">' +
-					'</div> <div class="tooltip-inner"> Tooltip on the top </div> </div>',
-			properties: {
-
-			}
-		});
-
-		this.tooltipRenderController = new RenderController();
-
 	};
 
 	function _getDefaultDates(date) {
@@ -174,6 +159,11 @@ define(function(require, exports, module) {
 		this.setHeaderSurface(this.calendarView);
 	}
 
+	TrackView.prototype.preChangePage = function() {
+		BaseView.prototype.preChangePage.call(this);
+		this.hidePopover();
+	}
+
 	TrackView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 		if (this.currentListView && this.currentListView.draggableList.length && !store.get('trackathonVisited')) {
@@ -182,15 +172,22 @@ define(function(require, exports, module) {
 	};
 
 	TrackView.prototype.showPopover = function() {
-		$('#trackathon-menu').popover('show');
+		if (!store.get('trackathonVisited')) {
+			$('#trackathon-menu').popover('show');
+			document.getElementsByClassName('sprint').classList.add('active');
+			this.isPopoverVisible = true;
+		}
 	};
 
 	TrackView.prototype.hidePopover = function() {
 		$('#trackathon-menu').popover('hide');
+		document.getElementsByClassName('sprint').classList.remove('active');
+		this.isPopoverVisible = false;
 	};
 
 	TrackView.prototype.preShow = function(state) {
 		BaseView.prototype.preShow.call(this);
+		this.popoverVisible = false;
 		if (state && state.fromServer) {
 			var glowEntryDate = state.data.glowEntry.get("date");
 			if (this.calendarView.getSelectedDate().setHours(0, 0, 0) !== new Date(glowEntryDate).setHours(0, 0, 0)) {
@@ -230,6 +227,9 @@ define(function(require, exports, module) {
 		this.entryFormView.batchMoveUpModifiers();
 		BaseView.prototype.killOverlayContent.call(this);
 		this.showMenuButton();
+		if (this.isPopoverVisible) {
+			this.showPopover();
+		}
 		this.setHeaderSurface(this.calendarView, new StateModifier({align: [0.5, 0.5], origin: [0.5, 0.5]}));
 	};
 
@@ -272,6 +272,10 @@ define(function(require, exports, module) {
 	TrackView.prototype.showEntryFormView = function(state) {
 		var continueShowForm = this.entryFormView.preShow(state);
 		if (continueShowForm) {
+			if (this.isPopoverVisible) {
+				this.hidePopover();
+				this.isPopoverVisible = true;
+			}
 			this.entryListContainer.setProperties({
 				webkitFilter: 'blur(5px)',
 				filter: 'blur(5px)'
