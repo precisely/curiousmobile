@@ -35,7 +35,6 @@ define(function(require, exports, module) {
 		this.entryFormView = new TrackEntryFormView({trackView: this});
 		_createBody.call(this);
 		_createCalendar.call(this);
-		_createTrackathonPopup.call(this);
 	}
 
 	TrackView.prototype = Object.create(BaseView.prototype);
@@ -47,20 +46,6 @@ define(function(require, exports, module) {
 		noBackButton: true,
 		reloadOnResume: true,
 		activeMenu: 'track'
-	};
-
-	function _createTrackathonPopup() {
-		this.trackathonTooltip = new Surface({
-			size: [80, 30],
-			content: '<div class="tooltip top" role="tooltip"> <div class="tooltip-arrow">' +
-					'</div> <div class="tooltip-inner"> Tooltip on the top </div> </div>',
-			properties: {
-
-			}
-		});
-
-		this.tooltipRenderController = new RenderController();
-
 	};
 
 	function _getDefaultDates(date) {
@@ -191,11 +176,17 @@ define(function(require, exports, module) {
 	};
 
 	TrackView.prototype.showPopover = function() {
-		$('#trackathon-menu').popover('show');
+		if (!store.get('trackathonVisited')) {
+			$('#trackathon-menu').popover('show');
+			document.getElementsByClassName('sprint').classList.add('active');
+			this.isPopoverVisible = true;
+		}
 	};
 
 	TrackView.prototype.hidePopover = function() {
 		$('#trackathon-menu').popover('hide');
+		document.getElementsByClassName('sprint').classList.remove('active');
+		this.isPopoverVisible = false;
 	};
 
 	TrackView.prototype.showPopover = function() {

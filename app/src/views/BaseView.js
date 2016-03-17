@@ -273,6 +273,9 @@ define(function(require, exports, module) {
 	BaseView.prototype.preChangePage = function() {
 	};
 
+	BaseView.prototype.preChangePage = function() {
+	}
+
 	BaseView.prototype.onShow = function(state) {
 		if (this.options.header) {
 			if (!this.options.noBackButton && App.pageView.hasHistory()) {
