@@ -166,22 +166,25 @@ define(function(require, exports, module) {
 
 	TrackView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
-		if (this.currentListView && this.currentListView.draggableList.length && !store.get('trackathonVisited')) {
-			this.showPopover();
-		}
 	};
 
 	TrackView.prototype.showPopover = function() {
 		if (!store.get('trackathonVisited')) {
-			$('#trackathon-menu').popover('show');
-			document.getElementsByClassName('sprint').classList.add('active');
+			setTimeout(function() {
+				$('#trackathon-menu').popover('show');
+			}.bind(this), 300);
+			if (document.getElementsByClassName('sprint')[0]) {
+				document.getElementsByClassName('sprint')[0].classList.add('active');
+			}
 			this.isPopoverVisible = true;
 		}
 	};
 
 	TrackView.prototype.hidePopover = function() {
 		$('#trackathon-menu').popover('hide');
-		document.getElementsByClassName('sprint').classList.remove('active');
+		if (document.getElementsByClassName('sprint')[0]) {
+			document.getElementsByClassName('sprint')[0].classList.remove('active');
+		}
 		this.isPopoverVisible = false;
 	};
 
@@ -197,7 +200,11 @@ define(function(require, exports, module) {
 			this.currentListView.refreshEntries(state.data.entries, state.data.glowEntry);
 		} else {
 			EntryCollection.clearCache();
-			this.changeDate(this.calendarView.selectedDate);
+			this.changeDate(this.calendarView.selectedDate, function() {
+				if (this.currentListView && this.currentListView.draggableList.length) {
+					this.showPopover();
+				}
+			}.bind(this));
 		}
 		return true;
 	};
