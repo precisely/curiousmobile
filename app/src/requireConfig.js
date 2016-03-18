@@ -4,39 +4,39 @@ require.config({
 	shim: {
 		exoskeleton: {
 			deps: [
-				'underscore'
+				"underscore"
 			],
-			exports: 'Backbone'
+			exports: "Backbone"
 		},
 		underscore: {
-			exports: '_',
+			exports: "_",
 			init: function () {
-			this._.extend(this._.templateSettings, {
-				interpolate: /\{\{(.+?)\}\}/g
-			});
-			return this._;
-		}
+		this._.extend(this._.templateSettings, {
+			interpolate: /\{\{(.+?)\}\}/g
+		});
+		return this._;
+	}
 		}
 	},
 	paths: {
-		jquery: '../lib/jquery/dist/jquery',
-		famous: '../lib/famous/src',
-		requirejs: '../lib/requirejs/require',
-		almond: '../lib/almond/almond',
-		backbone: '../lib/backbone/backbone',
-		underscore: '../lib/underscore/underscore',
-		exoskeleton: '../lib/exoskeleton/exoskeleton',
-		fontawesome: '../lib/fontawesome/fonts/*',
-		store: '../lib/store.js/store',
-		text: '../lib/text/text',
-		jstzdetect: '../lib/jstzdetect/jstz.min',
-		jscache: '../lib/jscache/cache',
-		'exoskeleton.localStorage': '../lib/exoskeleton.localStorage/backbone.localStorage',
-		Entry: './models/Entry',
-		'angular-resource': '../lib/angular-resource/angular-resource',
-		angularjs: '../lib/angularjs/angular',
-		'Autolinker': '../lib/Autolinker.js/dist/Autolinker.min'
-		bootstrap: '../lib/bootstrap/dist/js/bootstrap.min'
+		jquery: "../lib/jquery/dist/jquery",
+		famous: "../lib/famous/src",
+		requirejs: "../lib/requirejs/require",
+		almond: "../lib/almond/almond",
+		backbone: "../lib/backbone/backbone",
+		underscore: "../lib/underscore/underscore",
+		exoskeleton: "../lib/exoskeleton/exoskeleton",
+		fontawesome: "../lib/fontawesome/fonts/*",
+		store: "../lib/store.js/store",
+		text: "../lib/text/text",
+		jstzdetect: "../lib/jstzdetect/jstz.min",
+		jscache: "../lib/jscache/cache",
+		"exoskeleton.localStorage": "../lib/exoskeleton.localStorage/backbone.localStorage",
+		Entry: "./models/Entry",
+		"angular-resource": "../lib/angular-resource/angular-resource",
+		angularjs: "../lib/angularjs/angular",
+		Autolinker: "../lib/Autolinker.js/dist/Autolinker",
+		bootstrap: "../lib/bootstrap/dist/js/bootstrap"
 	},
 	packages: [
 

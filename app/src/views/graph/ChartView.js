@@ -68,6 +68,7 @@ define(function(require, exports, module) {
 
 		this.shareButton.on('click', function(e) {
 			if (e instanceof CustomEvent) {
+				this.hideShareButtonPopover();
 				this.graphView.plot.saveSnapshot();
 			}
 		}.bind(this));
