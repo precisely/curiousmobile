@@ -313,7 +313,7 @@ define(function(require, exports, module) {
 	};
 
 	User.markTrackathonVisited = function(successCallback) {
-		u.queueJSON('Closing explanation', App.serverUrl + '/api/user/action/markTrackathonVisited?' +
+		u.queueJSON('Mark trackathon visited', App.serverUrl + '/api/user/action/markTrackathonVisited?' +
 			u.getCSRFPreventionURI('markTrackathonVisitedCSRF') + '&callback=?', null, function(data) {
 				if (checkData(data)) {
 					if (data.success) {

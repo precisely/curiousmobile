@@ -197,7 +197,7 @@ define(function(require, exports, module) {
 		});
 
 		this.footerSurface = new Surface({
-			content: _.template(FooterTemplate, {activeMenu: this.options.activeMenu}, templateSettings),
+			content: _.template(FooterTemplate, {activeMenu: this.options.activeMenu, currentPage: App.pageView.getCurrentPage()}, templateSettings),
 			classes: ['footer-surface'],
 			size: [undefined, 50],
 			properties: {
@@ -235,7 +235,8 @@ define(function(require, exports, module) {
 
 	BaseView.prototype.resetFooter = function() {
 		if (this.footerSurface) {
-			this.footerSurface.setContent(_.template(FooterTemplate, {activeMenu: this.options.activeMenu}, templateSettings));
+			this.footerSurface.setContent(_.template(FooterTemplate,
+					{activeMenu: this.options.activeMenu, currentPage: App.pageView.getCurrentPage()}, templateSettings));
 		}
 	};
 

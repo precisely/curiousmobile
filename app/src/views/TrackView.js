@@ -171,19 +171,19 @@ define(function(require, exports, module) {
 	TrackView.prototype.showPopover = function() {
 		if (!store.get('trackathonVisited')) {
 			setTimeout(function() {
-				$('#trackathon-menu').popover('show');
-			}.bind(this), 300);
-			if (document.getElementsByClassName('sprint')[0]) {
-				document.getElementsByClassName('sprint')[0].classList.add('active');
-			}
+				$('#TrackView-sprint-menu').popover('show');
+				if (document.getElementById('TrackView-sprint-menu')) {
+					document.getElementById('TrackView-sprint-menu').classList.add('active');
+				}
+			}.bind(this), 400);
 			this.isPopoverVisible = true;
 		}
 	};
 
 	TrackView.prototype.hidePopover = function() {
-		$('#trackathon-menu').popover('hide');
-		if (document.getElementsByClassName('sprint')[0]) {
-			document.getElementsByClassName('sprint')[0].classList.remove('active');
+		$('#TrackView-sprint-menu').popover('hide');
+		if (document.getElementById('TrackView-sprint-menu')) {
+			document.getElementById('TrackView-sprint-menu').classList.remove('active');
 		}
 		this.isPopoverVisible = false;
 	};

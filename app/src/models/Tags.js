@@ -55,6 +55,9 @@ define(function(require, exports, module) {
 			}
 			if (match) {
 				skipSet[tag.description] = 1;
+				if (matchClosure) {
+					matchClosure(tag, i);
+				}
 				result.push(tag);
 			} else if (noMatchClosure) {
 				noMatchClosure(tag, i);
