@@ -36,7 +36,8 @@ require.config({
 		Entry: './models/Entry',
 		'angular-resource': '../lib/angular-resource/angular-resource',
 		angularjs: '../lib/angularjs/angular',
-		'famous-flex': '../lib/famous-flex/src'
+		'famous-flex': '../lib/famous-flex/src',
+		'Autolinker': '../lib/Autolinker.js/dist/Autolinker.min'
 	},
 	packages: [
 

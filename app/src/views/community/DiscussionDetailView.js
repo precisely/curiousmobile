@@ -122,13 +122,14 @@ define(function(require, exports, module) {
 		this.totalPostCount = discussionPost.discussionDetails.totalPostCount;
 		var prettyDate = u.prettyDate(new Date(discussionPost.discussionDetails.updated));
 		discussionPost.discussionDetails.updated = prettyDate;
+		var parsedTemplate = _.template(discussionPostTemplate, discussionPost.discussionDetails, templateSettings);
 		var discussionPostSurface = new Surface({
 			size: [undefined, true],
 			properties: {
 				padding: '5px 10px',
 				paddingTop: '20px'
 			},
-			content: _.template(discussionPostTemplate, discussionPost.discussionDetails, templateSettings),
+			content: u.getParsedInAppBrowserSupportedURL(parsedTemplate)
 		});
 
 		if (discussionPost.discussionDetails.firstPost && discussionPost.discussionDetails.firstPost.plotDataId) {
@@ -335,9 +336,10 @@ define(function(require, exports, module) {
 		post.isAdmin = post.authorUserId == User.getCurrentUserId();
 		if (post.message) {
 			post.message = u.parseNewLine(post.message);
+			var parsedTemplate =  _.template(commentTemplate, post, templateSettings);
 			var commentSurface = new Surface({
 				size: [undefined, true],
-				content: _.template(commentTemplate, post, templateSettings),
+				content: u.getParsedInAppBrowserSupportedURL(parsedTemplate)
 			});
 
 			commentSurface.discussionView = this;

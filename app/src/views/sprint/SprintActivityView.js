@@ -16,7 +16,7 @@ define(function(require, exports, module) {
 	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var SprintActivityTitleTemplate = require('text!templates/sprint-activity-title.html');
 	var SequentialLayout = require("famous/views/SequentialLayout");
-	var DiscussionCardView = require('views/community/card/DiscussionCardView')
+	var DiscussionCardView = require('views/community/card/DiscussionCardView');
 	var Sprint = require('models/Sprint');
 	var Discussion = require('models/Discussion');
 	var NoMoreItemsCardView = require('views/community/card/NoMoreItemsCardView');
@@ -132,7 +132,8 @@ define(function(require, exports, module) {
 
 	SprintActivityView.prototype.fetchDiscussions = function(args) {
 		var params = args;
-		this.sprintActivityTitleSurface.setContent(_.template(SprintActivityTitleTemplate, {name: this.name}, templateSettings));
+		var parsedTemplate = _.template(SprintActivityTitleTemplate, {name: this.name}, templateSettings);
+		this.sprintActivityTitleSurface.setContent(u.getParsedInAppBrowserSupportedURL(parsedTemplate));
 
 		Sprint.listDiscussions(args, addListItemsToScrollView.bind(this), function() {
 			Sprint.follow(args.sprintHash, function() {
