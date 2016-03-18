@@ -99,7 +99,7 @@ define(function(require, exports, module) {
 
 		var selectionLabelSurface = new Surface({
 			size: [undefined, 35],
-			content: 'Select up to 3 tags to graph<span class="pull-right uncheck-label-chart">UNCHECK ALL</span>',
+			content: 'Select up to 6 tags to graph<span class="pull-right uncheck-label-chart">UNCHECK ALL</span>',
 			properties: {
 				padding: '8px 15px',
 				color: '#cc7299',
@@ -244,8 +244,8 @@ define(function(require, exports, module) {
 				}).filter(isFinite)
 
 				if (u.isAndroid() || (event instanceof CustomEvent)) {
-					if (this.selectedTags.length === 3 && indexes.length === 0) {
-						u.showAlert('Can not select more than 3 tags');
+					if (this.selectedTags.length === 6 && indexes.length === 0) {
+						u.showAlert('Can not select more than 6 tags');
 					} else if (indexes.length > 0) {
 						this.selectedTags.splice(indexes[0], 1);
 						checkIconClassList.remove('fa-check-square');

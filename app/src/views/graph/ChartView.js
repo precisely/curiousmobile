@@ -23,6 +23,8 @@ define(function(require, exports, module) {
 	var CreateChartView = require('views/graph/CreateChartView');
 	var treeView = require('util/treeview');
 	var tagList = require('util/taglist');
+	require('jquery');
+	require('bootstrap');
 
 
 	function ChartView() {
@@ -60,7 +62,8 @@ define(function(require, exports, module) {
 
 		this.shareButton = new Surface({
 			size: [true, true],
-			content: '<img height="30" src="content/images/share-red.png">',
+			content: '<img height="30" src="content/images/share-red.png" data-placement="top" data-html="true"' +
+				'data-content="Click here to share" id="share-button">'
 		});
 
 		this.shareButton.on('click', function(e) {
@@ -69,8 +72,7 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.shareButtonRenderController = new RenderController();
-		this.add(new StateModifier({transform: Transform.translate(15, App.height - 95, App.zIndex.header)})).add(this.shareButtonRenderController);
+		this.add(new StateModifier({transform: Transform.translate(274, App.height - 95, App.zIndex.header)})).add(this.shareButton);
 
 		this.setHeaderLabel('CHART');
 		this.setRightIcon(this.optionsSurface);
@@ -99,9 +101,24 @@ define(function(require, exports, module) {
 		{class: 'create-chart', label: 'Create New Chart'}]
 	};
 
+	ChartView.prototype.showShareButtonPopover = function() {
+		setTimeout(function() {
+			$('#share-button').popover('show');
+		}, 400);
+	};
+
+	ChartView.prototype.hideShareButtonPopover = function() {
+		$('#share-button').popover('hide');
+	};
+
 	ChartView.prototype.init = function(isAreaChart) {
 		this.add(new StateModifier({transform: Transform.translate(0, 65, App.zIndex.readView)})).add(this.graphView);
 		this.graphView.drawGraph(this.tagsToPlot, isAreaChart);
+	};
+
+	ChartView.prototype.preChangePage = function() {
+		BaseView.prototype.preChangePage.call(this);
+		this.hideShareButtonPopover();
 	};
 
 	ChartView.prototype.onShow = function(state) {
@@ -128,7 +145,7 @@ define(function(require, exports, module) {
 					this.init(false);
 				}.bind(this));
 			} else if (state.shareDiscussion) {
-				this.shareButtonRenderController.show(this.shareButton);
+				this.showShareButtonPopover();
 			}
 		}
 		return true;
