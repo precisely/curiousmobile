@@ -124,7 +124,11 @@ define(function(require, exports, module) {
 	ChartView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 		if ((!this.tagsToPlot || !this.tagsToPlot.length) && (!state || !state.tagsByDescription)) {
-			App.pageView.changePage('CreateChartView');
+			var viewProperties = [];
+			if (state && state.shareDiscussion) {
+				viewProperties.push({name: 'shareDiscussion', value: true});
+			}
+			App.pageView.changePage('CreateChartView', {viewProperties: viewProperties});
 		} else if (state && state.triggerLoadGraph) {
 			this.showLoadGraphOverlay();
 		}
@@ -144,7 +148,9 @@ define(function(require, exports, module) {
 					this.tagsToPlot.push(App.tagListWidget.list.searchItemByDescription(state.tagsByDescription[1]));
 					this.init(false);
 				}.bind(this));
-			} else if (state.shareDiscussion) {
+			}
+
+			if (state.shareDiscussion) {
 				this.showShareButtonPopover();
 			}
 		}

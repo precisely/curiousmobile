@@ -193,7 +193,12 @@ define(function(require, exports, module) {
 				if (!this.selectedTags || this.selectedTags.length < 1) {
 					u.showAlert('No Tags Selected to plot');
 				} else {
-					App.pageView.changePage('ChartView', {tagsToPlot: this.selectedTags});
+					var shareDiscussion = false;
+					if (this.shareDiscussion) {
+						shareDiscussion = true;
+					}
+					App.pageView.changePage('ChartView', {tagsToPlot: this.selectedTags, shareDiscussion: shareDiscussion});
+					this.shareDiscussion = false;
 				}
 			}
 		}.bind(this));
