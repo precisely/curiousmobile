@@ -30,9 +30,6 @@ define(function(require, exports, module) {
 
 	Tags.eachSearchMatches = function(term, matchClosure, noMatchClosure, skipSet, additionalWordsCharLimit) {
 		var list = App.tagListWidget.list.listItems.list;
-		if (term.length === 0) {
-			return list;
-		}
 		var i, j, result = [];
 
 		var terms = term.split(' ');
@@ -49,21 +46,21 @@ define(function(require, exports, module) {
 			var match = false;
 			var tagName = tag.description;
 			if (tagName in skipSet) continue;
-			match = false;
+			match = true;
 			for (j in terms) {
-				if (terms[j].length >0 && (tagName.startsWith(terms[j]) || (tagName.indexOf(spaceTerms[j]) >= 0))) {
-					match = true;
+				if (terms[j].length >0 && (!(tagName.startsWith(terms[j]) || (termLonger && (tagName.indexOf(spaceTerms[j]) >= 0)) ))) {
+					match = false;
 					break;
 				}
 			}
-			if (match && matchClosure) {
+			if (match) {
 				skipSet[tag.description] = 1;
-				matchClosure(tag, i);
+				if (matchClosure) {
+					matchClosure(tag, i);
+				}
+				result.push(tag);
 			} else if (noMatchClosure) {
 				noMatchClosure(tag, i);
-			}
-			if (match) {
-				result.push(tag)
 			}
 		}
 

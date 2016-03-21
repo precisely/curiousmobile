@@ -78,6 +78,7 @@ define(function(require, exports, module) {
 			closedExplanationCardSprint = user.closedExplanationCardTrackathon;
 			store.set('hideCuriositiesExplanation', user.closedExplanationCardCuriousities);
 			store.set('hideSprintExplanation', user.closedExplanationCardTrackathon);
+			store.set('trackathonVisited', user.hasVisitedTrackathon);
 			this.u.callDataReadyCallbacks();
 			return currentUser;
 		}
@@ -141,7 +142,7 @@ define(function(require, exports, module) {
 		if (typeof push.pushNotification !== 'undefined') {
 			push.unregister();
 		} else {
-			User.clearCache();	
+			User.clearCache();
 		}
 		if (typeof callback !== 'undefined') {
 			callback(userData);
@@ -303,7 +304,25 @@ define(function(require, exports, module) {
 					if (data.success) {
 						successCallback()
 					} else {
-						showAlert(data.message);
+						u.showAlert(data.message);
+					}
+				}
+			}, function(xhr) {
+				console.log(xhr);
+			});
+	};
+
+	User.markTrackathonVisited = function(successCallback) {
+		u.queueJSON('Mark trackathon visited', App.serverUrl + '/api/user/action/markTrackathonVisited?' +
+			u.getCSRFPreventionURI('markTrackathonVisitedCSRF') + '&callback=?', null, function(data) {
+				if (checkData(data)) {
+					if (data.success) {
+						store.set('trackathonVisited', true);
+						if(successCallback) {
+							successCallback();
+						}
+					} else {
+						u.showAlert(data.message);
 					}
 				}
 			}, function(xhr) {
@@ -324,7 +343,7 @@ define(function(require, exports, module) {
 				function(surveyOptions) {
 					callback(surveyOptions);
 				});
-		
+
 	};
 
 	User.sendVerificationLink = function() {

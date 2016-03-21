@@ -92,7 +92,7 @@ define(function(require, exports, module) {
 
 	AppView.prototype.slideLeft = function() {
 		this.pageModifier.setTransform(Transform.translate(0, 0, 0), this.options.transition);
-		this.menuView.backgroundModifier.setTransform(Transform.translate(0, 0, 0));
+		this.menuView.backgroundModifier.setTransform(Transform.translate(0, 0, -2));
 	};
 
 	AppView.prototype.getSelectedDate = function () {

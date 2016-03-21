@@ -197,7 +197,7 @@ define(function(require, exports, module) {
 		});
 
 		this.footerSurface = new Surface({
-			content: _.template(FooterTemplate, {activeMenu: this.options.activeMenu}, templateSettings),
+			content: _.template(FooterTemplate, {activeMenu: this.options.activeMenu, currentPage: App.pageView.getCurrentPage()}, templateSettings),
 			classes: ['footer-surface'],
 			size: [undefined, 50],
 			properties: {
@@ -210,6 +210,12 @@ define(function(require, exports, module) {
 		this.footerSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				console.log('footerSurface event');
+				if (_.contains(e.srcElement.classList, 'popover-content')) {
+					var trackView = App.pageView.getPage('TrackView');
+					trackView.hidePopover();
+					trackView.isPopoverVisible = false;
+					return;
+				}
 				var pageName = e.srcElement.getAttribute('data');
 				e.data = pageName;
 				if (e.data == 'TrackView' || e.data == 'FeedView') {
@@ -229,7 +235,8 @@ define(function(require, exports, module) {
 
 	BaseView.prototype.resetFooter = function() {
 		if (this.footerSurface) {
-			this.footerSurface.setContent(_.template(FooterTemplate, {activeMenu: this.options.activeMenu}, templateSettings));
+			this.footerSurface.setContent(_.template(FooterTemplate,
+					{activeMenu: this.options.activeMenu, currentPage: App.pageView.getCurrentPage()}, templateSettings));
 		}
 	};
 
@@ -265,6 +272,9 @@ define(function(require, exports, module) {
 
 	BaseView.prototype.preChangePage = function() {
 	};
+
+	BaseView.prototype.preChangePage = function() {
+	}
 
 	BaseView.prototype.onShow = function(state) {
 		if (this.options.header) {
