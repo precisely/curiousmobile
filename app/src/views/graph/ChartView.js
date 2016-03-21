@@ -189,6 +189,7 @@ define(function(require, exports, module) {
 				b: 'No',
 				onA: function() {
 					this.graphView.plottedTags.splice(0, this.graphView.plottedTags.length);
+					this.graphView.clearGraph();
 					App.pageView.changePage('CreateChartView', {selectedTags: this.graphView.plottedTags});
 				}.bind(this),
 				onB: function() {}.bind(this),
