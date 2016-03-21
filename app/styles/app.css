@@ -742,7 +742,7 @@ button.close {
 	padding-right: 0px;
 }
 
-.entry-input-surface.input-group input, .entry-input-surface.input-group .form-control, 
+.entry-input-surface.input-group input, .entry-input-surface.input-group .form-control,
 .tutorial-input-surface.input-group input, .tutorial-input-surface.input-group .form-control {
 	height: 40px;
 	border: 0;
@@ -762,7 +762,11 @@ button.close {
 	color: rgba(192, 79, 127, 0.5);
 }
 
-.tutorial-input-surface .input-group-addon, 
+#entry-description-dummy .input-placeholder {
+	padding: 10px 10px 10px 0px;
+}
+
+.tutorial-input-surface .input-group-addon,
 .tutorial-input-surface.input-group input, .tutorial-input-surface.input-group .form-control {
 	color: #8C8C8C;
 	font-size: 12px;
@@ -828,8 +832,7 @@ button.close {
 	-webkit-appearance: initial;
 }
 
-.not-loggedin .terms-check input[type="checkbox"]:checked {
-
+.not-loggedin .terms-check input[type="checkbox"]:checked, .discussion-multi-select input[type="radio"]:checked {
 	height: 28px;
 	width: 28px;
 	border-radius: 21px;
@@ -839,7 +842,7 @@ button.close {
 	border-style: solid;
 }
 
-.not-loggedin .terms-check input[type="checkbox"] {
+.not-loggedin .terms-check input[type="checkbox"], .discussion-multi-select input[type="radio"] {
 	-webkit-appearance: none;
 	height: 28px;
 	width: 28px;
@@ -1683,17 +1686,17 @@ list-style-type: none;
 	font-size: 12px;
 }
 
-.help-wizard input:focus::-webkit-input-placeholder { 
+.help-wizard input:focus::-webkit-input-placeholder {
 	color: transparent;
 }
 
-.help-wizard input:focus::-moz-placeholder { 
+.help-wizard input:focus::-moz-placeholder {
 	color: transparent;
 }
-.help-wizard input:focus:-moz-placeholder { 
+.help-wizard input:focus:-moz-placeholder {
 	color: transparent;
 }
-.help-wizard input:focus:-ms-input-placeholder { 
+.help-wizard input:focus:-ms-input-placeholder {
 	color: transparent;
 }
 .help-wizard .range-box {
@@ -3492,4 +3495,31 @@ input.cropit-image-zoom-input {
 
 .resend-email-link {
 	text-align: center;
+}
+
+.discussion-multi-select {
+	padding: 10px 20px;
+}
+
+.discussion-multi-select .radio {
+	margin: 10px 20px 10px 30px;
+	height: 35px;
+}
+
+.discussion-multi-select h3 {
+	margin-bottom: 20px;
+}
+
+.discussion-multi-select label {
+	font-weight: 500;
+	vertical-align: sub;
+}
+
+.discussion-multi-select button {
+	width: 100%;
+	height: 50px;
+	background-color: rgb(241, 74, 66);
+	font-size: 18px;
+	color: #ffffff;
+	margin-top: 30px;
 }

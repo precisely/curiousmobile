@@ -122,6 +122,7 @@ define(function(require, exports, module) {
 		this.totalPostCount = discussionPost.discussionDetails.totalPostCount;
 		var prettyDate = u.prettyDate(new Date(discussionPost.discussionDetails.updated));
 		discussionPost.discussionDetails.updated = prettyDate;
+		discussionPost.discussionDetails.discussionTitle = u.parseNewLine(discussionPost.discussionDetails.discussionTitle);
 		var parsedTemplate = _.template(discussionPostTemplate, discussionPost.discussionDetails, templateSettings);
 		var discussionPostSurface = new Surface({
 			size: [undefined, true],
@@ -230,7 +231,7 @@ define(function(require, exports, module) {
 	DiscussionDetailView.prototype.getAddCommentSurface = function(post, currentIndex) {
 		var addCommentSurface = new Surface({
 			size: [undefined, true],
-			content: _.template(addCommentTemplate, {message: post.message || '', postId: post.id || undefined, 
+			content: _.template(addCommentTemplate, {message: post.message || '', postId: post.id || undefined,
 				authorAvatarURL: post.authorAvatarURL, commentIndex: currentIndex}, templateSettings),
 				properties: {
 				}

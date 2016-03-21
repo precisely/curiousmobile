@@ -261,7 +261,10 @@ define(function(require, exports, module) {
 		if (this.headerRightIconController) {
 			this.rightIconsList.splice(this.rightIconsList.indexOf(this.searchOptionSurface), 1);
 		}
-	}
+	};
+
+	BaseView.prototype.preChangePage = function() {
+	};
 
 	BaseView.prototype.onShow = function(state) {
 		if (this.options.header) {

@@ -23,6 +23,7 @@ define(function(require, exports, module) {
 	var PeopleCardView = require('views/community/card/PeopleCardView')
 	var DiscussionCardView = require('views/community/card/DiscussionCardView')
 	var NoMoreItemsCardView = require('views/community/card/NoMoreItemsCardView');
+	var DiscussionCreateOptionsSurface = require('views/community/DiscussionOptionsOverlay');
 
 	function FeedView(showSearchView) {
 		BaseView.apply(this, arguments);
@@ -115,7 +116,8 @@ define(function(require, exports, module) {
 
 		this.plusSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				App.pageView.changePage(CreatePostView.name);
+				var discussionCreateOptionsSurface = new DiscussionCreateOptionsSurface();
+				this.showDiscussionOptions(discussionCreateOptionsSurface);
 			}
 		}.bind(this));
 
@@ -317,6 +319,20 @@ define(function(require, exports, module) {
 		this.scrollView.sequenceFrom(this.deck);
 		this.renderController.show(this.scrollView);
 	};
+
+	FeedView.prototype.showDiscussionOptions = function(discussionCreateOptionsSurface) {
+		this.showBackButton();
+		this.removeRightIcon();
+		this.hideSearchIcon();
+		this.showOverlayContent(discussionCreateOptionsSurface);
+	};
+
+	FeedView.prototype.killOverlayContent = function() {
+		BaseView.prototype.killOverlayContent.call(this);
+		this.showMenuButton();
+		this.showSearchIcon();
+		this.setRightIcon(this.plusSurface);
+	}
 
 	App.pages[FeedView.name] = FeedView;
 	module.exports = FeedView;

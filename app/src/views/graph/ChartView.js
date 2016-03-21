@@ -23,6 +23,8 @@ define(function(require, exports, module) {
 	var CreateChartView = require('views/graph/CreateChartView');
 	var treeView = require('util/treeview');
 	var tagList = require('util/taglist');
+	require('jquery');
+	require('bootstrap');
 
 
 	function ChartView() {
@@ -58,6 +60,21 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
+		this.shareButton = new Surface({
+			size: [true, true],
+			content: '<img height="30" src="content/images/share-red.png" data-placement="top" data-html="true"' +
+				'data-content="Click here to share" id="share-button">'
+		});
+
+		this.shareButton.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				this.hideShareButtonPopover();
+				this.graphView.plot.saveSnapshot();
+			}
+		}.bind(this));
+
+		this.add(new StateModifier({transform: Transform.translate(274, App.height - 95, App.zIndex.header)})).add(this.shareButton);
+
 		this.setHeaderLabel('CHART');
 		this.setRightIcon(this.optionsSurface);
 		this.backRenderController = new RenderController();
@@ -85,15 +102,34 @@ define(function(require, exports, module) {
 		{class: 'create-chart', label: 'Create New Chart'}]
 	};
 
+	ChartView.prototype.showShareButtonPopover = function() {
+		setTimeout(function() {
+			$('#share-button').popover('show');
+		}, 400);
+	};
+
+	ChartView.prototype.hideShareButtonPopover = function() {
+		$('#share-button').popover('hide');
+	};
+
 	ChartView.prototype.init = function(isAreaChart) {
 		this.add(new StateModifier({transform: Transform.translate(0, 65, App.zIndex.readView)})).add(this.graphView);
 		this.graphView.drawGraph(this.tagsToPlot, isAreaChart);
 	};
 
+	ChartView.prototype.preChangePage = function() {
+		BaseView.prototype.preChangePage.call(this);
+		this.hideShareButtonPopover();
+	};
+
 	ChartView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 		if ((!this.tagsToPlot || !this.tagsToPlot.length) && (!state || !state.tagsByDescription)) {
-			App.pageView.changePage('CreateChartView');
+			var viewProperties = [];
+			if (state && state.shareDiscussion) {
+				viewProperties.push({name: 'shareDiscussion', value: true});
+			}
+			App.pageView.changePage('CreateChartView', {viewProperties: viewProperties});
 		} else if (state && state.triggerLoadGraph) {
 			this.showLoadGraphOverlay();
 		}
@@ -113,6 +149,10 @@ define(function(require, exports, module) {
 					this.tagsToPlot.push(App.tagListWidget.list.searchItemByDescription(state.tagsByDescription[1]));
 					this.init(false);
 				}.bind(this));
+			}
+
+			if (state.shareDiscussion) {
+				this.showShareButtonPopover();
 			}
 		}
 		return true;
@@ -171,4 +211,3 @@ define(function(require, exports, module) {
 	App.pages['ChartView'] = ChartView;
 	module.exports = ChartView;
 });
-

@@ -188,6 +188,10 @@ define(function(require, exports, module) {
 			}
 		}
 
+		if (comingFromPage) {
+			this.getPage(comingFromPage).preChangePage();
+		}
+
 		if (view.options.noBackButton) {
 			this.clearHistory();
 		} else {
