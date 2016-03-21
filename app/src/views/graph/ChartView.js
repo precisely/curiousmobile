@@ -8,7 +8,7 @@ define(function(require, exports, module) {
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
 	var StateView = require('views/StateView');
-	var LoadGraphOverlay = require('views/graph/LoadGraphOverlay')
+	var LoadGraphOverlay = require('views/graph/LoadGraphOverlay');
 	var GraphView = require('views/graph/GraphView');
 	var RenderNode = require("famous/core/RenderNode");
 	var RenderController = require('famous/views/RenderController');
@@ -25,7 +25,8 @@ define(function(require, exports, module) {
 	var tagList = require('util/taglist');
 	require('jquery');
 	require('bootstrap');
-
+	var chartTitleTemplate = require('text!templates/share-chart.html');
+	var DraggableView = require("views/widgets/DraggableView");
 
 	function ChartView() {
 		BaseView.apply(this, arguments);
@@ -60,6 +61,30 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
+		this.addTitleRenderController = new RenderController();
+		this.addTitleContainer = new ContainerSurface({});
+		var backdropSurface = new Surface({
+			size: [undefined, undefined],
+			align: [0, 1],
+			origin: [0, 1],
+			properties: {
+				opacity: '0.2',
+				backgroundColor: '#000000'
+			}
+		});
+		var backdropModifer = new Modifier({
+			opacity: 0.5
+		});
+
+		this.addTitleContainer.add(backdropModifer).add(backdropSurface);
+		this.add(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.contextMenu)})).add(this.addTitleRenderController);
+
+		//this.addTitleSurface.on('click', function(e) {
+		//	if (e instanceof CustomEvent) {
+		//		//this.addTitleRenderController.hide({duration: 1});
+		//	}
+		//}.bind(this));
+
 		this.shareButton = new Surface({
 			size: [true, true],
 			content: '<div id="share-button-popover"><img height="30" src="content/images/share-red.png" data-placement="top" data-html="true"' +
@@ -70,6 +95,15 @@ define(function(require, exports, module) {
 			if (e instanceof CustomEvent) {
 				this.hideShareButtonPopover();
 				this.graphView.plot.saveSnapshot();
+				//this.hideShareButtonPopover();
+				this.getGroupsToShare(function(data) {
+					this.shareGraphModal = new Surface({
+						content: _.template(chartTitleTemplate, {groups: data.groups}, templateSettings)
+					});
+					this.addTitleContainer.add(this.shareGraphModal);
+					this.draggableGroupsView = new DraggableView(this.addTitleContainer, true);
+					this.addTitleRenderController.show(this.draggableGroupsView);
+				}.bind(this));
 			}
 		}.bind(this));
 		this.shareModifier = new Modifier();
@@ -90,7 +124,6 @@ define(function(require, exports, module) {
 		this.add(new StateModifier({transform: Transform.translate(0, 65, App.zIndex.readView)})).add(this.graphView);
 		_setHandlers.call(this);
 	}
-
 
 	ChartView.prototype = Object.create(BaseView.prototype);
 	ChartView.prototype.constructor = ChartView;
@@ -189,6 +222,29 @@ define(function(require, exports, module) {
 		this.setRightIcon(this.optionsSurface);
 	};
 
+	ChartView.prototype.getGroupsToShare = function(successCallback) {
+		u.queueJSON('Loading group list', App.serverUrl + '/api/user/action/getGroupsToShare?' + u.getCSRFPreventionURI('getGroupsList') + '&callback=?', function(data) {
+			if (!checkData(data) || !data.success) {
+				return
+			}
+
+			var groups = [];
+			// https://github.com/syntheticzero/curious2/issues/688#issuecomment-164689115
+			if (data.groups.length > 0) {
+				groups.push(data.groups[0]);
+			}
+			groups.push({name: "PUBLIC", fullName: "Public"}, {name: "PRIVATE", fullName: "Private"});
+			if (data.groups.length > 0) {
+				// Adding the rest of all the groups to the array.
+				groups.push.apply(groups, data.groups.slice(1));
+			}
+
+			data.groups = groups;
+
+			successCallback(data);
+		});
+	};
+
 	function _setHandlers() {
 		this.on('create-chart', function() {
 			u.showAlert({
@@ -214,6 +270,15 @@ define(function(require, exports, module) {
 		this.on('load-snapshot', function() {
 			this.showLoadGraphOverlay();
 		}.bind(this));
+
+		//$(document).on('click', '#share-chart-modal', function(e) {
+		//	console.log(">>>>>>>>>>>>");
+		//	e.modal('hide');
+		//});
+        //
+		//$(document).on('click', '#share-chart', function() {
+		//	//this.graphView.plot.saveSnapshot();
+		//}.bind(this));
 	}
 
 	App.pages['ChartView'] = ChartView;

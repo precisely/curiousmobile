@@ -895,6 +895,18 @@ button.close {
 	float: left;
 }
 
+.share-chart-text {
+	color: rgb(232, 56, 56);
+}
+
+.share-groups {
+	margin-left: 20px;
+}
+
+.share-groups label {
+	padding-left: 5px;
+}
+
 /*Context Menu*/
 .context-menu {
 	list-style: none;
