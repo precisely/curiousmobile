@@ -56,7 +56,9 @@ define(function(require, exports, module) {
 								currentView.resetNotificationCount();
 							} else {
 								for (var i in App.pageView.pageMap) {
-									App.pageView.pageMap[i].resetFooter();
+									if (App.pageView.pageMap[i]) {
+										App.pageView.pageMap[i].resetFooter();
+									}
 								}
 							}
 							if (callback) {

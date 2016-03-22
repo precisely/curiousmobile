@@ -35,8 +35,8 @@ require.config({
 		Entry: './models/Entry',
 		'angular-resource': '../lib/angular-resource/angular-resource',
 		angularjs: '../lib/angularjs/angular',
-		'Autolinker': '../lib/Autolinker.js/dist/Autolinker.min'
-		bootstrap: '../lib/bootstrap/dist/js/bootstrap.min',
+		'Autolinker': '../lib/Autolinker.js/dist/Autolinker.min',
+		bootstrap: '../lib/bootstrap/dist/js/bootstrap.min'
 	},
 	packages: [
 

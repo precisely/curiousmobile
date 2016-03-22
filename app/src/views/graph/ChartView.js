@@ -72,8 +72,13 @@ define(function(require, exports, module) {
 				this.graphView.plot.saveSnapshot();
 			}
 		}.bind(this));
+		this.shareModifier = new Modifier();
 
-		this.add(new StateModifier({transform: Transform.translate(274, App.height - 95, App.zIndex.header)})).add(this.shareButton);
+		this.shareModifier.transformFrom(function() {
+			return Transform.translate(App.width - 40, App.height - 95, App.zIndex.header);
+		});
+
+		this.add(this.shareModifier).add(this.shareButton);
 
 		this.setHeaderLabel('CHART');
 		this.setRightIcon(this.optionsSurface);
@@ -188,10 +193,10 @@ define(function(require, exports, module) {
 				a: 'Yes',
 				b: 'No',
 				onA: function() {
-					this.graphView.plottedTags.splice(0, this.graphView.plottedTags.length);
-					App.pageView.changePage('CreateChartView', {selectedTags: this.graphView.plottedTags});
+					this.graphView.clearGraph();
+					App.pageView.changePage('CreateChartView');
 				}.bind(this),
-				onB: function() {}.bind(this),
+				onB: function() {}.bind(this)
 			});
 		});
 		this.on('edit-chart', function() {
