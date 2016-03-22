@@ -3523,3 +3523,7 @@ input.cropit-image-zoom-input {
 	color: #ffffff;
 	margin-top: 30px;
 }
+
+#share-button-popover .popover {
+	width: 153px;
+}
