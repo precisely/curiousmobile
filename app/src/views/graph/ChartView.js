@@ -72,8 +72,13 @@ define(function(require, exports, module) {
 				this.graphView.plot.saveSnapshot();
 			}
 		}.bind(this));
+        this.shareModifier = new Modifier();
 
-		this.add(new StateModifier({transform: Transform.translate(274, App.height - 95, App.zIndex.header)})).add(this.shareButton);
+        this.shareModifier.transformFrom(function(){
+           return Transform.translate(App.width - 40, App.height - 95, App.zIndex.header);
+        });
+
+		this.add(this.shareModifier).add(this.shareButton);
 
 		this.setHeaderLabel('CHART');
 		this.setRightIcon(this.optionsSurface);
