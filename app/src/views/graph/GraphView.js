@@ -26,7 +26,7 @@ define(function(require, exports, module) {
 		StateView.apply(this, arguments);
 		console.log('GraphView controller');
 		this.tags = tagsToPlot;
-		this.plotAreaId = plotAreaId || 'plotArea'
+		this.plotAreaId = plotAreaId || 'plotArea';
 		this.plottedTags = [];
 		this.renderController = new RenderController();
 		this.add(new StateModifier({transform: Transform.translate(0, 50, 0)})).add(this.renderController);

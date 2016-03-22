@@ -72,11 +72,11 @@ define(function(require, exports, module) {
 				this.graphView.plot.saveSnapshot();
 			}
 		}.bind(this));
-        this.shareModifier = new Modifier();
+		this.shareModifier = new Modifier();
 
-        this.shareModifier.transformFrom(function(){
-           return Transform.translate(App.width - 40, App.height - 95, App.zIndex.header);
-        });
+		this.shareModifier.transformFrom(function() {
+			return Transform.translate(App.width - 40, App.height - 95, App.zIndex.header);
+		});
 
 		this.add(this.shareModifier).add(this.shareButton);
 
@@ -193,11 +193,10 @@ define(function(require, exports, module) {
 				a: 'Yes',
 				b: 'No',
 				onA: function() {
-					this.graphView.plottedTags.splice(0, this.graphView.plottedTags.length);
 					this.graphView.clearGraph();
-					App.pageView.changePage('CreateChartView', {selectedTags: this.graphView.plottedTags});
+					App.pageView.changePage('CreateChartView');
 				}.bind(this),
-				onB: function() {}.bind(this),
+				onB: function() {}.bind(this)
 			});
 		});
 		this.on('edit-chart', function() {
