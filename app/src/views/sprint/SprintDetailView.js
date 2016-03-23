@@ -82,7 +82,7 @@ define(function (require, exports, module) {
 		return true;
 	};
 
-	SprintDetailView.prototype.loadDetails = function () {
+	SprintDetailView.prototype.loadDetails = function (args) {
 		this.participantsOffset = 10;
 		Sprint.show(this.hash, function (sprintDetails) {
 			this.totalParticipants = sprintDetails.totalParticipants;
@@ -96,6 +96,10 @@ define(function (require, exports, module) {
 			}
 			sprintDetails.sprint.description = u.parseNewLine(sprintDetails.sprint.description);
 			sprintDetails.isFormView = false;
+			if (typeof(args) !== 'undefined') {
+				sprintDetails.sprint.hasStarted = args.started;
+				sprintDetails.sprint.hasEnded = args.stopped;
+			}
 			var parsedTemplate = _.template(SprintDetailsTemplate, sprintDetails, templateSettings);
 			var sprintSurface = new Surface({
 				size: [undefined, undefined],
@@ -132,11 +136,11 @@ define(function (require, exports, module) {
 						});
 					} else if (e.srcElement.id.indexOf('start-sprint') > -1) {
 						Sprint.start(this.hash, function (data) {
-							this.loadDetails();
+							this.loadDetails({started: true});
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('stop-sprint') > -1) {
 						Sprint.stop(this.hash, function (data) {
-							this.loadDetails();
+							this.loadDetails({stopped: true});
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('delete-sprint') > -1) {
 						Sprint.delete(this.hash, function (data) {

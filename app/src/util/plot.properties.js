@@ -22,31 +22,31 @@ function PlotProperties(divIdArray) {
 			this.usernameField.text(name);
 	}
 	this.getStartDate = function() {
-		if (startDate) {
-			return startDate;
+		if (this.startDate) {
+			return this.startDate;
 		}
 		return null;
 	}
 	this.getStartTime = function() {
-		if (!startDate) return 0;
-		return startDate.getTime();
+		if (!this.startDate) return 0;
+		return this.startDate.getTime();
 	}
 	this.setStartDate = function(date) {
-		//setDateField(this.startDatePicker, date, this.startDateInit);
-	}
+		this.startDate = date;
+	};
 	this.getEndDate = function() {
-		if (endDate) {
-			return endDate;
+		if (this.endDate) {
+			return this.endDate;
 		}
 		return null;
-	}
+	};
 	this.getEndTime = function() {
-		if (!endDate) return 0;
-		return endDate.getTime();
-	}
+		if (!this.endDate) return 0;
+		return this.endDate.getTime();
+	};
 	this.setEndDate = function(date) {
-		//setDateField(this.endDatePicker, date, this.endDateInit);
-	}
+		this.endDate = date;
+	};
 	this.getZoomControl = function() {
 		return this.zoomControl;
 	}

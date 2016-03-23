@@ -1,4 +1,3 @@
-var endDate, startDate;
 define(function(require, exports, module) {
 	'use strict';
 	var View = require('famous/core/View');
@@ -29,6 +28,8 @@ define(function(require, exports, module) {
 		this.plotAreaId = plotAreaId || 'plotArea';
 		this.plottedTags = [];
 		this.renderController = new RenderController();
+		this.startDate = null;
+		this.endDate = null;
 		this.add(new StateModifier({transform: Transform.translate(0, 50, 0)})).add(this.renderController);
 		this.init();
 	}
@@ -51,10 +52,8 @@ define(function(require, exports, module) {
 
 		this.graphSurface.pipe(this._eventOutput);
 		this.renderController.show(this.graphSurface, function() {
-			this.plot = new PlotMobile(App.tagListWidget.list, User.getCurrentUserId(), User.getCurrentUser().get("username"), '#' + this.plotAreaId, true, false, new PlotProperties({
-				'startDate':'#startdatepicker1',
+			this.plotProperties = new PlotProperties({
 				'startDateInit':'start date and/or tag',
-				'endDate':'#enddatepicker1',
 				'endDateInit':'end date and/or tag',
 				'cycleTag':'#cycleTag1',
 				'zoomControl':'#zoomcontrol1',
@@ -62,7 +61,8 @@ define(function(require, exports, module) {
 				'name':'#queryTitle',
 				'rename':'#queryTitleEdit',
 				'logout':'#logoutLink'
-			}));
+			});
+			this.plot = new PlotMobile(App.tagListWidget.list, User.getCurrentUserId(), User.getCurrentUser().get("username"), '#' + this.plotAreaId, true, false, this.plotProperties);
 			this.graphIsRendered = true;
 			this._eventOutput.emit('graph-visible');
 		}.bind(this));
@@ -72,7 +72,7 @@ define(function(require, exports, module) {
 		var pillsViewMod = new StateModifier({
 			transform: Transform.translate(0, -1, App.zIndex.readView)
 		});
-		this.add(pillsViewMod).add(this.pillsView)
+		this.add(pillsViewMod).add(this.pillsView);
 	};
 
 	GraphView.prototype.clearPillsSurfaceList = function() {
@@ -118,8 +118,6 @@ define(function(require, exports, module) {
 	};
 
 	GraphView.prototype.drawDateFooter = function() {
-		startDate = endDate = null;
-
 		var dateContainerSurface = new ContainerSurface({
 			size: [undefined, 58],
 			properties: {
@@ -143,12 +141,12 @@ define(function(require, exports, module) {
 			border: '1px solid #c3c3c3'
 		};
 
-		this.endDateString = this.startDateString = 'MM/DD/YY';
-
 		this.dateLabelSurface = new Surface({
 			size: [200, 28],
 			classes: ['datepicker-surface'],
-			content: '<span class="blank-date-label start-date">MM/DD/YY</span> <i class="fa fa-minus"></i> <span class="blank-date-label end-date">MM/DD/YY</span>',
+			content: '<span class="blank-date-label start-date">' + this.getDateLabel(this.startDate) + '</span> <i' +
+					' class="fa fa-minus"></i><span class="blank-date-label end-date">' + this.getDateLabel(this.endDate)
+					+ '</span>',
 			properties: {
 				color: '#6f6f6f',
 				textAlign: 'center',
@@ -156,13 +154,14 @@ define(function(require, exports, module) {
 				fontSize: '12px'
 			}
 		});
+
 		this.dateLabelSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				var classList = e.srcElement.classList;
 				if (_.contains(classList, 'start-date')) {
-					showDatePicker.call(this, 'startDate');
+					this.toggleDatePicker('startDate');
 				} else if (_.contains(classList, 'end-date')) {
-					showDatePicker.call(this, 'endDate');
+					this.toggleDatePicker('endDate');
 				}
 			}
 		}.bind(this));
@@ -171,17 +170,17 @@ define(function(require, exports, module) {
 		this.add(new StateModifier({transform: Transform.translate(0, (App.height - 172), -5)})).add(dateContainerSurface);
 	};
 
-	function showDatePicker(dateType) {
+	GraphView.prototype.toggleDatePicker = function(dateType) {
+		var datePickerDate;
 		if(this.dateGridOpen) {
 			this.dateGridRenderController.hide();
 		} else {
 			if (dateType == 'startDate') {
-				this.selectedDate = startDate;
+				datePickerDate = this.startDate;
 			} else {
-				this.selectedDate = endDate;
+				datePickerDate = this.endDate;
 			}
-			var dateGridView = new DateGridView(this.selectedDate || new Date(), true);
-			this.dateGrid = dateGridView;
+			this.dateGrid = new DateGridView(datePickerDate || new Date(), true);
 			this.dateGridRenderController.show(this.dateGrid);
 			this.dateGrid.on('select-date', function(date) {
 				console.log('CalenderView: Date selected');
@@ -191,35 +190,30 @@ define(function(require, exports, module) {
 			}.bind(this));
 		}
 		this.dateGridOpen = !this.dateGridOpen;
-	}
+	};
 
 	GraphView.prototype.setSelectedDate = function(date, dateType) {
-		var App = window.App;
-		this.selectedDate = date;
 		if (dateType == 'startDate') {
-			if (!date) {
-				this.startDateString = 'MM/DD/YY';
-			} else {
-				var year = date.getFullYear().toString();
-				this.startDateString = ('0' + (date.getMonth()+1)).slice(-2) + '/' + ('0' + date.getDate()).slice(-2) + '/'  + 
-						+ year.substring(2);
-			}
-			startDate = date;
+			this.startDate = date;
+			this.plotProperties.setStartDate(this.startDate);
 		} else {
-			endDate = date;
-			if (!date) {
-				this.endDateString = 'MM/DD/YY';
-			} else {
-				var year = date.getFullYear().toString();
-				this.endDateString = ('0' + (date.getMonth()+1)).slice(-2) + '/' + ('0' + date.getDate()).slice(-2) + '/'  + 
-						+ year.substring(2);
-			}
+			this.endDate = date;
+			this.plotProperties.setEndDate(this.endDate);
 		}
-		this.dateLabelSurface.setContent('<span class="blank-date-label start-date">' + this.startDateString + '</span> <i class="fa fa-minus"></i> '
-				+ '<span class="blank-date-label end-date">' + this.endDateString + '</span>');
-		this.plot.loadAllData();
 
-	}
+		this.dateLabelSurface.setContent('<span class="blank-date-label start-date">' + this.getDateLabel(this.startDate) + '</span> <i class="fa fa-minus"></i> '
+				+ '<span class="blank-date-label end-date">' + this.getDateLabel(this.endDate) + '</span>');
+		this.plot.loadAllData();
+	};
+
+	GraphView.prototype.getDateLabel = function(date) {
+		if (!date) {
+			return 'MM/DD/YY';
+		}
+
+		return (('0' + (date.getMonth()+1)).slice(-2) + '/' + ('0' + date.getDate()).slice(-2) + '/'  +
+			+ date.getFullYear().toString().substring(2));
+	};
 
 	GraphView.prototype.createTagsPill = function(lineId, tag, color) {
 		if (tag) {
@@ -233,7 +227,7 @@ define(function(require, exports, module) {
 				size: [true, 50],
 				properties: {
 					backgroundColor: '#efefef',
-					textAlign: 'center',
+					textAlign: 'center'
 				}
 			});
 			pillSurface.lineId = lineId;
