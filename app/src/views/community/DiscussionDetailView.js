@@ -136,7 +136,7 @@ define(function(require, exports, module) {
 		if (discussionPost.discussionDetails.firstPost && discussionPost.discussionDetails.firstPost.plotDataId) {
 			this.isSharedGraph = true;
 			App.tagListWidget = initTagListWidget();
-			this.graphView = new GraphView(null, 'discussionDetailPlotArea');
+			this.graphView = new GraphView(null, 'discussionDetailPlotArea-' + this.discussionHash);
 			this.surfaceList.splice(0, 0, this.graphView);
 			this.graphView.pipe(this.scrollView)
 		} else {

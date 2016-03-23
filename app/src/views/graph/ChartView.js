@@ -96,7 +96,7 @@ define(function(require, exports, module) {
 	ChartView.prototype.constructor = ChartView;
 
 	ChartView.DEFAULT_OPTIONS = {
-		plotAreaId: 'plotArea',
+		plotAreaId: 'plotAreaChartView',
 		header: true,
 		footer: true,
 		activeMenu: 'chart',
