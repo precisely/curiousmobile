@@ -149,9 +149,14 @@ define(function(require, exports, module) {
 		this.lastItemClicked = null;
 		this.lastItemClickTime = null;
 		if (plotArea.is(":hidden")) {
-			// Preventing flot.js exception of 0 height or width. (Hiding an element returns width & height as 0)
-			console.warn("Plotarea is hidden. Not drawing the graph.");
-			return false;
+			var plotAreaChartView = $('#plotAreaChartView');
+			if (plotAreaChartView.length === 1) {
+				plotArea = plotAreaChartView;
+			} else {
+				// Preventing flot.js exception of 0 height or width. (Hiding an element returns width & height as 0)
+				console.warn("Plotarea is hidden. Not drawing the graph.");
+				return false;
+			}
 		}
 		$.plot(plotArea, this.plotData, this.plotOptions);
 		plotArea.off("click");

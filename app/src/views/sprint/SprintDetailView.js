@@ -84,7 +84,6 @@ define(function (require, exports, module) {
 
 	SprintDetailView.prototype.loadDetails = function (args) {
 		this.participantsOffset = 10;
-		args = args || {started: null, stopped: null};
 		Sprint.show(this.hash, function (sprintDetails) {
 			this.totalParticipants = sprintDetails.totalParticipants;
 			if (sprintDetails.sprint.hasAdmin) {
@@ -97,8 +96,10 @@ define(function (require, exports, module) {
 			}
 			sprintDetails.sprint.description = u.parseNewLine(sprintDetails.sprint.description);
 			sprintDetails.isFormView = false;
-			sprintDetails.sprint.hasStarted = args.started;
-			sprintDetails.sprint.hasEnded = args.stopped;
+			if (typeof(args) !== 'undefined') {
+				sprintDetails.sprint.hasStarted = args.started;
+				sprintDetails.sprint.hasEnded = args.stopped;
+			}
 			var parsedTemplate = _.template(SprintDetailsTemplate, sprintDetails, templateSettings);
 			var sprintSurface = new Surface({
 				size: [undefined, undefined],

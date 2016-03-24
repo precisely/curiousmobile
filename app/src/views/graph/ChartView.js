@@ -62,8 +62,8 @@ define(function(require, exports, module) {
 
 		this.shareButton = new Surface({
 			size: [true, true],
-			content: '<img height="30" src="content/images/share-red.png" data-placement="top" data-html="true"' +
-				'data-content="Click here to share" id="share-button">'
+			content: '<div id="share-button-popover"><img height="30" src="content/images/share-red.png" data-placement="top" data-html="true"' +
+				'data-content="Click here to share" id="share-button"></div>'
 		});
 
 		this.shareButton.on('click', function(e) {
@@ -96,7 +96,7 @@ define(function(require, exports, module) {
 	ChartView.prototype.constructor = ChartView;
 
 	ChartView.DEFAULT_OPTIONS = {
-		plotAreaId: 'plotArea',
+		plotAreaId: 'plotAreaChartView',
 		header: true,
 		footer: true,
 		activeMenu: 'chart',
@@ -114,7 +114,7 @@ define(function(require, exports, module) {
 	};
 
 	ChartView.prototype.hideShareButtonPopover = function() {
-		$('#share-button').popover('hide');
+		$('#share-button').popover('destroy');
 	};
 
 	ChartView.prototype.init = function(isAreaChart) {
@@ -125,6 +125,9 @@ define(function(require, exports, module) {
 	ChartView.prototype.preChangePage = function() {
 		BaseView.prototype.preChangePage.call(this);
 		this.hideShareButtonPopover();
+		if (this.graphView.dateGridRenderController) {
+			this.graphView.dateGridRenderController.hide();
+		}
 	};
 
 	ChartView.prototype.onShow = function(state) {

@@ -209,7 +209,8 @@ define(function(require, exports, module) {
 		this.renderController.show(view, {
 			duration: 200
 		}, function() {
-			console.log("PageView: show complete");
+			// this is bound to the 'view'.
+			console.log(this.constructor.name + ": show complete");
 			if (continueChangePage) {
 				Timer.setTimeout(function() {
 					this.onShow(state);
