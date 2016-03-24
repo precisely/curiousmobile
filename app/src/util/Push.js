@@ -15,6 +15,7 @@ define(function(require, exports, module) {
 					senderID: "852521907580"
 				},
 				ios: {
+					alert: true,
 					sound: true,
 					vibration: true,
 					badge: true,
