@@ -46,7 +46,7 @@ define(function(require, exports, module) {
 			content: _.template(GraphTemplate, {plotAreaId: this.plotAreaId}, templateSettings),
 			properties: {
 				backgroundColor: '#fff',
-				//zIndex: 10
+				zIndex: 10
 			}
 		});
 

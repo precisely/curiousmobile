@@ -86,16 +86,14 @@ define(function(require, exports, module) {
 				}.bind(this));
 	}
 
-	PlotMobile.prototype.saveSnapshot = function() {
-		var first = true;
+	PlotMobile.prototype.saveSnapshot = function(group) {
 		var plotDataStr = this.storeSnapshot();
 		if (plotDataStr == null) {
 			this.showAlert("No plotted data to save");
 			return;
 		}
-		var plot = this;
 
-		this.queuePostJSON("sharing graph", this.makePostUrl("saveSnapshotData"), { name: this.getName() + ' (snapshot)', snapshotData: plotDataStr },
+		this.queuePostJSON("sharing graph", this.makePostUrl("saveSnapshotData"), { name: this.getName() + ' (snapshot)', snapshotData: plotDataStr, group: group },
 				function(data) {
 					if (this.checkData(data)) {
 						if (data.success) {

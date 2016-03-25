@@ -1,7 +1,7 @@
 <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
-            <button type="button" class="close" id="share-chart-modal" data-dismiss="modal">
+            <button type="button" class="close" id="share-chart-close-button" style="opacity: 0.5;">
                 <i class="fa fa-times-circle-o"></i>
             </button>
             <h4 class="modal-title">Share chart</h4>
@@ -10,16 +10,11 @@
             <h4>Title</h4>
             <p class="share-chart-text"><small>Please enter a title for this chart in the form of a question, as in: 'Does exercise affect my
                 mood?'</small></p>
-            <textarea id="chart-title" name="chart-title" class="form-control" placeholder="Add Title"></textarea>
+            <input type="text" id="chart-title" name="chart-title" class="form-control" placeholder="Add Title">
             <br>
             <h4>Groups</h4>
             <p class="share-chart-text"><small>Where do you want to publish this?</small></p>
-            {{ _.each(groups, function(groupName, index) { }}
-                <div class="radio share-groups">
-                    <input type="radio" id="group-{{- index }}" name="group" value="{{- groupName.name }}">
-                    <label for="group-{{- index }}">{{- groupName.fullName }}</label>
-                </div>
-            {{ }); }}
+            <div style="height: {{- height }}px"></div>
         </div>
         <div class="modal-footer">
             <button class="btn btn-default text-right" id="share-chart">Share</button>

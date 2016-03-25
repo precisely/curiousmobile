@@ -25,8 +25,9 @@ define(function(require, exports, module) {
 	var tagList = require('util/taglist');
 	require('jquery');
 	require('bootstrap');
-	var chartTitleTemplate = require('text!templates/share-chart.html');
-	var DraggableView = require("views/widgets/DraggableView");
+	var shareChartTemplate = require('text!templates/share-chart.html');
+	var groupsListTemplate = require('text!templates/groups-list.html');
+	var Scrollview = require('famous/views/Scrollview');
 
 	function ChartView() {
 		BaseView.apply(this, arguments);
@@ -61,8 +62,27 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.addTitleRenderController = new RenderController();
-		this.addTitleContainer = new ContainerSurface({});
+		this.shareButton = new Surface({
+			size: [true, true],
+			content: '<div id="share-button-popover"><img height="30" src="content/images/share-red.png" data-placement="top" data-html="true"' +
+				'data-content="Click here to share" id="share-button"></div>'
+		});
+
+		this.shareModifier = new Modifier();
+		this.shareModifier.transformFrom(function() {
+			return Transform.translate(App.width - 40, App.height - 95, App.zIndex.header);
+		});
+		this.add(this.shareModifier).add(this.shareButton);
+
+		this.shareButton.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				this.hideShareButtonPopover();
+				this.showShareChartModal();
+			}
+		}.bind(this));
+
+		this.shareChartRenderController = new RenderController();
+		this.shareChartContainerSurface = new ContainerSurface({});
 		var backdropSurface = new Surface({
 			size: [undefined, undefined],
 			align: [0, 1],
@@ -76,43 +96,30 @@ define(function(require, exports, module) {
 			opacity: 0.5
 		});
 
-		this.addTitleContainer.add(backdropModifer).add(backdropSurface);
-		this.add(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.contextMenu)})).add(this.addTitleRenderController);
-
-		//this.addTitleSurface.on('click', function(e) {
-		//	if (e instanceof CustomEvent) {
-		//		//this.addTitleRenderController.hide({duration: 1});
-		//	}
-		//}.bind(this));
-
-		this.shareButton = new Surface({
-			size: [true, true],
-			content: '<div id="share-button-popover"><img height="30" src="content/images/share-red.png" data-placement="top" data-html="true"' +
-				'data-content="Click here to share" id="share-button"></div>'
+		this.shareGraphModal = new Surface({
+			size: [undefined, undefined]
 		});
-
-		this.shareButton.on('click', function(e) {
+		this.shareGraphModalModifier = new StateModifier({
+			transform: Transform.translate(0, 0, 0)
+		});
+		this.shareGraphModal.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				this.hideShareButtonPopover();
-				this.graphView.plot.saveSnapshot();
-				//this.hideShareButtonPopover();
-				this.getGroupsToShare(function(data) {
-					this.shareGraphModal = new Surface({
-						content: _.template(chartTitleTemplate, {groups: data.groups}, templateSettings)
-					});
-					this.addTitleContainer.add(this.shareGraphModal);
-					this.draggableGroupsView = new DraggableView(this.addTitleContainer, true);
-					this.addTitleRenderController.show(this.draggableGroupsView);
-				}.bind(this));
+				var classList = e.srcElement.classList;
+				if (_.contains(classList, 'fa')) {
+					this.shareChartRenderController.hide();
+					this.shareGraphModal.setContent('');
+					this.groupsListSurface.setContent('');
+				}
+
+				if (e.srcElement.id === 'share-chart') {
+					this.shareChart();
+				}
 			}
 		}.bind(this));
-		this.shareModifier = new Modifier();
 
-		this.shareModifier.transformFrom(function() {
-			return Transform.translate(App.width - 40, App.height - 95, App.zIndex.header);
-		});
-
-		this.add(this.shareModifier).add(this.shareButton);
+		this.shareChartContainerSurface.add(backdropModifer).add(backdropSurface);
+		this.shareChartContainerSurface.add(this.shareGraphModalModifier).add(this.shareGraphModal);
+		this.add(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.contextMenu)})).add(this.shareChartRenderController);
 
 		this.setHeaderLabel('CHART');
 		this.setRightIcon(this.optionsSurface);
@@ -245,6 +252,70 @@ define(function(require, exports, module) {
 		});
 	};
 
+	ChartView.prototype.showShareChartModal = function() {
+		this.getGroupsToShare(function(data) {
+			this.shareGraphModal.setContent( _.template(shareChartTemplate, {height: App.height - 420}, templateSettings));
+
+			var scrollContainer = new ContainerSurface({
+				size: [App.width - 30, App.height - 420],
+				properties: {
+					overflow: 'hidden'
+				}
+			});
+
+			var groupsScrollView = new Scrollview();
+
+			this.groupsListSurface = new Surface({
+				content: _.template(groupsListTemplate, {groups: data.groups}, templateSettings),
+				size: [undefined, true]
+			});
+
+			this.groupsListSurface.pipe(groupsScrollView);
+
+			var spareSurface = new Surface({
+				size: [undefined, 10]
+			});
+
+			spareSurface.pipe(groupsScrollView);
+
+			groupsScrollView.sequenceFrom([this.groupsListSurface, spareSurface]);
+
+			var xTranslate = 15;
+			if (App.width >= 560) {
+				xTranslate = 80;
+			}
+			var scrollContainerModifier = new StateModifier({
+				transform: Transform.translate(xTranslate, 310, 0)
+			});
+
+			scrollContainer.add(groupsScrollView);
+
+			this.shareChartContainerSurface.add(scrollContainerModifier).add(scrollContainer);
+			this.shareChartRenderController.show(this.shareChartContainerSurface);
+		}.bind(this));
+	};
+
+	ChartView.prototype.shareChart = function() {
+		var chartTitle = $('#chart-title').val();
+		if (!chartTitle) {
+			u.showAlert('Please enter a title for the chart to share.');
+			return;
+		}
+
+		var groupName = $('input[name="group"]:checked').val();
+		if (!groupName) {
+			u.showAlert('Please select a group name to share this chart.');
+			return;
+		}
+
+		this.shareChartRenderController.hide();
+		this.shareGraphModal.setContent('');
+		this.groupsListSurface.setContent('');
+
+		this.graphView.plot.setName(chartTitle);
+		this.graphView.plot.saveSnapshot(groupName);
+	};
+
 	function _setHandlers() {
 		this.on('create-chart', function() {
 			u.showAlert({
@@ -265,20 +336,11 @@ define(function(require, exports, module) {
 			this.graphView.plot.save();
 		}.bind(this));
 		this.on('share-snapshot', function() {
-			this.graphView.plot.saveSnapshot();
+			this.showShareChartModal();
 		}.bind(this));
 		this.on('load-snapshot', function() {
 			this.showLoadGraphOverlay();
 		}.bind(this));
-
-		//$(document).on('click', '#share-chart-modal', function(e) {
-		//	console.log(">>>>>>>>>>>>");
-		//	e.modal('hide');
-		//});
-        //
-		//$(document).on('click', '#share-chart', function() {
-		//	//this.graphView.plot.saveSnapshot();
-		//}.bind(this));
 	}
 
 	App.pages['ChartView'] = ChartView;
