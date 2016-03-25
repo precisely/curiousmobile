@@ -123,7 +123,6 @@ define(function(require, exports, module) {
 			this.renderController.hide();
 			var currentListView = this.trackView.currentListView;
 			window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],resp.tagStats[3], resp.tagStats[4])
-			Entry.cacheEntries(resp.glowEntry.date, resp.entries);
 			this.trackView.preShow({data: resp, fromServer: true});
 			this.trackView.showPopover();
 		}.bind(this));
@@ -139,7 +138,6 @@ define(function(require, exports, module) {
 			if (resp.tagStats[1]) {
 				window.autocompleteCache.update(resp.tagStats[1][0], resp.tagStats[1][1], resp.tagStats[1][2],resp.tagStats[1][3], resp.tagStats[1][4])
 			}
-			Entry.cacheEntries(resp.glowEntry.date, resp.entries);
 			this.trackView.preShow({data: resp, fromServer: true});
 			this.trackView.showPopover();
 		}.bind(this));
