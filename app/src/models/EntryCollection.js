@@ -45,7 +45,7 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 					if (u.checkData(entries)) {
 						console.log('entries from the server: ', entries);
 						for (var prop in entries) {
-							Entry.cacheEntries(prop, entries[prop]);
+							EntryCollection.setCache(prop, entries[prop]);
 						}
 						var collections = [];
 						for (var i = 0, len = dates.length; i < len; i++) {
@@ -70,6 +70,13 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 			}
 			var key = Entry.getCacheKey(key);
 			return collectionCache.getItem(key);
+		}
+
+		EntryCollection.setCache = function cacheEntries(date, entries) {
+			var collectionCache = window.App.collectionCache;
+			var key;
+			key = Entry.getCacheKey(date);
+			collectionCache.setItem(key, entries);
 		}
 
 		EntryCollection.clearCache = function (key) {

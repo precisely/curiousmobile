@@ -195,21 +195,31 @@ define(function(require, exports, module) {
 	TrackView.prototype.preShow = function(state) {
 		BaseView.prototype.preShow.call(this);
 		this.popoverVisible = false;
-		if (state && state.fromServer) {
-			var glowEntryDate = state.data.glowEntry.get("date");
-			if (this.calendarView.getSelectedDate().setHours(0, 0, 0) !== new Date(glowEntryDate).setHours(0, 0, 0)) {
+		if (state && (state.fromServer || state.message)) { //Entry from the server or a push notification
+			var glowEntryDate, entries, glowEntry, currentDay;
+			currentDay =  this.calendarView.getSelectedDate().setHours(0, 0, 0) == new Date(glowEntryDate).setHours(0, 0, 0);
+
+			if (state.fromServer) {
+				glowEntryDate = state.data.glowEntry.get("date");
+				entries = EntryCollection.setCache(glowEntryDate, state.data.entries);
+				glowEntry = state.data.glowEntry;
+			} else { // Push notification
+				glowEntryDate = state.entryDate;
+				this.calendarView.setSelectedDate(glowEntryDate);
+				entries = EntryCollection.getFromCache(glowEntryDate);
+			}
+			if (currentDay) {
+				this.currentListView.refreshEntries(entries, glowEntry);
 				return true;
 			}
-			var updatedEntries = EntryCollection.getFromCache(glowEntryDate);
-			this.currentListView.refreshEntries(state.data.entries, state.data.glowEntry);
-		} else {
-			EntryCollection.clearCache();
-			this.changeDate(this.calendarView.selectedDate, function() {
-				if (this.currentListView && this.currentListView.draggableList.length) {
-					this.showPopover();
-				}
-			}.bind(this));
 		}
+
+		EntryCollection.clearCache();
+		this.changeDate(this.calendarView.selectedDate, function() {
+			if (this.currentListView && this.currentListView.draggableList.length) {
+				this.showPopover();
+			}
+		}.bind(this));
 		return true;
 	};
 

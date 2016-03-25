@@ -3,6 +3,8 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 		'use strict';
 
 		var User = require('models/User');
+		var EntryCollection = require('models/EntryCollection');
+
 		// Singleton Class function.
 		var RepeatType = new function() {
 			this.DAILY_BIT = 1;
@@ -217,7 +219,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 									u.showAlert("You must enter a time duration, like 'sleep 8 hours 10 mins'");
 									return;
 								}
-								Entry.cacheEntries(baseDate, entries[0]);
+								EntryCollection.setCache(baseDate, entries[0]);
 								callback({
 									entries: entries[0],
 									glowEntry: entries[3],
@@ -260,7 +262,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						if (entries[1] != null) {
 							u.showAlert(entries[1]);
 						}
-						Entry.cacheEntries(baseDate, entries[0]);
+						EntryCollection.setCache(baseDate, entries[0]);
 						callback({
 							entries: entries[0],
 							glowEntry: new Entry(entries[3]),
@@ -313,7 +315,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 								this.set(entry);
 							}
 						}.bind(this));
-						Entry.cacheEntries(baseDate, entries[0]);
+						EntryCollection.setCache(baseDate, entries[0]);
 						callback({
 							entries: entries[0],
 							glowEntry: this,
@@ -369,7 +371,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 							if (u.checkData(entries)) {
 								var collectionCache = window.App.collectionCache;
 								collectionCache.clear();
-								Entry.cacheEntries(baseDate, entries[0]);
+								EntryCollection.setCache(baseDate, entries[0]);
 								callback(entries[0]);
 							} else {
 								u.showAlert("Error deleting entry");
@@ -401,7 +403,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						if (u.checkData(entries)) {
 							var collectionCache = window.App.collectionCache;
 							collectionCache.clear();
-							Entry.cacheEntries(baseDate, entries[0]);
+							EntryCollection.setCache(baseDate, entries[0]);
 							callback(entries[0]);
 							return;
 						} else {
@@ -437,13 +439,6 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				dateStr = date;
 			}
 			return dateStr;
-		}
-
-		Entry.cacheEntries = function cacheEntries(date, entries) {
-			var collectionCache = window.App.collectionCache;
-			var key;
-			key = Entry.getCacheKey(date);
-			collectionCache.setItem(key, entries);
 		}
 
 		Entry.getRepeatParams = function getRepeatParams(isRepeat, isRemind, repeatEnd) {

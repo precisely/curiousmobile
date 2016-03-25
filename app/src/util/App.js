@@ -31,7 +31,7 @@ var App = function() {
 
 
 	//this.serverUrl = "http://192.168.0.31:8080";
-	//this.serverUrl = "http://192.168.1.123:8080";
+	//this.serverUrl = "http://192.168.2.123:8080";
 	this.serverUrl = "https://www.wearecurio.us";
 	//this.serverUrl = "http://192.168.0.111:8080";
 	//this.serverUrl = "http://localhost:8080";
