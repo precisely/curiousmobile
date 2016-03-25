@@ -105,7 +105,7 @@ define(function(require, exports, module) {
 		this.shareGraphModal.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				var classList = e.srcElement.classList;
-				if (_.contains(classList, 'fa')) {
+				if (_.contains(classList, 'fa') || _.contains(e.srcElement.parentElement.classList, 'close')) {
 					this.shareChartRenderController.hide();
 					this.shareGraphModal.setContent('');
 					this.groupsListSurface.setContent('');
@@ -280,15 +280,16 @@ define(function(require, exports, module) {
 
 			groupsScrollView.sequenceFrom([this.groupsListSurface, spareSurface]);
 
-			var xTranslate = 15;
+			var xTranslate = 25;
 			if (App.width >= 560) {
-				xTranslate = 80;
+				xTranslate = 95;
 			}
+
+			scrollContainer.add(groupsScrollView);
+
 			var scrollContainerModifier = new StateModifier({
 				transform: Transform.translate(xTranslate, 310, 0)
 			});
-
-			scrollContainer.add(groupsScrollView);
 
 			this.shareChartContainerSurface.add(scrollContainerModifier).add(scrollContainer);
 			this.shareChartRenderController.show(this.shareChartContainerSurface);

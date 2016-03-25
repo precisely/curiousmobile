@@ -29,6 +29,7 @@ var App = function() {
 		this.coreEventHandler = new EventHandler();
 	};
 
+
 	//this.serverUrl = "http://192.168.0.31:8080";
 	//this.serverUrl = "http://192.168.1.123:8080";
 	this.serverUrl = "https://www.wearecurio.us";
