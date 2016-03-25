@@ -65,12 +65,15 @@ define(function(require, exports, module) {
 		this.shareButton = new Surface({
 			size: [true, true],
 			content: '<div id="share-button-popover"><img height="30" src="content/images/share-red.png" data-placement="top" data-html="true"' +
-				'data-content="Click here to share" id="share-button"></div>'
+				'data-content="Click here to share" id="share-button"></div>',
+			properties: {
+				padding: '10px'
+			}
 		});
 
 		this.shareModifier = new Modifier();
 		this.shareModifier.transformFrom(function() {
-			return Transform.translate(App.width - 40, App.height - 95, App.zIndex.header);
+			return Transform.translate(App.width - 50, App.height - 105, App.zIndex.header);
 		});
 		this.add(this.shareModifier).add(this.shareButton);
 
@@ -105,7 +108,7 @@ define(function(require, exports, module) {
 		this.shareGraphModal.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				var classList = e.srcElement.classList;
-				if (_.contains(classList, 'fa') || _.contains(e.srcElement.parentElement.classList, 'close')) {
+				if (_.contains(classList, 'close') || _.contains(e.srcElement.parentElement.classList, 'close')) {
 					this.shareChartRenderController.hide();
 					this.shareGraphModal.setContent('');
 					this.groupsListSurface.setContent('');
