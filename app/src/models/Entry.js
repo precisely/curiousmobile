@@ -211,8 +211,8 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					timeZoneName: u.getTimezone(),
 					defaultToNow: '1'
 				});
-			
-				u.queueJSON("Adding entry", u.makeGetUrl("createSingleHelpEntrysData"), u.makeGetArgs(argsToSend), 
+
+				u.queueJSON("Adding entry", u.makeGetUrl("createSingleHelpEntrysData"), u.makeGetArgs(argsToSend),
 						function(entries) {
 							if (u.checkData(entries)) {
 								if (!entries[0]) {
@@ -231,7 +231,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						}, function (data) {
 							console.log('Entry creation failed: ' + this.toString());
 						}.bind(this), 0, false, false);
-			}, 
+			},
 
 			create: function(callback) {
 				var now = new Date();

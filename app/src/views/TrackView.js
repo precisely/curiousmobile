@@ -195,7 +195,7 @@ define(function(require, exports, module) {
 	TrackView.prototype.preShow = function(state) {
 		BaseView.prototype.preShow.call(this);
 		this.popoverVisible = false;
-		if (state && (state.fromServer || state.message)) { //Entry from the server or a push notification
+		if (state && (state.fromServer || state.entryDate)) { //Entry from the server or a push notification
 			var glowEntryDate, entries, glowEntry, currentDay;
 			currentDay =  this.calendarView.getSelectedDate().setHours(0, 0, 0) == new Date(glowEntryDate).setHours(0, 0, 0);
 
