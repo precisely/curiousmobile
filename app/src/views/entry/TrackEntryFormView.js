@@ -88,8 +88,8 @@ define(function(require, exports, module) {
 
 
 		this.repeatModifierSurface.on('click', function(e) {
-			var classList = e.srcElement.parentElement.classList;
 			if (e instanceof CustomEvent) {
+				var classList = e.srcElement.parentElement.classList;
 				if (_.contains(classList, 'entry-checkbox') ||
 					_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {
 					var repeatEachCheckbox = document.getElementById('confirm-each-repeat');
@@ -102,8 +102,7 @@ define(function(require, exports, module) {
 					if (this.dateGridOpen) {
 						this.dateGridRenderController.hide();
 					} else {
-						var dateGridView = new DateGridView(this.selectedDate || new Date());
-						this.dateGrid = dateGridView;
+						this.dateGrid = new DateGridView(this.selectedDate || new Date());
 						this.dateGridRenderController.show(this.dateGrid);
 						this.dateGrid.on('select-date', function(date) {
 							console.log('CalenderView: Date selected');
@@ -186,7 +185,7 @@ define(function(require, exports, module) {
 		}
 
 		this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">' + buttonName + '</button>');
-		this.submitButtonModifier.setTransform(Transform.translate(30,180, App.zIndex.formView));
+		this.submitButtonModifier.setTransform(Transform.translate(30, 180, App.zIndex.formView));
 
 		if (isInEditMode) {
 			this.deleteButtonModifier.setTransform(Transform.translate(30, 230, App.zIndex.formView));
@@ -299,7 +298,7 @@ define(function(require, exports, module) {
 				value: entryText,
 				selectionRange: selectionRange,
 				elementType: ElementType.domElement,
-				focus: true,
+				focus: true
 			}],
 			postLoadAction: {
 				name: 'showEntryModifiers',
@@ -313,7 +312,7 @@ define(function(require, exports, module) {
 			state.preShowCheck = {
 				name: 'submit',
 				args: [entry, true],
-				doNotLoad: true,
+				doNotLoad: true
 			}
 		}
 		return state;
@@ -326,14 +325,14 @@ define(function(require, exports, module) {
 			viewProperties: [{
 				name: 'entry',
 				model: 'Entry',
-				value: this.entry,
-			}, ],
+				value: this.entry
+			}],
 			form: [{
 				id: 'entry-description',
 				value: inputElement.value,
 				selectionRange: [inputElement.selectionStart, inputElement.selectionEnd],
 				elementType: ElementType.domElement,
-				focus: true,
+				focus: true
 			}]
 		};
 	};
@@ -424,7 +423,7 @@ define(function(require, exports, module) {
 				}.bind(this),
 				onB: function() {
 					this.saveEntry(true);
-				}.bind(this),
+				}.bind(this)
 			});
 			this.autoCompleteView.hide();
 			return;
@@ -466,4 +465,4 @@ define(function(require, exports, module) {
 
 	App.pages[TrackEntryFormView.name] = TrackEntryFormView;
 	module.exports = TrackEntryFormView;
-})
+});
