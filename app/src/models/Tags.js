@@ -77,24 +77,12 @@ define(function(require, exports, module) {
 		}
 	};
 
-	Tags.sortTags = function(tagsList, sortAscending, sortFilter) {
+	Tags.sortTags = function(tagList, sortAscending, sortFilter) {
 		if (sortFilter === 'most-used') {
-			tagsList.sort(function(a, b) {
-				if (a.useCount < b.useCount)
-					return 1;
-				if (a.useCount > b.useCount)
-					return -1;
-				if (a.useCount === b.useCount) {
-					if (a.description < b.description)
-						return -1;
-					if (a.description > b.description)
-						return 1;
-				}
-				return 0;
-			});
+			tagList.sortByUseCount();
 		} else {
 			if (sortAscending) {
-				tagsList.sort(function(a, b) {
+				tagList.listItems.list.sort(function(a, b) {
 					if (a.description < b.description)
 						return -1;
 					if (a.description > b.description)
@@ -102,7 +90,7 @@ define(function(require, exports, module) {
 					return 0;
 				});
 			} else {
-				tagsList.sort(function(a, b) {
+				tagList.listItems.list.sort(function(a, b) {
 					if (a.description < b.description)
 						return 1;
 					if (a.description > b.description)
@@ -111,8 +99,6 @@ define(function(require, exports, module) {
 				});
 			}
 		}
-
-		return tagsList;
 	};
 
 	Tags.getTagProperties = function(id, callback) {

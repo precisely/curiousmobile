@@ -34,7 +34,7 @@ define(function(require, exports, module) {
 				zIndex: 5
 			}
 		});
-		this.listAscending = false;
+		this.listAscending = true;
 		this.setBody(this.backgroundSurface);
 
 		this.renderController = new RenderController();
@@ -141,18 +141,18 @@ define(function(require, exports, module) {
 			listAscending = true;
 		}
 		
-		var tagList = Tags.sortTags(App.tagListWidget.list.listItems.list, this.listAscending, sortFilter);
+		Tags.sortTags(App.tagListWidget.list, this.listAscending, sortFilter);
 		document.getElementById(removeClassForId).classList.remove('active');
 		document.getElementById(elementId).classList.add('active');
-		_renderTagsList.call(this, tagList);
+		_renderTagsList.call(this, App.tagListWidget.list.listItems.list);
 		this.listAscending = listAscending;
 	}
 	
 	function _createPills() {
 		var pillSurface = new Surface({
 			content: '<div class="btn-group tag-filters" role="group">' +
-				'<button type="button" class="btn btn-secondary" id="most-used-pill">Most Used</button>' +
-				'<button type="button" class="btn btn-secondary active" id="a-z-pill">A-Z</button>',
+				'<button type="button" class="btn btn-secondary active" id="most-used-pill">Most Used</button>' +
+				'<button type="button" class="btn btn-secondary" id="a-z-pill">A-Z</button>',
 			size: [true, true],
 			properties: {
 				backgroundColor: '#efefef',
@@ -230,7 +230,6 @@ define(function(require, exports, module) {
 
 	CreateChartView.prototype.init = function() {
 		App.tagListWidget = initTagListWidget(_renderTagsList.bind(this));
-		_renderTagsList.call(this, App.tagListWidget.list.listItems.list);
 		this.renderController.show((this.tagsScrollView));
 	};
 
@@ -258,7 +257,7 @@ define(function(require, exports, module) {
 					if(obj.id === tag.id) {
 						return index;
 					}
-				}).filter(isFinite)
+				}).filter(isFinite);
 
 				if (u.isAndroid() || (event instanceof CustomEvent)) {
 					if (this.selectedTags.length === 6 && indexes.length === 0) {

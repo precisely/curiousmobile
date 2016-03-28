@@ -255,7 +255,7 @@ function TagGroup(args) {
 			return false;
 
 		return nameIterator.remaining() == 0;
-	}
+	};
 
 	this.matchNameListSegment = function(nameIterator) {
 		for (var i = 0, len = this.children.length; i < len; ++i) {
@@ -264,7 +264,7 @@ function TagGroup(args) {
 		}
 
 		return true;
-	}
+	};
 
 	this.sort = function() {
 		this.children.sort(function(itemA, itemB) {
@@ -275,8 +275,11 @@ function TagGroup(args) {
 				return 1;
 			return 0;
 		});
-	}
+	};
 
+	
+	
+	
 	this.excludeChildAtBackend = function(childItem, callback) {
 		var csrfKey = "excludeFromTagGroupDataCSRF";
 		var url = "/tag/excludeFromTagGroupData?callback=?";
@@ -440,7 +443,22 @@ function TagList(args) {
 
 	this.sort = function() {
 		this.listItems.sort();
-	}
+	};
+	
+	this.sortByUseCount = function() {
+		this.listItems.list.sort(function(a, b) {
+			if (a.useCount < b.useCount)
+				return 1;
+			if (a.useCount > b.useCount)
+				return -1;
+			if (a.useCount === b.useCount) {
+				if (a.description < b.description)
+					return -1;
+				if (a.description > b.description)
+					return 1;
+			}
+		});
+	};
 
 	this.searchItemByDescriptionAndType = function(description, type) {
 		var item;
