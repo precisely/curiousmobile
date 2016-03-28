@@ -130,6 +130,24 @@ define(function(require, exports, module) {
 		this.add(pillsMod).add(_createPills.call(this));
 	}
 
+	function handleTagSort(elementId) {
+		var sortFilter = 'a-z';
+		var removeClassForId = 'most-used-pill';
+		var listAscending = !this.listAscending;
+		
+		if (elementId === 'most-used-pill') {
+			sortFilter = 'most-used';
+			removeClassForId = 'a-z-pill';
+			listAscending = true;
+		}
+		
+		var tagList = Tags.sortTags(App.tagListWidget.list.listItems.list, this.listAscending, sortFilter);
+		document.getElementById(removeClassForId).classList.remove('active');
+		document.getElementById(elementId).classList.add('active');
+		_renderTagsList.call(this, tagList);
+		this.listAscending = listAscending;
+	}
+	
 	function _createPills() {
 		var pillSurface = new Surface({
 			content: '<div class="btn-group tag-filters" role="group">' +
@@ -143,13 +161,7 @@ define(function(require, exports, module) {
 		});
 		pillSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				if (e.srcElement.id === 'a-z-pill') {
-					var tagList = Tags.sortTags(App.tagListWidget.list.listItems.list, this.listAscending);
-					document.getElementById('most-used-pill').classList.remove('active');
-					e.srcElement.classList.add('active');
-					_renderTagsList.call(this, tagList);
-					this.listAscending = !this.listAscending;
-				}
+				handleTagSort.call(this, e.srcElement.id);
 			}
 		}.bind(this));
 		return pillSurface;

@@ -11,6 +11,7 @@ function Tag(args) {
 	this.description = args.description;
 	this.isContinuous = args.isContinuous;
 	this.showPoints = args.showPoints;
+	this.useCount = args.useCount;
 	this.update = function(args) {
 		if (typeof args.state !== 'undefined' && args.state == TREEITEM_SNAPSHOT) {
 			this.state = TREEITEM_SNAPSHOT;
@@ -377,7 +378,8 @@ function TagStore(args) {
 			type : type,
 			id : args['id'],
 			treeStore : this,
-			state: args['state']
+			state: args['state'],
+			useCount: args['useCount']
 		};
 
 		if (typeClass === TagGroup) {
