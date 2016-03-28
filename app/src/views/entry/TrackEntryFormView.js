@@ -58,6 +58,7 @@ define(function(require, exports, module) {
 					this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.formView));
 					this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 220, App.zIndex.formView + 5));
 				} else {
+					this.dateGridRenderController.hide();
 					this.renderController.hide();
 					this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] - 220, App.zIndex.formView));
 					this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] - 220, App.zIndex.formView + 5));
@@ -80,8 +81,8 @@ define(function(require, exports, module) {
 				this.removeSuffix();
 				this.setPinned = !this.setPinned;
 				this.toggleSelector(this.pinSurface);
-				this.renderController.hide();
 				this.dateGridRenderController.hide();
+				this.renderController.hide();
 				this.submit();
 			}
 		}.bind(this));
