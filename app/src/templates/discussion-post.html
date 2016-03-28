@@ -25,7 +25,7 @@
 					<a href="#">
 						<span> {{= discussionTitle ? discussionTitle : '(No Title)' }}</span>
 					</a>
-					<p>{{= firstPost ? firstPost.message : '' }}</p>
+					<p>{{= firstPost ? linkify(firstPost.message) : '' }}</p>
 				</div>
 				<hr>
 				<div class="text-left disable-button-option">

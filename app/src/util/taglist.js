@@ -276,9 +276,6 @@ function TagGroup(args) {
 			return 0;
 		});
 	};
-
-	
-	
 	
 	this.excludeChildAtBackend = function(childItem, callback) {
 		var csrfKey = "excludeFromTagGroupDataCSRF";

@@ -86,9 +86,7 @@ define(function(require, exports, module) {
 			var parsedTemplate = _.template(profileTemplate, peopleDetails, templateSettings);
 			var peopleSurface = new Surface({
 				size: [undefined, undefined],
-				content: u.getParsedInAppBrowserSupportedURL(parsedTemplate),
-				properties: {
-				}
+				content: parsedTemplate
 			});
 
 			peopleSurface.on('click', function(e) {

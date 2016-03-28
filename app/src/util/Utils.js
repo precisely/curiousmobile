@@ -1,8 +1,7 @@
-define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'views/AlertView', 'Autolinker'],
+define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'views/AlertView'],
 	function(require, exports, module, store, jstz, exoskeleton, AlertView) {
 		'use strict';
 		var Engine = require('famous/core/Engine');
-		var Autolinker = require('Autolinker');
 		var Utils = {};
 		var u = Utils;
 
@@ -581,23 +580,10 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				var message = decodeURI(e.url.split("message=")[1]);
 				u.showAlert(message);
 			}
-		}
+		};
 
 		Utils.isAndroid = function() {
 			return device.platform == 'android' || device.platform == 'Android';
-		};
-
-		Utils.getParsedInAppBrowserSupportedURL = function(input) {
-			return Autolinker.link( input, {
-				className: 'auto-link-color',
-				email: false,
-				phone: false,
-				twitter: false,
-				hashtag: false,
-				replaceFn: function (autolinker, match) {
-					return '<a onclick="window.open(\'' + match.getUrl() + '\'\, \'_blank\')">' + match.getUrl() + '</a>';
-				}
-			});
 		};
 
 		var device = {};

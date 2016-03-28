@@ -279,3 +279,16 @@ function moveCaretToEnd(el) {
 	}
 	el.focus();
 }
+
+linkify = function(input) {
+	return Autolinker.link( input, {
+		className: 'auto-link-color',
+		email: false,
+		phone: false,
+		twitter: false,
+		hashtag: false,
+		replaceFn: function (autolinker, match) {
+			return '<a onclick="window.open(\'' + match.getUrl() + '\'\, \'_blank\')">' + match.getUrl() + '</a>';
+		}
+	});
+};

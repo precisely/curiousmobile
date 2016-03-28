@@ -133,7 +133,7 @@ define(function(require, exports, module) {
 	SprintActivityView.prototype.fetchDiscussions = function(args) {
 		var params = args;
 		var parsedTemplate = _.template(SprintActivityTitleTemplate, {name: this.name}, templateSettings);
-		this.sprintActivityTitleSurface.setContent(u.getParsedInAppBrowserSupportedURL(parsedTemplate));
+		this.sprintActivityTitleSurface.setContent(parsedTemplate);
 
 		Sprint.listDiscussions(args, addListItemsToScrollView.bind(this), function() {
 			Sprint.follow(args.sprintHash, function() {

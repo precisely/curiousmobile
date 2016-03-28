@@ -103,8 +103,7 @@ define(function (require, exports, module) {
 			var parsedTemplate = _.template(SprintDetailsTemplate, sprintDetails, templateSettings);
 			var sprintSurface = new Surface({
 				size: [undefined, undefined],
-				content: u.getParsedInAppBrowserSupportedURL(parsedTemplate),
-				properties: {}
+				content: parsedTemplate
 			});
 
 			sprintSurface.on('click', function (e) {
