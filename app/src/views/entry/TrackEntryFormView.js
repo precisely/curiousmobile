@@ -340,6 +340,7 @@ define(function(require, exports, module) {
 
 
 	TrackEntryFormView.prototype.submit = function(e, directlyCreateEntry) {
+		this.autoCompleteView.hide();
 		if (typeof cordova !== 'undefined') {
 			cordova.plugins.Keyboard.close();
 		}
@@ -426,7 +427,6 @@ define(function(require, exports, module) {
 					this.saveEntry(true);
 				}.bind(this)
 			});
-			this.autoCompleteView.hide();
 			return;
 		}
 		this.saveEntry(true);

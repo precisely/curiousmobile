@@ -219,7 +219,7 @@ define(function(require, exports, module) {
 			if (this.currentListView && this.currentListView.draggableList.length) {
 				this.showPopover();
 			}
-		}.bind(this));
+		}.bind(this), glowEntry);
 		return true;
 	};
 
