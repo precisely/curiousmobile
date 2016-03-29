@@ -283,6 +283,7 @@ define(function(require, exports, module) {
 
 			groupsScrollView.sequenceFrom([this.groupsListSurface, spareSurface]);
 
+			// TODO Fix the x and y transform to be dynamic with respect to the Device's Screen Resolution.
 			var xTranslate = 25;
 			if (App.width >= 560) {
 				xTranslate = 95;
