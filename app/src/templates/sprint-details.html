@@ -38,7 +38,7 @@
 				  value="{{= sprint.description }}">{{- sprint.description }}</textarea>
 		{{ } else { }}
 		<p>
-			{{= sprint.description }}
+			{{= linkify(sprint.description) }}
 		</p>
 		{{ } }}
 	</div>

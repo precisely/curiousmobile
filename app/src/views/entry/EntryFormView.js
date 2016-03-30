@@ -64,7 +64,7 @@ define(function(require, exports, module) {
 		];
 		var monthName = months[date.getMonth()];
 		document.getElementsByClassName('choose-date-input')[0].value = date.getDate() + ' ' + monthName + ' ' + date.getFullYear();
-	}
+	};
 
 	function _createForm() {
 		this.clazz = 'EntryFormView';
@@ -90,7 +90,7 @@ define(function(require, exports, module) {
 			classes: ['input-surface'],
 			content: _.template(inputSurfaceTemplate, {
 				tag: ''
-			}, templateSettings),
+			}, templateSettings)
 		});
 
 		this.inputSurface.on('click', function(e) {
@@ -159,21 +159,21 @@ define(function(require, exports, module) {
 			defaultItemSize: [80, 24],
 		});
 
-		var firstOffset = (App.width - ((84 * 3) + 60)) / 2;
+		this.firstOffset = (App.width - ((84 * 3) + 60)) / 2;
 
 		this.repeatSurface = new Surface({
 			content: '<div class="text-center"><i class="fa fa-repeat"></i> <br/> Set Repeat</div>',
-			size: [84, 24],
+			size: [84, 24]
 		});
 
 		this.remindSurface = new Surface({
 			content: '<div class="text-center"><i class="fa fa-bell"></i> <br/>' + ((this.constructor.name === 'TrackEntryFormView') ? ' Set Alert' : ' Daily Alert') + '</div>',
-			size: [84, 24],
+			size: [84, 24]
 		});
 
 		this.pinSurface = new Surface({
 			content: '<div class="text-center"><i class="fa fa-plus-square-o"></i><br/> Bookmark</div>',
-			size: [84, 24],
+			size: [84, 24]
 		});
 
 		sequentialLayout.sequenceFrom([this.repeatSurface, this.remindSurface, this.pinSurface]);
@@ -188,7 +188,7 @@ define(function(require, exports, module) {
 		this.buttonsAndHelp.add(sequentialLayout);
 
 		this.buttonsModifier = new StateModifier({
-			transform: Transform.translate(firstOffset, 100, _zIndex())
+			transform: Transform.translate(this.firstOffset, 100, _zIndex())
 		});
 		this.formContainerSurface.add(this.buttonsModifier).add(this.buttonsRenderController);
 
@@ -205,14 +205,14 @@ define(function(require, exports, module) {
 
 		this.repeatControllerModifier = new StateModifier({
 			size: [App.width, undefined],
-			transform: Transform.translate(0, 140, _zIndex())
+			transform: Transform.translate(0, 140, _zIndex() + 1)
 		});
 		this.dateGridRenderControllerMod = new StateModifier({
 			transform: Transform.translate(18, 220, 16)
 		});
 		this.formContainerSurface.add(this.repeatControllerModifier).add(this.renderController);
 		this.formContainerSurface.add(new StateModifier({
-			transform: Transform.translate(0, 0, _zIndex() + 1)
+			transform: Transform.translate(0, 0, _zIndex() + 2)
 		})).add(this.dateGridRenderControllerMod).add(this.dateGridRenderController);
 	};
 
@@ -281,7 +281,7 @@ define(function(require, exports, module) {
 		} else {
 			return false;
 		}
-	}
+	};
 
 	EntryFormView.prototype.setEntry = function(entry) {
 		this.entry = entry;
@@ -304,7 +304,7 @@ define(function(require, exports, module) {
 
 	EntryFormView.prototype.batchMoveUpModifiers = function() {
 		this.modifiersMovedDown = false;
-		this.buttonsModifier.setTransform(Transform.translate(0, 100, _zIndex()));
+		this.buttonsModifier.setTransform(Transform.translate(this.firstOffset, 100, _zIndex()));
 		this.repeatControllerModifier.setTransform(Transform.translate(0, 140, _zIndex()));
 		this.dateGridRenderControllerMod.setTransform(Transform.translate(18, 220, 16));
 		var yTransformSubmitButtonModifier = this.submitButtonModifier.getTransform()[13];
@@ -316,7 +316,7 @@ define(function(require, exports, module) {
 
 	EntryFormView.prototype.batchMoveDownModifiers = function() {
 		this.modifiersMovedDown = true;
-		this.buttonsModifier.setTransform(Transform.translate(0, 200, _zIndex()));
+		this.buttonsModifier.setTransform(Transform.translate(this.firstOffset, 200, _zIndex()));
 		this.repeatControllerModifier.setTransform(Transform.translate(0, 240, _zIndex()));
 		this.dateGridRenderControllerMod.setTransform(Transform.translate(18, 320, 16));
 		var yTransformSubmitButtonModifier = this.submitButtonModifier.getTransform()[13];

@@ -130,7 +130,7 @@ define(function(require, exports, module) {
 				padding: '5px 10px',
 				paddingTop: '20px'
 			},
-			content: u.getParsedInAppBrowserSupportedURL(parsedTemplate)
+			content: parsedTemplate
 		});
 
 		if (discussionPost.discussionDetails.firstPost && discussionPost.discussionDetails.firstPost.plotDataId) {
@@ -340,7 +340,7 @@ define(function(require, exports, module) {
 			var parsedTemplate =  _.template(commentTemplate, post, templateSettings);
 			var commentSurface = new Surface({
 				size: [undefined, true],
-				content: u.getParsedInAppBrowserSupportedURL(parsedTemplate)
+				content: parsedTemplate
 			});
 
 			commentSurface.discussionView = this;

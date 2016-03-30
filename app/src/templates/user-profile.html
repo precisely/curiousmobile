@@ -31,7 +31,7 @@
 					{{ if (user.bio === "") { }}
 						<p>This user has not provided any bio.</p>
 					{{ } else { }}
-						<p> {{- user.bio }}</p>
+						<p> {{= linkify(user.bio) }}</p>
 					{{ } }}
 				</div>
 			</div>

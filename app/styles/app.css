@@ -2035,6 +2035,8 @@ and (max-device-height: 568px) {
 	padding: 5px;
 	text-align: center;
 	border: none;
+	border-radius: 0px;
+	opacity: 1;
 }
 
 .repeat-modifier .choose-date-input::-webkit-input-placeholder, .repeat-modifier .choose-date-input::-moz-placeholder,

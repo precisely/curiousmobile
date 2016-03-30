@@ -359,10 +359,11 @@ function TreeItemList(options) {
 			}.bind(this));
 			this.callback(function(widget) { widget.notifyDoneLoading(); });
 			if (successCallback) {
+				this.sortByMostUsed();
 				successCallback(this.listItems.list);
 			}
 		}.bind(this));
-	}
+	};
 
 	this.addAfter = function(listItem, afterItem) {
 		var afterIndex = afterItem ? this.listItems.indexOf(afterItem) : -1;

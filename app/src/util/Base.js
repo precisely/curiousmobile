@@ -279,3 +279,11 @@ function moveCaretToEnd(el) {
 	}
 	el.focus();
 }
+
+linkify = function(input) {
+	return Autolinker.link( input, {
+		replaceFn: function (autolinker, match) {
+			return '<a class="auto-link-color" onclick="window.open(\'' + match.getUrl() + '\'\, \'_blank\')">' + match.getUrl() + '</a>';
+		}
+	});
+};
