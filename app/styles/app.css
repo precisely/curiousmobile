@@ -895,6 +895,41 @@ button.close {
 	float: left;
 }
 
+.share-chart-text {
+	color: rgb(232, 56, 56);
+}
+
+.share-chart-title {
+	margin-bottom: 2px;
+}
+
+.share-chart-group {
+	margin-top: 20px;
+	margin-bottom: 2px;
+}
+
+.share-groups {
+	margin-left: 20px;
+	margin-bottom: 5px;
+	margin-top: 0px;
+}
+
+.share-groups label {
+	padding-left: 5px;
+	padding-top: 2px;
+}
+
+#share-chart-close-button {
+	opacity: 0.5;
+	padding: 15px;
+	margin-top: -14px;
+	margin-right: -10px;
+}
+
+.modal-bottom-pad {
+	padding-bottom: 0px;
+}
+
 /*Context Menu*/
 .context-menu {
 	list-style: none;
@@ -2326,7 +2361,8 @@ and (max-device-height: 568px) {
 	float: right;
 	color: #cc7299;
 	font-weight: 600;
-	margin-right: 15px;
+	padding: 5px 10px;
+	margin-top: -5px;
 }
 
 .profile-detail h1 {

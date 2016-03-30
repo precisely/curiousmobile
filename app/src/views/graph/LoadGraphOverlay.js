@@ -48,7 +48,7 @@ define(function(require, exports, module) {
 			_.each(graphList, function(graphItem) {
 				var graphItemSurface = new Surface({
 					size: [undefined, 50],
-					content: '<div class="graph-item-bar"><p>' + graphItem.name + '</p><i class="delete-graph fa-2x fa fa-trash-o"></i></div>',
+					content: '<div class="graph-item-bar"><p>' + graphItem.name + '</p><div class="delete-graph"><i class="fa-2x fa fa-trash-o"></i></div></div>',
 					properties: {
 						backgroundColor: '#fff',
 					}
@@ -57,7 +57,7 @@ define(function(require, exports, module) {
 					if (e instanceof CustomEvent) {
 						var classList = e.srcElement.classList;
 						var currentView = App.pageView.getPage('ChartView');
-						if (_.contains(classList, 'delete-graph')) {
+						if (_.contains(classList, 'delete-graph') || _.contains(e.srcElement.parentElement.classList, 'delete-graph')) {
 							u.showAlert({
 								message: 'Are you sure you want to delete the saved gaph?',
 								a: 'Yes',
@@ -90,4 +90,3 @@ define(function(require, exports, module) {
 
 	module.exports = LoadGraphOverlay;
 });
-
