@@ -74,7 +74,7 @@ define(function(require, exports, module) {
 
 		this.shareModifier = new Modifier();
 		this.shareModifier.transformFrom(function() {
-			return Transform.translate(App.width - 50, App.height - 105, App.zIndex.readView);
+			return Transform.translate(App.width - 50, App.height - 105, App.zIndex.readView + 3);
 		});
 		this.add(this.shareModifier).add(this.shareButton);
 
@@ -131,7 +131,7 @@ define(function(require, exports, module) {
 
 		this.graphView = new GraphView(null, this.options.plotAreaId);
 		this.add(new StateModifier({transform: Transform.translate(0, 65, App.zIndex.readView)})).add(this.graphView);
-		
+
 		this.createGroupsListScrollView();
 		_setHandlers.call(this);
 	}
@@ -232,7 +232,7 @@ define(function(require, exports, module) {
 		this.backRenderController.show(this.leftSurface);
 		this.setRightIcon(this.optionsSurface);
 	};
-	
+
 	ChartView.prototype.createGroupsListScrollView = function() {
 		this.groupsListScrollContainer = new ContainerSurface({
 			size: [App.width - 50, App.height - 420],
@@ -246,11 +246,11 @@ define(function(require, exports, module) {
 		this.groupsListScrollView = new Scrollview({
 			direction: Utility.Direction.Y
 		});
-		
+
 		this.groupsSurfaceList = [];
-		
+
 		this.groupsListScrollView.sequenceFrom(this.groupsSurfaceList);
-		
+
 		this.groupsListScrollContainer.add(this.groupsListScrollView);
 
 		// TODO Fix the x and y transform to be dynamic with respect to the Device's Screen Resolution.
@@ -265,13 +265,13 @@ define(function(require, exports, module) {
 
 		this.shareChartContainerSurface.add(this.groupsListScrollContainerModifier).add(this.groupsListScrollContainer);
 	};
-	
+
 	ChartView.prototype.showShareChartModal = function() {
 		User.getGroupsToShare(function(data) {
 			this.shareGraphModal.setContent('');
 			this.groupsSurfaceList.splice(0, this.groupsSurfaceList.length);
 			this.groupName = '';
-			
+
 			this.shareGraphModal.setContent(_.template(shareChartTemplate, {height: App.height - 420}, templateSettings));
 
 			_.each(data.groups, function(groupName, index) {
@@ -287,14 +287,14 @@ define(function(require, exports, module) {
 				this.groupsSurfaceList.push(groupSurface);
 				groupSurface.pipe(this.groupsListScrollView);
 			}.bind(this));
-			
+
 			var spareSurfaceForGroupsListScrollView = new Surface({
 				size: [undefined, 10]
 			});
 
 			this.groupsSurfaceList.push(spareSurfaceForGroupsListScrollView);
 			spareSurfaceForGroupsListScrollView.pipe(this.groupsListScrollView);
-			
+
 			this.shareChartRenderController.show(this.shareChartContainerSurface, null, function() {
 					var yOffset = document.getElementById('group-list-container').getBoundingClientRect().top;
 					this.groupsListScrollContainerModifier.setTransform(Transform.translate(this.xTranslate, yOffset, 0));
