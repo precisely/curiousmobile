@@ -79,7 +79,7 @@ define(function(require, exports, module) {
 
 	Tags.sortTags = function(tagList, sortAscending, sortFilter) {
 		if (sortFilter === 'most-used') {
-			tagList.sortByUseCount();
+			tagList.sortByMostUsed();
 		} else {
 			if (sortAscending) {
 				tagList.listItems.list.sort(function(a, b) {

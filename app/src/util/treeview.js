@@ -359,7 +359,7 @@ function TreeItemList(options) {
 			}.bind(this));
 			this.callback(function(widget) { widget.notifyDoneLoading(); });
 			if (successCallback) {
-				this.sortByUseCount();
+				this.sortByMostUsed();
 				successCallback(this.listItems.list);
 			}
 		}.bind(this));

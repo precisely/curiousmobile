@@ -276,7 +276,7 @@ function TagGroup(args) {
 			return 0;
 		});
 	};
-	
+
 	this.excludeChildAtBackend = function(childItem, callback) {
 		var csrfKey = "excludeFromTagGroupDataCSRF";
 		var url = "/tag/excludeFromTagGroupData?callback=?";
@@ -379,7 +379,7 @@ function TagStore(args) {
 			id : args['id'],
 			treeStore : this,
 			state: args['state'],
-			useCount: args['useCount']
+			useCount: args['c']
 		};
 
 		if (typeClass === TagGroup) {
@@ -441,8 +441,8 @@ function TagList(args) {
 	this.sort = function() {
 		this.listItems.sort();
 	};
-	
-	this.sortByUseCount = function() {
+
+	this.sortByMostUsed = function() {
 		this.listItems.list.sort(function(a, b) {
 			if (a.useCount < b.useCount)
 				return 1;
@@ -1023,19 +1023,19 @@ inherit(TagListWidget, TreeWidget);
 
 /*
  * function tagListFindSearchMatches(list, ) { var i, j, result = [];
- * 
- * 
- * 
+ *
+ *
+ *
  * for (j in terms) { spaceTerms.push(' ' + terms[j]); }
- * 
+ *
  * var termLonger = term.length > additionalWordsCharLimit;
- * 
+ *
  * for (i in list) { var tag = list[i]; var tagName = tag.description if
  * (tagName in skipSet) continue; var match = true; for (j in terms) { if
  * (terms[j].length >0 && (!(tagName.startsWith(terms[j]) || (termLonger &&
  * (tagName.indexOf(spaceTerms[j]) >= 0)) ))) { match = false; break; } } if
  * (match) { result.push(tag); } }
- * 
+ *
  * return result; }
  */
 function tagListSetInputText(inp, text) {
