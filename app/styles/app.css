@@ -899,6 +899,15 @@ button.close {
 	color: rgb(232, 56, 56);
 }
 
+.share-chart-title {
+	margin-bottom: 2px;
+}
+
+.share-chart-group {
+	margin-top: 20px;
+	margin-bottom: 2px;
+}
+
 .share-groups {
 	margin-left: 20px;
 	margin-bottom: 5px;
@@ -907,6 +916,7 @@ button.close {
 
 .share-groups label {
 	padding-left: 5px;
+	padding-top: 2px;
 }
 
 #share-chart-close-button {
@@ -917,7 +927,7 @@ button.close {
 }
 
 .modal-bottom-pad {
-	padding-top: 5px;
+	padding-bottom: 0px;
 }
 
 /*Context Menu*/
