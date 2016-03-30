@@ -6,15 +6,14 @@
             </button>
             <h4 class="modal-title">Share chart</h4>
         </div>
-        <div class="modal-body">
+        <div class="modal-body modal-bottom-pad">
             <h4>Title</h4>
             <p class="share-chart-text"><small>Please enter a title for this chart in the form of a question, as in: 'Does exercise affect my
                 mood?'</small></p>
             <input type="text" id="chart-title" name="chart-title" class="form-control" placeholder="Add Title">
-            <br>
             <h4>Groups</h4>
             <p class="share-chart-text"><small>Where do you want to publish this?</small></p>
-            <div style="height: {{- height }}px"></div>
+            <div id="group-list-container" style="height: {{- height }}px"></div>
         </div>
         <div class="modal-footer">
             <button class="btn btn-default text-right" id="share-chart">Share</button>

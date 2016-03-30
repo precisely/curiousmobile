@@ -901,6 +901,8 @@ button.close {
 
 .share-groups {
 	margin-left: 20px;
+	margin-bottom: 5px;
+	margin-top: 0px;
 }
 
 .share-groups label {
@@ -912,6 +914,10 @@ button.close {
 	padding: 15px;
 	margin-top: -14px;
 	margin-right: -10px;
+}
+
+.modal-bottom-pad {
+	padding-top: 5px;
 }
 
 /*Context Menu*/

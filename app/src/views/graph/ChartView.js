@@ -28,6 +28,7 @@ define(function(require, exports, module) {
 	var shareChartTemplate = require('text!templates/share-chart.html');
 	var groupsListTemplate = require('text!templates/groups-list.html');
 	var Scrollview = require('famous/views/Scrollview');
+	var User = require('models/User');
 
 	function ChartView() {
 		BaseView.apply(this, arguments);
@@ -73,7 +74,7 @@ define(function(require, exports, module) {
 
 		this.shareModifier = new Modifier();
 		this.shareModifier.transformFrom(function() {
-			return Transform.translate(App.width - 50, App.height - 105, App.zIndex.header);
+			return Transform.translate(App.width - 50, App.height - 105, App.zIndex.readView);
 		});
 		this.add(this.shareModifier).add(this.shareButton);
 
@@ -110,8 +111,6 @@ define(function(require, exports, module) {
 				var classList = e.srcElement.classList;
 				if (_.contains(classList, 'close') || _.contains(e.srcElement.parentElement.classList, 'close')) {
 					this.shareChartRenderController.hide();
-					this.shareGraphModal.setContent('');
-					this.groupsListSurface.setContent('');
 				}
 
 				if (e.srcElement.id === 'share-chart') {
@@ -132,6 +131,8 @@ define(function(require, exports, module) {
 
 		this.graphView = new GraphView(null, this.options.plotAreaId);
 		this.add(new StateModifier({transform: Transform.translate(0, 65, App.zIndex.readView)})).add(this.graphView);
+		
+		this.createGroupsListScrollView();
 		_setHandlers.call(this);
 	}
 
@@ -231,91 +232,90 @@ define(function(require, exports, module) {
 		this.backRenderController.show(this.leftSurface);
 		this.setRightIcon(this.optionsSurface);
 	};
-
-	ChartView.prototype.getGroupsToShare = function(successCallback) {
-		u.queueJSON('Loading group list', App.serverUrl + '/api/user/action/getGroupsToShare?' + u.getCSRFPreventionURI('getGroupsList') + '&callback=?', function(data) {
-			if (!checkData(data) || !data.success) {
-				return
+	
+	ChartView.prototype.createGroupsListScrollView = function() {
+		this.groupsListScrollContainer = new ContainerSurface({
+			size: [App.width - 50, App.height - 420],
+			properties: {
+				overflow: 'hidden',
+				boxShadow: 'rgb(223, 223, 223) -6px -48px 34px -23px inset',
+				padding: '0px 5px'
 			}
-
-			var groups = [];
-			// https://github.com/syntheticzero/curious2/issues/688#issuecomment-164689115
-			if (data.groups.length > 0) {
-				groups.push(data.groups[0]);
-			}
-			groups.push({name: "PUBLIC", fullName: "Public"}, {name: "PRIVATE", fullName: "Private"});
-			if (data.groups.length > 0) {
-				// Adding the rest of all the groups to the array.
-				groups.push.apply(groups, data.groups.slice(1));
-			}
-
-			data.groups = groups;
-
-			successCallback(data);
 		});
+
+		this.groupsListScrollView = new Scrollview({
+			direction: Utility.Direction.Y
+		});
+		
+		this.groupsSurfaceList = [];
+		
+		this.groupsListScrollView.sequenceFrom(this.groupsSurfaceList);
+		
+		this.groupsListScrollContainer.add(this.groupsListScrollView);
+
+		// TODO Fix the x and y transform to be dynamic with respect to the Device's Screen Resolution.
+		this.xTranslate = 25;
+		if (App.width >= 560) {
+			this.xTranslate = 95;
+			this.groupsListScrollContainer.setSize([575, App.height - 420]);
+		}
+		this.groupsListScrollContainerModifier = new StateModifier({
+			transform: Transform.translate(this.xTranslate, 300, 0)
+		});
+
+		this.shareChartContainerSurface.add(this.groupsListScrollContainerModifier).add(this.groupsListScrollContainer);
 	};
-
+	
 	ChartView.prototype.showShareChartModal = function() {
-		this.getGroupsToShare(function(data) {
-			this.shareGraphModal.setContent( _.template(shareChartTemplate, {height: App.height - 420}, templateSettings));
+		User.getGroupsToShare(function(data) {
+			this.shareGraphModal.setContent('');
+			this.groupsSurfaceList.splice(0, this.groupsSurfaceList.length);
+			this.groupName = '';
+			
+			this.shareGraphModal.setContent(_.template(shareChartTemplate, {height: App.height - 420}, templateSettings));
 
-			var scrollContainer = new ContainerSurface({
-				size: [App.width - 30, App.height - 420],
-				properties: {
-					overflow: 'hidden'
-				}
-			});
-
-			var groupsScrollView = new Scrollview();
-
-			this.groupsListSurface = new Surface({
-				content: _.template(groupsListTemplate, {groups: data.groups}, templateSettings),
-				size: [undefined, true]
-			});
-
-			this.groupsListSurface.pipe(groupsScrollView);
-
-			var spareSurface = new Surface({
+			_.each(data.groups, function(groupName, index) {
+				var groupSurface = new Surface({
+					size: [undefined, true],
+					content: _.template(groupsListTemplate, {index: index, groupName: groupName}, templateSettings)
+				});
+				groupSurface.on('click', function(e) {
+					if (e instanceof CustomEvent) {
+						this.groupName = groupName.name;
+					}
+				}.bind(this));
+				this.groupsSurfaceList.push(groupSurface);
+				groupSurface.pipe(this.groupsListScrollView);
+			}.bind(this));
+			
+			var spareSurfaceForGroupsListScrollView = new Surface({
 				size: [undefined, 10]
 			});
 
-			spareSurface.pipe(groupsScrollView);
-
-			groupsScrollView.sequenceFrom([this.groupsListSurface, spareSurface]);
-
-			// TODO Fix the x and y transform to be dynamic with respect to the Device's Screen Resolution.
-			var xTranslate = 25;
-			if (App.width >= 560) {
-				xTranslate = 95;
-			}
-
-			scrollContainer.add(groupsScrollView);
-
-			var scrollContainerModifier = new StateModifier({
-				transform: Transform.translate(xTranslate, 310, 0)
-			});
-
-			this.shareChartContainerSurface.add(scrollContainerModifier).add(scrollContainer);
-			this.shareChartRenderController.show(this.shareChartContainerSurface);
+			this.groupsSurfaceList.push(spareSurfaceForGroupsListScrollView);
+			spareSurfaceForGroupsListScrollView.pipe(this.groupsListScrollView);
+			
+			this.shareChartRenderController.show(this.shareChartContainerSurface, null, function() {
+					var yOffset = document.getElementById('group-list-container').getBoundingClientRect().top;
+					this.groupsListScrollContainerModifier.setTransform(Transform.translate(this.xTranslate, yOffset, 0));
+			}.bind(this));
 		}.bind(this));
 	};
 
 	ChartView.prototype.shareChart = function() {
-		var chartTitle = $('#chart-title').val();
+		var chartTitle = document.getElementById('chart-title').value;
 		if (!chartTitle) {
 			u.showAlert('Please enter a title for the chart to share.');
 			return;
 		}
 
-		var groupName = $('input[name="group"]:checked').val();
+		var groupName = this.groupName;
 		if (!groupName) {
-			u.showAlert('Please select a group name to share this chart.');
+			u.showAlert('Please select a group to share this chart with.');
 			return;
 		}
 
 		this.shareChartRenderController.hide();
-		this.shareGraphModal.setContent('');
-		this.groupsListSurface.setContent('');
 
 		this.graphView.plot.setName(chartTitle);
 		this.graphView.plot.saveSnapshot(groupName);

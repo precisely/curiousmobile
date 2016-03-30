@@ -359,7 +359,30 @@ define(function(require, exports, module) {
 					}
 				}
 		);
-	}
+	};
+	
+	User.getGroupsToShare = function(successCallback) {
+		u.queueJSON('Loading group list', App.serverUrl + '/api/user/action/getGroupsToShare?' + u.getCSRFPreventionURI('getGroupsList') + '&callback=?', function(data) {
+			if (!checkData(data) || !data.success) {
+				return
+			}
+
+			var groups = [];
+			// https://github.com/syntheticzero/curious2/issues/688#issuecomment-164689115
+			if (data.groups.length > 0) {
+				groups.push(data.groups[0]);
+			}
+			groups.push({name: "PUBLIC", fullName: "Public"}, {name: "PRIVATE", fullName: "Private"});
+			if (data.groups.length > 0) {
+				// Adding the rest of all the groups to the array.
+				groups.push.apply(groups, data.groups.slice(1));
+			}
+
+			data.groups = groups;
+			
+			successCallback(data);
+		});
+	};
 
 	module.exports = User;
 });
