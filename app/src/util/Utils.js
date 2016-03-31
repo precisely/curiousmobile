@@ -417,8 +417,8 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				return true;
 			}
 			if (data == 'refresh') {
-				u.showAlert("Server timeout, refreshing page.")
-				refreshPage();
+				u.showAlert("Server timeout, refreshing page.");
+				location.reload();
 				return false;
 			}
 			if (typeof(data) == 'string') {

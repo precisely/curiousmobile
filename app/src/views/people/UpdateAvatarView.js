@@ -62,7 +62,6 @@ define(function (require, exports, module) {
 						var currentView = App.pageView.getCurrentView();
 						if (typeof currentView !== 'undefined') {
 							currentView.killOverlayContent();
-							currentView.showUserDetailsForm();
 							console.log('********************** profile picture updated ***********************************');
 						}
 					});

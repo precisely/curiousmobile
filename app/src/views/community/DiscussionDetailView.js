@@ -427,7 +427,7 @@ define(function(require, exports, module) {
 				this.loadDetails();
 			}.bind(this));
 		} else {
-			DiscussionPost.update({postId: postId, message: message}, function(data) {
+			DiscussionPost.update({id: postId, message: message}, function(data) {
 				this.loadDetails();
 			}.bind(this), function(data) {
 			}.bind(this));
@@ -440,7 +440,7 @@ define(function(require, exports, module) {
 		this.isCommentSelected = false;
 		this.commentBoxHeight = 0;
 		this.initialHeight = 50;
-	}
+	};
 
 	App.pages[DiscussionDetailView.name] = DiscussionDetailView;
 	module.exports = DiscussionDetailView;

@@ -136,7 +136,7 @@ define(function(require, exports, module) {
 		} else {
 			tagListItem.isContinuous = isContinuous;
 			tagListItem.showPoints = false;
-			
+
 			this.addLine(tagListItem);
 		}
 	};
@@ -268,7 +268,7 @@ $(document).on('postLineDetails', function(e, tagLine) {
 	var currentPage = App.pageView.getCurrentPage();
 	if (currentPage !== 'ChartView' && currentPage !== 'CreateChartView') {
 		var currentView = App.pageView.getCurrentView();
-		if (typeof currentView !== 'undefined') {
+		if ((typeof currentView !== 'undefined') && (typeof currentView.graphView !== 'undefined')) {
 			currentView.graphView.createTagsPill(tagLine.id, tagLine.tag, tagLine.color);
 		}
 	} else {

@@ -174,8 +174,8 @@ function checkData(data, status, errorMessage, successMessage) {
 		return true;
 	}
 	if (data == 'refresh') {
-		showAlert("Server timeout, refreshing page.")
-		refreshPage();
+		showAlert("Server timeout, refreshing page.");
+		location.reload();
 		return false;
 	}
 	if (typeof(data) == 'string') {

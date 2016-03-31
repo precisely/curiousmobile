@@ -233,13 +233,20 @@ define(function(require, exports, module) {
 		this.renderController.show((this.tagsScrollView));
 	};
 
-	function _renderTagsList(tagsList) {
+	function _renderTagsList(tagsList, notSearchResult) {
 		this.tagsSurfaceList = [];
+		var deletedTags = [];
+		if (notSearchResult) {
+			deletedTags = deletedTags.concat(this.selectedTags);
+		}
 		_.each(tagsList, function(tag) {
 			var squareIcon = 'fa-square-o';
 			_.each(this.selectedTags, function(tagItem) {
 				if (tagItem.id === tag.id) {
 					squareIcon = 'fa-check-square';
+					if (deletedTags.length) {
+						deletedTags.splice(deletedTags.indexOf(tagItem), 1);
+					}
 					return;
 				}
 			});
@@ -273,10 +280,15 @@ define(function(require, exports, module) {
 					}
 				}
 			}.bind(this));
-
 			tagSurface.pipe(this.tagsScrollView);
 			this.tagsSurfaceList.push(tagSurface);
 		}.bind(this));
+		if (deletedTags.length) {
+			this.selectedTags = this.selectedTags.filter(function(tag) {
+				return deletedTags.indexOf(tag) === -1;
+			});
+		}
+		
 		this.tagsScrollView.sequenceFrom(this.tagsSurfaceList);
 	}
 
