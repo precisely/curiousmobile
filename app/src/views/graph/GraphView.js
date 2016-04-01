@@ -51,7 +51,7 @@ define(function(require, exports, module) {
 		});
 
 		this.graphSurface.pipe(this._eventOutput);
-		this.renderController.show(this.graphSurface, function() {
+		this.renderController.show(this.graphSurface, null, function() {
 			this.plotProperties = new PlotProperties({
 				'startDateInit':'start date and/or tag',
 				'endDateInit':'end date and/or tag',

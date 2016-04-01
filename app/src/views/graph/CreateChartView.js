@@ -233,13 +233,33 @@ define(function(require, exports, module) {
 		this.renderController.show((this.tagsScrollView));
 	};
 
-	function _renderTagsList(tagsList) {
+	function _renderTagsList(tagsList, notSearchResult) {
 		this.tagsSurfaceList = [];
+		/*
+		 * Pushing all selectedTags into new deletedTags list, then inside second _.each, if selected tag matches any
+		 * of the tags in the tagslist, we are removing that tag from deletedTags list(i.e. plotted tag has not been
+		 * deleted from taglist). At the end of the loop we have list of tags that are deleted, which is then
+		 * filtered out from selected(plotted) tags. This code tackles the situation 
+		 * where user plots some tags > goes to trackview and delete some of plotted tag(s) > comes back to
+		 * chartview and tries to edit existing chart or create new chart. 
+		 */
+		var deletedTags = [];
+		
+		/* 
+		 * Do not perform delete tag operaton if taglist comes as a result of search because that will give only
+		 * limited search results not complete taglist.
+		 */
+		if (notSearchResult) {
+			deletedTags = deletedTags.concat(this.selectedTags);
+		}
 		_.each(tagsList, function(tag) {
 			var squareIcon = 'fa-square-o';
 			_.each(this.selectedTags, function(tagItem) {
 				if (tagItem.id === tag.id) {
 					squareIcon = 'fa-check-square';
+					if (deletedTags.length) {
+						deletedTags.splice(deletedTags.indexOf(tagItem), 1);
+					}
 					return;
 				}
 			});
@@ -273,10 +293,17 @@ define(function(require, exports, module) {
 					}
 				}
 			}.bind(this));
-
 			tagSurface.pipe(this.tagsScrollView);
 			this.tagsSurfaceList.push(tagSurface);
 		}.bind(this));
+		
+		// Removing the deleted tags from the selected tags list.
+		if (deletedTags.length) {
+			this.selectedTags = this.selectedTags.filter(function(tag) {
+				return deletedTags.indexOf(tag) === -1;
+			});
+		}
+		
 		this.tagsScrollView.sequenceFrom(this.tagsSurfaceList);
 	}
 

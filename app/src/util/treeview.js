@@ -360,7 +360,7 @@ function TreeItemList(options) {
 			this.callback(function(widget) { widget.notifyDoneLoading(); });
 			if (successCallback) {
 				this.sortByMostUsed();
-				successCallback(this.listItems.list);
+				successCallback(this.listItems.list, true);
 			}
 		}.bind(this));
 	};
