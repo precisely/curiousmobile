@@ -16,7 +16,7 @@ define(function(require, exports, module) {
 		var backgroundSurface = new Surface({
 			size: [280, undefined],
 			properties: {
-				backgroundColor: '#ffffff',
+				backgroundColor: '#ffffff'
 			}
 		});
 		this.backgroundModifier = new StateModifier({transform: Transform.behind});
@@ -34,7 +34,7 @@ define(function(require, exports, module) {
 		menuItemOffset: 58,
 		staggerDelay: 35,
 		transition: {
-			duration: 700,
+			duration: 350,
 			curve: 'easeOut'
 		}
 	};

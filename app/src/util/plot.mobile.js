@@ -86,16 +86,14 @@ define(function(require, exports, module) {
 				}.bind(this));
 	}
 
-	PlotMobile.prototype.saveSnapshot = function() {
-		var first = true;
+	PlotMobile.prototype.saveSnapshot = function(group) {
 		var plotDataStr = this.storeSnapshot();
 		if (plotDataStr == null) {
 			this.showAlert("No plotted data to save");
 			return;
 		}
-		var plot = this;
 
-		this.queuePostJSON("sharing graph", this.makePostUrl("saveSnapshotData"), { name: this.getName() + ' (snapshot)', snapshotData: plotDataStr },
+		this.queuePostJSON("sharing graph", this.makePostUrl("saveSnapshotData"), { name: this.getName() + ' (snapshot)', snapshotData: plotDataStr, group: group },
 				function(data) {
 					if (this.checkData(data)) {
 						if (data.success) {
@@ -138,7 +136,7 @@ define(function(require, exports, module) {
 		} else {
 			tagListItem.isContinuous = isContinuous;
 			tagListItem.showPoints = false;
-			
+
 			this.addLine(tagListItem);
 		}
 	};
@@ -270,7 +268,7 @@ $(document).on('postLineDetails', function(e, tagLine) {
 	var currentPage = App.pageView.getCurrentPage();
 	if (currentPage !== 'ChartView' && currentPage !== 'CreateChartView') {
 		var currentView = App.pageView.getCurrentView();
-		if (typeof currentView !== 'undefined') {
+		if ((typeof currentView !== 'undefined') && (typeof currentView.graphView !== 'undefined')) {
 			currentView.graphView.createTagsPill(tagLine.id, tagLine.tag, tagLine.color);
 		}
 	} else {

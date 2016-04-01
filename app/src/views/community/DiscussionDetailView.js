@@ -130,7 +130,7 @@ define(function(require, exports, module) {
 				padding: '5px 10px',
 				paddingTop: '20px'
 			},
-			content: u.getParsedInAppBrowserSupportedURL(parsedTemplate)
+			content: parsedTemplate
 		});
 
 		if (discussionPost.discussionDetails.firstPost && discussionPost.discussionDetails.firstPost.plotDataId) {
@@ -340,7 +340,7 @@ define(function(require, exports, module) {
 			var parsedTemplate =  _.template(commentTemplate, post, templateSettings);
 			var commentSurface = new Surface({
 				size: [undefined, true],
-				content: u.getParsedInAppBrowserSupportedURL(parsedTemplate)
+				content: parsedTemplate
 			});
 
 			commentSurface.discussionView = this;
@@ -427,7 +427,7 @@ define(function(require, exports, module) {
 				this.loadDetails();
 			}.bind(this));
 		} else {
-			DiscussionPost.update({postId: postId, message: message}, function(data) {
+			DiscussionPost.update({id: postId, message: message}, function(data) {
 				this.loadDetails();
 			}.bind(this), function(data) {
 			}.bind(this));
@@ -440,7 +440,7 @@ define(function(require, exports, module) {
 		this.isCommentSelected = false;
 		this.commentBoxHeight = 0;
 		this.initialHeight = 50;
-	}
+	};
 
 	App.pages[DiscussionDetailView.name] = DiscussionDetailView;
 	module.exports = DiscussionDetailView;

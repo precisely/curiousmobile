@@ -174,8 +174,8 @@ function checkData(data, status, errorMessage, successMessage) {
 		return true;
 	}
 	if (data == 'refresh') {
-		showAlert("Server timeout, refreshing page.")
-		refreshPage();
+		showAlert("Server timeout, refreshing page.");
+		location.reload();
 		return false;
 	}
 	if (typeof(data) == 'string') {
@@ -279,3 +279,11 @@ function moveCaretToEnd(el) {
 	}
 	el.focus();
 }
+
+linkify = function(input) {
+	return Autolinker.link( input, {
+		replaceFn: function (autolinker, match) {
+			return '<a class="auto-link-color" onclick="window.open(\'' + match.getUrl() + '\'\, \'_blank\')">' + match.getUrl() + '</a>';
+		}
+	});
+};

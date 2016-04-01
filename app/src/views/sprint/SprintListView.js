@@ -153,14 +153,14 @@ define(function(require, exports, module) {
 		User.markTrackathonVisited(function() {
 			App.pageView.getPage('TrackView').hidePopover();
 		});
-	}
+	};
 
 	SprintListView.prototype.preShow = function(state) {
 		if (this.deck.length <= 0 || (state && state.new)) {
-			this.initScrollView();
 			this.currentPill = this.currentPill || 'ALL';
-			this.fetchSprints();
 		}
+		this.initScrollView();
+		this.fetchSprints();
 		return true;
 	};
 

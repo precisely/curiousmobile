@@ -170,6 +170,23 @@ define(function(require, exports, module) {
 
 	TrackView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
+		if (this.currentListView && this.currentListView.draggableList.length && !store.get('trackathonVisited')) {
+			this.showPopover();
+		}
+	};
+
+	TrackView.prototype.showPopover = function() {
+		if (!store.get('trackathonVisited')) {
+			$('#trackathon-menu').popover('show');
+			document.getElementsByClassName('sprint').classList.add('active');
+			this.isPopoverVisible = true;
+		}
+	};
+
+	TrackView.prototype.hidePopover = function() {
+		$('#trackathon-menu').popover('hide');
+		document.getElementsByClassName('sprint').classList.remove('active');
+		this.isPopoverVisible = false;
 	};
 
 	TrackView.prototype.showPopover = function() {
@@ -219,7 +236,7 @@ define(function(require, exports, module) {
 			if (this.currentListView && this.currentListView.draggableList.length) {
 				this.showPopover();
 			}
-		}.bind(this));
+		}.bind(this), glowEntry);
 		return true;
 	};
 

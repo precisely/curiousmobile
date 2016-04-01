@@ -54,7 +54,7 @@ define(function(require, exports, module) {
 			var classList;
 			if (e instanceof CustomEvent) {
 				classList = e.srcElement.parentElement.classList;
-				if (_.contains(classList, 'close-discussion')) {
+				if (_.contains(classList, 'close-discussion') || _.contains(e.srcElement.classList, 'close-discussion')) {
 					this.alert = u.showAlert({
 						message: 'Are you sure you want to delete ' + this.discussion.get("name") + ' ?',
 						a: 'Yes',
@@ -104,4 +104,3 @@ define(function(require, exports, module) {
 
  	module.exports = DiscussionCardView;
  });
-

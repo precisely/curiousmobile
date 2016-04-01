@@ -68,7 +68,7 @@ define( function(require, exports, module) {
 	};
 
 	DiscussionPost.update = function(args, successCallback, failCallback) {
-		u.queueJSONAll("Updating a comment", App.serverUrl + '/api/discussionPost/' + args.postId, 
+		u.queueJSONAll("Updating a comment", App.serverUrl + '/api/discussionPost/' + args.id, 
 		  JSON.stringify(args), function(data) {
 			if (data.success) {
 				successCallback(data);

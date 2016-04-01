@@ -9,6 +9,7 @@ define(function(require, exports, module) {
 	var Scrollview = require('famous/views/Scrollview');
 	var RenderController = require('famous/views/RenderController');
 	var Graph = require('models/Graph');
+	var NoMoreItemsCardView = require('views/community/card/NoMoreItemsCardView');
 
 	var u = require('util/Utils');
 
@@ -21,7 +22,7 @@ define(function(require, exports, module) {
 				backgroundColor: '#fff'
 			}
 		});
-		this.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(backgroundSurface);
+		this.add(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.contextMenu)})).add(backgroundSurface);
 		this.renderController = new RenderController();
 		this.add(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.contextMenu + 1)})).add(this.renderController);
 		this.initScrollView();
@@ -45,10 +46,16 @@ define(function(require, exports, module) {
 
 	LoadGraphOverlay.prototype.listContents = function() {
 		Graph.load({offset: 0}, function(graphList) {
+			if (!graphList.length) {
+				var noMoreItemsCardView = new NoMoreItemsCardView();
+				this.contentsSurfaceList.push(noMoreItemsCardView);
+				noMoreItemsCardView.setScrollView(this.scrollView);
+				return;
+			}
 			_.each(graphList, function(graphItem) {
 				var graphItemSurface = new Surface({
 					size: [undefined, 50],
-					content: '<div class="graph-item-bar"><p>' + graphItem.name + '</p><i class="delete-graph fa-2x fa fa-trash-o"></i></div>',
+					content: '<div class="graph-item-bar"><p>' + graphItem.name + '</p><div class="delete-graph"><i class="fa-2x fa fa-trash-o"></i></div></div>',
 					properties: {
 						backgroundColor: '#fff',
 					}
@@ -57,7 +64,7 @@ define(function(require, exports, module) {
 					if (e instanceof CustomEvent) {
 						var classList = e.srcElement.classList;
 						var currentView = App.pageView.getPage('ChartView');
-						if (_.contains(classList, 'delete-graph')) {
+						if (_.contains(classList, 'delete-graph') || _.contains(e.srcElement.parentElement.classList, 'delete-graph')) {
 							u.showAlert({
 								message: 'Are you sure you want to delete the saved gaph?',
 								a: 'Yes',
@@ -90,4 +97,3 @@ define(function(require, exports, module) {
 
 	module.exports = LoadGraphOverlay;
 });
-

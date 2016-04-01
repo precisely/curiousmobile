@@ -77,26 +77,28 @@ define(function(require, exports, module) {
 		}
 	};
 
-	Tags.sortTags = function(tagsList, sortAscending) {
-		if (sortAscending) {
-			tagsList.sort(function(a, b) {
-				if (a.description < b.description)
-					return -1;
-				if (a.description > b.description)
-					return 1;
-				return 0;
-			});
+	Tags.sortTags = function(tagList, sortAscending, sortFilter) {
+		if (sortFilter === 'most-used') {
+			tagList.sortByMostUsed();
 		} else {
-			tagsList.sort(function(a, b) {
-				if (a.description < b.description)
-					return 1;
-				if (a.description > b.description)
-					return -1;
-				return 0;
-			});
+			if (sortAscending) {
+				tagList.listItems.list.sort(function(a, b) {
+					if (a.description < b.description)
+						return -1;
+					if (a.description > b.description)
+						return 1;
+					return 0;
+				});
+			} else {
+				tagList.listItems.list.sort(function(a, b) {
+					if (a.description < b.description)
+						return 1;
+					if (a.description > b.description)
+						return -1;
+					return 0;
+				});
+			}
 		}
-
-		return tagsList;
 	};
 
 	Tags.getTagProperties = function(id, callback) {

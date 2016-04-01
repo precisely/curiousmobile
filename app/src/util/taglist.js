@@ -11,6 +11,7 @@ function Tag(args) {
 	this.description = args.description;
 	this.isContinuous = args.isContinuous;
 	this.showPoints = args.showPoints;
+	this.useCount = args.useCount;
 	this.update = function(args) {
 		if (typeof args.state !== 'undefined' && args.state == TREEITEM_SNAPSHOT) {
 			this.state = TREEITEM_SNAPSHOT;
@@ -254,7 +255,7 @@ function TagGroup(args) {
 			return false;
 
 		return nameIterator.remaining() == 0;
-	}
+	};
 
 	this.matchNameListSegment = function(nameIterator) {
 		for (var i = 0, len = this.children.length; i < len; ++i) {
@@ -263,7 +264,7 @@ function TagGroup(args) {
 		}
 
 		return true;
-	}
+	};
 
 	this.sort = function() {
 		this.children.sort(function(itemA, itemB) {
@@ -274,7 +275,7 @@ function TagGroup(args) {
 				return 1;
 			return 0;
 		});
-	}
+	};
 
 	this.excludeChildAtBackend = function(childItem, callback) {
 		var csrfKey = "excludeFromTagGroupDataCSRF";
@@ -377,7 +378,8 @@ function TagStore(args) {
 			type : type,
 			id : args['id'],
 			treeStore : this,
-			state: args['state']
+			state: args['state'],
+			useCount: args['c']
 		};
 
 		if (typeClass === TagGroup) {
@@ -438,7 +440,22 @@ function TagList(args) {
 
 	this.sort = function() {
 		this.listItems.sort();
-	}
+	};
+
+	this.sortByMostUsed = function() {
+		this.listItems.list.sort(function(a, b) {
+			if (a.useCount < b.useCount)
+				return 1;
+			if (a.useCount > b.useCount)
+				return -1;
+			if (a.useCount === b.useCount) {
+				if (a.description < b.description)
+					return -1;
+				if (a.description > b.description)
+					return 1;
+			}
+		});
+	};
 
 	this.searchItemByDescriptionAndType = function(description, type) {
 		var item;
@@ -1006,19 +1023,19 @@ inherit(TagListWidget, TreeWidget);
 
 /*
  * function tagListFindSearchMatches(list, ) { var i, j, result = [];
- * 
- * 
- * 
+ *
+ *
+ *
  * for (j in terms) { spaceTerms.push(' ' + terms[j]); }
- * 
+ *
  * var termLonger = term.length > additionalWordsCharLimit;
- * 
+ *
  * for (i in list) { var tag = list[i]; var tagName = tag.description if
  * (tagName in skipSet) continue; var match = true; for (j in terms) { if
  * (terms[j].length >0 && (!(tagName.startsWith(terms[j]) || (termLonger &&
  * (tagName.indexOf(spaceTerms[j]) >= 0)) ))) { match = false; break; } } if
  * (match) { result.push(tag); } }
- * 
+ *
  * return result; }
  */
 function tagListSetInputText(inp, text) {

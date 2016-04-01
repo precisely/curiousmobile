@@ -34,7 +34,7 @@ define(function(require, exports, module) {
 				zIndex: 5
 			}
 		});
-		this.listAscending = false;
+		this.listAscending = true;
 		this.setBody(this.backgroundSurface);
 
 		this.renderController = new RenderController();
@@ -130,11 +130,29 @@ define(function(require, exports, module) {
 		this.add(pillsMod).add(_createPills.call(this));
 	}
 
+	function handleTagSort(elementId) {
+		var sortFilter = 'a-z';
+		var removeClassForId = 'most-used-pill';
+		var listAscending = !this.listAscending;
+		
+		if (elementId === 'most-used-pill') {
+			sortFilter = 'most-used';
+			removeClassForId = 'a-z-pill';
+			listAscending = true;
+		}
+		
+		Tags.sortTags(App.tagListWidget.list, this.listAscending, sortFilter);
+		document.getElementById(removeClassForId).classList.remove('active');
+		document.getElementById(elementId).classList.add('active');
+		_renderTagsList.call(this, App.tagListWidget.list.listItems.list);
+		this.listAscending = listAscending;
+	}
+	
 	function _createPills() {
 		var pillSurface = new Surface({
 			content: '<div class="btn-group tag-filters" role="group">' +
-				'<button type="button" class="btn btn-secondary" id="most-used-pill">Most Used</button>' +
-				'<button type="button" class="btn btn-secondary active" id="a-z-pill">A-Z</button>',
+				'<button type="button" class="btn btn-secondary active" id="most-used-pill">Most Used</button>' +
+				'<button type="button" class="btn btn-secondary" id="a-z-pill">A-Z</button>',
 			size: [true, true],
 			properties: {
 				backgroundColor: '#efefef',
@@ -143,13 +161,7 @@ define(function(require, exports, module) {
 		});
 		pillSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				if (e.srcElement.id === 'a-z-pill') {
-					var tagList = Tags.sortTags(App.tagListWidget.list.listItems.list, this.listAscending);
-					document.getElementById('most-used-pill').classList.remove('active');
-					e.srcElement.classList.add('active');
-					_renderTagsList.call(this, tagList);
-					this.listAscending = !this.listAscending;
-				}
+				handleTagSort.call(this, e.srcElement.id);
 			}
 		}.bind(this));
 		return pillSurface;
@@ -218,17 +230,36 @@ define(function(require, exports, module) {
 
 	CreateChartView.prototype.init = function() {
 		App.tagListWidget = initTagListWidget(_renderTagsList.bind(this));
-		_renderTagsList.call(this, App.tagListWidget.list.listItems.list);
 		this.renderController.show((this.tagsScrollView));
 	};
 
-	function _renderTagsList(tagsList) {
+	function _renderTagsList(tagsList, notSearchResult) {
 		this.tagsSurfaceList = [];
+		/*
+		 * Pushing all selectedTags into new deletedTags list, then inside second _.each, if selected tag matches any
+		 * of the tags in the tagslist, we are removing that tag from deletedTags list(i.e. plotted tag has not been
+		 * deleted from taglist). At the end of the loop we have list of tags that are deleted, which is then
+		 * filtered out from selected(plotted) tags. This code tackles the situation 
+		 * where user plots some tags > goes to trackview and delete some of plotted tag(s) > comes back to
+		 * chartview and tries to edit existing chart or create new chart. 
+		 */
+		var deletedTags = [];
+		
+		/* 
+		 * Do not perform delete tag operaton if taglist comes as a result of search because that will give only
+		 * limited search results not complete taglist.
+		 */
+		if (notSearchResult) {
+			deletedTags = deletedTags.concat(this.selectedTags);
+		}
 		_.each(tagsList, function(tag) {
 			var squareIcon = 'fa-square-o';
 			_.each(this.selectedTags, function(tagItem) {
 				if (tagItem.id === tag.id) {
 					squareIcon = 'fa-check-square';
+					if (deletedTags.length) {
+						deletedTags.splice(deletedTags.indexOf(tagItem), 1);
+					}
 					return;
 				}
 			});
@@ -246,7 +277,7 @@ define(function(require, exports, module) {
 					if(obj.id === tag.id) {
 						return index;
 					}
-				}).filter(isFinite)
+				}).filter(isFinite);
 
 				if (u.isAndroid() || (event instanceof CustomEvent)) {
 					if (this.selectedTags.length === 6 && indexes.length === 0) {
@@ -262,10 +293,17 @@ define(function(require, exports, module) {
 					}
 				}
 			}.bind(this));
-
 			tagSurface.pipe(this.tagsScrollView);
 			this.tagsSurfaceList.push(tagSurface);
 		}.bind(this));
+		
+		// Removing the deleted tags from the selected tags list.
+		if (deletedTags.length) {
+			this.selectedTags = this.selectedTags.filter(function(tag) {
+				return deletedTags.indexOf(tag) === -1;
+			});
+		}
+		
 		this.tagsScrollView.sequenceFrom(this.tagsSurfaceList);
 	}
 
