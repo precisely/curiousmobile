@@ -227,7 +227,7 @@ define(function(require, exports, module, store) {
 			editPeopleSurface.on('keyup', function(e) {
 				var inputType = e.srcElement.type;
 				if ((e.which === 13) && (inputType === 'text' || inputType === 'textarea' || inputType === 'password' || inputType === "radio")) {
-					cordova.plugins.Keyboard.close();	
+					cordova.plugins.Keyboard.close();
 				}
 			}.bind(this));
 
@@ -256,9 +256,8 @@ define(function(require, exports, module, store) {
 
 			// Calculating draggable container height according to the taglist height
 			this.draggableView = new DraggableView(this.editProfileContainerSurface, true, 1030 + (this.tagList.length * 50));
-			this.renderController.show(this.draggableView, null, function() {
-					this.submitButtonModifier.setTransform(Transform.translate(0, (1330 + this.tagList.length * 40),  App.zIndex.readView + 62));
-			}.bind(this));
+			this.submitButtonModifier.setTransform(Transform.translate(0, (1330 + this.tagList.length * 40),  App.zIndex.readView + 62));
+			this.renderController.show(this.draggableView);
 			if (callback) {
 				callback();
 			}
