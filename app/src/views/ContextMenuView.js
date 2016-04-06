@@ -26,7 +26,10 @@ define(function (require, exports, module) {
 		pinnedEntry: [
 			{class: 'trigger-delete-entry', label: 'Delete Tag'},
 		],
-		discussion: {},
+		discussion: [
+			{class: 'delete-discussion', label: 'Delete'},
+			{class: 'edit-discussion', label: 'edit'}
+		]
 	};
 
 	function _createView() {

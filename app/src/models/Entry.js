@@ -336,7 +336,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			},
 			delete: function(callback) {
 				var collectionCache = window.App.collectionCache;
-				if (this.isGhost()) {
+				if (this.isGhost() && !this.get('sprintEntry')) {
 					if (this.isContinuous() || this.isTodayOrLater()) {
 						this.deleteGhost(true, callback);
 					} else {

@@ -28,7 +28,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			var alert = new AlertView(options);
 			u.alertViewsOpen.push(alert);
 			if (typeof cordova	!== 'undefined') {
-				cordova.plugins.Keyboard.close();	
+				cordova.plugins.Keyboard.close();
 			}
 			return alert;
 		};
@@ -584,6 +584,16 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 
 		Utils.isAndroid = function() {
 			return device.platform == 'android' || device.platform == 'Android';
+		};
+
+		/**
+		* @param {String} HTML representing a single element
+		* @return {Element}
+		*/
+		Utils.htmlToElement = function(html) {
+			var template = document.createElement('template');
+			template.innerHTML = html;
+			return template.content.firstChild;
 		};
 
 		var device = {};

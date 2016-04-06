@@ -150,5 +150,24 @@ define(function(require, exports, module) {
 				}, null, httpArgs);
 	};
 
+	Discussion.update = function(args, successCallback, failCallback) {
+		var httpArgs = {requestMethod: 'PUT'};
+		u.queueJSONAll('Updating discussion', App.serverUrl + '/api/discussion/' + args.hash, JSON.stringify(args),
+				function(data) {
+					if (u.checkData(data)) {
+						if (data.success) {
+							successCallback();
+						} else {
+							u.showAlert(data.message);
+							if (failCallback) {
+								failCallback();
+							}
+						}
+					}
+				}, function(error) {
+					console.log('error: ', error);
+				}, null, httpArgs);
+	};
+
 	module.exports = Discussion;
 });

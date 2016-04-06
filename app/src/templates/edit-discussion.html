@@ -1,0 +1,22 @@
+<div class="modal-dialog edit-discussion-overlay">
+	<div class="modal-content">
+		<div class="modal-header">
+			<button type="button" class="close" id="share-chart-close-button">
+				<i class="fa fa-times-circle-o"></i>
+			</button>
+			<h4 class="modal-title">Edit Discussion</h4>
+		</div>
+		<div class="modal-body modal-bottom-pad">
+			<div class="form-group">
+				<textarea class="form-control" placeholder="New question or discussion topic?" type="text" id="name" name="name" rows="5">{{- name }}</textarea>
+				<br>
+				<textarea class="form-control" placeholder="Add description" type="text" id="description" name="message" rows="2">{{- description }}</textarea>
+				<p class="share-chart-text"><small>Where do you want to publish this?</small></p>
+				<div id="group-list-container" style="height: {{- height }}px"></div>
+			</div>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="submit-post">UPDATE</button>
+		</div>
+	</div>
+</div>
