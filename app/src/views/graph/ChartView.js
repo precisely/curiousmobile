@@ -79,10 +79,10 @@ define(function(require, exports, module) {
 		this.shareButton.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				this.hideShareButtonPopover();
-				this.overlayWithGroupListView.showOverlayModal();
+				this.overlayWithGroupListView = new OverlayWithGroupListView(shareChartTemplate);
+				this.showOverlayContent(this.overlayWithGroupListView);
 			}
 		}.bind(this));
-
 
 		this.setHeaderLabel('CHART');
 		this.setRightIcon(this.optionsSurface);
@@ -93,8 +93,6 @@ define(function(require, exports, module) {
 		this.graphView = new GraphView(null, this.options.plotAreaId);
 		this.add(new StateModifier({transform: Transform.translate(0, 65, App.zIndex.readView)})).add(this.graphView);
 
-		this.overlayWithGroupListView = new OverlayWithGroupListView(shareChartTemplate);
-		this.add(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.contextMenu)})).add(this.overlayWithGroupListView);
 		_setHandlers.call(this);
 	}
 
@@ -207,7 +205,7 @@ define(function(require, exports, module) {
 			return;
 		}
 
-		this.overlayWithGroupListView.overlayRenderController.hide();
+		this.killOverlayContent();
 
 		this.graphView.plot.setName(chartTitle);
 		this.graphView.plot.saveSnapshot(groupName);
@@ -233,11 +231,30 @@ define(function(require, exports, module) {
 			this.graphView.plot.save();
 		}.bind(this));
 		this.on('share-snapshot', function() {
-			this.overlayWithGroupListView.showOverlayModal();
+			this.overlayWithGroupListView = new OverlayWithGroupListView(shareChartTemplate);
+			this.showOverlayContent(this.overlayWithGroupListView);
 		}.bind(this));
 		this.on('load-snapshot', function() {
 			this.showLoadGraphOverlay();
 		}.bind(this));
+	}
+
+	ChartView.prototype.showOverlayContent = function(renderable) {
+		this.showBackButton();
+		this.removeRightIcon();
+		this.hideSearchIcon();
+		this.backRenderController.hide();
+		this.setHeaderLabel('SHARE CHART');
+		BaseView.prototype.showOverlayContent.call(this, renderable);
+	};
+
+	ChartView.prototype.killOverlayContent = function() {
+		BaseView.prototype.killOverlayContent.call(this);
+		this.showSearchIcon();
+		this.showMenuButton();
+		this.setRightIcon(this.optionsSurface);
+		this.backRenderController.show(this.leftSurface);
+		this.setHeaderLabel('CHART');
 	}
 
 	App.pages['ChartView'] = ChartView;

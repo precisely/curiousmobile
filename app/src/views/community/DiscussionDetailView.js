@@ -51,9 +51,6 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		_setHandlers.call(this);
-
-		this.overlayWithGroupListView = new OverlayWithGroupListView(editDiscussionTemplate);
-		this.add(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.contextMenu)})).add(this.overlayWithGroupListView);
 	}
 
 	DiscussionDetailView.prototype = Object.create(BaseView.prototype);
@@ -210,8 +207,10 @@ define(function(require, exports, module) {
 						}
 					}.bind(this));
 				} else if (_.contains(e.srcElement.classList, 'add-description')) {
-					this.overlayWithGroupListView.showOverlayModal({name: u.parseDivToNewLine(this.discussionDetails.discussionTitle), description: this.discussionDetails.firstPost.message,
+					this.overlayWithGroupListView = new OverlayWithGroupListView(editDiscussionTemplate, {name: u.parseDivToNewLine(this.discussionDetails.discussionTitle), description: this.discussionDetails.firstPost.message,
 							groupName: this.discussionDetails.groupName || (this.discussionDetails.isPublic ? 'PUBLIC' : 'PRIVATE')});
+					this.showOverlayContent(this.overlayWithGroupListView);
+					this.setHeaderLabel('EDIT DISCUSSION');
 				}
 			}
 		}.bind(this));
@@ -281,8 +280,10 @@ define(function(require, exports, module) {
 
 	function _setHandlers() {
 		this.on('edit-discussion', function() {
-			this.overlayWithGroupListView.showOverlayModal({name: u.parseDivToNewLine(this.discussionDetails.discussionTitle), description: this.discussionDetails.firstPost.message,
+			this.overlayWithGroupListView = new OverlayWithGroupListView(editDiscussionTemplate, {name: u.parseDivToNewLine(this.discussionDetails.discussionTitle), description: this.discussionDetails.firstPost.message,
 					groupName: this.discussionDetails.groupName || (this.discussionDetails.isPublic ? 'PUBLIC' : 'PRIVATE')});
+			this.showOverlayContent(this.overlayWithGroupListView);
+			this.setHeaderLabel('EDIT DISCUSSION');
 		}.bind(this));
 		this.on('delete-discussion', function() {
 			this.deleteDiscussion();
@@ -502,8 +503,8 @@ define(function(require, exports, module) {
 	DiscussionDetailView.prototype.updateDiscussion = function(args) {
 		args.discussionHash = this.discussionHash;
 		Discussion.update(args, function() {
+			this.killOverlayContent();
 			this.loadDetails();
-			this.overlayWithGroupListView.overlayRenderController.hide();
 		}.bind(this), function() {
 		}.bind(this));
 	};
@@ -514,6 +515,11 @@ define(function(require, exports, module) {
 		this.isCommentSelected = false;
 		this.commentBoxHeight = 0;
 		this.initialHeight = 50;
+	};
+
+	DiscussionDetailView.prototype.killOverlayContent = function() {
+		BaseView.prototype.killOverlayContent.call(this);
+		this.setHeaderLabel('SOCIAL');
 	};
 
 	App.pages[DiscussionDetailView.name] = DiscussionDetailView;

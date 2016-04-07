@@ -15,11 +15,13 @@ define(function(require, exports, module) {
 	var User = require('models/User');
 	var u = require('util/Utils');
 
-	function OverlayWithGroupListView(template, args) {
+	function OverlayWithGroupListView(template, templateProperties) {
 		StateView.apply(this, arguments);
 		this.template = template;
+		this.templateProperties = templateProperties;
 		this.createOverlay();
 		this.createGroupsListScrollView();
+		this.showOverlayModal();
 	}
 
 	OverlayWithGroupListView.prototype = Object.create(StateView.prototype);
@@ -31,24 +33,15 @@ define(function(require, exports, module) {
 	OverlayWithGroupListView.prototype.createOverlay = function() {
 		this.overlayRenderController = new RenderController();
 		this.overlayContainerSurface = new ContainerSurface({});
-		var backdropSurface = new Surface({
-			size: [undefined, undefined],
-			align: [0, 1],
-			origin: [0, 1],
+		this.overlayModal = new Surface({
+			size: [undefined, App.height - 110],
 			properties: {
-				opacity: '0.2',
-				backgroundColor: '#000000'
+				padding: '15px',
+				backgroundColor: '#EFEFEF'
 			}
 		});
-		var backdropModifer = new Modifier({
-			opacity: 0.5
-		});
-
-		this.overlayModal = new Surface({
-			size: [undefined, undefined]
-		});
 		this.overlayModalModifier = new StateModifier({
-			transform: Transform.translate(0, 0, 0)
+			transform: Transform.translate(0, 0, App.zIndex.contextMenu)
 		});
 		this.overlayModal.on('click', function(e) {
 			if (e instanceof CustomEvent) {
@@ -70,14 +63,13 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		this.overlayContainerSurface.add(backdropModifer).add(backdropSurface);
 		this.overlayContainerSurface.add(this.overlayModalModifier).add(this.overlayModal);
 		this.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(this.overlayRenderController);
 	};
 
 	OverlayWithGroupListView.prototype.createGroupsListScrollView = function() {
 		this.groupsListScrollContainer = new ContainerSurface({
-			size: [App.width - 50, App.height - 420],
+			size: [App.width - 40, App.height - 420],
 			properties: {
 				overflow: 'hidden',
 				boxShadow: 'rgb(223, 223, 223) -6px -48px 34px -23px inset',
@@ -96,25 +88,24 @@ define(function(require, exports, module) {
 		this.groupsListScrollContainer.add(this.groupsListScrollView);
 
 		// TODO Fix the x and y transform to be dynamic with respect to the Device's Screen Resolution.
-		this.xTranslate = 25;
+		this.xTranslate = 20;
 		if (App.width >= 560) {
-			this.xTranslate = 95;
+			this.xTranslate = 90;
 			this.groupsListScrollContainer.setSize([575, App.height - 420]);
 		}
 		this.groupsListScrollContainerModifier = new StateModifier({
-			transform: Transform.translate(this.xTranslate, 300, 0)
+			transform: Transform.translate(this.xTranslate, 280, 0)
 		});
-
 		this.overlayContainerSurface.add(this.groupsListScrollContainerModifier).add(this.groupsListScrollContainer);
 	};
 
-	OverlayWithGroupListView.prototype.showOverlayModal = function(templateProperties) {
+	OverlayWithGroupListView.prototype.showOverlayModal = function() {
+		var templateProperties = this.templateProperties || {};
 		User.getGroupsToShare(function(data) {
 			this.overlayModal.setContent('');
 			this.groupsSurfaceList.splice(0, this.groupsSurfaceList.length);
 			this.groupName = '';
-			templateProperties = templateProperties || {};
-			templateProperties.height = App.height - 420;
+			templateProperties.height = (App.pageView.getCurrentPage() === 'DiscussionDetailView') ? App.height - 420 : App.height - 400;
 
 			this.overlayModal.setContent(_.template(this.template, templateProperties, templateSettings));
 
@@ -141,7 +132,7 @@ define(function(require, exports, module) {
 
 			this.overlayRenderController.show(this.overlayContainerSurface, null, function() {
 					var yOffset = document.getElementById('group-list-container').getBoundingClientRect().top;
-					this.groupsListScrollContainerModifier.setTransform(Transform.translate(this.xTranslate, yOffset, 0));
+					this.groupsListScrollContainerModifier.setTransform(Transform.translate(this.xTranslate, yOffset - 65, App.zIndex.contextMenu));
 			}.bind(this));
 		}.bind(this));
 	};

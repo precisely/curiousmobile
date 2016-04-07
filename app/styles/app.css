@@ -919,10 +919,6 @@ button.close {
 	background-color: #ffffff;
 }
 
-.modal-bottom-pad {
-	padding-bottom: 0px;
-}
-
 /*Context Menu*/
 .context-menu {
 	list-style: none;
@@ -1821,7 +1817,7 @@ list-style-type: none;
 }
 
 .sprint-details button, .sprint-activity button, .people-detail button,
-.profile-detail button, .edit-people-detail button, .create-entry-button, .submit-post {
+.profile-detail button, .edit-people-detail button, .create-entry-button, .submit-post, #share-chart {
 	background-color: transparent;
 	border: 1px solid #979797;
 	border-radius: 2px;
@@ -3567,6 +3563,7 @@ input.cropit-image-zoom-input {
 
 .edit-discussion-overlay .share-chart-text {
 	color: #333333;
+	margin-top: 10px;
 }
 
 .tag-button-block {
@@ -3583,4 +3580,8 @@ input.cropit-image-zoom-input {
 
 .participants-wrapper .fa-times-circle {
 	font-size: 18px;
+}
+
+.edit-discussion-overlay {
+
 }
