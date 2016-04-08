@@ -3570,7 +3570,7 @@ input.cropit-image-zoom-input {
 	display: inline-block;
 }
 
-.tag-button-block .fa-times-circle {
+.tag-button-block .fa-times-circle, .participants-wrapper .fa-times-circle {
 	padding: 5px 10px 5px 0px;
 	margin-left: 0px;
 	font-size: 18px;

@@ -271,7 +271,7 @@ define(function(require, exports, module) {
 
 	Sprint.deleteParticipant = function(args, callback) {
 		args.timeZoneName = jstz.determine().name();
-		queuePostJSON('Removing members', '/api/sprint/action/deleteMember', u.getCSRFPreventionObject('deleteMemberCSRF', args),
+		queuePostJSON('Removing members', App.serverUrl + '/api/sprint/action/deleteMember', u.getCSRFPreventionObject('deleteMemberCSRF', args),
 			function(data) {
 				if (!checkData(data))
 					return;

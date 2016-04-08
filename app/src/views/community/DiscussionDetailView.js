@@ -232,6 +232,15 @@ define(function(require, exports, module) {
 			}.bind(this), 500)
 		}.bind(this));
 
+		this.touchSync.on('update', function(data) {
+			var movementX = Math.abs(data.position[0]);
+			var movementY = Math.abs(data.position[1]);
+			// Don't show context menu if there is intent to move something
+			if (movementX > 8 || movementY > 8) {
+				clearTimeout(this.touchTimeout);
+			}
+		}.bind(this));
+
 		this.touchSync.on('end', function(data) {
 			this.end = Date.now();
 			var movementX = Math.abs(data.position[0]);

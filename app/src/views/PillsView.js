@@ -42,7 +42,7 @@ define(function(require, exports, module) {
 		this.pillsScrollViewModifier = new StateModifier({
 			origin: [0.5, 0],
 			align: [0.5, 0],
-			transform: Transform.translate(0, 0, 15)
+			transform: Transform.translate(0, 0, 5)
 		});
 		this.pillsScrollView.sequenceFrom(this.pillsSurfaceList);
 
@@ -60,4 +60,3 @@ define(function(require, exports, module) {
 
 	module.exports = PillsView;
 });
-

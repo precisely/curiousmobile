@@ -131,6 +131,7 @@ define(function(require, exports, module) {
 			spareSurfaceForGroupsListScrollView.pipe(this.groupsListScrollView);
 
 			this.overlayRenderController.show(this.overlayContainerSurface, null, function() {
+					document.activeElement.blur();
 					var yOffset = document.getElementById('group-list-container').getBoundingClientRect().top;
 					this.groupsListScrollContainerModifier.setTransform(Transform.translate(this.xTranslate, yOffset - 65, App.zIndex.contextMenu));
 			}.bind(this));

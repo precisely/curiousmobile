@@ -70,7 +70,7 @@ define(function(require, exports, module) {
 		this.pillsSurfaceList = [];
 		this.pillsView = new PillsView(this.pillsSurfaceList);
 		var pillsViewMod = new StateModifier({
-			transform: Transform.translate(0, -1, App.zIndex.readView)
+			transform: Transform.translate(0, -1, 5)
 		});
 		this.add(pillsViewMod).add(this.pillsView);
 	};
