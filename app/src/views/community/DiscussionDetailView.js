@@ -132,6 +132,9 @@ define(function(require, exports, module) {
 		var prettyDate = u.prettyDate(new Date(discussionPost.discussionDetails.updated));
 		discussionPost.discussionDetails.updated = prettyDate;
 		discussionPost.discussionDetails.discussionTitle = u.parseNewLine(discussionPost.discussionDetails.discussionTitle);
+		if (discussionPost.discussionDetails.firstPost && discussionPost.discussionDetails.firstPost.message) {
+			discussionPost.discussionDetails.firstPost.message = u.parseNewLine(discussionPost.discussionDetails.firstPost.message);
+		}
 		var parsedTemplate = _.template(discussionPostTemplate, discussionPost.discussionDetails, templateSettings);
 		var discussionPostSurface = new Surface({
 			size: [undefined, true],
@@ -207,7 +210,7 @@ define(function(require, exports, module) {
 						}
 					}.bind(this));
 				} else if (_.contains(e.srcElement.classList, 'add-description')) {
-					this.overlayWithGroupListView = new OverlayWithGroupListView(editDiscussionTemplate, {name: u.parseDivToNewLine(this.discussionDetails.discussionTitle), description: this.discussionDetails.firstPost.message,
+					this.overlayWithGroupListView = new OverlayWithGroupListView(editDiscussionTemplate, {name: u.parseDivToNewLine(this.discussionDetails.discussionTitle), description: u.parseDivToNewLine(this.discussionDetails.firstPost.message),
 							groupName: this.discussionDetails.groupName || (this.discussionDetails.isPublic ? 'PUBLIC' : 'PRIVATE')});
 					this.showOverlayContent(this.overlayWithGroupListView);
 					this.setHeaderLabel('EDIT DISCUSSION');
@@ -289,7 +292,7 @@ define(function(require, exports, module) {
 
 	function _setHandlers() {
 		this.on('edit-discussion', function() {
-			this.overlayWithGroupListView = new OverlayWithGroupListView(editDiscussionTemplate, {name: u.parseDivToNewLine(this.discussionDetails.discussionTitle), description: this.discussionDetails.firstPost.message,
+			this.overlayWithGroupListView = new OverlayWithGroupListView(editDiscussionTemplate, {name: u.parseDivToNewLine(this.discussionDetails.discussionTitle), description: u.parseDivToNewLine(this.discussionDetails.firstPost.message),
 					groupName: this.discussionDetails.groupName || (this.discussionDetails.isPublic ? 'PUBLIC' : 'PRIVATE')});
 			this.showOverlayContent(this.overlayWithGroupListView);
 			this.setHeaderLabel('EDIT DISCUSSION');
@@ -441,9 +444,8 @@ define(function(require, exports, module) {
 									postId: post.id
 								}, function(sucess) {
 									this.discussionView.surfaceList.splice(
-										this.discussionView.surfaceList.indexOf(this),
-										1
-									);
+										this.discussionView.surfaceList.indexOf(this), 1);
+										this.discussionView.scrollView.sequenceFrom(this.discussionView.surfaceList);
 								}.bind(this));
 							}.bind(this),
 							onB: function() {}.bind(this),
@@ -471,11 +473,11 @@ define(function(require, exports, module) {
 			});
 
 
-			if (this.isSharedGraph) {
-				this.surfaceList.splice(2, 0, commentSurface);
-			} else if (post.newPost) {
+			if (post.newPost) {
 				this.surfaceList.splice(this.surfaceList.length - 1, 0, commentSurface);
-			} else {
+			} else if (this.isSharedGraph) {
+				this.surfaceList.splice(2, 0, commentSurface);
+			}else {
 				this.surfaceList.splice(1, 0, commentSurface);
 			}
 
