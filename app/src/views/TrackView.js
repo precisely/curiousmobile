@@ -265,6 +265,7 @@ define(function(require, exports, module) {
 		this.entryFormView.batchMoveUpModifiers();
 		BaseView.prototype.killOverlayContent.call(this);
 		this.showMenuButton();
+		this.showSearchIcon();
 		if (this.isPopoverVisible) {
 			this.showPopover();
 		}
@@ -324,6 +325,7 @@ define(function(require, exports, module) {
 			this.showBackButton();
 			this.setHeaderLabel('');
 			this.entryFormView.draggableEntryFormView.setPosition([0, 0]);
+			this.hideSearchIcon();
 			this.showOverlayContent(this.entryFormView, function() {
 				this.onShow(state);
 			}.bind(this.entryFormView));

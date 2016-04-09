@@ -50,7 +50,7 @@ var App = function() {
 	this.viewsWithoutSearchIcon = ['EditProfileView', 'LoginView', 'RegisterView', 'AdvancedTagsView', 'SearchView',
 		'ForgotPasswordView', 'HelpContentsView', 'CreateTagHelpView', 'HelpContentsView', 'RepeatAlertTagsHelpView',
 		'ShareHelpView', 'MakeChartHelpView', 'TermsView', 'DiscussionDetailView', 'CreateSprintHelpView', 'AddDiscussionHelpView',
-		'ManageCuriositiesHelpView', 'SprintFormView', 'ExternalDevicesHelpView'
+		'ManageCuriositiesHelpView', 'SprintFormView', 'ExternalDevicesHelpView', 'PeopleDetailView'
 	];
 
 	this.setAppView = function(appView) {

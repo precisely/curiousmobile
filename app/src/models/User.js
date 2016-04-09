@@ -353,7 +353,7 @@ define(function(require, exports, module) {
 						return false;
 					}
 					if (data.success) {
-						u.showAlert('Email verification link sent');
+						u.showAlert('Verification email sent. Be sure to check your spam folder for an email from curious@wearecurio.us');
 					} else {
 						u.showAlert(data.message);
 					}

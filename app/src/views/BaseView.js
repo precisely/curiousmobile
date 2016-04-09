@@ -180,7 +180,6 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.rightIconsList = [];
-		this.rightIconsList.push(this.searchOptionSurface);
 		this.rightIconsSequenceView = new SequentialLayout({
 			direction: 0,
 			itemSpacing: 0,
