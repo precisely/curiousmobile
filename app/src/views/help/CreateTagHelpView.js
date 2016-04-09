@@ -15,8 +15,7 @@ define(function(require, exports, module) {
 	CreateTagHelpView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
-		helpTemplate: CreateTagHelpTemplate,
-		templateScrollHeight: 400
+		helpTemplate: CreateTagHelpTemplate
 	};
 	CreateTagHelpView.prototype = Object.create(HelpView.prototype);
 

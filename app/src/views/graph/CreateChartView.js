@@ -182,7 +182,7 @@ define(function(require, exports, module) {
 			content: "PLOT GRAPH: ",
 			properties: {
 				fontSize: '10px',
-				margin: '13px 5px 0px 0px'
+				margin: '13px 5px 0px 10px'
 			}
 		});
 
@@ -217,7 +217,7 @@ define(function(require, exports, module) {
 
 		this.submitFormContainer.add(labelSurface);
 		this.submitFormContainer.add(new Modifier({
-			transform: Transform.translate(115, 5, 0)
+			transform: Transform.translate(90, 5, 0)
 		})).add(createChartSurface);
 		this.formContainerMod = new StateModifier({
 			transform: Transform.translate(0, App.height - 105, App.zIndex.readView + 1)

@@ -243,6 +243,9 @@ define(function(require, exports, module) {
 							currentView.tagsToPlot.splice(currentView.tagsToPlot.indexOf(tag), 1)
 						}
 						this.pillsView.pillsScrollView.sequenceFrom(this.pillsSurfaceList);
+						if (this.pillsSurfaceList.length === 0) {
+							App.pageView.changePage('CreateChartView');
+						}
 					} else {
 						var plotLine = this.plot.getLine(lineId);
 						var plot = this.plot;

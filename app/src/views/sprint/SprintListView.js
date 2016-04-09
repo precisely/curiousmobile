@@ -95,7 +95,8 @@ define(function(require, exports, module) {
 
 		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
 
-		var showExplanationSurface = new Surface({
+		this.showExplanationRenderController = new RenderController();
+		this.showExplanationSurface = new Surface({
 			size: [50, 50],
 			content: '<i class="fa fa-question-circle"></i>',
 			properties: {
@@ -105,15 +106,12 @@ define(function(require, exports, module) {
 		});
 
 		this.explanationBoxModifier = new StateModifier({transform: Transform.translate(App.width - 50, 64, App.zIndex.header)});
-		this.add(this.explanationBoxModifier).add(showExplanationSurface);
+		this.add(this.explanationBoxModifier).add(this.showExplanationRenderController);
+		this.showExplanationRenderController.show(this.showExplanationSurface);
 
-		showExplanationSurface.on('click', function(e) {
+		this.showExplanationSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				if (this.explanationVisible) {
-					this.hideExplanationBox();
-				} else {
-					this.showExplanationCard();
-				}
+				this.showExplanationCard();
 			}
 		}.bind(this));
 	};
@@ -128,12 +126,13 @@ define(function(require, exports, module) {
 
 		this.sprintRenderController.show(sprintExplanationCard, function() {
 			this.explanationVisible = true;
-			var explanationCardHeight = sprintExplanationCard.getSize()[1]
+			var explanationCardHeight = sprintExplanationCard.getSize()[1];
 			this.pillsScrollViewContainerModifier.setTransform(Transform.translate(0, 52 + explanationCardHeight, App.zIndex.header));
 			this.scrollViewMod.setTransform(Transform.translate(0, 110 + explanationCardHeight, App.zIndex.feedItem));
 			this.explanationBoxModifier.setTransform(Transform.translate(App.width - 50, 52 + explanationCardHeight, App.zIndex.header));
 		}.bind(this));
 
+		this.showExplanationRenderController.hide();
 		this.on('close-explanation', this.hideExplanationBox);
 	};
 
@@ -145,6 +144,7 @@ define(function(require, exports, module) {
 			this.pillsScrollViewContainerModifier.setTransform(Transform.translate(0, 64, App.zIndex.header));
 			this.scrollViewMod.setTransform(Transform.translate(0, 110, App.zIndex.feedItem));
 			this.explanationBoxModifier.setTransform(Transform.translate(App.width - 50, 64, App.zIndex.header));
+			this.showExplanationRenderController.show(this.showExplanationSurface);
 		}.bind(this));
 	};
 

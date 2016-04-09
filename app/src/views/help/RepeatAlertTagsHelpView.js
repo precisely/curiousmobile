@@ -10,8 +10,7 @@ define(function(require, exports, module) {
 	RepeatAlertTagsHelpView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
-		helpTemplate: repeatAlertTagsTemplate,
-		templateScrollHeight: 1000
+		helpTemplate: repeatAlertTagsTemplate
 	};
 	RepeatAlertTagsHelpView.prototype = Object.create(HelpView.prototype);
 

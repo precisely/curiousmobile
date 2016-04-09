@@ -11,8 +11,7 @@ define(function(require, exports, module) {
 	ExternalDevicesHelpView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
-		helpTemplate: externalDeviceHelpTemplate,
-		templateScrollHeight: 10
+		helpTemplate: externalDeviceHelpTemplate
 	};
 	ExternalDevicesHelpView.prototype = Object.create(HelpView.prototype);
 

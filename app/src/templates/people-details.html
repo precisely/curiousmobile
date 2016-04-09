@@ -2,7 +2,7 @@
 	<div class="upper-body">
 		<i class="fa fa-circle fa-4x"></i>
 		<h2>{{- user.name || user.username }}</h2>
-		<button>FOLLOW</button>
+		<button id="{{- user.buttonLabel }}">{{- user.buttonLabel }}</button>
 		<p>{{- user.bio }}</p>
 	</div>
 	<div class="lower-body">

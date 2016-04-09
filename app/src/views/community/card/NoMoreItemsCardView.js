@@ -12,13 +12,19 @@ define(function(require, exports, module) {
 	var PeopleDetailView = require('views/people/PeopleDetailView');
 	var u = require('util/Utils');
 
-	function NoMoreItemsCardView() {
+	function NoMoreItemsCardView(text) {
 		CardView.apply(this, arguments);
+		this.text = text;
 		createCard.call(this);
 	}
 
 	NoMoreItemsCardView.prototype = Object.create(CardView.prototype);
 	NoMoreItemsCardView.prototype.constructor = NoMoreItemsCardView;
+
+	NoMoreItemsCardView.prototype.setText = function(text) {
+		this.text = text;
+		this.cardSurface.setContent(this.text);
+	};
 
 	NoMoreItemsCardView.DEFAULT_OPTIONS = {
 	};
@@ -26,7 +32,7 @@ define(function(require, exports, module) {
 	function createCard() {
 		this.cardSurface = new Surface({
 			size: [undefined, 200],
-			content: 'No more items',
+			content: this.text,
 			properties: {
 				padding: '10px'
 			}
