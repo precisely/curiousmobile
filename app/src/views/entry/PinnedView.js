@@ -24,7 +24,7 @@ define(function(require, exports, module) {
 		var options = {
 			classes: ['pinned'],
 			size: [true, true],
-			content: this.getDisplayText(),
+			content: this.getDisplayText() + '  <i class="fa fa-pencil edit-pin display-none"></i>',
 			properties: {
 				color: '#5E5E5E',
 				padding: '10px',
@@ -46,7 +46,7 @@ define(function(require, exports, module) {
 
 	PinnedView.prototype.getSize = function () {
 		// This is to get exact width and height after surface gets rendered
-		return this.entrySurface._currentTarget ? 
+		return this.entrySurface._currentTarget ?
 				[this.entrySurface._currentTarget.offsetWidth, this.entrySurface._currentTarget.offsetHeight] : this.entrySurface.getSize();
 	}
 

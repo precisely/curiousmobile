@@ -3568,9 +3568,16 @@ input.cropit-image-zoom-input {
 
 .bookmark-plus {
 	font-size: 16px;
-	font-weight: bolder;
-	display: inline-block;
-	padding: 7px 10px 0px 10px;
-	vertical-align: top;
+	padding: 4px 10px 0px 10px;
 	margin-top: -10px;
+	margin-right: -10px;
+}
+
+.pinned .fa {
+	margin-right: -5px;
+	margin-left: 2px;
+}
+
+.display-none {
+	display: none;
 }

@@ -123,6 +123,7 @@ define(function(require, exports, module) {
 			this.renderController.hide();
 			var currentListView = this.trackView.currentListView;
 			window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],resp.tagStats[3], resp.tagStats[4])
+			this.trackView.initContextMenuOptions();
 			this.trackView.preShow({data: resp, fromServer: true});
 			this.trackView.showPopover();
 		}.bind(this));
@@ -138,6 +139,7 @@ define(function(require, exports, module) {
 			if (resp.tagStats[1]) {
 				window.autocompleteCache.update(resp.tagStats[1][0], resp.tagStats[1][1], resp.tagStats[1][2],resp.tagStats[1][3], resp.tagStats[1][4])
 			}
+			this.trackView.initContextMenuOptions();
 			this.trackView.preShow({data: resp, fromServer: true});
 			this.trackView.showPopover();
 		}.bind(this));
@@ -147,6 +149,7 @@ define(function(require, exports, module) {
 			if (resp && resp.fail) {
 				u.showAlert('Could not delete entry');
 			}
+			this.trackView.initContextMenuOptions();
 			this.trackView.currentListView.refreshEntries(resp);
 		}.bind(this));
 	};
@@ -198,9 +201,18 @@ define(function(require, exports, module) {
 		this.renderController.hide();
 		this.selectedDate = null;
 		var entry = this.entry;
-		if (entry.isContinuous()) {
+		if (isInEditMode) {
+			this.deleteButtonRenderController.show(this.deleteButtonSurface);
+		}
+		if (entry.isContinuous() && entry.state !== 'bookmarkEdit') {
 			this.setRepeat = false;
 			this.setRemind = false;
+			return;
+		} else if (entry.state === 'bookmarkEdit') {
+			this.setPinned = true;
+			this.buttonsRenderController.hide();
+			this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">UPDATE BOOKMARK</button>');
+			this.deleteButtonSurface.setContent('<button type="button" class="full-width-button create-entry-button">DELETE BOOKMARK</button>');
 			return;
 		}
 
@@ -244,10 +256,6 @@ define(function(require, exports, module) {
 			this.toggleSelector(this.repeatSurface);
 		}
 		this.buttonsRenderController.show(this.buttonsAndHelp);
-
-		if (isInEditMode) {
-			this.deleteButtonRenderController.show(this.deleteButtonSurface);
-		}
 	};
 
 	TrackEntryFormView.prototype.toggleSelector = function(selectorSurface) {
@@ -264,14 +272,14 @@ define(function(require, exports, module) {
 		this.setPinned = this.setRemind = this.setRepeat = false;
 		this.entry = entry;
 		var directlyCreateEntry = false;
-		if (entry.isContinuous() || ((entry.isRemind() || entry.isRepeat()) && entry.isGhost())) {
+		if (entry.state !== 'bookmarkEdit' && (entry.isContinuous() || ((entry.isRemind() || entry.isRepeat()) && entry.isGhost()))) {
 			var tag = this.removeSuffix(entry.toString());
 			var tagStatsMap = autocompleteCache.tagStatsMap.get(tag);
 			if (!tagStatsMap) {
 				tagStatsMap = autocompleteCache.tagStatsMap.getFromText(tag);
 			}
 			if (!tagStatsMap || (tagStatsMap.typicallyNoAmount || entry.get("amount")) || tag.indexOf('start') > -1 ||
-				tag.indexOf('begin') > -1 || tag.indexOf('stop') > -1 || tag.indexOf('end') > -1 || (entry.isRepeat() && entry.isGhost())) {
+					tag.indexOf('begin') > -1 || tag.indexOf('stop') > -1 || tag.indexOf('end') > -1 || (entry.isRepeat() && entry.isGhost())) {
 				directlyCreateEntry = true;
 			}
 		}
@@ -382,7 +390,7 @@ define(function(require, exports, module) {
 			repeatTypeId = Entry.RepeatType.CONTINUOUSGHOST;
 		}
 
-		if (!entry || !entry.get('id') || entry.isContinuous()) {
+		if (!entry || !entry.get('id') || (entry.isContinuous() && entry.state !== 'bookmarkEdit')) {
 			var newEntry = new Entry();
 			newEntry.setText(newText);
 			if (repeatTypeId) {

@@ -36,6 +36,7 @@ define(function(require, exports, module) {
 		this.entryFormView = new TrackEntryFormView({trackView: this});
 		_createBody.call(this);
 		_createCalendar.call(this);
+		_setHandlers.call(this);
 	}
 
 	TrackView.prototype = Object.create(BaseView.prototype);
@@ -46,7 +47,11 @@ define(function(require, exports, module) {
 		footer: true,
 		noBackButton: true,
 		reloadOnResume: true,
-		activeMenu: 'track'
+		activeMenu: 'track',
+		contextMenuOptions: [
+			{class: 'add-bookmark', label: 'Add Bookmark'},
+			{class: 'edit-bookmarks', label: 'Edit Bookmarks'}
+		]
 	};
 
 	function _getDefaultDates(date) {
@@ -91,8 +96,13 @@ define(function(require, exports, module) {
 		this.inputSurface.on('click', function(e) {
 			console.log('TrackView: Clicking on dummy input surface');
 			if (e instanceof CustomEvent) {
-				if (_.contains(e.srcElement.classList, 'bookmark-plus')) {
-					this.showEntryFormView({createJustBookmark: true});
+				if (_.contains(e.srcElement.classList, 'bookmark-plus') || _.contains(e.srcElement.parentElement.classList, 'bookmark-plus')) {
+					App.pageView._eventOutput.emit('show-context-menu', {
+						menu: 'bookmark',
+						target: this,
+						eventArg: {}
+					});
+					//this.showEntryFormView({createJustBookmark: true});
 				} else if (_.contains(e.srcElement.classList, 'input-placeholder')) {
 					this._eventOutput.emit('create-entry');
 				}
@@ -208,6 +218,13 @@ define(function(require, exports, module) {
 			document.getElementById('TrackView-sprint-menu').classList.remove('active');
 		}
 		this.isPopoverVisible = false;
+	};
+
+	TrackView.prototype.initContextMenuOptions = function() {
+		this.options.contextMenuOptions = [
+			{class: 'add-bookmark', label: 'Add Bookmark'},
+			{class: 'edit-bookmarks', label: 'Edit Bookmarks'}
+		];
 	};
 
 	TrackView.prototype.preShow = function(state) {
@@ -348,6 +365,28 @@ define(function(require, exports, module) {
 			return {new: true};
 		}
 	};
+
+	function _setHandlers() {
+		this.on('edit-bookmarks', function(event) {
+			this.options.contextMenuOptions.splice(1, 1, {class: 'done-edit-bookmarks', label: 'Done Editing'});
+			_.each(document.getElementsByClassName('edit-pin'), function(editPinIcon, index) {
+				editPinIcon.classList.remove('display-none');
+				this.currentListView.pinnedViews[index].entry.state = 'bookmarkEdit';
+			}.bind(this));
+		});
+
+		this.on('done-edit-bookmarks', function(event) {
+			this.options.contextMenuOptions.splice(1, 1, {class: 'edit-bookmarks', label: 'Edit Bookmarks'});
+			_.each(document.getElementsByClassName('edit-pin'), function(editPinIcon, index) {
+				editPinIcon.classList.add('display-none');
+				this.currentListView.pinnedViews[index].entry.state = null;
+			}.bind(this));
+		});
+
+		this.on('add-bookmark', function(event) {
+			this.showEntryFormView({createJustBookmark: true});
+		});
+	}
 
 	App.pages[TrackView.name] = TrackView;
 	module.exports = TrackView;

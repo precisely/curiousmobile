@@ -319,7 +319,7 @@ define(function(require, exports, module) {
 			classes: ['pin-container'],
 			properties: {
 				backgroundColor: '#ebebeb',
-				padding: '20px 10px 10px 10px',
+				padding: '23px 10px 10px 10px',
 				overflowY: 'hidden',
 				borderBottom: '8px solid #ebebeb'
 			}

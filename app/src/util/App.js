@@ -1,3 +1,4 @@
+var App = function() {
 	//var u = require('models/User');
 	//var AppView = require('views/AppView');
 
@@ -28,15 +29,14 @@
 		this.coreEventHandler = new EventHandler();
 	};
 
-
 	//this.serverUrl = "http://192.168.0.31:8080";
-	//this.serverUrl = "http://192.168.2.123:8080";
-	this.serverUrl = "https://www.wearecurio.us";
+	//this.serverUrl = "http://192.168.1.123:8080";
+	//this.serverUrl = "https://www.wearecurio.us";
 	//this.serverUrl = "http://192.168.0.111:8080";
 	//this.serverUrl = "http://localhost:8080";
 	//this.serverUrl = "http://127.0.0.1:8080";
 	//this.serverUrl = "http://192.168.0.108:8080";
-	//this.serverUrl = "http://192.168.1.141:8080";
+	this.serverUrl = "http://192.168.1.141:8080";
 	//this.serverUrl = "http://192.168.1.107:8080";
 	//this.serverUrl = "http://103.17.156.129:8080";
 	//this.serverUrl = "http://114.143.237.122:8080";
@@ -44,7 +44,6 @@
 
 	this.width = window.innerWidth;
 	this.height = window.innerHeight;
-
 
 	this.viewsWithoutSearchIcon = ['EditProfileView', 'LoginView', 'RegisterView', 'AdvancedTagsView', 'SearchView',
 		'ForgotPasswordView', 'HelpContentsView', 'CreateTagHelpView', 'HelpContentsView', 'RepeatAlertTagsHelpView',

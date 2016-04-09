@@ -290,7 +290,8 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					baseDate: baseDate.toUTCString(),
 					timeZoneName: u.getTimezone(),
 					defaultToNow: 1, //TODO Is this going to be configurable
-					allFuture: allFuture ? '1' : '0'
+					allFuture: allFuture ? '1' : '0',
+					bookmarkEdit: this.state === 'bookmarkEdit' ? true : false
 				});
 
 				if (this.get("repeatType")) {
