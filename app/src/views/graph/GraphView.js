@@ -233,7 +233,7 @@ define(function(require, exports, module) {
 			}
 			var pillSurface = new Surface({
 				content: '<button class="tag-pill btn' + '" id="' + tag.id + '" style="border-left: 2px solid' + color +
-						'; color: ' + color + ';">' + tag.description + deleteAffordance + '</button>',
+						'; color: ' + color + ';">' + u.escapeHTML(tag.description) + deleteAffordance + '</button>',
 				size: [true, 50],
 				properties: {
 					backgroundColor: '#efefef',

@@ -74,6 +74,7 @@ define(function(require, exports, module) {
 		User.show(this.hash, function(peopleDetails) {
 			this.setHeaderLabel(peopleDetails.user.name);
 			var profileTemplate = PeopleDetailsTemplate;
+			peopleDetails.user.bio = u.parseNewLine(peopleDetails.user.bio);
 			this.backgroundSurface.setProperties({
 				background: '#fff'
 			});

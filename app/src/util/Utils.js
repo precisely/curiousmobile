@@ -550,6 +550,9 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		}
 
 		Utils.parseNewLine = function(text) {
+			if (!text) {
+				return '';
+			}
 			var lines = text.split("\n");
 			var parsedText = '';
 			_.each(lines, function(line) {
@@ -561,6 +564,9 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		}
 
 		Utils.parseDivToNewLine = function(text) {
+			if (!text) {
+				return '';
+			}
 			var parsedText = text.replace(/<div>/g, '').replace(/<\/div>/g, "\n").replace(/^\s+|\s+$/g, '');;
 			return parsedText;
 		}

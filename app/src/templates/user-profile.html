@@ -27,11 +27,11 @@
 				BIO
 			</label>
 			<div class="media">
-				<div class="media-body">
+				<div class="media-body bio">
 					{{ if (user.bio === "") { }}
 						<p>This user has not provided any bio.</p>
 					{{ } else { }}
-						<p> {{= linkify(user.bio) }}</p>
+						{{= linkify(user.bio) }}
 					{{ } }}
 				</div>
 			</div>

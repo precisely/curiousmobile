@@ -254,8 +254,6 @@ define(function(require, exports, module) {
 		return true;
 	};
 
-<<<<<<< HEAD
-=======
 	EntryFormView.prototype.toggleSelector = function(selectorSurface) {
 		var isHilighted = selectorSurface ? _.contains(selectorSurface.getClassList(), 'highlight-surface') : null;
 		if (this.constructor.name === 'SprintEntryFormView') {
@@ -270,7 +268,6 @@ define(function(require, exports, module) {
 		}
 	};
 
->>>>>>> discussion-description
 	EntryFormView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 		console.log('FormView: on-show ' + state);

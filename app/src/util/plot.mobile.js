@@ -81,8 +81,8 @@ define(function(require, exports, module) {
 
 		this.queuePostJSON("saving graph", this.makePostUrl("savePlotData"), { name: this.getName(), plotData: plotDataStr },
 				function(data) {
-					this.checkData(data[0], '', "Error while saving live graph", "Graph saved");
-					this.showAlert("Graph saved");
+					this.checkData(data[0], '', "Error while saving live graph", "Chart saved, use Load menu item to load it");
+					this.showAlert("Chart saved, use Load menu item to load it");
 				}.bind(this));
 	}
 
