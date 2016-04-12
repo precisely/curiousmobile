@@ -126,14 +126,22 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				var entryStr = escapeHTML(entry.description);
 				var amounts = entry.amounts;
 				var i = 0, iString;
-				while ((iString = (i++).toString()) in amounts) {
-					var amountEntry = amounts[iString];
-					var amount = amountEntry.amount;
-					var amountPrecision = amountEntry.amountPrecision;
-					var units = amountEntry.units;
+				if (this.isContinuous()) {
+					if (this.get('amountPrecision') > 0) {
+						entryStr += ' ' + this.get('amount') + ' ' + escapehtml(this.get('units'));
+					} else if (this.get('amount') == null) {
+						entryStr += ' # ' + escapehtml(this.get('units'));
+					}
+				} else {
+					while ((iString = (i++).toString()) in amounts) {
+						var amountEntry = amounts[iString];
+						var amount = amountEntry.amount;
+						var amountPrecision = amountEntry.amountPrecision;
+						var units = amountEntry.units;
 
-					var formattedAmount = this.formattedAmount({amount: amount, amountPrecision: amountPrecision});
-					entryStr += escapeHTML(formattedAmount) + escapeHTML(this.formatUnits(units))
+						var formattedAmount = this.formattedAmount({amount: amount, amountPrecision: amountPrecision});
+						entryStr += escapeHTML(formattedAmount) + escapeHTML(this.formatUnits(units))
+					}
 				}
 
 				entryStr += escapeHTML(this.dateStr()) + (entry.comment != '' ? ' ' + escapeHTML(entry.comment) : '')
@@ -146,7 +154,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				} else {
 					entry = this.attributes;
 				}
-				if (entry.amount == null) return " ___";
+				if (entry.amount == null) return " #";
 				if (entry.amountPrecision < 0) return "";
 				if (entry.amountPrecision == 0) {
 					return entry.amount ? " yes" : " no";

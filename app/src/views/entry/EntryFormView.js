@@ -161,7 +161,6 @@ define(function(require, exports, module) {
 			defaultItemSize: [80, 24],
 		});
 
-		this.firstOffset = (App.width - ((84 * 3) + 60)) / 2;
 		this.repeatSurface = new Surface({
 			content: '<div class="text-center"><i class="fa fa-repeat"></i> <br/> Set Repeat</div>',
 			size: [84, 24]
@@ -177,9 +176,15 @@ define(function(require, exports, module) {
 			size: [84, 24]
 		});
 
-		sequentialLayout.sequenceFrom([this.repeatSurface, this.remindSurface, this.pinSurface]);
+		if (this.constructor.name === 'TrackEntryFormView') {
+			this.firstOffset = (App.width - ((84 * 2) + 30)) / 2;
+			sequentialLayout.sequenceFrom([this.repeatSurface, this.remindSurface]);
+		} else {
+			this.firstOffset = (App.width - ((84 * 3) + 60)) / 2;
+			sequentialLayout.sequenceFrom([this.repeatSurface, this.remindSurface, this.pinSurface]);
+		}
 		this.buttonsAndHelp = new ContainerSurface({
-			size: [undefined, undefined],
+			size: [undefined, true],
 			classes: ['entry-form-buttons'],
 			properties: {
 				color: '#fff',

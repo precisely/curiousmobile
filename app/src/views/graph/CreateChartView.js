@@ -134,20 +134,20 @@ define(function(require, exports, module) {
 		var sortFilter = 'a-z';
 		var removeClassForId = 'most-used-pill';
 		var listAscending = !this.listAscending;
-		
+
 		if (elementId === 'most-used-pill') {
 			sortFilter = 'most-used';
 			removeClassForId = 'a-z-pill';
 			listAscending = true;
 		}
-		
+
 		Tags.sortTags(App.tagListWidget.list, this.listAscending, sortFilter);
 		document.getElementById(removeClassForId).classList.remove('active');
 		document.getElementById(elementId).classList.add('active');
 		_renderTagsList.call(this, App.tagListWidget.list.listItems.list);
 		this.listAscending = listAscending;
 	}
-	
+
 	function _createPills() {
 		var pillSurface = new Surface({
 			content: '<div class="btn-group tag-filters" role="group">' +
@@ -239,13 +239,13 @@ define(function(require, exports, module) {
 		 * Pushing all selectedTags into new deletedTags list, then inside second _.each, if selected tag matches any
 		 * of the tags in the tagslist, we are removing that tag from deletedTags list(i.e. plotted tag has not been
 		 * deleted from taglist). At the end of the loop we have list of tags that are deleted, which is then
-		 * filtered out from selected(plotted) tags. This code tackles the situation 
+		 * filtered out from selected(plotted) tags. This code tackles the situation
 		 * where user plots some tags > goes to trackview and delete some of plotted tag(s) > comes back to
-		 * chartview and tries to edit existing chart or create new chart. 
+		 * chartview and tries to edit existing chart or create new chart.
 		 */
 		var deletedTags = [];
-		
-		/* 
+
+		/*
 		 * Do not perform delete tag operaton if taglist comes as a result of search because that will give only
 		 * limited search results not complete taglist.
 		 */
@@ -265,7 +265,7 @@ define(function(require, exports, module) {
 			});
 			var tagSurface = new Surface({
 				size: [undefined, 50],
-				content: '<div data-value="' + tag.id + '" class="tagList"><i class="fa fa-tag"></i><p>' + tag.description +
+				content: '<div data-value="' + tag.id + '" class="tagList"><i class="fa fa-tag"></i><p>' + u.escapeHTML(tag.description) +
 					'</p><i class="pull-right fa ' + squareIcon + ' fa-2x" id="selection' + tag.id + '"></i></div>'
 			});
 
@@ -296,14 +296,14 @@ define(function(require, exports, module) {
 			tagSurface.pipe(this.tagsScrollView);
 			this.tagsSurfaceList.push(tagSurface);
 		}.bind(this));
-		
+
 		// Removing the deleted tags from the selected tags list.
 		if (deletedTags.length) {
 			this.selectedTags = this.selectedTags.filter(function(tag) {
 				return deletedTags.indexOf(tag) === -1;
 			});
 		}
-		
+
 		this.tagsScrollView.sequenceFrom(this.tagsSurfaceList);
 	}
 

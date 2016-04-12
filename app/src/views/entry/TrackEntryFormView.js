@@ -104,12 +104,18 @@ define(function(require, exports, module) {
 						this.dateGridRenderController.hide();
 					} else {
 						this.dateGrid = new DateGridView(this.selectedDate || new Date());
-						this.dateGridRenderController.show(this.dateGrid);
+						this.dateGridRenderController.show(this.dateGrid, null, function() {
+							App.pageView.getCurrentView().showBackDrop();
+						});
 						this.dateGrid.on('select-date', function(date) {
 							console.log('CalenderView: Date selected');
 							this.setSelectedDate(date);
 							this.dateGridRenderController.hide();
 							this.dateGridOpen = false;
+						}.bind(this));
+
+						this.dateGrid.on('close-date-grid', function(date) {
+							this.dateGridRenderController.hide();
 						}.bind(this));
 					}
 					this.dateGridOpen = !this.dateGridOpen;
@@ -202,11 +208,15 @@ define(function(require, exports, module) {
 		this.selectedDate = null;
 		var entry = this.entry;
 		if (isInEditMode) {
-			this.deleteButtonRenderController.show(this.deleteButtonSurface);
+			if(!entry.isContinuous() || entry.state === 'bookmarkEdit') {
+				this.deleteButtonRenderController.show(this.deleteButtonSurface);
+			}
 		}
 		if (entry.isContinuous() && entry.state !== 'bookmarkEdit') {
 			this.setRepeat = false;
 			this.setRemind = false;
+			this.setPinned = false;
+			this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">CREATE ENTRY</button>');
 			return;
 		} else if (entry.state === 'bookmarkEdit') {
 			this.setPinned = true;
@@ -275,11 +285,23 @@ define(function(require, exports, module) {
 		if (entry.state !== 'bookmarkEdit' && (entry.isContinuous() || ((entry.isRemind() || entry.isRepeat()) && entry.isGhost()))) {
 			var tag = this.removeSuffix(entry.toString());
 			var tagStatsMap = autocompleteCache.tagStatsMap.get(tag);
+			var nullAmount = false;
+			if (entry.get('amountPrecision') < 0) {
+				if (entry.get('amount') == null) {
+					nullAmount = true;
+				}
+ 			}
 			if (!tagStatsMap) {
 				tagStatsMap = autocompleteCache.tagStatsMap.getFromText(tag);
 			}
-			if (!tagStatsMap || (tagStatsMap.typicallyNoAmount || entry.get("amount")) || tag.indexOf('start') > -1 ||
-					tag.indexOf('begin') > -1 || tag.indexOf('stop') > -1 || tag.indexOf('end') > -1 || (entry.isRepeat() && entry.isGhost())) {
+			if (!tagStatsMap || tagStatsMap.typicallyNoAmount) {
+				if (nullAmount) {
+					directlyCreateEntry = false;
+				} else {
+					directlyCreateEntry = true;
+				}
+			} else if (tag.indexOf('start') > -1 || tag.indexOf('begin') > -1 ||
+					tag.indexOf('stop') > -1 || tag.indexOf('end') > -1 || (entry.isRepeat() && entry.isGhost())) {
 				directlyCreateEntry = true;
 			}
 		}

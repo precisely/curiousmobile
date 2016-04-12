@@ -505,7 +505,7 @@ input, textarea {
 
 .glow {
 	color: #ffffff !important;
-	background-color: #FC3F28 !important;
+	background-color: #C83A6E !important;
 }
 
 .continuous {
@@ -558,7 +558,8 @@ input, textarea {
 }
 
 .selected {
-	background-color: #FFFFFF !important;
+	background-color: #FC3F28 !important;
+	color: #ffffff !important;
 }
 
 .discussion .footer {
@@ -618,15 +619,15 @@ input, textarea {
 	font-weight: 500;
 }
 .date-picker-text {
-	font-size: 22px;
+	font-size: 18px;
 	margin: 0 5px;
-	width: 122px;
 	display: inline-block;
 	text-align: center;
 }
 
 .date-picker-month, .date-picker-year {
 	padding: 7px;
+	color: #7A7A7A;
 }
 
 .close-discussion {

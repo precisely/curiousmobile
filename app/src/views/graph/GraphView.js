@@ -181,15 +181,25 @@ define(function(require, exports, module) {
 				datePickerDate = this.endDate;
 			}
 			this.dateGrid = new DateGridView(datePickerDate || new Date(), true);
-			this.dateGridRenderController.show(this.dateGrid);
+			this.dateGridRenderController.show(this.dateGrid, null, function() {
+				App.pageView.getCurrentView().showBackDrop();
+			}.bind(this));
 			this.dateGrid.on('select-date', function(date) {
 				console.log('CalenderView: Date selected');
 				this.setSelectedDate(date, dateType);
-				this.dateGridRenderController.hide();
-				this.dateGridOpen = false;
+				this.closeDateGrid();
+			}.bind(this));
+
+			this.on('close-date-grid', function(date) {
+				this.closeDateGrid();
 			}.bind(this));
 		}
 		this.dateGridOpen = !this.dateGridOpen;
+	};
+	GraphView.prototype.closeDateGrid = function() {
+		this.dateGridRenderController.hide();
+		this.dateGridOpen = false;
+		App.pageView.getCurrentView().hideBackDrop();
 	};
 
 	GraphView.prototype.setSelectedDate = function(date, dateType) {

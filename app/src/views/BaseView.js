@@ -32,6 +32,7 @@ define(function(require, exports, module) {
 		_createLayout.call(this);
 		_createHeader.call(this);
 		this._createFooter();
+		this.createBackDrop();
 		_setListeners.call(this);
 	}
 
@@ -357,5 +358,27 @@ define(function(require, exports, module) {
 		this.currentOverlay = null;
 	}
 
+	BaseView.prototype.createBackDrop = function (first_argument) {
+		this.backdropTransparentSurface = new Surface({
+			size: [undefined, App.height]
+		});
+		this.backdropTransparentSurface.on('click',function(e) {
+			if (e instanceof CustomEvent) {
+				this._eventOutput.emit('close-date-grid');
+				return;
+			}
+		}.bind(this));
+		this.backDropRenderController = new RenderController();
+		// Backdrop will also cover header and footer
+		this.add(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.datePicker - 1)})).add(this.backDropRenderController);
+	};
+
+	BaseView.prototype.showBackDrop = function() {
+		this.backDropRenderController.show(this.backdropTransparentSurface);
+	}
+
+	BaseView.prototype.hideBackDrop = function() {
+		this.backDropRenderController.hide();
+	}
 	module.exports = BaseView;
 });

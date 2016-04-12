@@ -111,7 +111,7 @@ define(function(require, exports, module) {
 			}
 		});
 		this.setRightIcon(this.plusSurface);
-		this.setHeaderLabel('SOCIAL');
+		this.setHeaderLabel('SOCIAL FEED');
 
 
 		this.plusSurface.on('click', function(e) {
@@ -175,6 +175,16 @@ define(function(require, exports, module) {
 
 		pillSurface.pipe(this.pillsScrollView);
 		return pillSurface;
+	};
+
+	FeedView.prototype.setCurrentPill = function(lable) {
+		var previousActivePill = document.getElementsByClassName('active-pill');
+		if (previousActivePill[0]) {
+			previousActivePill[0].classList.remove('active-pill');
+		}
+		var pillElement = document.getElementById(lable + '-pill');
+		pillElement.classList.add('active-pill');
+		this.currentPill = lable;
 	};
 
 	FeedView.prototype.getScrollPosition = function() {

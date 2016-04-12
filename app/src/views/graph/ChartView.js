@@ -322,6 +322,10 @@ define(function(require, exports, module) {
 	};
 
 	function _setHandlers() {
+		this.on('close-date-grid', function() {
+			this.graphView._eventOutput.emit('close-date-grid');
+		}.bind(this));
+
 		this.on('create-chart', function() {
 			u.showAlert({
 				message: 'Are you sure to clear graph?',

@@ -28,7 +28,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			var alert = new AlertView(options);
 			u.alertViewsOpen.push(alert);
 			if (typeof cordova	!== 'undefined') {
-				cordova.plugins.Keyboard.close();	
+				cordova.plugins.Keyboard.close();
 			}
 			return alert;
 		};
@@ -442,16 +442,16 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		}
 
 		Utils.spinnerStart = function () {
-			var spinnerDialog = window.plugins? window.plugins.spinnerDialog : false;
-			if (window.plugins && spinnerDialog) {
-				spinnerDialog.show(null, null, true);
+			//var spinnerDialog = window.plugins? window.plugins.spinnerDialog : false;
+			if (typeof wizSpinner !== 'undefined') {
+				wizSpinner.show({bgColor: 'transparent', opacity: 0.0, label: "my loading text"});
 			}
 		}
 
 		Utils.spinnerStop = function () {
-			var spinnerDialog = window.plugins? window.plugins.spinnerDialog : false;
-			if (window.plugins && spinnerDialog) {
-				spinnerDialog.hide();
+			//var spinnerDialog = window.plugins? window.plugins.spinnerDialog : false;
+			if (typeof wizSpinner !== 'undefined') {
+				wizSpinner.hide();
 			}
 		}
 
@@ -554,7 +554,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			var parsedText = '';
 			_.each(lines, function(line) {
 				if (line) {
-					parsedText += '<div>' + line + '</div>'
+					parsedText += '<div>' + Utils.escapeHTML(line) + '</div>'
 				}
 			});
 			return parsedText || text;

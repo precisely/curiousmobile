@@ -156,6 +156,14 @@ define(function(require, exports, module) {
 			var formViewState = this.entryFormView.buildStateFromEntry(new Entry());
 			this.showEntryFormView(formViewState);
 		}.bind(this));
+
+		this.on('close-date-grid', function(date) {
+			this.hideBackDrop();
+			this.calendarView.renderController.hide();
+			this.calendarView.showingDateGrid = false;
+			this.entryFormView.dateGridRenderController.hide();
+			this.entryFormView.dateGridOpen = false;
+		}.bind(this));
 	}
 
 	TrackView.prototype.refresh = function() {

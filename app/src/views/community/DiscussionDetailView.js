@@ -24,7 +24,7 @@ define(function(require, exports, module) {
 	function DiscussionDetailView() {
 		BaseView.apply(this, arguments);
 		this.parentPage = 'FeedView';
-		this.setHeaderLabel('SOCIAL');
+		this.setHeaderLabel('SOCIAL FEED');
 
 		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
@@ -343,8 +343,6 @@ define(function(require, exports, module) {
 				content: parsedTemplate
 			});
 
-			commentSurface.discussionView = this;
-
 			commentSurface.on('deploy', function() {
 				Timer.every(function() {
 					var size = this.getSize();
@@ -358,8 +356,8 @@ define(function(require, exports, module) {
 				if (e instanceof CustomEvent) {
 					var classList;
 					classList = e.srcElement.parentElement.classList;
-					if (this.discussionView.isCommentSelected) {
-						this.discussionView.unselectComment();
+					if (this.isCommentSelected) {
+						this.unselectComment();
 					} else if (_.contains(classList, 'delete-post') || _.contains(e.srcElement.parentElement.classList, 'delete-post')) {
 						u.showAlert({
 							message: 'Are you sure you want to delete this comment?',
@@ -368,9 +366,9 @@ define(function(require, exports, module) {
 							onA: function() {
 								DiscussionPost.deleteComment({
 									postId: post.id
-								}, function(sucess) {
-									this.discussionView.surfaceList.splice(
-										this.discussionView.surfaceList.indexOf(this),
+								}, function(success) {
+									this.surfaceList.splice(
+										this.surfaceList.indexOf(commentSurface),
 										1
 									);
 								}.bind(this));
@@ -378,18 +376,18 @@ define(function(require, exports, module) {
 							onB: function() {}.bind(this),
 						});
 					} else if (_.contains(classList, 'edit-post')) {
-						this.discussionView.isCommentSelected = true;
-						this.discussionView.selectedCommentSurface = commentSurface;
-						this.discussionView.selectionIndex = this.discussionView.surfaceList.indexOf(commentSurface);
-						this.discussionView.surfaceList.splice(this.discussionView.surfaceList.indexOf(this.discussionView.addCommentSurface), 1);
+						this.isCommentSelected = true;
+						this.selectedCommentSurface = commentSurface;
+						this.selectionIndex = this.surfaceList.indexOf(commentSurface);
+						this.surfaceList.splice(this.surfaceList.indexOf(this.addCommentSurface), 1);
 						post.message = u.parseDivToNewLine(post.message);
-						var editCommentSurface = this.discussionView.getAddCommentSurface(post, this.discussionView.selectionIndex);
-						this.discussionView.surfaceList.splice(this.discussionView.selectionIndex, 1, editCommentSurface.node);
-						editCommentSurface.pipe(this.discussionView.scrollView);
+						var editCommentSurface = this.getAddCommentSurface(post, this.selectionIndex);
+						this.surfaceList.splice(this.selectionIndex, 1, editCommentSurface.node);
+						editCommentSurface.pipe(this.scrollView);
 						setTimeout(function() {
-							this.discussionView.resizeCommentSurface(editCommentSurface, true, true);
+							this.resizeCommentSurface(editCommentSurface, true, true);
 							document.getElementById('add-comment-avatar').classList.add('invisible');
-							this.discussionView.commentScrollPosition = this.discussionView.scrollView.getPosition();
+							this.commentScrollPosition = this.scrollView.getPosition();
 							moveCaretToEnd(document.getElementById('message'));
 						}.bind(this), 400);
 					} else if (_.contains(classList, 'comment-author') || _.contains(e.srcElement.parentElement.classList, 'comment-author')) {
@@ -397,7 +395,7 @@ define(function(require, exports, module) {
 					}
 
 				}
-			});
+			}.bind(this));
 
 
 			if (this.isSharedGraph) {

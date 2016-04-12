@@ -6,6 +6,7 @@ define(function(require, exports, module) {
 	var Modifier = require('famous/core/Modifier');
 	var EntryView = require('views/entry/EntryView');
 	var Timer = require('famous/utilities/Timer');
+	var u = require('util/Utils');
 	var FastClick = require('famous/inputs/FastClick');
 
 	function PinnedView(options) {
@@ -52,7 +53,7 @@ define(function(require, exports, module) {
 
 	PinnedView.prototype.getDisplayText = function() {
 		var displayText = this.entry.removeSuffix();
-		return displayText;
+		return u.escapeHTML(displayText);
 	}
 	module.exports = PinnedView;
 });

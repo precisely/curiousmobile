@@ -102,7 +102,7 @@ define(function(require, exports, module) {
 	EntryReadView.prototype.getDisplayText = function() {
 		var date = new Date(this.entry.date);
 		var time = u.formatAMPM(date);
-		var displayText = this.entry.removeSuffix();
+		var displayText = u.escapeHTML(this.entry.removeSuffix());
 		if (this.entry.isRemind() && this.entry.isRepeat()) {
 			if (this.entry.isDaily()) {
 				return '<div class="help"><i class="fa fa-repeat"></i> Alert + Repeat every day </div>' + displayText;
