@@ -160,27 +160,6 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	TrackEntryFormView.prototype.createDeleteButton = function() {
-		this.deleteButtonSurface = new Surface({
-			content: '<button type="button" class="full-width-button create-entry-button">DELETE ENTRY</button>',
-			size: [undefined, true]
-		});
-
-		this.deleteButtonSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
-				this.entry.delete(function(data) {
-					this._eventOutput.emit('delete-entry', data);
-				}.bind(this));
-			}
-		}.bind(this));
-
-		this.deleteButtonRenderController = new RenderController();
-		this.deleteButtonModifier = new StateModifier({
-			size: [App.width - 60, undefined],
-			transform: Transform.translate(30, 250, App.zIndex.formView)
-		});
-		this.formContainerSurface.add(this.deleteButtonModifier).add(this.deleteButtonRenderController);
-	};
 	/**
 	 * If form loads in edit mode, this will initialize
 	 * entry modifier form according to properties of current entry
@@ -266,15 +245,6 @@ define(function(require, exports, module) {
 			this.toggleSelector(this.repeatSurface);
 		}
 		this.buttonsRenderController.show(this.buttonsAndHelp);
-	};
-
-	TrackEntryFormView.prototype.toggleSelector = function(selectorSurface) {
-		var isHilighted = selectorSurface ? _.contains(selectorSurface.getClassList(), 'highlight-surface') : null;
-		if (selectorSurface && !isHilighted) {
-			selectorSurface.addClass('highlight-surface');
-		} else if (selectorSurface && isHilighted) {
-			selectorSurface.removeClass('highlight-surface');
-		}
 	};
 
 	TrackEntryFormView.prototype.buildStateFromEntry = function(entry) {
@@ -483,15 +453,6 @@ define(function(require, exports, module) {
 	TrackEntryFormView.prototype.hasFuture = function() {
 		var entry = this.entry;
 		return ((entry.isRepeat() && !entry.isRemind()) || entry.isGhost()) && !entry.isTodayOrLater();
-	};
-
-	TrackEntryFormView.prototype.resetRepeatModifierForm = function() {
-		this.repeatSurface.removeClass('highlight-surface');
-		this.pinSurface.removeClass('highlight-surface');
-		this.remindSurface.removeClass('highlight-surface');
-		if (document.getElementById('repeat-modifier-form')) {
-			document.getElementById('repeat-modifier-form').reset();
-		}
 	};
 
 	App.pages[TrackEntryFormView.name] = TrackEntryFormView;

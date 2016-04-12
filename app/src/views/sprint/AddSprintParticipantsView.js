@@ -42,8 +42,8 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.on('new-sprint-participant', function(resp) {
-			var participant = resp;
-			this.parentView.killAddSprintParticipantsOverlay(participant + '<br>');
+			var participant = '<p>' + resp + '<i class="fa fa-times-circle delete-participant" data-participant="' + resp + '"></i></p>';
+			this.parentView.killAddSprintParticipantsOverlay(participant);
 		}.bind(this));
 	}
 
@@ -107,7 +107,7 @@ define(function(require, exports, module) {
 
 		this.add(this.formContainerSurface);
 	}
-	
+
 	AddSprintParticipantsView.prototype.preShow = function(state) {
 		if (state.preShowCheck) {
 			this[state.preShowCheck.name].apply(this, state.preShowCheck.args);

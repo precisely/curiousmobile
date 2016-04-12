@@ -153,6 +153,28 @@ define(function(require, exports, module) {
 		})).add(this.draggableEntryFormView);
 	}
 
+	EntryFormView.prototype.createDeleteButton = function() {
+		this.deleteButtonSurface = new Surface({
+			content: '<button type="button" class="full-width-button create-entry-button">DELETE ENTRY</button>',
+			size: [undefined, true]
+		});
+
+		this.deleteButtonSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				this.entry.delete(function(data) {
+					this._eventOutput.emit('delete-entry', data);
+				}.bind(this));
+			}
+		}.bind(this));
+
+		this.deleteButtonRenderController = new RenderController();
+		this.deleteButtonModifier = new StateModifier({
+			size: [App.width - 60, undefined],
+			transform: Transform.translate(30, 250, App.zIndex.formView)
+		});
+		this.formContainerSurface.add(this.deleteButtonModifier).add(this.deleteButtonRenderController);
+	};
+
 	EntryFormView.prototype.showEntryButtons = function() {
 		this.buttonsRenderController = new RenderController();
 		var sequentialLayout = new SequentialLayout({
@@ -232,6 +254,23 @@ define(function(require, exports, module) {
 		return true;
 	};
 
+<<<<<<< HEAD
+=======
+	EntryFormView.prototype.toggleSelector = function(selectorSurface) {
+		var isHilighted = selectorSurface ? _.contains(selectorSurface.getClassList(), 'highlight-surface') : null;
+		if (this.constructor.name === 'SprintEntryFormView') {
+			this.repeatSurface.removeClass('highlight-surface');
+			this.remindSurface.removeClass('highlight-surface');
+			this.pinSurface.removeClass('highlight-surface');
+		}
+		if (selectorSurface && !isHilighted) {
+			selectorSurface.addClass('highlight-surface');
+		} else if (selectorSurface && isHilighted) {
+			selectorSurface.removeClass('highlight-surface');
+		}
+	};
+
+>>>>>>> discussion-description
 	EntryFormView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 		console.log('FormView: on-show ' + state);
@@ -249,6 +288,15 @@ define(function(require, exports, module) {
 			return;
 		}
 		this.loadState(state);
+	};
+
+	EntryFormView.prototype.resetRepeatModifierForm = function() {
+		this.repeatSurface.removeClass('highlight-surface');
+		this.pinSurface.removeClass('highlight-surface');
+		this.remindSurface.removeClass('highlight-surface');
+		if (document.getElementById('repeat-modifier-form')) {
+			document.getElementById('repeat-modifier-form').reset();
+		}
 	};
 
 	EntryFormView.prototype.toggleSuffix = function(suffix) {

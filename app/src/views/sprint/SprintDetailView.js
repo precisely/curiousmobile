@@ -15,6 +15,7 @@ define(function (require, exports, module) {
 	var SprintDetailsTemplate = require('text!templates/sprint-details.html');
 	var SprintFormView = require("views/sprint/SprintFormView");
 	var Sprint = require('models/Sprint');
+	var Entry = require('models/Entry');
 	var u = require('util/Utils');
 
 	function SprintDetailView() {
@@ -100,6 +101,11 @@ define(function (require, exports, module) {
 				sprintDetails.sprint.hasStarted = args.started;
 				sprintDetails.sprint.hasEnded = args.stopped;
 			}
+			this.entryMap = _.object(_.map(sprintDetails.entries, function(entry) {
+				entry.sprintEntry = true;
+				return [entry.id, new Entry(entry)]
+			}));
+			sprintDetails.entries = this.entryMap;
 			var parsedTemplate = _.template(SprintDetailsTemplate, sprintDetails, templateSettings);
 			var sprintSurface = new Surface({
 				size: [undefined, undefined],

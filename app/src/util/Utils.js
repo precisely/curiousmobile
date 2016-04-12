@@ -586,6 +586,16 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			return device.platform == 'android' || device.platform == 'Android';
 		};
 
+		/**
+		* @param {String} HTML representing a single element
+		* @return {Element}
+		*/
+		Utils.htmlToElement = function(html) {
+			var template = document.createElement('template');
+			template.innerHTML = html;
+			return template.content.firstChild;
+		};
+
 		var device = {};
 		if (/iPhone|iPod|iPad/i.test(navigator.userAgent)) {
 			device.platform = "ios"

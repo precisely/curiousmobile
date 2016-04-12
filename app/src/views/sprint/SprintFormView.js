@@ -17,6 +17,7 @@ define(function(require, exports, module) {
 	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var SprintEditTemplate = require('text!templates/sprint-details.html');
 	var Sprint = require('models/Sprint');
+	var Entry = require('models/Entry');
 	var u = require('util/Utils');
 
 	function SprintFormView() {
@@ -61,6 +62,7 @@ define(function(require, exports, module) {
 		}
 		this.hash = state.hash;
 		this.parentPage = state.parentPage || 'SprintListView';
+		this.entryMap = {};
 		this.loadData();
 		return true;
 	};
@@ -68,9 +70,15 @@ define(function(require, exports, module) {
 	SprintFormView.prototype.loadData = function() {
 		this.participantsOffset = 10;
 		Sprint.show(this.hash, function(sprintDetails) {
+			this.entryMap = _.object(_.map(sprintDetails.entries, function(entry) {
+				entry.sprintEntry = true;
+				return [entry.id, new Entry(entry)]
+			}));
+
 			this.totalParticipants = sprintDetails.totalParticipants;
 			this.virtualUserId = sprintDetails.sprint.virtualUserId;
 			this.virtualGroupId = sprintDetails.sprint.virtualGroupId;
+			sprintDetails.entries = this.entryMap;
 			sprintDetails.isFormView = true;
 			sprintDetails.isCreateForm = (this.parentPage == 'SprintDetailView') ? false : true;
 			this.sprintSurface = new Surface({
@@ -82,7 +90,7 @@ define(function(require, exports, module) {
 				if (e.keyCode === 13 && e.srcElement.id !== 'sprint-description') {
 					cordova.plugins.Keyboard.close();
 				} if (e.srcElement.id === 'sprint-description') {
-					this.resizeDescreption();	
+					this.resizeDescreption();
 				}
 			}.bind(this));
 
@@ -119,6 +127,30 @@ define(function(require, exports, module) {
 						}
 						this.addSprintTagsView = new SprintEntryFormView(this);
 						this.showOverlayContent(this.addSprintTagsView);
+					} else if (_.contains(classList, 'delete-tag')) {
+						if (typeof cordova !== 'undefined') {
+							cordova.plugins.Keyboard.close();
+						}
+						// this.addSprintTagsView = new SprintEntryFormView(this);
+						// var formViewState = this.addSprintTagsView.buildStateFromEntry(this.entryMap[entryId]);
+						// this.showOverlayContent(this.addSprintTagsView, function() {
+						// 	this.onShow(formViewState);
+						// }.bind(this.addSprintTagsView));
+						var entryId = e.srcElement.parentElement.dataset.id;
+						var entry = this.entryMap[entryId];
+						entry.delete(function(data) {
+							if (data && data.fail) {
+								u.showAlert('Could not delete entry');
+							} else {
+								var tagToRemove = document.querySelectorAll("[data-id='"+ entryId +"']")[0];
+								document.getElementsByClassName('tags-wrapper')[0].removeChild(tagToRemove);
+							}
+						}.bind(this));
+					} else if (_.contains(classList, 'delete-participant')) {
+						var participantUserName = e.srcElement.dataset.participant;
+						Sprint.deleteParticipant({username: participantUserName, now: new Date().toUTCString(), sprintHash: this.hash}, function() {
+							document.getElementsByClassName('participants-wrapper')[0].removeChild(e.srcElement.parentElement);
+						}.bind(this));
 					} else if (_.contains(classList, 'add-participants') || _.contains(e.srcElement.parentElement.classList, 'add-participants')) {
 						if (typeof cordova !== 'undefined') {
 							cordova.plugins.Keyboard.close();
@@ -149,14 +181,32 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	SprintFormView.prototype.killAddSprintTagsOverlay = function(entryItem) {
+	SprintFormView.prototype.killAddSprintTagsOverlay = function(args) {
 		this.killOverlayContent();
-		if (entryItem != '') {
-			var noTagsLabel = document.getElementById('no-tags-added');
-			if (noTagsLabel) {
-				noTagsLabel.parentNode.removeChild(noTagsLabel);
+		if (args) {
+			var entryItem = args.entryItem;
+			var hasUpdatedTag = args.hasUpdatedTag;
+			var entryId = args.entry.id;
+			this.entryMap[entryId] = args.entry;
+
+			if (entryItem && entryItem != '') {
+				var noTagsLabel = document.getElementById('no-tags-added');
+				if (noTagsLabel) {
+					noTagsLabel.parentNode.removeChild(noTagsLabel);
+				}
+				if (hasUpdatedTag) {
+					var tagToRemove = document.querySelectorAll("[data-id='"+ entryId +"']")[0];
+					if (tagToRemove) {
+						entryItem = u.htmlToElement(entryItem);
+						document.getElementsByClassName('tags-wrapper')[0].replaceChild(entryItem, tagToRemove);
+					}
+				} else {
+					document.getElementsByClassName('tags-wrapper')[0].innerHTML += entryItem;
+				}
+			} else if (args.hasDeletedTag) {
+				var tagToRemove = document.querySelectorAll("[data-id='"+ entryId +"']")[0];
+				document.getElementsByClassName('tags-wrapper')[0].removeChild(tagToRemove);
 			}
-			document.getElementsByClassName('tags-wrapper')[0].innerHTML += entryItem;
 		}
 	};
 
@@ -171,7 +221,7 @@ define(function(require, exports, module) {
 
 	SprintFormView.prototype.killAddSprintParticipantsOverlay = function(participant) {
 		this.killOverlayContent();
-		document.getElementById('sprint-participants').innerHTML += participant;
+		document.getElementsByClassName('participants-wrapper')[0].innerHTML += participant;
 	};
 
 	App.pages['SprintFormView'] = SprintFormView;

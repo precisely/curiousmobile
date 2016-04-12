@@ -18,7 +18,7 @@ define(function(require, exports, module) {
 
 	CreatePostView.DEFAULT_OPTIONS = {
 		header: true,
-		footer: false,
+		footer: true,
 	};
 
 	function _createView() {
@@ -27,8 +27,8 @@ define(function(require, exports, module) {
 		this.postSurface = new Surface({
 			content: _.template(template, this.options, templateSettings),
 			properties: {
-				backgroundColor: 'white',
-				padding: '10px'
+				backgroundColor: '#EFEFEF',
+				padding: '15px'
 			}
 		});
 
