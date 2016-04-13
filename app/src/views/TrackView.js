@@ -175,28 +175,45 @@ define(function(require, exports, module) {
 		}
 	};
 
-	TrackView.prototype.showPopover = function() {
-		if (!store.get('trackathonVisited')) {
-			$('#trackathon-menu').popover('show');
-			document.getElementsByClassName('sprint').classList.add('active');
-			this.isPopoverVisible = true;
+	TrackView.prototype.showPopover = function(state, glowEntry) {
+		var showEntryBalloon;
+		var showBookmarkBalloon;
+		var entryId;
+		
+		if (state && state.data) {
+			showEntryBalloon = state.data.showEntryBalloon ? state.data.showEntryBalloon : false;
+			showBookmarkBalloon = state.data.showBookmarkBalloon ? state.data.showBookmarkBalloon : false;
+			entryId = glowEntry ? glowEntry.id : null;
 		}
-	};
+		var elementId = "#entry-" + entryId;
+		
+		if (!this.currentListView || this.currentListView.pinnedViews.length > 0) {
+			$('#pin-container').popover(App.getPopover('bookmarksPresent'));
+			$('#pin-container').popover('show');
+		}
+		
+		if (store.get('firstVisit') === undefined) {
+			store.set('firstVisit', false);
+			$('#entry-description-dummy').popover(App.getPopover('enterTag'));
+			$('#entry-description-dummy').popover('show');
+		}
+		
+		if (showEntryBalloon) {
+			App.showPopover(elementId, 'entryAdded');
+		}
 
-	TrackView.prototype.hidePopover = function() {
-		$('#trackathon-menu').popover('hide');
-		document.getElementsByClassName('sprint').classList.remove('active');
-		this.isPopoverVisible = false;
-	};
-
-	TrackView.prototype.showPopover = function() {
+		if (showBookmarkBalloon) {
+			App.showPopover(elementId, 'bookmarkAdded');
+		}
+		
 		if (!store.get('trackathonVisited')) {
 			setTimeout(function() {
+				$('#TrackView-sprint-menu').popover(App.getPopover('sprintMenu'));
 				$('#TrackView-sprint-menu').popover('show');
 				if (document.getElementById('TrackView-sprint-menu')) {
 					document.getElementById('TrackView-sprint-menu').classList.add('active');
 				}
-			}.bind(this), 400);
+			}, 400);
 			this.isPopoverVisible = true;
 		}
 	};
@@ -212,6 +229,12 @@ define(function(require, exports, module) {
 	TrackView.prototype.preShow = function(state) {
 		BaseView.prototype.preShow.call(this);
 		this.popoverVisible = false;
+		
+		if (state && state.data) {
+			var showAlertBalloon = state.data.showAlertBalloon ? state.data.showAlertBalloon : true;
+			store.set('showAlertBalloon', showAlertBalloon);
+		}
+		
 		if (state && (state.fromServer || state.entryDate)) { //Entry from the server or a push notification
 			var glowEntryDate, entries, glowEntry, currentDay;
 			currentDay =  this.calendarView.getSelectedDate().setHours(0, 0, 0) == new Date(glowEntryDate).setHours(0, 0, 0);
@@ -233,9 +256,7 @@ define(function(require, exports, module) {
 
 		EntryCollection.clearCache();
 		this.changeDate(this.calendarView.selectedDate, function() {
-			if (this.currentListView && this.currentListView.draggableList.length) {
-				this.showPopover();
-			}
+			this.showPopover(state, glowEntry);
 		}.bind(this), glowEntry);
 		return true;
 	};
@@ -249,6 +270,7 @@ define(function(require, exports, module) {
 	};
 
 	TrackView.prototype.killEntryForm = function(onEntryFormSubmit) {
+		$('#remind-surface').popover('destroy');
 		this.entryListContainer.setProperties({
 			webkitFilter: 'blur(0px)',
 			filter: 'blur(0px)'

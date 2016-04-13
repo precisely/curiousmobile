@@ -65,8 +65,7 @@ define(function(require, exports, module) {
 
 		this.shareButton = new Surface({
 			size: [true, true],
-			content: '<div id="share-button-popover"><img height="30" src="content/images/share-red.png" data-placement="top" data-html="true"' +
-				'data-content="Click here to share" id="share-button"></div>',
+			content: '<div id="share-button-popover"><img height="30" src="content/images/share-red.png" id="share-button"></div>',
 			properties: {
 				padding: '10px'
 			}
@@ -153,6 +152,9 @@ define(function(require, exports, module) {
 
 	ChartView.prototype.showShareButtonPopover = function() {
 		setTimeout(function() {
+			var popover = App.getPopover('shareChart');
+			popover.container = '#share-button-popover';
+			$('#share-button').popover(popover);
 			$('#share-button').popover('show');
 		}, 400);
 	};

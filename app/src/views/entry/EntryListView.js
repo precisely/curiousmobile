@@ -105,6 +105,7 @@ define(function(require, exports, module) {
 
 	EntryListView.prototype.addPinnedEntry = function (entry) {
 		var pinnedEntryView = new PinnedView({entry: entry});
+		pinnedEntryView.entrySurface.setOptions({attributes: {id: 'entry-' + entry.id}});
 		this.draggablePin.subscribe(pinnedEntryView.entrySurface);
 		this.pinnedViews.push(pinnedEntryView);
 		this.entryEventListeners(pinnedEntryView);
@@ -322,6 +323,9 @@ define(function(require, exports, module) {
 				padding: '20px 10px 10px 10px',
 				overflowY: 'hidden',
 				borderBottom: '8px solid #ebebeb'
+			},
+			attributes: {
+				id: 'pin-container'
 			}
 		});
 

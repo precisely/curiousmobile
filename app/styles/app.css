@@ -3567,3 +3567,40 @@ input.cropit-image-zoom-input {
 #share-button-popover .popover {
 	width: 153px;
 }
+
+.popover {
+	border: none;
+	border-radius: 0px;
+	box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2);
+}
+
+.popover.top {
+	margin-top: -45px;
+	padding: 0px;
+}
+
+.popover-content {
+	padding: 23px;
+	font-size: 18px;
+	font-weight: 500;
+	color: #FF935F;
+}
+
+.popover.top .arrow {
+	bottom: -42px;
+}
+
+.vline {
+	width: 8px;
+	height: 25px;
+	background-color: white;
+	bottom: 10px;
+	position: absolute;
+	left: -4px;
+	z-index: 10;
+	box-shadow: 0px -1px 2px 0px rgba(0,0,0,.2);
+}
+
+.popover.top>.arrow:after {
+	box-shadow: 0px -1px 3px -1px rgba(0, 0, 0, 0.2);
+}

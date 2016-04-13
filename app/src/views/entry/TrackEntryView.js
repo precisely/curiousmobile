@@ -50,6 +50,7 @@ define(function(require, exports, module) {
 		this.size = readSurfaceOptions.size = [window.innerWidth, this.options.entryHeight];
 		readSurfaceOptions.content = this.getDisplayText();
 		readSurfaceOptions.classes = this.entry.repeatTypeAsClass();
+		readSurfaceOptions.attributes = {id: 'entry-' + this.entry.get('id')};
 		if (this.entry.isContinuous()) {
 			readSurfaceOptions.properties.margin = '5px';
 			size[0] = size[0] - 10;
