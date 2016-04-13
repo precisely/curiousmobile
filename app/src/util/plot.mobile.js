@@ -86,18 +86,22 @@ define(function(require, exports, module) {
 				}.bind(this));
 	}
 
-	PlotMobile.prototype.saveSnapshot = function(group) {
+	PlotMobile.prototype.saveSnapshot = function(groupToShareWith) {
+		var group = groupToShareWith.name;
+		var groupFullName = groupToShareWith.fullName;
+		this.sharedChartContext = (groupFullName == 'Public') ? 'publically' : (groupFullName == 'Private') ? 'privately' : 'with ' + groupFullName;
 		var plotDataStr = this.storeSnapshot();
 		if (plotDataStr == null) {
 			this.showAlert("No plotted data to save");
 			return;
 		}
 
-		this.queuePostJSON("sharing graph", this.makePostUrl("saveSnapshotData"), { name: this.getName() + ' (snapshot)', snapshotData: plotDataStr, group: group },
+		this.queuePostJSON("sharing graph", this.makePostUrl("saveSnapshotData"), { name: this.getName() + ' (chart)', snapshotData: plotDataStr, group: group },
 				function(data) {
 					if (this.checkData(data)) {
 						if (data.success) {
 							App.pageView.changePage('DiscussionDetailView', {discussionHash: data.discussionHash});
+							showAlert('You\'ve shared your chart ' + this.sharedChartContext);
 						} else {
 							this.showAlert(data.message);
 						}

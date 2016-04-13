@@ -79,8 +79,7 @@ define(function(require, exports, module) {
 		this.shareButton.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				this.hideShareButtonPopover();
-				this.overlayWithGroupListView = new OverlayWithGroupListView(shareChartTemplate);
-				this.showOverlayContent(this.overlayWithGroupListView);
+				this._eventOutput.emit('share-snapshot');
 			}
 		}.bind(this));
 
@@ -193,14 +192,14 @@ define(function(require, exports, module) {
 		this.setRightIcon(this.optionsSurface);
 	};
 
-	ChartView.prototype.shareChart = function(groupName) {
+	ChartView.prototype.shareChart = function(groupToShareWith) {
 		var chartTitle = document.getElementById('chart-title').value;
 		if (!chartTitle) {
 			u.showAlert('Please enter a title for the chart to share.');
 			return;
 		}
 
-		if (!groupName) {
+		if (!groupToShareWith || !groupToShareWith.name) {
 			u.showAlert('Please select a group to share this chart with.');
 			return;
 		}
@@ -208,7 +207,7 @@ define(function(require, exports, module) {
 		this.killOverlayContent();
 
 		this.graphView.plot.setName(chartTitle);
-		this.graphView.plot.saveSnapshot(groupName);
+		this.graphView.plot.saveSnapshot(groupToShareWith);
 	};
 
 	function _setHandlers() {
@@ -231,13 +230,35 @@ define(function(require, exports, module) {
 		this.on('edit-chart', function() {
 			App.pageView.changePage('CreateChartView', {selectedTags: this.graphView.plottedTags});
 		}.bind(this));
+
 		this.on('save-snapshot', function() {
 			this.graphView.plot.save();
 		}.bind(this));
+
 		this.on('share-snapshot', function() {
-			this.overlayWithGroupListView = new OverlayWithGroupListView(shareChartTemplate);
+			var overlayTemplateProperties = {};
+			var graphTitle;
+			var totalPlottetTags = this.tagsToPlot.length;
+			if (totalPlottetTags == 1) {
+				graphTitle = 'What is the relationship between ' + this.tagsToPlot[0].description + ' and my health?';
+			} else if (totalPlottetTags > 1) {
+				graphTitle = 'Is there a relationship between';
+				_.each(this.tagsToPlot, function(tag, index) {
+					if (index == totalPlottetTags - 1) {
+						graphTitle += ' and ' + tag.description + '?';
+					} else {
+						graphTitle += ' ' + tag.description + ((index == totalPlottetTags - 2) ? '' : ',');
+					}
+				});
+			} else {
+				u.showAlert('Please plot a chart to share');
+				return;
+			}
+			overlayTemplateProperties.graphTitle = graphTitle;
+			this.overlayWithGroupListView = new OverlayWithGroupListView(shareChartTemplate, overlayTemplateProperties);
 			this.showOverlayContent(this.overlayWithGroupListView);
 		}.bind(this));
+
 		this.on('load-snapshot', function() {
 			this.showLoadGraphOverlay();
 		}.bind(this));

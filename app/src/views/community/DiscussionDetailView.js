@@ -497,7 +497,8 @@ define(function(require, exports, module) {
 				discussionHash: this.discussionHash,
 				message: message
 			}, function(data) {
-				document.getElementById('message').value = '';
+				messageBox.value = '';
+				this.resizeCommentSurface(messageBox);
 				data.post.newPost = true;
 				this.renderComment(data.post);
 			}.bind(this));

@@ -602,6 +602,15 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			return template.content.firstChild;
 		};
 
+		Utils.setCursorAtEnd = function(inputElement) {
+			var value = inputElement.value;
+			inputElement.focus();
+			setTimeout(function() {
+				inputElement.value = '';
+				inputElement.value = value;
+			}, 100);
+		};
+
 		var device = {};
 		if (/iPhone|iPod|iPad/i.test(navigator.userAgent)) {
 			device.platform = "ios"

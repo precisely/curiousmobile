@@ -49,7 +49,7 @@ define(function(require, exports, module) {
 				if (_.contains(classList, 'close') || _.contains(e.srcElement.parentElement.classList, 'close')) {
 					this.overlayRenderController.hide();
 				} else if (e.srcElement.id === 'share-chart') {
-					App.pageView.getCurrentView().shareChart(this.groupName);
+					App.pageView.getCurrentView().shareChart({name: this.groupName, fullName: this.groupFullName});
 				} else if (_.contains(classList, 'submit-post')) {
 					var discussionTitle = document.getElementById('name').value;
 					var discussionDescription = document.getElementById('description').value;
@@ -105,6 +105,7 @@ define(function(require, exports, module) {
 			this.overlayModal.setContent('');
 			this.groupsSurfaceList.splice(0, this.groupsSurfaceList.length);
 			this.groupName = '';
+			this.groupFullName = '';
 			templateProperties.height = (App.pageView.getCurrentPage() === 'DiscussionDetailView') ? App.height - 420 : App.height - 400;
 
 			this.overlayModal.setContent(_.template(this.template, templateProperties, templateSettings));
@@ -117,6 +118,7 @@ define(function(require, exports, module) {
 				groupSurface.on('click', function(e) {
 					if (e instanceof CustomEvent) {
 						this.groupName = groupName.name;
+						this.groupFullName = groupName.fullName;
 					}
 				}.bind(this));
 				this.groupsSurfaceList.push(groupSurface);
@@ -134,6 +136,17 @@ define(function(require, exports, module) {
 					document.activeElement.blur();
 					var yOffset = document.getElementById('group-list-container').getBoundingClientRect().top;
 					this.groupsListScrollContainerModifier.setTransform(Transform.translate(this.xTranslate, yOffset - 65, App.zIndex.contextMenu));
+					_.each(document.getElementsByTagName('TEXTAREA'), function(inputElement){
+						inputElement.onfocus = function() {
+							u.setCursorAtEnd(this);
+						};
+					});
+					var chartTitleInputElement = document.getElementById('chart-title');
+					if (chartTitleInputElement) {
+						chartTitleInputElement.onfocus = function() {
+							this.setSelectionRange(0, this.value.length);
+						};
+					}
 			}.bind(this));
 		}.bind(this));
 	};
