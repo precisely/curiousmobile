@@ -122,7 +122,7 @@ define(function(require, exports, module) {
 
 	EntryView.prototype.delete = function(e) {
 		console.log('EntryView: Deleting entry - ' + this.entry.id);
-		if ((e instanceof CustomEvent) || e instanceof Entry) {
+		if ((e instanceof CustomEvent) || e.entry instanceof Entry) {
 			this.entry.delete(function(data) {
 				this._eventOutput.emit('delete-entry', data);
 			}.bind(this));

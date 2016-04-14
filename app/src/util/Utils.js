@@ -238,9 +238,10 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			window.setTimeout(function() {
 				if (stillRunning) {
 					stillRunning = false;
-					window.location.reload();
+					u.showAlert(description + ": in progress");
 				}
-			}, 10000);
+			}, 6000);
+
 			if (typeof args == "function") {
 				background = requestMethod;
 				requestMethod = delay;

@@ -240,7 +240,6 @@ define(function(require, exports, module) {
 		this.popoverVisible = false;
 		if (state && (state.fromServer || state.entryDate)) { //Entry from the server or a push notification
 			var glowEntryDate, entries, glowEntry, currentDay;
-			currentDay =  this.calendarView.getSelectedDate().setHours(0, 0, 0) == new Date(glowEntryDate).setHours(0, 0, 0);
 
 			if (state.fromServer) {
 				glowEntryDate = state.data.glowEntry.get("date");
@@ -251,6 +250,7 @@ define(function(require, exports, module) {
 				this.calendarView.setSelectedDate(glowEntryDate);
 				entries = EntryCollection.getFromCache(glowEntryDate);
 			}
+			currentDay =  this.calendarView.getSelectedDate().setHours(0, 0, 0) == new Date(glowEntryDate).setHours(0, 0, 0);
 			if (currentDay) {
 				this.currentListView.refreshEntries(entries, glowEntry);
 				return true;

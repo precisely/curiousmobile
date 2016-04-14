@@ -360,7 +360,7 @@ define(function(require, exports, module) {
 			commentBox.style.cssText = 'height:auto;';
 			commentBox.style.cssText = 'height:' + commentBox.scrollHeight + 'px';
 			this.addCommentSurface.trans.halt();
-			addCommentSurface.trans.set(commentBox.scrollHeight + 20);
+			this.addCommentSurface.trans.set(commentBox.scrollHeight + 20);
 			if (setInitialHeight) {
 				this.initialHeight = commentBox.scrollHeight + 20;
 			}
