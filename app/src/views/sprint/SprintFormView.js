@@ -19,6 +19,8 @@ define(function(require, exports, module) {
 	var Sprint = require('models/Sprint');
 	var Entry = require('models/Entry');
 	var u = require('util/Utils');
+	var Scrollview = require('famous/views/Scrollview');
+	var Utility = require('famous/utilities/Utility');
 
 	function SprintFormView() {
 		BaseView.apply(this, arguments);
@@ -82,7 +84,7 @@ define(function(require, exports, module) {
 			sprintDetails.isFormView = true;
 			sprintDetails.isCreateForm = (this.parentPage == 'SprintDetailView') ? false : true;
 			this.sprintSurface = new Surface({
-				size: [undefined, undefined],
+				size: [undefined, true],
 				content: _.template(SprintEditTemplate, sprintDetails, templateSettings),
 			});
 
@@ -174,8 +176,20 @@ define(function(require, exports, module) {
 				}
 			}.bind(this));
 
-			this.draggableFormView = new DraggableView(this.sprintSurface, true);
-			this.renderController.show(this.draggableFormView);
+			this.scrollableSprintFormView = new Scrollview({
+				direction: Utility.Direction.Y
+			});
+
+			var spareSurface = new Surface({
+				size: [undefined, 10]
+			});
+
+			this.scrollableSprintFormView.sequenceFrom([this.sprintSurface, spareSurface]);
+
+			this.sprintSurface.pipe(this.scrollableSprintFormView);
+			spareSurface.pipe(this.scrollableSprintFormView);
+
+			this.renderController.show(this.scrollableSprintFormView);
 		}.bind(this), function() {
 			App.pageView.goBack();
 		}.bind(this));

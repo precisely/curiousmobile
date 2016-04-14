@@ -3,7 +3,10 @@
 		<h1>PROFILE</h1>
 		<button class="edit-button">EDIT</button>
 		{{ if (user.avatarURL == null) { }}
-			<i class="fa fa-circle fa-4x"></i>
+			<span class="fa-stack fa-2x">
+				<i class="fa fa-circle fa-stack-2x grey-circle"></i>
+				<i class="fa fa-user fa-stack-1x fa-inverse"></i>
+			</span>
 		{{ } else { }}
 			<img src="{{- user.avatarURL }}" class="img-circle">
 		{{ } }}

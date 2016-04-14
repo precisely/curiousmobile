@@ -122,7 +122,7 @@ define(function(require, exports, module) {
 		this.layout.header.add(leftModifier).add(this.headerLeftIconController);
 		this.layout.header.add(rightModifier).add(this.headerRightIconController);
 		this.leftSurface = new Surface({
-			content: '<i class="fa fa-arrow-left"></i>',
+			content: '<img src="content/images/left.png" />',
 			size: [61, 64],
 			properties: {
 				padding: '15px 20px',
@@ -181,7 +181,6 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.rightIconsList = [];
-		this.rightIconsList.push(this.searchOptionSurface);
 		this.rightIconsSequenceView = new SequentialLayout({
 			direction: 0,
 			itemSpacing: 0,

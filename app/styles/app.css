@@ -757,6 +757,7 @@ button.close {
 
 #entry-description-dummy .input-placeholder {
 	padding: 10px 10px 10px 0px;
+	font-size: 10px;
 }
 
 .tutorial-input-surface .input-group-addon,
@@ -770,12 +771,14 @@ button.close {
 #entry-description::-webkit-input-placeholder {
 	color: #C04F7F !important;
 	opacity: 0.5;
+	font-size: 10px;
 }
 
 /* individual: mozilla */
 #entry-description::-moz-placeholder {
 	color: #C04F7F !important;
 	opacity: 0.5;
+	font-size: 10px;
 }
 
 /*HOME*/
@@ -978,7 +981,7 @@ button.close {
 	background-color: transparent;
 }
 
-.feed-pill:active, .feed-pill.active-pill {
+.feed-pill.active-pill {
 	background-color: #ff935f;
 	color: #fff;
 }
@@ -2846,9 +2849,8 @@ input.cropit-image-zoom-input {
 	margin-top: 0px;
 }
 
-.edit-image .fa-circle {
-	font-size: 110px;
-	vertical-align: middle;
+.grey-circle {
+	color: rgb(94, 94, 94);
 }
 
 #correlation-template {
@@ -3562,6 +3564,7 @@ input.cropit-image-zoom-input {
 	width: 153px;
 }
 
+<<<<<<< HEAD
 .bookmark-plus {
 	font-size: 16px;
 	padding: 4px 10px 0px 10px;
@@ -3605,4 +3608,41 @@ input.cropit-image-zoom-input {
 
 .profile-detail .bio {
 	color: #fff;
+}
+
+.popover {
+	border: none;
+	border-radius: 0px;
+	box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2);
+}
+
+.popover.top {
+	margin-top: -45px;
+	padding: 0px;
+}
+
+.popover-content {
+	padding: 23px;
+	font-size: 18px;
+	font-weight: 500;
+	color: #FF935F;
+}
+
+.popover.top .arrow {
+	bottom: -42px;
+}
+
+.vline {
+	width: 8px;
+	height: 25px;
+	background-color: white;
+	bottom: 10px;
+	position: absolute;
+	left: -4px;
+	z-index: 10;
+	box-shadow: 0px -1px 2px 0px rgba(0,0,0,.2);
+}
+
+.popover.top>.arrow:after {
+	box-shadow: 0px -1px 3px -1px rgba(0, 0, 0, 0.2);
 }

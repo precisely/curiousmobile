@@ -73,6 +73,10 @@ define(function(require, exports, module) {
 				this.setRemind = !this.setRemind;
 				this.setPinned = false;
 				this.toggleSelector(this.remindSurface);
+				if (store.get('showAlertBalloon')) {
+					$('#remind-surface').popover(App.getPopover('setAlert'));
+					$('#remind-surface').popover('show');
+				}
 			}
 		}.bind(this));
 
@@ -131,7 +135,6 @@ define(function(require, exports, module) {
 			window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],resp.tagStats[3], resp.tagStats[4])
 			this.trackView.initContextMenuOptions();
 			this.trackView.preShow({data: resp, fromServer: true});
-			this.trackView.showPopover();
 		}.bind(this));
 
 		this.on('update-entry', function(resp) {
@@ -147,7 +150,6 @@ define(function(require, exports, module) {
 			}
 			this.trackView.initContextMenuOptions();
 			this.trackView.preShow({data: resp, fromServer: true});
-			this.trackView.showPopover();
 		}.bind(this));
 
 		this.on('delete-entry', function(resp) {
@@ -341,6 +343,7 @@ define(function(require, exports, module) {
 
 	TrackEntryFormView.prototype.submit = function(e, directlyCreateEntry) {
 		this.autoCompleteView.hide();
+		$('#remind-surface').popover('destroy');
 		if (typeof cordova !== 'undefined') {
 			cordova.plugins.Keyboard.close();
 		}

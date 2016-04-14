@@ -267,17 +267,24 @@ define(function(require, exports, module) {
 		if (!listItems || listItems.length <= 0) {
 			this.itemsAvailable = false;
 			console.log('no more items available');
-			var noMoreItemsCardView = new NoMoreItemsCardView();
+			var noMoreItemsCardView = new NoMoreItemsCardView('No results');
 			this.deck.push(noMoreItemsCardView);
 			noMoreItemsCardView.setScrollView(this.scrollView);
+
+			this.on('list-empty', function () {
+				noMoreItemsCardView.setText('No results');
+			});
 
 			if (this.offset == 0) {
 				if (this.showExplanationCard && this.currentPill !== 'STARTED') {
 					this.showExplanationCard();
 				}
+			} else {
+				noMoreItemsCardView.setText('No more results');
 			}
 			return;
 		}
+
 		if (nextSuggestionOffset) {
 			this.nextSuggestionOffset = nextSuggestionOffset;
 		}

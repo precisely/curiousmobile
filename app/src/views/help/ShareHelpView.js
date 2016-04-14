@@ -10,8 +10,7 @@ define(function(require, exports, module) {
 	ShareHelpView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
-		helpTemplate: ShareHelpTemplate,
-		templateScrollHeight: 300
+		helpTemplate: ShareHelpTemplate
 	};
 	ShareHelpView.prototype = Object.create(HelpView.prototype);
 

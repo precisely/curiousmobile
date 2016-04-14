@@ -163,11 +163,20 @@ define(function(require, exports, module) {
 
 	function addListItemsToScrollView(listItems) {
 		if (typeof listItems === undefined || !listItems.length) {
-			var noActivityMessage = new NoMoreItemsCardView(); 
+			var noActivityMessage = new NoMoreItemsCardView('No results');
 			this.deck.push(noActivityMessage);
 			noActivityMessage.setScrollView(this.scrollView);
 			this.itemsAvailable = false;
 			console.log('no more items available');
+
+			this.on('list-empty', function() {
+				noActivityMessage.setText('No results');
+			});
+
+			if (this.offset !== 0) {
+				noActivityMessage.setText('No more results')
+			}
+
 			return;
 		}
 		listItems.forEach(function(item) {

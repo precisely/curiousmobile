@@ -10,8 +10,7 @@ define(function(require, exports, module) {
 	CreateSprintHelpView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
-		helpTemplate: CreateSprintHelpTemplate,
-		templateScrollHeight: 1360
+		helpTemplate: CreateSprintHelpTemplate
 	};
 	CreateSprintHelpView.prototype = Object.create(HelpView.prototype);
 

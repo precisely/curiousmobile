@@ -21,6 +21,49 @@ var App = function() {
 		contextMenu: 50,
 		overlay: 20
 	};
+	
+	// Global popover contents, so that any popover content can be changed here without visiting any views.
+	var popoverContents = {
+		entryAdded: 'Tap to edit',
+		bookmarkAdded: 'Bookmark added here, tap to track it!',
+		setAlert: 'An alert will pop up at the time of this entry to remind you to track this',
+		bookmarksPresent: 'Tap a bookmark to track it',
+		createBookmark: 'Create a bookmark for one-tap tracking',
+		sprintMenu: 'Ideas for activities to do with <br>We Are Curious!',
+		shareChart: 'Tap here to share',
+		enterTag: 'Enter tag here to track'
+	};
+	
+	//Global popover settings applied to every popup in the app. 
+	var popoverSettings = {
+		placement: 'top',
+		html: true,
+		container: 'body',
+		template: '<div class="popover" role="tooltip"><div class="arrow"><div class="vline"></div></div><h3 class="popover-title">' +
+				'</h3><div class="popover-content"></div></div>'
+	};
+	
+	// Show popover with specific content.
+	this.showPopover = function(elementId, key) {
+		setTimeout(function() {
+			var popover = popoverSettings;
+			popover.content = popoverContents[key];
+			$(elementId).popover(popover);
+			$(elementId).popover('show');
+
+			setTimeout(function() {
+				$(elementId).popover('destroy');
+			}, 3000)
+		}, 500);
+	};
+	
+	// Get popover with content.
+	this.getPopover = function(key) {
+		var popover = popoverSettings;
+		popover.content = popoverContents[key];
+		
+		return popover;
+	};
 
 	this.setCacheAndCoreEeventHandlers = function(EventHandler, Cache) {
 		this.collectionCache = new Cache(1000, true, new Cache.LocalStorageCacheStorage('ec'));
@@ -48,7 +91,7 @@ var App = function() {
 	this.viewsWithoutSearchIcon = ['EditProfileView', 'LoginView', 'RegisterView', 'AdvancedTagsView', 'SearchView',
 		'ForgotPasswordView', 'HelpContentsView', 'CreateTagHelpView', 'HelpContentsView', 'RepeatAlertTagsHelpView',
 		'ShareHelpView', 'MakeChartHelpView', 'TermsView', 'DiscussionDetailView', 'CreateSprintHelpView', 'AddDiscussionHelpView',
-		'ManageCuriositiesHelpView', 'SprintFormView', 'ExternalDevicesHelpView'
+		'ManageCuriositiesHelpView', 'SprintFormView', 'ExternalDevicesHelpView', 'PeopleDetailView'
 	];
 
 	this.setAppView = function(appView) {

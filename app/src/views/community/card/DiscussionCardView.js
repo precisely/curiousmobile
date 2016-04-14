@@ -65,6 +65,9 @@ define(function(require, exports, module) {
 							}, function(success) {
 								console.log('deleted successfully...');
 								this.cardViewCollection.splice(this.cardViewCollection.indexOf(this), 1);
+								if (this.cardViewCollection.length === 1) {
+									App.pageView.getCurrentView()._eventOutput.emit('list-empty');
+								}
 							}.bind(this));
 						}.bind(this),
 						onB: function() {
