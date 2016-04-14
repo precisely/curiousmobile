@@ -55,13 +55,13 @@ define(function(require, exports, module) {
 	};
 
 	function _getDefaultDates(date) {
-		var dates = [];
-		var date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 5);
-		date = u.getMidnightDate(date);
-
-		for (var i = 0, len = 11; i < len; i++) {
-			dates.push(new Date(date.getFullYear(), date.getMonth(), date.getDate() + i));
-		}
+		var dates = [date];
+		// var date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 5);
+		// date = u.getMidnightDate(date);
+		//
+		// for (var i = 0, len = 11; i < len; i++) {
+		// 	dates.push(new Date(date.getFullYear(), date.getMonth(), date.getDate() + i));
+		// }
 		return dates;
 	}
 

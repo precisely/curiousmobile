@@ -270,6 +270,7 @@ define(function(require, exports, module) {
 
 	DiscussionDetailView.prototype.deleteDiscussion = function() {
 		this.alert = u.showAlert({
+			type: 'alert',
 			message: 'Are you sure you want to delete this discussion?',
 			a: 'Yes',
 			b: 'No',
@@ -434,6 +435,7 @@ define(function(require, exports, module) {
 						this.unselectComment();
 					} else if (_.contains(classList, 'delete-post') || _.contains(e.srcElement.parentElement.classList, 'delete-post')) {
 						u.showAlert({
+							type: 'alert',
 							message: 'Are you sure you want to delete this comment?',
 							a: 'Yes',
 							b: 'No',

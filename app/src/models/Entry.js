@@ -350,6 +350,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						this.deleteGhost(true, callback);
 					} else {
 						u.showAlert({
+							type: 'alert',
 							message: 'Delete just this one event or also future events?',
 							verify: false,
 							a: 'One',

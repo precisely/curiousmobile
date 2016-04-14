@@ -57,7 +57,7 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 							collections.push(entryCollection);
 						}
 						if (!dataSentToCallback) {
-							callback(collections[5]);
+							callback(collections[0]);
 						}
 					}
 				});
@@ -84,7 +84,7 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 			if (key) {
 				collectionCache.remove(key);
 			} else {
-				collectionCache.clear();	
+				collectionCache.clear();
 			}
 		}
 

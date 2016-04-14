@@ -1,7 +1,7 @@
-<div class="alert alert-{{- type}} alert-dismissible" role="alert">
-    <button type="button" class="close btn-primary">&times;</button>
+<div class="alert alert-{{- type }} alert-dismissible" role="alert">
+    <button type="button" class="close">&times;</button>
 	{{- message}}
-	{{ if (showCheckBox) { }}
+	{{ if (typeof showCheckBox !== 'undefined' && showCheckBox) { }}
 		<i class="fa fa-check"></i>
 	{{ } }}
 </div>
