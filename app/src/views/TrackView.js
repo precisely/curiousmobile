@@ -55,13 +55,13 @@ define(function(require, exports, module) {
 	};
 
 	function _getDefaultDates(date) {
-		var dates = [];
-		var date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 5);
-		date = u.getMidnightDate(date);
-
-		for (var i = 0, len = 11; i < len; i++) {
-			dates.push(new Date(date.getFullYear(), date.getMonth(), date.getDate() + i));
-		}
+		var dates = [date];
+		// var date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 5);
+		// date = u.getMidnightDate(date);
+		//
+		// for (var i = 0, len = 11; i < len; i++) {
+		// 	dates.push(new Date(date.getFullYear(), date.getMonth(), date.getDate() + i));
+		// }
 		return dates;
 	}
 
@@ -263,7 +263,6 @@ define(function(require, exports, module) {
 		
 		if (state && (state.fromServer || state.entryDate)) { //Entry from the server or a push notification
 			var glowEntryDate, entries, glowEntry, currentDay;
-			currentDay =  this.calendarView.getSelectedDate().setHours(0, 0, 0) == new Date(glowEntryDate).setHours(0, 0, 0);
 
 			if (state.fromServer) {
 				glowEntryDate = state.data.glowEntry.get("date");
@@ -274,6 +273,7 @@ define(function(require, exports, module) {
 				this.calendarView.setSelectedDate(glowEntryDate);
 				entries = EntryCollection.getFromCache(glowEntryDate);
 			}
+			currentDay =  this.calendarView.getSelectedDate().setHours(0, 0, 0) == new Date(glowEntryDate).setHours(0, 0, 0);
 			if (currentDay) {
 				this.currentListView.refreshEntries(entries, glowEntry);
 				return true;

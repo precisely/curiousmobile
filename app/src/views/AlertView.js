@@ -20,21 +20,27 @@ define(function(require, exports, module) {
 		window.mainContext.add(this.controller);
 		this.controller.show(this, null, function() {
 			Engine.on('click', closeAlert);
-		});
+			if (this.options.type === 'default') {
+				setTimeout(function() {
+					closeAlert();
+				}, this.options.delay);
+			}
+		}.bind(this));
 	}
 
 	AlertView.prototype = Object.create(View.prototype);
 	AlertView.prototype.constructor = AlertView;
 
 	AlertView.DEFAULT_OPTIONS = {
-		type: 'info',
+		type: 'default',
 		message: 'Enter message',
 		verify: false,
 		a: 'OK',
 		b: 'Cancel',
 		onA: undefined,
 		onB: undefined,
-		tapOnBodyHandler: undefined
+		tapOnBodyHandler: undefined,
+		delay: 5000
 	};
 
 	function _createAlert() {
@@ -73,7 +79,7 @@ define(function(require, exports, module) {
 						this.options.tapOnBodyHandler();
 					}
 					u.closeAlerts();
-				} 
+				}
 			}
 		}.bind(this));
 

@@ -187,6 +187,7 @@ define(function(require, exports, module) {
 	Sprint.delete = function(sprintHash, successCallback) {
 		var httpArgs ={requestMethod:'delete'};
 		u.showAlert({
+			type: 'alert',
 			message: 'Are you sure you want to delete this trackathon?',
 			a: 'Yes',
 			b: 'No',

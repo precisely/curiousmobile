@@ -1754,14 +1754,31 @@ list-style-type: none;
 	padding: 10px;
 	min-height: 50px;
 	word-wrap: break-word;
+	color: #636363;
+}
+
+.alert .close {
+	margin-right: 0px;
+	background-color: #fff;
+	color: #676767;
+	font-size: 20px;
+	margin-top: -10px;
+	margin-right: -10px;
 }
 
 .alert button {
 	color: #fff;
+	background-color: #C34D7D;
 	padding: 5px 10px;
 	border-radius: 2px;
 	right: 0px !important;
-	margin-left: 10px;
+	margin-right: 10px;
+	margin-top: 3px;
+}
+
+.alert-alert, .alert-default {
+	background-color: #fff;
+	box-shadow: 0px 0px 8px 2px #D2D1D1;
 }
 
 .sprint-details {
@@ -3645,4 +3662,37 @@ input.cropit-image-zoom-input {
 
 .popover.top>.arrow:after {
 	box-shadow: 0px -1px 3px -1px rgba(0, 0, 0, 0.2);
+}
+
+.blinking-cursor {
+	font-weight: 100;
+	font-size: 18px;
+	color: #8C8C8C;
+	margin-right: -5px;
+	margin-top: -5px;
+	margin-left: -4px;
+	display: inline-block;
+	-webkit-animation: 1s blink step-end infinite;
+	-moz-animation: 1s blink step-end infinite;
+	-ms-animation: 1s blink step-end infinite;
+	-o-animation: 1s blink step-end infinite;
+	animation: 1s blink step-end infinite;
+}
+
+@keyframes "blink" {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: black;
+  }
+}
+
+@-webkit-keyframes "blink" {
+  from, to {
+    color: transparent;
+  }
+  50% {
+    color: black;
+  }
 }

@@ -219,6 +219,7 @@ define(function(require, exports, module) {
 
 		this.on('create-chart', function() {
 			u.showAlert({
+				type: 'alert',
 				message: 'Are you sure to clear graph?',
 				a: 'Yes',
 				b: 'No',

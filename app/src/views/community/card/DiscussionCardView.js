@@ -56,6 +56,7 @@ define(function(require, exports, module) {
 				classList = e.srcElement.parentElement.classList;
 				if (_.contains(classList, 'close-discussion') || _.contains(e.srcElement.classList, 'close-discussion')) {
 					this.alert = u.showAlert({
+						type: 'alert',
 						message: 'Are you sure you want to delete ' + this.discussion.get("name") + ' ?',
 						a: 'Yes',
 						b: 'No',

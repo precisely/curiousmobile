@@ -236,7 +236,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 							}
 						}, function (data) {
 							console.log('Entry creation failed: ' + this.toString());
-						}.bind(this), 0, false, false);
+						}.bind(this), 0, false, true);
 			},
 
 			create: function(callback) {
@@ -353,6 +353,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						this.deleteGhost(true, callback);
 					} else {
 						u.showAlert({
+							type: 'alert',
 							message: 'Delete just this one event or also future events?',
 							verify: false,
 							a: 'One',
@@ -376,7 +377,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 							displayDate: baseDate
 						});
 
-						u.queueJSON("deleting entry", u.makeGetUrl("deleteEntrySData"), u.makeGetArgs(argsToSend),
+						u.backgroundJSON("deleting entry", u.makeGetUrl("deleteEntrySData"), u.makeGetArgs(argsToSend),
 						function(entries) {
 							if (u.checkData(entries)) {
 								var collectionCache = window.App.collectionCache;
@@ -399,7 +400,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				var collectionCache = window.App.collectionCache;
 				var selectedDate = window.App.selectedDate;
 				var baseDate = window.App.selectedDate.toUTCString();
-				u.queueJSON("deleting entry", u.makeGetUrl("deleteGhostEntryData"),
+				u.backgroundJSON("deleting entry", u.makeGetUrl("deleteGhostEntryData"),
 				u.makeGetArgs(u.getCSRFPreventionObject(
 					"deleteGhostEntryDataCSRF", {
 						entryId: this.id,

@@ -420,6 +420,7 @@ define(function(require, exports, module) {
 
 		if (this.hasFuture()) {
 			this.alert = u.showAlert({
+				type: 'alert',
 				message: 'Update just this one event or also future events?',
 				a: 'One',
 				b: 'All Future',

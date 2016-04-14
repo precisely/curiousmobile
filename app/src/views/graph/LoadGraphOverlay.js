@@ -66,6 +66,7 @@ define(function(require, exports, module) {
 						var currentView = App.pageView.getPage('ChartView');
 						if (_.contains(classList, 'delete-graph') || _.contains(e.srcElement.parentElement.classList, 'delete-graph')) {
 							u.showAlert({
+								type: 'alert',
 								message: 'Are you sure you want to delete the saved gaph?',
 								a: 'Yes',
 								b: 'No',
