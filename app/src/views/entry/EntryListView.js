@@ -202,9 +202,6 @@ define(function(require, exports, module) {
 				padding: '23px 10px 10px 10px',
 				overflowY: 'hidden',
 				borderBottom: '8px solid #ebebeb'
-			},
-			attributes: {
-				id: 'pin-container'
 			}
 		});
 

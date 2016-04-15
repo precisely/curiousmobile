@@ -3581,7 +3581,6 @@ input.cropit-image-zoom-input {
 	width: 153px;
 }
 
-<<<<<<< HEAD
 .bookmark-plus {
 	font-size: 16px;
 	padding: 4px 10px 0px 10px;
@@ -3631,6 +3630,8 @@ input.cropit-image-zoom-input {
 	border: none;
 	border-radius: 0px;
 	box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2);
+	min-width: 150px;
+	text-align: center;
 }
 
 .popover.top {
@@ -3638,15 +3639,24 @@ input.cropit-image-zoom-input {
 	padding: 0px;
 }
 
+.popover.bottom {
+	margin-top: 45px;
+	padding: 0px;
+}
+
 .popover-content {
-	padding: 23px;
-	font-size: 18px;
+	padding: 10px;
+	font-size: 14px;
 	font-weight: 500;
 	color: #FF935F;
 }
 
 .popover.top .arrow {
 	bottom: -42px;
+}
+
+.popover.bottom .arrow {
+	top: -42px !important;
 }
 
 .vline {
@@ -3658,6 +3668,34 @@ input.cropit-image-zoom-input {
 	left: -4px;
 	z-index: 10;
 	box-shadow: 0px -1px 2px 0px rgba(0,0,0,.2);
+}
+
+.bottom .vline {
+	bottom: -36px;
+	box-shadow: 0px 1px 2px 0px rgba(0,0,0,.2);
+}
+
+#entry-description-dummy .vline {
+	height: 135px;
+	bottom: -146px;
+}
+
+#entry-description-dummy .arrow {
+	top: -152px !important;
+}
+
+#entry-description-dummy .popover {
+	top: 150px !important;
+}
+
+#bookmark-menu-icon .arrow {
+	left: 96% !important;
+}
+
+@media all and (max-width: 768px) {
+	#bookmark-menu-icon .popover {
+		left: 35% !important;
+	}
 }
 
 .popover.top>.arrow:after {
@@ -3679,7 +3717,7 @@ input.cropit-image-zoom-input {
 	animation: 1s blink step-end infinite;
 }
 
-@keyframes "blink" {
+@keyframes blink {
   from, to {
     color: transparent;
   }
@@ -3688,7 +3726,7 @@ input.cropit-image-zoom-input {
   }
 }
 
-@-webkit-keyframes "blink" {
+@-webkit-keyframes blink {
   from, to {
     color: transparent;
   }

@@ -41,9 +41,10 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 			});
 			console.log('Fetching entries from the server for dates: ' + dates);
 			u.queueJSON("loading entry list", u.makeGetUrl("getListData"), u.makeGetArgs(argsToSend),
-				function(entries) {
-					if (u.checkData(entries)) {
-						console.log('entries from the server: ', entries);
+				function(data) {
+					if (u.checkData(data)) {
+						console.log('entries from the server: ', data[0]);
+						var entries = data[0];
 						for (var prop in entries) {
 							EntryCollection.setCache(prop, entries[prop]);
 						}
@@ -56,6 +57,7 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 							entryCollection.key = key;
 							collections.push(entryCollection);
 						}
+						store.set('showRemindAlertBalloon', data[1]);
 						if (!dataSentToCallback) {
 							callback(collections[0]);
 						}

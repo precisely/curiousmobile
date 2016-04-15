@@ -73,9 +73,9 @@ define(function(require, exports, module) {
 				this.setRemind = !this.setRemind;
 				this.setPinned = false;
 				this.toggleSelector(this.remindSurface);
-				if (store.get('showAlertBalloon')) {
-					$('#remind-surface').popover(App.getPopover('setAlert'));
-					$('#remind-surface').popover('show');
+				if (store.get('showRemindAlertBalloon') && this.setRemind) {
+					App.showPopover('#remind-surface', {key: 'setAlert', autoHide: true, container: '#popover-surface'});
+					store.set('showRemindAlertBalloon', false);
 				}
 			}
 		}.bind(this));
@@ -175,6 +175,15 @@ define(function(require, exports, module) {
 			isInEditMode = true;
 		}
 
+		this.add(new StateModifier({
+			transform: Transform.translate(0, 0, 100)
+		})).add(new Surface({
+			size: [0, 0],
+			attributes: {
+				id: 'popover-surface'
+			}
+		}));
+		
 		this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">' + buttonName + '</button>');
 		this.submitButtonModifier.setTransform(Transform.translate(30, 180, App.zIndex.formView));
 

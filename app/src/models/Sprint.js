@@ -109,6 +109,7 @@ define(function(require, exports, module) {
 		function(data) {
 			if (u.checkData(data)) {
 				if (data.success) {
+					store.set('showPostDiscussionBalloon', data.showPostDiscussionBalloon);
 					successCallback(data.listItems);
 				} else {
 					failCallback();
@@ -172,6 +173,7 @@ define(function(require, exports, module) {
 				return;
 
 			if (data.success) {
+				store.set('showSprintStartBalloon', data.showSprintStartBalloon);
 				if (successCallback) {
 					successCallback();
 				}

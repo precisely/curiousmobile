@@ -110,12 +110,7 @@ define(function(require, exports, module) {
 	};
 
 	ChartView.prototype.showShareButtonPopover = function() {
-		setTimeout(function() {
-			var popover = App.getPopover('shareChart');
-			popover.container = '#share-button-popover';
-			$('#share-button').popover(popover);
-			$('#share-button').popover('show');
-		}, 400);
+		App.showPopover('#share-button', {key: 'shareChart', container: '#share-button-popover'});
 	};
 
 	ChartView.prototype.hideShareButtonPopover = function() {

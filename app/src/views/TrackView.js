@@ -97,19 +97,30 @@ define(function(require, exports, module) {
 			console.log('TrackView: Clicking on dummy input surface');
 			if (e instanceof CustomEvent) {
 				if (_.contains(e.srcElement.classList, 'bookmark-plus') || _.contains(e.srcElement.parentElement.classList, 'bookmark-plus')) {
+					$('#bookmark-menu-icon').popover('destroy');
 					App.pageView._eventOutput.emit('show-context-menu', {
 						menu: 'bookmark',
 						target: this,
 						eventArg: {}
 					});
-					//this.showEntryFormView({createJustBookmark: true});
 				} else if (_.contains(e.srcElement.classList, 'input-placeholder')) {
+					$('#entry-description-dummy').popover('destroy');
 					this._eventOutput.emit('create-entry');
 				}
 			}
 		}.bind(this));
 
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
+		
+		formContainerSurface.add(new StateModifier({
+			transform: Transform.translate(0, 0, 100)
+		})).add(new Surface({
+			size: [0, 0],
+			attributes: {
+				id: 'popover-surface'
+			}
+		}));
+		
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(function(progress) {
 			return Transform.translate(0, 0, 0);
@@ -206,33 +217,33 @@ define(function(require, exports, module) {
 		}
 		var elementId = "#entry-" + entryId;
 		
-		if (!this.currentListView || this.currentListView.pinnedViews.length > 0) {
-			$('#pin-container').popover(App.getPopover('bookmarksPresent'));
-			$('#pin-container').popover('show');
+		if (!store.get('hasVisitedMobileApp')) {
+			store.set('hasVisitedMobileApp', true);
+
+			if (!this.currentListView || this.currentListView.pinnedViews.length > 0) {
+				App.showPopover('#bookmark-label', {key: 'bookmarksPresent', container: '#bookmark-label', placement: 'bottom', autoHide: true});
+			} else {
+				App.showPopover('#bookmark-menu-icon', {key: 'createBookmark', container: '#bookmark-menu-icon', placement: 'bottom'});
+			}
+
+			App.showPopover('#entry-description-dummy', {key: 'enterTag', placement: 'bottom', container: '#entry-description-dummy'});
 		}
-		
-		if (store.get('firstVisit') === undefined) {
-			store.set('firstVisit', false);
-			$('#entry-description-dummy').popover(App.getPopover('enterTag'));
-			$('#entry-description-dummy').popover('show');
-		}
-		
+
 		if (showEntryBalloon) {
-			App.showPopover(elementId, 'entryAdded');
+			App.showPopover(elementId, {key: 'entryAdded', autoHide: true, container: '#popover-surface'});
 		}
 
 		if (showBookmarkBalloon) {
-			App.showPopover(elementId, 'bookmarkAdded');
+			App.showPopover(elementId, {key: 'bookmarkAdded', autoHide: true, container: '#popover-surface'});
 		}
-		
-		if (!store.get('trackathonVisited')) {
+
+		if (!store.get('trackathonVisited') && this.currentListView.draggableList.length > 0) {
 			setTimeout(function() {
-				$('#TrackView-sprint-menu').popover(App.getPopover('sprintMenu'));
-				$('#TrackView-sprint-menu').popover('show');
+				App.showPopover('#TrackView-sprint-menu', {key: 'sprintMenu', container: '#TrackView-sprint-menu'});
 				if (document.getElementById('TrackView-sprint-menu')) {
 					document.getElementById('TrackView-sprint-menu').classList.add('active');
 				}
-			}, 400);
+			}, 500);
 			this.isPopoverVisible = true;
 		}
 	};
@@ -255,12 +266,7 @@ define(function(require, exports, module) {
 	TrackView.prototype.preShow = function(state) {
 		BaseView.prototype.preShow.call(this);
 		this.popoverVisible = false;
-		
-		if (state && state.data) {
-			var showAlertBalloon = state.data.showAlertBalloon ? state.data.showAlertBalloon : true;
-			store.set('showAlertBalloon', showAlertBalloon);
-		}
-		
+
 		if (state && (state.fromServer || state.entryDate)) { //Entry from the server or a push notification
 			var glowEntryDate, entries, glowEntry, currentDay;
 
@@ -276,6 +282,7 @@ define(function(require, exports, module) {
 			currentDay =  this.calendarView.getSelectedDate().setHours(0, 0, 0) == new Date(glowEntryDate).setHours(0, 0, 0);
 			if (currentDay) {
 				this.currentListView.refreshEntries(entries, glowEntry);
+				this.showPopover(state, glowEntry);
 				return true;
 			}
 		}

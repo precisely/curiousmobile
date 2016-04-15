@@ -58,6 +58,7 @@ define(function(require, exports, module) {
 		},
 		getUserData: function(data) {
 			store.set('mobileSessionId', data['mobileSessionId']);
+			store.set('hasVisitedMobileApp', data['hasVisitedMobileApp']);
 			if (data.user) {
 				return this.cache(data.user);
 			} else {

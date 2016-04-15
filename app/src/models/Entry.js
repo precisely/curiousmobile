@@ -275,7 +275,6 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 							tagStats: entries[2],
 							showEntryBalloon: entries[4],
 							showBookmarkBalloon: entries[5],
-							showAlertBalloon: entries[6],
 							key: Entry.getCacheKey(baseDate)
 						});
 						//if (entries[2] != null)
