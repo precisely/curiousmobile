@@ -147,7 +147,10 @@ define(function(require, exports, module) {
 					var chartTitleInputElement = document.getElementById('chart-title');
 					if (chartTitleInputElement) {
 						chartTitleInputElement.onfocus = function() {
-							this.setSelectionRange(0, this.value.length);
+							this.focus();
+							setTimeout(function() {
+								this.setSelectionRange(0, this.value.length);
+							}.bind(this), 50)
 						};
 					}
 			}.bind(this));

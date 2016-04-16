@@ -112,15 +112,6 @@ define(function(require, exports, module) {
 
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
 		
-		formContainerSurface.add(new StateModifier({
-			transform: Transform.translate(0, 0, 100)
-		})).add(new Surface({
-			size: [0, 0],
-			attributes: {
-				id: 'popover-surface'
-			}
-		}));
-		
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(function(progress) {
 			return Transform.translate(0, 0, 0);
@@ -200,9 +191,6 @@ define(function(require, exports, module) {
 
 	TrackView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
-		if (this.currentListView && this.currentListView.draggableList.length && !store.get('trackathonVisited')) {
-			this.showPopover();
-		}
 	};
 
 	TrackView.prototype.showPopover = function(state, glowEntry) {
@@ -239,12 +227,16 @@ define(function(require, exports, module) {
 
 		if (!store.get('trackathonVisited') && this.currentListView.draggableList.length > 0) {
 			setTimeout(function() {
-				App.showPopover('#TrackView-sprint-menu', {key: 'sprintMenu', container: '#TrackView-sprint-menu'});
+				App.showPopover('#TrackView-sprint-menu', {key: 'sprintMenu', container: '#popover-surface'});
 				if (document.getElementById('TrackView-sprint-menu')) {
 					document.getElementById('TrackView-sprint-menu').classList.add('active');
 				}
 			}, 500);
 			this.isPopoverVisible = true;
+		}
+		
+		if (state && state.showTrackathonTagsBalloon) {
+			App.showPopover('#bookmark-label', {key: 'trackathonBookmarks', container: '#bookmark-label', placement: 'bottom', autoHide: true});
 		}
 	};
 
@@ -291,6 +283,7 @@ define(function(require, exports, module) {
 		this.changeDate(this.calendarView.selectedDate, function() {
 			this.showPopover(state, glowEntry);
 		}.bind(this), glowEntry);
+		
 		return true;
 	};
 

@@ -74,7 +74,7 @@ define(function(require, exports, module) {
 				this.setPinned = false;
 				this.toggleSelector(this.remindSurface);
 				if (store.get('showRemindAlertBalloon') && this.setRemind) {
-					App.showPopover('#remind-surface', {key: 'setAlert', autoHide: true, container: '#popover-surface'});
+					App.showPopover('#remind-surface', {key: 'setAlert', autoHide: true, container: '#remind-surface'});
 					store.set('showRemindAlertBalloon', false);
 				}
 			}
@@ -174,15 +174,6 @@ define(function(require, exports, module) {
 			buttonName = 'UPDATE ENTRY';
 			isInEditMode = true;
 		}
-
-		this.add(new StateModifier({
-			transform: Transform.translate(0, 0, 100)
-		})).add(new Surface({
-			size: [0, 0],
-			attributes: {
-				id: 'popover-surface'
-			}
-		}));
 		
 		this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">' + buttonName + '</button>');
 		this.submitButtonModifier.setTransform(Transform.translate(30, 180, App.zIndex.formView));

@@ -1,6 +1,13 @@
 <div class="people-detail draggable-container">
 	<div class="upper-body">
-		<i class="fa fa-circle fa-4x"></i>
+		{{ if (user.avatarURL == null) { }}
+			<span class="fa-stack fa-2x">
+				<i class="fa fa-circle fa-stack-2x grey-circle"></i>
+				<i class="fa fa-user fa-stack-1x fa-inverse"></i>
+			</span>
+		{{ } else { }}
+			<img src="{{- user.avatarURL }}" class="img-circle" height="55">
+		{{ } }}
 		<h2>{{- user.name || user.username }}</h2>
 		<button id="{{- user.buttonLabel }}">{{- user.buttonLabel }}</button>
 		<p>{{= linkify(user.bio) }}</p>

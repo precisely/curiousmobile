@@ -18,7 +18,7 @@ var App = function() {
 		datePicker: 50,
 		autocomplete: 99,
 		alertView: 999,
-		contextMenu: 50,
+		contextMenu: 90,
 		overlay: 20
 	};
 
@@ -31,7 +31,10 @@ var App = function() {
 		createBookmark: 'Create a bookmark for one-tap tracking',
 		sprintMenu: 'Activities to do with <br>We Are Curious!',
 		shareChart: 'Tap here to share',
-		enterTag: 'Enter tag to track'
+		enterTag: 'Enter tag to track',
+		addDiscussionTrackathon: 'Post new discussion topic',
+		trackathonBookmarks: "The trackathon’s tags have been added to your bookmarks! " +
+				"Go to the Trackathon/STARTED tab to see your started trackathons and discuss your progress with other users"
 	};
 	
 	//Global popover settings applied to every popup in the app.
@@ -40,8 +43,8 @@ var App = function() {
 			placement: 'top',
 			html: true,
 			container: 'body',
-			template: '<div class="popover" role="tooltip"><div class="arrow"><div class="vline"></div></div><h3 class="popover-title">' +
-			'</h3><div class="popover-content"></div></div>'
+			template: '<div class="popover" role="tooltip"><div class="arrow"><div class="vline"></div></div>' +
+			'<div class="popover-content"></div></div>'
 		};
 	};
 
@@ -64,7 +67,7 @@ var App = function() {
 			if (customSettings.autoHide) {
 				setTimeout(function() {
 					$element.popover('destroy');
-				}, 5000);
+				}, 15000);
 			}
 		}.bind(this), 500);
 	};

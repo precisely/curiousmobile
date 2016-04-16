@@ -274,7 +274,7 @@ function initCuriosities() {
 			$('#correlation-container').append(new_row);
 		} else {
 			var currentView = App.pageView.getCurrentView();
-			if (typeof currentView !== 'undefined') {
+			if (typeof currentView !== 'undefined' && currentView.addListItems) {
 				currentView.addListItems(templateProperties);
 			}
 		}

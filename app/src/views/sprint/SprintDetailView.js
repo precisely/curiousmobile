@@ -19,6 +19,7 @@ define(function (require, exports, module) {
 	var u = require('util/Utils');
 	var Scrollview = require('famous/views/Scrollview');
 	var Utility = require('famous/utilities/Utility');
+	var store = require('store');
 
 	function SprintDetailView() {
 		BaseView.apply(this, arguments);
@@ -146,7 +147,11 @@ define(function (require, exports, module) {
 					} else if (e.srcElement.id.indexOf('start-sprint') > -1) {
 						Sprint.start(this.hash, function (data) {
 							this.loadDetails({started: true});
-							App.pageView.changePage('TrackView');
+							var showTrackathonTagsBalloon = false;
+							if (store.get('showSprintStartBalloon')) {
+								showTrackathonTagsBalloon = true;
+							}
+							App.pageView.changePage('TrackView', {showTrackathonTagsBalloon: showTrackathonTagsBalloon});
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('stop-sprint') > -1) {
 						Sprint.stop(this.hash, function (data) {

@@ -98,6 +98,7 @@
 				StatusBar.hide();
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 				window.Keyboard = cordova.plugins.Keyboard;
+				window.open = cordova.InAppBrowser.open;
 				function refresh() {
 					if (!App || !App.coreEventHandler) {
 						setTimeout(refresh, 500);

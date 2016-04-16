@@ -31,6 +31,14 @@ define(function(require, exports, module) {
 		StateView.apply(this, arguments);
 		_createLayout.call(this);
 		_createHeader.call(this);
+		this.add(new StateModifier({
+			transform: Transform.translate(0, 0, 100)
+		})).add(new Surface({
+			size: [undefined, 0],
+			attributes: {
+				id: 'popover-surface'
+			}
+		}));
 		this._createFooter();
 		this.createBackDrop();
 		_setListeners.call(this);

@@ -845,8 +845,8 @@ button.close {
 	border-radius: 21px;
 	margin-top: 0px;
 	border-color: #FC3F28;
-	background-color: #ffffff;
-	border: solid 1px #FC3F28;
+	background-color: transparent;
+	border: solid 1px #979797;
 }
 
 .not-loggedin {
@@ -1838,7 +1838,7 @@ list-style-type: none;
 }
 
 .sprint-details button, .sprint-activity button, .people-detail button,
-.profile-detail button, .edit-people-detail button, .create-entry-button, .submit-post, #share-chart {
+.profile-detail button, .edit-people-detail button, .create-entry-button, .submit-post, #share-chart, .discussion-multi-select button {
 	background-color: transparent;
 	border: 1px solid #979797;
 	border-radius: 2px;
@@ -1932,7 +1932,6 @@ list-style-type: none;
 	display: inline;
 	font-weight: 300;
 	font-size: 16px;
-	font-weight: 500;
 }
 
 #device-list p {
@@ -3569,11 +3568,6 @@ input.cropit-image-zoom-input {
 }
 
 .discussion-multi-select button {
-	width: 100%;
-	height: 50px;
-	background-color: rgb(241, 74, 66);
-	font-size: 18px;
-	color: #ffffff;
 	margin-top: 30px;
 }
 
@@ -3630,7 +3624,6 @@ input.cropit-image-zoom-input {
 	border: none;
 	border-radius: 0px;
 	box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.2);
-	min-width: 150px;
 	text-align: center;
 }
 
@@ -3645,14 +3638,15 @@ input.cropit-image-zoom-input {
 }
 
 .popover-content {
-	padding: 10px;
-	font-size: 14px;
+	padding: 8px;
+	font-size: 12px;
 	font-weight: 500;
 	color: #FF935F;
+	line-height: 16px;
 }
 
 .popover.top .arrow {
-	bottom: -42px;
+	bottom: -42px !important;
 }
 
 .popover.bottom .arrow {
@@ -3688,14 +3682,16 @@ input.cropit-image-zoom-input {
 	top: 150px !important;
 }
 
-#bookmark-menu-icon .arrow {
-	left: 96% !important;
+#bookmark-menu-icon .popover {
+	width: 150px;
 }
 
-@media all and (max-width: 768px) {
-	#bookmark-menu-icon .popover {
-		left: 35% !important;
-	}
+#plus-icon-surface .popover {
+	width: 150px;
+}
+
+#remind-surface .popover {
+	width: 220px;
 }
 
 .popover.top>.arrow:after {
@@ -3706,18 +3702,19 @@ input.cropit-image-zoom-input {
 	font-weight: 100;
 	font-size: 18px;
 	color: #8C8C8C;
-	margin-right: -5px;
-	margin-top: -5px;
-	margin-left: -4px;
+	margin-right: -3px;
+	margin-top: -4px;
+	margin-left: -3px;
 	display: inline-block;
-	-webkit-animation: 1s blink step-end infinite;
-	-moz-animation: 1s blink step-end infinite;
-	-ms-animation: 1s blink step-end infinite;
-	-o-animation: 1s blink step-end infinite;
-	animation: 1s blink step-end infinite;
+	text-decoration: blink;
+	-webkit-animation-name: blinker;
+	-webkit-animation-duration: 1s;
+	-webkit-animation-iteration-count:infinite;
+	-webkit-animation-timing-function:ease-in-out;
+	-webkit-animation-direction: alternate;
 }
 
-@keyframes blink {
+@keyframes blinker {
   from, to {
     color: transparent;
   }
@@ -3726,7 +3723,7 @@ input.cropit-image-zoom-input {
   }
 }
 
-@-webkit-keyframes blink {
+@-webkit-keyframes blinker {
   from, to {
     color: transparent;
   }

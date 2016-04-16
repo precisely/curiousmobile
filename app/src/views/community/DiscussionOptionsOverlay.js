@@ -28,14 +28,14 @@ define(function (require, exports, module) {
 			origin: [0, 0.5],
 			content: _.template(discussionOptionsSurfaceTemplate, {createTrackathonDiscussion: this.createTrackathonDiscussion}, templateSettings),
 			properties: {
-				backgroundColor: '#ffffff'
+				backgroundColor: 'rgb(239, 239, 239)'
 			}
 		});
 
 		this.DiscussionOptionsSurface.on('click', function (e) {
 			if (e instanceof CustomEvent) {
 				var classList = e.srcElement.classList;
-				if (_.contains(classList, 'full-width')) {
+				if (_.contains(classList, 'full-width-button')) {
 					var selectedOption = document.querySelector('input[name="option"]:checked').value;
 					App.pageView.getCurrentView().killOverlayContent();
 					if (selectedOption === 'how-to') {

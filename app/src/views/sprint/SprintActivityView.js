@@ -19,6 +19,7 @@ define(function(require, exports, module) {
 	var DiscussionCardView = require('views/community/card/DiscussionCardView');
 	var Sprint = require('models/Sprint');
 	var Discussion = require('models/Discussion');
+	var store = require('store');
 	var NoMoreItemsCardView = require('views/community/card/NoMoreItemsCardView');
 	var DiscussionCreateOptionsSurface = require('views/community/DiscussionOptionsOverlay');
 	var u = require('util/Utils');
@@ -53,28 +54,34 @@ define(function(require, exports, module) {
 		activeMenu: 'sprint'
 	};
 
-	SprintActivityView.prototype.initContent = function() {
+	SprintActivityView.prototype.createPlusSurface = function() {
 		this.plusSurface = new Surface({
 			size: [44, 64],
-			content: '<i class="fa fa-2x fa-plus-square-o"></i>',
+			content: '<i class="fa fa-2x fa-plus-square-o" id="add-discussion"></i>',
 			properties: {
 				padding: '19px 0px 0px 5px',
 				color: '#f14a42'
+			},
+			attributes: {
+				id: 'plus-icon-surface'
 			}
 		});
+		this.removeRightIcon();
 		this.setRightIcon(this.plusSurface);
 
 		this.plusSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				var discussionCreateOptionsSurface = new DiscussionCreateOptionsSurface({createTrackathonDiscussion: true,
-						groupName: this.virtualGroupName});
+					groupName: this.virtualGroupName});
 				this.showBackButton();
 				this.removeRightIcon();
 				this.hideSearchIcon();
 				this.showOverlayContent(discussionCreateOptionsSurface);
 			}
 		}.bind(this));
-
+	};
+	
+	SprintActivityView.prototype.initContent = function() {
    		var sequentialLayout = new SequentialLayout({
    			direction: 1,
    			itemSpacing: 0
@@ -157,7 +164,15 @@ define(function(require, exports, module) {
 		var parsedTemplate = _.template(SprintActivityTitleTemplate, {name: this.name}, templateSettings);
 		this.sprintActivityTitleSurface.setContent(parsedTemplate);
 
-		Sprint.listDiscussions(args, addListItemsToScrollView.bind(this), function() {
+		Sprint.listDiscussions(args, function(data) {
+			if (store.get('showPostDiscussionBalloon')) {
+				App.showPopover('#add-discussion', {placement: 'bottom', key: 'addDiscussionTrackathon', autoHide: true, container: '#plus-icon-surface'});
+			}
+			if (data.isMember) {
+				this.createPlusSurface();
+			}
+			addListItemsToScrollView.call(this, data.listItems);
+		}.bind(this), function() {
 			Sprint.follow(args.sprintHash, function() {
 				this.fetchDiscussions(args);
 			}.bind(this), function() {
@@ -167,6 +182,10 @@ define(function(require, exports, module) {
 
 	};
 
+	SprintActivityView.prototype.preChangePage = function() {
+		$('#add-discussion').popover('destroy');
+	};
+	
 	SprintActivityView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 	};
@@ -186,7 +205,7 @@ define(function(require, exports, module) {
 	};
 
 	function addListItemsToScrollView(listItems) {
-		if (typeof listItems === undefined || !listItems.length) {
+		if (typeof listItems === 'undefined' || !listItems.length) {
 			var noActivityMessage = new NoMoreItemsCardView('No results');
 			this.deck.push(noActivityMessage);
 			noActivityMessage.setScrollView(this.scrollView);

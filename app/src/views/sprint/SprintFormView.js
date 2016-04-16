@@ -176,20 +176,8 @@ define(function(require, exports, module) {
 				}
 			}.bind(this));
 
-			this.scrollableSprintFormView = new Scrollview({
-				direction: Utility.Direction.Y
-			});
-
-			var spareSurface = new Surface({
-				size: [undefined, 10]
-			});
-
-			this.scrollableSprintFormView.sequenceFrom([this.sprintSurface, spareSurface]);
-
-			this.sprintSurface.pipe(this.scrollableSprintFormView);
-			spareSurface.pipe(this.scrollableSprintFormView);
-
-			this.renderController.show(this.scrollableSprintFormView);
+			this.draggableFormView = new DraggableView(this.sprintSurface, true);
+			this.renderController.show(this.draggableFormView);
 		}.bind(this), function() {
 			App.pageView.goBack();
 		}.bind(this));

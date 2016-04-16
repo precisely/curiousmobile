@@ -445,9 +445,9 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		Utils.spinnerStart = function () {
 			//var spinnerDialog = window.plugins? window.plugins.spinnerDialog : false;
 			if (typeof wizSpinner !== 'undefined') {
-				wizSpinner.show({bgColor: 'transparent', opacity: 0.0, label: "my loading text"});
+				wizSpinner.show({bgColor: 'transparent', opacity: 0.0, label: "Loading"});
 			}
-		}
+		};
 
 		Utils.spinnerStop = function () {
 			//var spinnerDialog = window.plugins? window.plugins.spinnerDialog : false;

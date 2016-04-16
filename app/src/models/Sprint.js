@@ -110,7 +110,7 @@ define(function(require, exports, module) {
 			if (u.checkData(data)) {
 				if (data.success) {
 					store.set('showPostDiscussionBalloon', data.showPostDiscussionBalloon);
-					successCallback(data.listItems);
+					successCallback(data);
 				} else {
 					failCallback();
 				}
