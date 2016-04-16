@@ -20,6 +20,7 @@ define(function(require, exports, module) {
 	var Sprint = require('models/Sprint');
 	var Discussion = require('models/Discussion');
 	var NoMoreItemsCardView = require('views/community/card/NoMoreItemsCardView');
+	var DiscussionCreateOptionsSurface = require('views/community/DiscussionOptionsOverlay');
 	var u = require('util/Utils');
 
 	function SprintActivityView() {
@@ -39,13 +40,6 @@ define(function(require, exports, module) {
 		});
 		this.setBody(this.backgroundSurface);
 
-		this.pencilSurface = new ImageSurface({
-			size: [44, 64],
-			content: 'content/images/edit-pencil.png',
-		});
-
-		// Pencil icon will appear after the sprint edit is functional
-		//this.setRightIcon(this.pencilSurface);
 		this.initContent();
 	}
 
@@ -60,6 +54,27 @@ define(function(require, exports, module) {
 	};
 
 	SprintActivityView.prototype.initContent = function() {
+		this.plusSurface = new Surface({
+			size: [44, 64],
+			content: '<i class="fa fa-2x fa-plus-square-o"></i>',
+			properties: {
+				padding: '19px 0px 0px 5px',
+				color: '#f14a42'
+			}
+		});
+		this.setRightIcon(this.plusSurface);
+
+		this.plusSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				var discussionCreateOptionsSurface = new DiscussionCreateOptionsSurface({createTrackathonDiscussion: true,
+						groupName: this.virtualGroupName});
+				this.showBackButton();
+				this.removeRightIcon();
+				this.hideSearchIcon();
+				this.showOverlayContent(discussionCreateOptionsSurface);
+			}
+		}.bind(this));
+
    		var sequentialLayout = new SequentialLayout({
    			direction: 1,
    			itemSpacing: 0
@@ -130,6 +145,13 @@ define(function(require, exports, module) {
 		this.add(mod).add(sequentialLayout);
 	};
 
+	SprintActivityView.prototype.killOverlayContent = function() {
+		BaseView.prototype.killOverlayContent.call(this);
+		this.showMenuButton();
+		this.showSearchIcon();
+		this.setRightIcon(this.plusSurface);
+	};
+
 	SprintActivityView.prototype.fetchDiscussions = function(args) {
 		var params = args;
 		var parsedTemplate = _.template(SprintActivityTitleTemplate, {name: this.name}, templateSettings);
@@ -150,11 +172,13 @@ define(function(require, exports, module) {
 	};
 
 	SprintActivityView.prototype.preShow = function(state) {
-		if (!state || !state.hash) {
+		if (!state || (!state.hash && (state.new && !this.hash))) {
 			return false;
+		} else if (state.hash) {
+			this.hash = state.hash;
+			this.name = state.name;
+			this.virtualGroupName = state.virtualGroupName;
 		}
-		this.hash = state.hash;
-		this.name = state.name;
 		this.parentPage = state.parentPage || 'SprintListView';
 		this.initScrollView();
 		this.fetchDiscussions({sprintHash: this.hash, max: 5, offset: 0});

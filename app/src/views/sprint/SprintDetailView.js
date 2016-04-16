@@ -79,6 +79,7 @@ define(function (require, exports, module) {
 		}
 		this.hash = state.hash;
 		this.name = state.name;
+		this.virtualGroupName = state.virtualGroupName;
 		this.parentPage = state.parentPage || 'SprintListView';
 		this.parentCard = state.parentCard;
 		this.loadDetails();
@@ -122,6 +123,7 @@ define(function (require, exports, module) {
 						var state = {
 							hash: this.hash,
 							name: this.name,
+							virtualGroupName: this.virtualGroupName,
 							parentPage: this.parentPage != 'SprintActivityView' ? 'SprintDetailView' : undefined
 						};
 						App.pageView.changePage('SprintActivityView', state);
@@ -144,6 +146,7 @@ define(function (require, exports, module) {
 					} else if (e.srcElement.id.indexOf('start-sprint') > -1) {
 						Sprint.start(this.hash, function (data) {
 							this.loadDetails({started: true});
+							App.pageView.changePage('TrackView');
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('stop-sprint') > -1) {
 						Sprint.stop(this.hash, function (data) {

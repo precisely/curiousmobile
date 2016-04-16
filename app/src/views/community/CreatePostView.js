@@ -56,7 +56,9 @@ define(function(require, exports, module) {
 	}
 
 	CreatePostView.prototype.clear = function() {
-		document.forms["postForm"]["name"].value = '';
+		if (document.forms["postForm"] && document.forms["postForm"]["name"]) {
+			document.forms["postForm"]["name"].value = '';
+		}
 	};
 
 	CreatePostView.prototype.onShow = function(state) {
@@ -66,6 +68,14 @@ define(function(require, exports, module) {
 			this.hashTag = state.hashTag;
 		}
 	}
+
+	CreatePostView.prototype.preShow = function(state) {
+		BaseView.prototype.preShow.call(this);
+		if (state && state.groupName) {
+			this.groupName = state.groupName;
+		}
+		return true;
+	};
 
 	CreatePostView.prototype.submit = function() {
 		var value = document.forms["postForm"]["name"].value;
@@ -77,6 +87,7 @@ define(function(require, exports, module) {
 			Discussion.post(
 				extractedData.name,
 				extractedData.post,
+				this.groupName,
 				function(result) {
 					this.clear();
 					console.log('Posted a new discussion');
@@ -84,9 +95,7 @@ define(function(require, exports, module) {
 					u.spinnerStart();
 					setTimeout(function(){
 						u.spinnerStop();
-						App.pageView.changePage('FeedView', {
-							new: true
-						});
+						App.pageView.goBack(null, {new: true});
 					}, 1000);
 				}.bind(this)
 			);

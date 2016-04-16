@@ -113,7 +113,6 @@ define(function(require, exports, module) {
 		this.setRightIcon(this.plusSurface);
 		this.setHeaderLabel('SOCIAL FEED');
 
-
 		this.plusSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				var discussionCreateOptionsSurface = new DiscussionCreateOptionsSurface();

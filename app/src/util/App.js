@@ -21,7 +21,7 @@ var App = function() {
 		contextMenu: 50,
 		overlay: 20
 	};
-	
+
 	// Global popover contents, so that any popover content can be changed here without visiting any views.
 	var popoverContents = {
 		entryAdded: 'Tap to edit',
