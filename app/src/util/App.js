@@ -21,7 +21,7 @@ var App = function() {
 		contextMenu: 50,
 		overlay: 20
 	};
-	
+
 	// Global popover contents, so that any popover content can be changed here without visiting any views.
 	var popoverContents = {
 		entryAdded: 'Tap to edit',
@@ -33,8 +33,8 @@ var App = function() {
 		shareChart: 'Tap here to share',
 		enterTag: 'Enter tag here to track'
 	};
-	
-	//Global popover settings applied to every popup in the app. 
+
+	//Global popover settings applied to every popup in the app.
 	var popoverSettings = {
 		placement: 'top',
 		html: true,
@@ -42,7 +42,7 @@ var App = function() {
 		template: '<div class="popover" role="tooltip"><div class="arrow"><div class="vline"></div></div><h3 class="popover-title">' +
 				'</h3><div class="popover-content"></div></div>'
 	};
-	
+
 	// Show popover with specific content.
 	this.showPopover = function(elementId, key) {
 		setTimeout(function() {
@@ -56,12 +56,12 @@ var App = function() {
 			}, 3000)
 		}, 500);
 	};
-	
+
 	// Get popover with content.
 	this.getPopover = function(key) {
 		var popover = popoverSettings;
 		popover.content = popoverContents[key];
-		
+
 		return popover;
 	};
 
@@ -74,12 +74,12 @@ var App = function() {
 
 	//this.serverUrl = "http://192.168.0.31:8080";
 	//this.serverUrl = "http://192.168.1.123:8080";
-	//this.serverUrl = "https://www.wearecurio.us";
+	this.serverUrl = "https://www.wearecurio.us";
 	//this.serverUrl = "http://192.168.0.111:8080";
 	//this.serverUrl = "http://localhost:8080";
 	//this.serverUrl = "http://127.0.0.1:8080";
 	//this.serverUrl = "http://192.168.0.108:8080";
-	this.serverUrl = "http://192.168.1.141:8080";
+	//this.serverUrl = "http://192.168.1.141:8080";
 	//this.serverUrl = "http://192.168.1.107:8080";
 	//this.serverUrl = "http://103.17.156.129:8080";
 	//this.serverUrl = "http://114.143.237.122:8080";

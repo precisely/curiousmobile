@@ -209,7 +209,7 @@ define(function(require, exports, module) {
 					if (this.shareDiscussion) {
 						shareDiscussion = true;
 					}
-					App.pageView.changePage('ChartView', {tagsToPlot: this.selectedTags, shareDiscussion: shareDiscussion});
+					App.pageView.changePage('ChartView', {tagsToPlot: this.selectedTags, shareDiscussion: shareDiscussion, groupName: this.groupName});
 					this.shareDiscussion = false;
 				}
 			}
@@ -312,6 +312,10 @@ define(function(require, exports, module) {
 			'<input type="text" class="form-control tag-search-input" placeholder="Search Tags"></div>');
 		if (state && state.selectedTags) {
 			this.selectedTags = state.selectedTags.slice(0);
+		}
+		if (state && state.shareDiscussion) {
+			this.shareDiscussion = state.shareDiscussion;
+			this.groupName = state.groupName;
 		}
 		this.hideSearchIcon();
 		this.init();

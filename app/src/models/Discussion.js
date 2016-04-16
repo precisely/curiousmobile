@@ -16,12 +16,16 @@ define(function(require, exports, module) {
 
 	Discussion.max = 10;
 
-	Discussion.post = function(name, discussionPost, callback) {
+	Discussion.post = function(name, discussionPost, groupName, callback) {
+		if (!callback) {
+			callback = groupName;
+			groupName = '';
+		}
 		u.queuePostJSON("posting in", App.serverUrl + '/api/discussion',
 				u.makeGetArgs({
 					name: name,
 					discussionPost: discussionPost,
-					group: ""
+					group: groupName || ""
 				}),
 				function(data) {
 					callback(data);

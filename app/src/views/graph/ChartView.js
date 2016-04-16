@@ -33,6 +33,7 @@ define(function(require, exports, module) {
 		console.log('ChartView constructor');
 		App.tagListWidget = initTagListWidget();
 		this.tagsToPlot = [];
+		this.groupToShareWith = '';
 		this.optionsSurface = new Surface({
 			size: [44, 64],
 			content: '<i class="fa fa-ellipsis-h fa-2x"></i>',
@@ -138,11 +139,11 @@ define(function(require, exports, module) {
 	ChartView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 		if ((!this.tagsToPlot || !this.tagsToPlot.length) && (!state || !state.tagsByDescription)) {
-			var viewProperties = [];
+			var viewProperties = {};
 			if (state && state.shareDiscussion) {
-				viewProperties.push({name: 'shareDiscussion', value: true});
+				viewProperties = {name: 'shareDiscussion', value: true, groupName: this.groupToShareWith};
 			}
-			App.pageView.changePage('CreateChartView', {viewProperties: viewProperties});
+			App.pageView.changePage('CreateChartView', viewProperties);
 		} else if (state && state.triggerLoadGraph) {
 			this.showLoadGraphOverlay();
 		}
@@ -165,6 +166,7 @@ define(function(require, exports, module) {
 			}
 
 			if (state.shareDiscussion) {
+				this.groupToShareWith = state.groupName ? state.groupName : 'Public';
 				this.showShareButtonPopover();
 			}
 		}
@@ -175,7 +177,7 @@ define(function(require, exports, module) {
 		if (this.currentOverlay) {
 			BaseView.prototype.goBack.call(this);
 		} else {
-			App.pageView.changePage('CreateChartView', {selectedTags: this.graphView.plottedTags});
+			App.pageView.changePage('CreateChartView', {selectedTags: this.graphView.plottedTags, groupName: this.groupToShareWith});
 		}
 	};
 
@@ -225,13 +227,13 @@ define(function(require, exports, module) {
 				b: 'No',
 				onA: function() {
 					this.graphView.clearGraph();
-					App.pageView.changePage('CreateChartView');
+					App.pageView.changePage('CreateChartView', {groupName: this.groupToShareWith});
 				}.bind(this),
 				onB: function() {}.bind(this)
 			});
 		});
 		this.on('edit-chart', function() {
-			App.pageView.changePage('CreateChartView', {selectedTags: this.graphView.plottedTags});
+			App.pageView.changePage('CreateChartView', {selectedTags: this.graphView.plottedTags, groupName: this.groupToShareWith});
 		}.bind(this));
 
 		this.on('save-snapshot', function() {
@@ -258,6 +260,7 @@ define(function(require, exports, module) {
 				return;
 			}
 			overlayTemplateProperties.graphTitle = graphTitle;
+			overlayTemplateProperties.groupName = this.groupToShareWith;
 			this.overlayWithGroupListView = new OverlayWithGroupListView(shareChartTemplate, overlayTemplateProperties);
 			this.showOverlayContent(this.overlayWithGroupListView);
 		}.bind(this));

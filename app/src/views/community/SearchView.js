@@ -177,7 +177,12 @@ define(function(require, exports, module) {
 				this.fetchFeedItems(state.lable);
 			}.bind(this), 350)
 		}
-	};
+		var lastVisitedPage = App.pageView.history.slice(-1)[0];
+		if (lastVisitedPage && (lastVisitedPage === 'PeopleDetailView' ||
+				App.pageView.getPage(lastVisitedPage).parentPage)) {
+			App.pageView.history.pop();
+		}
+	};;
 
 	SearchView.prototype.getCurrentState = function() {
 		var inputElement = document.getElementById('search-input');

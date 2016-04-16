@@ -443,7 +443,7 @@ define(function(require, exports, module) {
 								DiscussionPost.deleteComment({
 									postId: post.id
 								}, function(sucess) {
-									this.discussionView.surfaceList.splice(
+									this.surfaceList.splice(
 										this.surfaceList.indexOf(commentSurface), 1);
 										this.scrollView.sequenceFrom(this.surfaceList);
 								}.bind(this));

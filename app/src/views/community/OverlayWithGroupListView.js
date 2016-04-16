@@ -104,7 +104,7 @@ define(function(require, exports, module) {
 		User.getGroupsToShare(function(data) {
 			this.overlayModal.setContent('');
 			this.groupsSurfaceList.splice(0, this.groupsSurfaceList.length);
-			this.groupName = '';
+			this.groupName = templateProperties.groupName || '';
 			this.groupFullName = '';
 			templateProperties.height = (App.pageView.getCurrentPage() === 'DiscussionDetailView') ? App.height - 420 : App.height - 400;
 
@@ -115,6 +115,9 @@ define(function(require, exports, module) {
 					size: [undefined, true],
 					content: _.template(groupsListTemplate, {index: index, groupName: groupName, currentGroup: templateProperties.groupName}, templateSettings)
 				});
+				if (groupName.name === this.groupName) {
+					this.groupFullName = groupName.fullName;
+				}
 				groupSurface.on('click', function(e) {
 					if (e instanceof CustomEvent) {
 						this.groupName = groupName.name;
