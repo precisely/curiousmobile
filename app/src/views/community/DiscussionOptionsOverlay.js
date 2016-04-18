@@ -12,7 +12,7 @@ define(function (require, exports, module) {
 	function DiscussionOptionsOverlay(args) {
 		View.apply(this, arguments);
 		this.createTrackathonDiscussion = args ? args.createTrackathonDiscussion : '';
-		this.groupName = args ? args.groupName : '';
+		this.groupName = args ? args.groupName : 'PUBLIC';
 		_createView.call(this);
 	}
 

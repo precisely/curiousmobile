@@ -385,8 +385,10 @@ define(function(require, exports, module) {
 
 	DateGridView.prototype.setSelectedDate = function (date) {
 		this.selectedDate = date;
+		this.changeMonth(date.getMonth() + 1);
+		this.changeYear(date.getFullYear());
 		this.renderDates(date);
-	}
-
+	};
+	
 	module.exports = DateGridView;
 });

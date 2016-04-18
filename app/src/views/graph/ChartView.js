@@ -79,7 +79,10 @@ define(function(require, exports, module) {
 		this.shareButton.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				this.hideShareButtonPopover();
-				this._eventOutput.emit('share-snapshot');
+				var className = e.srcElement.className;
+				if (!_.contains(['popover', 'arrow', 'popover-content', 'vline'], className)) {
+					this._eventOutput.emit('share-snapshot');
+				}
 			}
 		}.bind(this));
 
@@ -118,11 +121,6 @@ define(function(require, exports, module) {
 		$('#share-button').popover('destroy');
 	};
 
-	ChartView.prototype.init = function(isAreaChart) {
-		this.add(new StateModifier({transform: Transform.translate(0, 65, App.zIndex.readView)})).add(this.graphView);
-		this.graphView.drawGraph(this.tagsToPlot, isAreaChart);
-	};
-
 	ChartView.prototype.preChangePage = function() {
 		BaseView.prototype.preChangePage.call(this);
 		this.hideShareButtonPopover();
@@ -141,6 +139,8 @@ define(function(require, exports, module) {
 			App.pageView.changePage('CreateChartView', viewProperties);
 		} else if (state && state.triggerLoadGraph) {
 			this.showLoadGraphOverlay();
+		} else if (this.tagsToPlot && this.tagsToPlot.length) {
+			this.graphView.drawGraph(this.tagsToPlot);
 		}
 	};
 
@@ -148,15 +148,11 @@ define(function(require, exports, module) {
 		if (state && !state.onLoad) {
 			if (state.tagsToPlot) {
 				this.tagsToPlot = state.tagsToPlot;
-				if (state.tagsToPlot) {
-					this.init(state.areaChart);
-				}
 			} else if (state.tagsByDescription) {
 				this.tagsToPlot.splice(0, this.tagsToPlot.length);
 				App.tagListWidget = initTagListWidget(function () {
 					this.tagsToPlot.push(App.tagListWidget.list.searchItemByDescription(state.tagsByDescription[0]));
 					this.tagsToPlot.push(App.tagListWidget.list.searchItemByDescription(state.tagsByDescription[1]));
-					this.init(false);
 				}.bind(this));
 			}
 

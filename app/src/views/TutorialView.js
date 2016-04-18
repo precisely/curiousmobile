@@ -99,7 +99,7 @@ define(function(require, exports, module) {
 						this.createSleepEntry(value, entryId, function(resp) {
 							if (resp.glowEntry) {
 								document.getElementById('sleep-hour').dataset.id = resp.glowEntry.id;
-								u.showAlert({message: 'Saved', showCheckBox: true});
+								u.showAlert({message: 'Saved', showCheckBox: true, delay: 3000});
 							}
 							this.navigate(1);
 						}.bind(this));
@@ -116,7 +116,7 @@ define(function(require, exports, module) {
 							createSingleEntry.call(this, {value: 'mood ' + value, entryId: entryId}, function(resp) {
 								if (resp.glowEntry) {
 									document.getElementById('mood-box').dataset.id = resp.glowEntry.id;
-									u.showAlert({message: 'Saved', showCheckBox: true});
+									u.showAlert({message: 'Saved', showCheckBox: true, delay: 3000});
 								}
 								this.navigate(1);
 							}.bind(this));

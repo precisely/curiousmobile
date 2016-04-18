@@ -325,7 +325,7 @@ define(function(require, exports, module) {
 		this.renderController.show(this.scrollWrapperSurface, {duration:0});
 	};
 
-	EntryListView.prototype.refreshEntries = function(entries, glowEntry) {
+	EntryListView.prototype.refreshEntries = function(entries, glowEntry, callback) {
 		this.glowEntry = glowEntry;
 		this.minYRange = 0;
 		var refreshPinEntries = (!glowEntry || glowEntry.isContinuous());
@@ -411,6 +411,9 @@ define(function(require, exports, module) {
 				this.scrollView.goToPage(this.glowView.position);
 			}
 			this.glowView.glow();
+		}
+		if (callback) {
+			callback();
 		}
 	};
 

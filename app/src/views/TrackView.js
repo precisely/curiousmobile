@@ -273,8 +273,10 @@ define(function(require, exports, module) {
 			}
 			currentDay =  this.calendarView.getSelectedDate().setHours(0, 0, 0) == new Date(glowEntryDate).setHours(0, 0, 0);
 			if (currentDay) {
-				this.currentListView.refreshEntries(entries, glowEntry);
-				this.showPopover(state, glowEntry);
+				this.currentListView.refreshEntries(entries, glowEntry, function() {
+					this.showPopover(state, glowEntry);
+				}.bind(this));
+				
 				return true;
 			}
 		}

@@ -273,8 +273,8 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 							entries: entries[0],
 							glowEntry: new Entry(entries[3]),
 							tagStats: entries[2],
-							showEntryBalloon: entries[4],
-							showBookmarkBalloon: entries[5],
+							showEntryBalloon: entries[5],
+							showBookmarkBalloon: entries[6],
 							key: Entry.getCacheKey(baseDate)
 						});
 						//if (entries[2] != null)

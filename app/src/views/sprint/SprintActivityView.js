@@ -71,12 +71,14 @@ define(function(require, exports, module) {
 
 		this.plusSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				var discussionCreateOptionsSurface = new DiscussionCreateOptionsSurface({createTrackathonDiscussion: true,
-					groupName: this.virtualGroupName});
-				this.showBackButton();
-				this.removeRightIcon();
-				this.hideSearchIcon();
-				this.showOverlayContent(discussionCreateOptionsSurface);
+				if (!_.contains(['popover', 'arrow', 'popover-content', 'vline'], className)) {
+					var discussionCreateOptionsSurface = new DiscussionCreateOptionsSurface({createTrackathonDiscussion: true,
+							groupName: this.virtualGroupName});
+					this.showBackButton();
+					this.removeRightIcon();
+					this.hideSearchIcon();
+					this.showOverlayContent(discussionCreateOptionsSurface);
+				}
 			}
 		}.bind(this));
 	};
@@ -135,7 +137,7 @@ define(function(require, exports, module) {
 					sprintHash: this.hash,
 					offset: this.offset,
 					max: this.max
-				}
+				};
 
 				this.fetchDiscussions(args);
 			}
