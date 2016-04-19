@@ -19,7 +19,7 @@ define(function(require, exports, module) {
 
 	function _createNavigation(date) {
 		var leftSurface = new Surface({
-			content: '<img src="content/images/left.png" />',	
+			content: '<img src="content/images/left.png" width="20px" height="18px"/>',	
 			size: [50, 74],
 			properties: {
 				textAlign: 'center',
@@ -70,7 +70,7 @@ define(function(require, exports, module) {
 		});
 
 		var rightSurface = new Surface({
-			content: '<img src="content/images/right.png" />',
+			content: '<img src="content/images/right.png" width="20px" height="18px"/>',
 			size: [50, 74],
 			properties: {
 				padding: '24px 0px 24px 29px'

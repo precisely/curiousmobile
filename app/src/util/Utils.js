@@ -580,12 +580,15 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		Utils.checkAuthentication = function(e) {
 			var successIndex = e.url.indexOf('success=true');
 			var failureIndex = e.url.indexOf('success=false');
-			if (successIndex >= 0 || failureIndex >= 0) {
+			var homeRedirectOnDeny = e.url.indexOf(App.serverUrl + '/home/login') >= 0;
+			if (successIndex >= 0 || failureIndex >= 0 || homeRedirectOnDeny) {
 				u.oauthWindow.removeEventListener('loadstart', u.checkAuthentication);
 				u.oauthWindow.close();
 				App.pageView.getCurrentView().showProfile();
-				var message = decodeURI(e.url.split("message=")[1]);
-				u.showAlert(message);
+				if (!homeRedirectOnDeny) {
+					var message = decodeURI(e.url.split("message=")[1]);
+					u.showAlert(message);
+				}
 			}
 		};
 

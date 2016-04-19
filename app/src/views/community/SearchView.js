@@ -89,8 +89,6 @@ define(function(require, exports, module) {
 		this.headerBackgroundSurface.setProperties({
 			backgroundColor: '#f14a42'
 		});
-
-		this.leftSurface.setProperties({color: '#fff'});
 	}
 
 	SearchView.prototype.createSearchPills = function() {
@@ -160,6 +158,7 @@ define(function(require, exports, module) {
 
 	SearchView.prototype.preShow = function(state) {
 		BaseView.prototype.preShow.call(this);
+		this.leftSurface.setContent('<img src="content/images/left-white.png" width="20px" height="18px"/>');
 		if (state && state.lastPage) {
 			this.showBackButton();
 		}

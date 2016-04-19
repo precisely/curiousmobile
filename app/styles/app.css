@@ -2792,7 +2792,7 @@ input.cropit-image-zoom-input {
 
 #search-input {
 	background-color: #f14a42;
-	width: calc(100% - 75px);
+	width: calc(100% - 80px);
 	height: 45px;
 	padding: 5px;
 	color: #fff;
@@ -2808,6 +2808,7 @@ input.cropit-image-zoom-input {
 .search-bar .fa-search {
 	color: #cb3933;
 	vertical-align: middle;
+	padding-left: 0px;
 }
 
 .close-background {
@@ -2818,6 +2819,7 @@ input.cropit-image-zoom-input {
 	text-align: center;
 	margin-top: 2px;
 	padding-top: 3px;
+	margin-right: 10px;
 }
 
 #search-input::-webkit-input-placeholder {

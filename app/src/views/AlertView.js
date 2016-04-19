@@ -40,7 +40,7 @@ define(function(require, exports, module) {
 		onA: undefined,
 		onB: undefined,
 		tapOnBodyHandler: undefined,
-		delay: 5000
+		delay: 3000
 	};
 
 	function _createAlert() {

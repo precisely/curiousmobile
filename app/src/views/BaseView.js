@@ -130,7 +130,7 @@ define(function(require, exports, module) {
 		this.layout.header.add(leftModifier).add(this.headerLeftIconController);
 		this.layout.header.add(rightModifier).add(this.headerRightIconController);
 		this.leftSurface = new Surface({
-			content: '<img src="content/images/left.png" />',
+			content: '<img src="content/images/left.png" width="20px" height="18px" />',
 			size: [61, 64],
 			properties: {
 				padding: '15px 20px',
