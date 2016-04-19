@@ -348,9 +348,7 @@ define(function(require, exports, module) {
 			this.renderController.hide({
 				duration: 0
 			});
-			this.renderController.show(this.currentListView, {
-				duration: 0
-			}, callback);
+			this.renderController.show(this.currentListView, null, callback);
 		}.bind(this));
 	};
 

@@ -225,7 +225,9 @@ define(function(require, exports, module) {
 		this.pinnedEntriesController.inTransformFrom(function() {
 			return Transform.translate(0, 0, App.zIndex.readView - 1);
 		}.bind(this));
-		this.pinnedEntriesController.show(pinnedContainerSurface, {duration: 0});
+		this.pinnedEntriesController.show(pinnedContainerSurface, null, function() {
+			this._eventOutput.emit('render-pinned-entries');
+		}.bind(this));
 	};
 
 	EntryListView.prototype.initDraggableViews = function() {
@@ -322,7 +324,9 @@ define(function(require, exports, module) {
 			return Transform.translate(0, 0, App.zIndex.readView + 22);
 		}.bind(this));
 
-		this.renderController.show(this.scrollWrapperSurface, {duration:0});
+		this.renderController.show(this.scrollWrapperSurface, null, function() {
+			this._eventOutput.emit('render-draggable-entries');
+		}.bind(this));
 	};
 
 	EntryListView.prototype.refreshEntries = function(entries, glowEntry, callback) {
@@ -350,6 +354,9 @@ define(function(require, exports, module) {
 			this.pinnedViews = [];
 			var bookmarkEntriesCount = 0;
 			this.initPinnedViews();
+			this.on('render-pinned-entries', function() {
+				this.handleGlowEntry(callback);
+			}.bind(this));
 		}
 
 		if (refreshDraggableEntries) {
@@ -358,6 +365,9 @@ define(function(require, exports, module) {
 			var nonBookmarkEntriesCount = 0;
 			var entriesGroupedByDeviceData = {};
 			this.initDraggableViews();
+			this.on('render-draggable-entries', function() {
+				this.handleGlowEntry(callback);
+			}.bind(this));
 		}
 
         //Filter out the device data
@@ -401,12 +411,12 @@ define(function(require, exports, module) {
 		if (refreshDraggableEntries) {
 			this.refreshDraggableEntriesView();
 		}
+	};
 
+	EntryListView.prototype.handleGlowEntry = function(callback) {
 		if (this.glowView) {
 			if (this.glowView.entry.isContinuous()) {
-				setTimeout(function(){
-					this.draggablePin.setPosition([0, -this.pinPosition(this.glowView.position), 0]);
-				}.bind(this), 200);
+				this.draggablePin.setPosition([0, -this.pinPosition(this.glowView.position), 0]);
 			} else {
 				this.scrollView.goToPage(this.glowView.position);
 			}

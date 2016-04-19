@@ -98,6 +98,8 @@ define(function(require, exports, module) {
 				this.clearPillsSurfaceList();
 				this.plot.initiateAddLine(this.tags, false);
 				this.addDateFooter();
+				this.plotProperties.setStartDate(this.startDate);
+				this.plotProperties.setEndDate(this.endDate);
 			}.bind(this));
 		};
 		if (this.tags) {
@@ -317,6 +319,8 @@ define(function(require, exports, module) {
 
 	GraphView.prototype.clearGraph = function() {
 		this.clearPillsSurfaceList();
+		this.startDate = null;
+		this.endDate = null;
 		if (this.tags && this.tags.length) {
 			this.tags.splice(0, this.tags.length);
 		}

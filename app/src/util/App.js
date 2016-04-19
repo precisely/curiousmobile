@@ -38,20 +38,20 @@ var App = function() {
 	};
 	
 	//Global popover settings applied to every popup in the app.
-	this.getDefaultPopoverSettings = function() {
+	this.getDefaultPopoverSettings = function(customCss) {
 		return {
 			placement: 'top',
 			html: true,
 			container: 'body',
-			template: '<div class="popover" role="tooltip"><div class="arrow"><div class="vline"></div></div>' +
-			'<div class="popover-content"></div></div>'
+			template: '<div class="popover ' + customCss + '" role="tooltip"><div class="arrow"><div' +
+					' class="vline"></div></div><div class="popover-content"></div></div>'
 		};
 	};
 
 	// Show popover with specific content.
 	this.showPopover = function(elementId, customSettings) {
 		setTimeout(function() {
-			var popover = this.getDefaultPopoverSettings();
+			var popover = this.getDefaultPopoverSettings(customSettings.key);
 			popover.content = popoverContents[customSettings.key];
 			popover.placement = customSettings.placement || popover.placement;
 			popover.container = customSettings.container || popover.container;

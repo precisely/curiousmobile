@@ -3694,6 +3694,10 @@ input.cropit-image-zoom-input {
 	width: 220px;
 }
 
+.bookmarkAdded {
+	width: 150px;
+}
+
 .popover.top>.arrow:after {
 	box-shadow: 0px -1px 3px -1px rgba(0, 0, 0, 0.2);
 }
