@@ -307,7 +307,9 @@ define(function(require, exports, module) {
 				peopleCardView.setScrollView(this.scrollView);
 			}
 		}.bind(this));
-	}
+		
+		this.saveState();
+	};
 
 	FeedView.prototype.refresh = function() {
 		this.initScrollView();

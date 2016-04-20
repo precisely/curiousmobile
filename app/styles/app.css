@@ -3643,7 +3643,8 @@ input.cropit-image-zoom-input {
 	padding: 8px;
 	font-size: 12px;
 	font-weight: 500;
-	color: #FF935F;
+	background-color: #FF935F;
+	color: #ffffff;
 	line-height: 16px;
 }
 
@@ -3663,6 +3664,7 @@ input.cropit-image-zoom-input {
 	position: absolute;
 	left: -4px;
 	z-index: 10;
+	background-color: #FF935F;
 	box-shadow: 0px -1px 2px 0px rgba(0,0,0,.2);
 }
 
@@ -3702,6 +3704,11 @@ input.cropit-image-zoom-input {
 
 .popover.top>.arrow:after {
 	box-shadow: 0px -1px 3px -1px rgba(0, 0, 0, 0.2);
+	border-top-color: #FF935F !important;
+}
+
+.popover .arrow:after {
+	border-bottom-color: #FF935F !important;
 }
 
 .blinking-cursor {

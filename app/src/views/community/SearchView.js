@@ -187,7 +187,7 @@ define(function(require, exports, module) {
 		var inputElement = document.getElementById('search-input');
 		var searchText = inputElement.value;
 		return {
-			lastPage: App.pageView.history.pop(),
+			lastPage: App.pageView.history.pop() || 'FeedView',
 			form: [{
 				id: 'search-input',
 				value: searchText,
