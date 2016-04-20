@@ -44,14 +44,6 @@ define(function(require, exports, module) {
 				}
 			}
 		}.bind(this));
-
-		this.postSurface.on('deploy', function(e) {
-			document.getElementById('name').onkeyup = function(e) {
-				// if (e.which === 13) {
-				// 	this.submit();
-				// }
-			}.bind(this);
-		}.bind(this));
 		this.setBody(this.postSurface);
 	}
 

@@ -174,12 +174,12 @@ define(function(require, exports, module) {
 			buttonName = 'UPDATE ENTRY';
 			isInEditMode = true;
 		}
-		
+
 		this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">' + buttonName + '</button>');
-		this.submitButtonModifier.setTransform(Transform.translate(30, 180, App.zIndex.formView));
+		this.submitButtonModifier.setTransform(Transform.translate(30, 180, App.zIndex.formView + 5));
 
 		if (isInEditMode) {
-			this.deleteButtonModifier.setTransform(Transform.translate(30, 230, App.zIndex.formView));
+			this.deleteButtonModifier.setTransform(Transform.translate(30, 230, App.zIndex.formView + 5));
 		}
 
 		this.buttonsRenderController.show(this.buttonsAndHelp);
@@ -228,8 +228,8 @@ define(function(require, exports, module) {
 					this.setSelectedDate(repeatEnd);
 				}
 			}.bind(this);
-			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.formView));
-			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 220, App.zIndex.formView));
+			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.formView + 5));
+			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 220, App.zIndex.formView + 5));
 			this.renderController.show(this.repeatModifierSurface, null, function() {
 				if (radioSelector) {
 					document.getElementById(radioSelector).checked = true;
@@ -258,10 +258,8 @@ define(function(require, exports, module) {
 			var tag = this.removeSuffix(entry.toString());
 			var tagStatsMap = autocompleteCache.tagStatsMap.get(tag);
 			var nullAmount = false;
-			if (entry.get('amountPrecision') < 0) {
-				if (entry.get('amount') == null) {
-					nullAmount = true;
-				}
+			if ((entry.get('amountPrecision') < 0) && (entry.get('amount') == null)) {
+				nullAmount = true;
  			}
 			if (!tagStatsMap) {
 				tagStatsMap = autocompleteCache.tagStatsMap.getFromText(tag);

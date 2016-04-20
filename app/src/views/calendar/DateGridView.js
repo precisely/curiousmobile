@@ -18,11 +18,6 @@ define(function(require, exports, module) {
 		this.withClearButton = withClearButton;
 		this.currentMonth = new Date(date.getFullYear(), date.getMonth(), 1);
 		this.currentYear = new Date(date.getFullYear(), date.getMonth(), 1);
-		this.datePickerContainer = new ContainerSurface({
-			size: [true, true],
-			classes: ['date-picker-container']
-		});
-		this.add(this.datePickerContainer);
 		_createMonthHeader.call(this, this.currentMonth);
 		_createMonthGrid.call(this);
 	}
@@ -74,7 +69,7 @@ define(function(require, exports, module) {
 		this.backgroundSurface.state.sizeFrom(function() {
 			return [285, this.backgroundSurface.transitionable.get()];
 		}.bind(this));
-		this.datePickerContainer.add(this.backgroundSurface.state).add(backgroundSurface);
+		this.add(this.backgroundSurface.state).add(backgroundSurface);
 
 		//leftSurface.on('click', function(e) {
 		//	if ((e instanceof CustomEvent)) {
@@ -97,7 +92,7 @@ define(function(require, exports, module) {
 			transform: Transform.translate(0, 10, _zIndex() + 5)
 		});
 
-		this.datePickerContainer.add(monthModifier).add(monthSurface);
+		this.add(monthModifier).add(monthSurface);
 		this.monthSurface = monthSurface;
 
 		monthSurface.on('click', function(e) {
@@ -159,7 +154,7 @@ define(function(require, exports, module) {
 		});
 		dayLabelLayout.sequenceFrom(dayLabelSurfaces);
 
-		this.datePickerContainer.add(dayLabelModifier).add(dayLabelLayout);
+		this.add(dayLabelModifier).add(dayLabelLayout);
 		this.weekRenderControllers = [];
 		this.daySurfaces = []; // Flattened bucket to manipulate all surfaces. See renderDates
 		var daysInAWeek = []; // temporary bucket to render each row in the month grid
@@ -245,7 +240,7 @@ define(function(require, exports, module) {
 		this.todayController.inTransformFrom(function() {
 			return Transform.translate(0, 75 + (this.rowsToShow * 30), 999);
 		}.bind(this));
-		this.datePickerContainer.add(this.todayController);
+		this.add(this.todayController);
 		this.todayController.show(this.todayButton);
 
 		if (this.withClearButton) {
@@ -254,7 +249,7 @@ define(function(require, exports, module) {
 
 		weekRowLayout.sequenceFrom(this.weekRenderControllers);
 
-		this.datePickerContainer.add(weekRowLayout);
+		this.add(weekRowLayout);
 
 		this.renderDates(new Date());
 	}
@@ -284,7 +279,7 @@ define(function(require, exports, module) {
 		this.clearController.inTransformFrom(function() {
 			return Transform.translate(230, 75 + (this.rowsToShow * 30), 999);
 		}.bind(this));
-		this.datePickerContainer.add(this.clearController);
+		this.add(this.clearController);
 		this.clearController.show(this.clearButton);
 	};
 
@@ -369,7 +364,7 @@ define(function(require, exports, module) {
 			var monthNum = this.currentMonth.getMonth();
 			if (monthNum === 0 && num === -1) {
 				this.navigateYear(-1);
-				monthNum =  12;
+				monthNum = 12;
 			} else if (monthNum === 11 && num === 1) {
 				this.navigateYear(1);
 				monthNum =  1;

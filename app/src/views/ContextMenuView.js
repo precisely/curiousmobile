@@ -24,7 +24,7 @@ define(function (require, exports, module) {
 			{class: 'trigger-delete-entry', label: 'Delete Tag'},
 		],
 		pinnedEntry: [
-			{class: 'trigger-delete-entry', label: 'Delete Tag'},
+			{class: 'trigger-delete-entry', label: 'Delete Bookmark'},
 		],
 		discussion: [
 			{class: 'delete-discussion', label: 'Delete'},

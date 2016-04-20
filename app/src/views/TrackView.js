@@ -34,6 +34,7 @@ define(function(require, exports, module) {
 		BaseView.apply(this, arguments);
 		this.pageChange = false; //making sure the pageChange even is disregarded on page reload
 		this.entryFormView = new TrackEntryFormView({trackView: this});
+		this.popoversList = [];
 		_createBody.call(this);
 		_createCalendar.call(this);
 		_setHandlers.call(this);
@@ -186,14 +187,14 @@ define(function(require, exports, module) {
 
 	TrackView.prototype.preChangePage = function() {
 		BaseView.prototype.preChangePage.call(this);
-		this.hidePopover();
-	}
+		this.hideSprintMenuPopover();
+	};
 
 	TrackView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 	};
 
-	TrackView.prototype.showPopover = function(state, glowEntry) {
+	TrackView.prototype.showAllPopovers = function(state, glowEntry) {
 		var showEntryBalloon;
 		var showBookmarkBalloon;
 		var entryId;
@@ -210,42 +211,56 @@ define(function(require, exports, module) {
 
 			if (!this.currentListView || this.currentListView.pinnedViews.length > 0) {
 				App.showPopover('#bookmark-label', {key: 'bookmarksPresent', container: '#bookmark-label', placement: 'bottom', autoHide: true});
+				this.popoversList.push('#bookmark-label');
 			} else {
 				App.showPopover('#bookmark-menu-icon', {key: 'createBookmark', container: '#bookmark-menu-icon', placement: 'bottom'});
+				this.popoversList.push('#bookmark-menu-icon');
 			}
 
 			App.showPopover('#entry-description-dummy', {key: 'enterTag', placement: 'bottom', container: '#entry-description-dummy'});
+			this.popoversList.push('#entry-description-dummy');
 		}
 
 		if (showEntryBalloon) {
 			App.showPopover(elementId, {key: 'entryAdded', autoHide: true, container: '#popover-surface'});
+			this.popoversList.push(elementId);
 		}
 
 		if (showBookmarkBalloon) {
 			App.showPopover(elementId, {key: 'bookmarkAdded', autoHide: true, container: '#popover-surface'});
+			this.popoversList.push(elementId);
 		}
 
-		if (!store.get('trackathonVisited') && this.currentListView.draggableList.length > 0) {
-			setTimeout(function() {
-				App.showPopover('#TrackView-sprint-menu', {key: 'sprintMenu', container: '#popover-surface'});
-				if (document.getElementById('TrackView-sprint-menu')) {
-					document.getElementById('TrackView-sprint-menu').classList.add('active');
-				}
-			}, 500);
-			this.isPopoverVisible = true;
-		}
-		
+		this.showSprintMenuPopover();
+
 		if (state && state.showTrackathonTagsBalloon) {
 			App.showPopover('#bookmark-label', {key: 'trackathonBookmarks', container: '#bookmark-label', placement: 'bottom', autoHide: true});
+			this.popoversList.push('#bookmark-label');
 		}
 	};
 
-	TrackView.prototype.hidePopover = function() {
-		$('#TrackView-sprint-menu').popover('hide');
+	TrackView.prototype.hideAllPopovers = function() {
+		_.each(this.popoversList, function(popoverId) {
+			$(popoverId).popover('destroy');
+		});
+	};
+
+	TrackView.prototype.hideSprintMenuPopover = function() {
+		$('#TrackView-sprint-menu').popover('destroy');
 		if (document.getElementById('TrackView-sprint-menu')) {
 			document.getElementById('TrackView-sprint-menu').classList.remove('active');
 		}
-		this.isPopoverVisible = false;
+		this.isSprintMenuPopoverVisible = false;
+	};
+
+	TrackView.prototype.showSprintMenuPopover = function() {
+		if (!store.get('trackathonVisited') && this.currentListView.draggableList.length > 0) {
+			App.showPopover('#TrackView-sprint-menu', {key: 'sprintMenu', container: '#popover-surface'});
+			if (document.getElementById('TrackView-sprint-menu')) {
+				document.getElementById('TrackView-sprint-menu').classList.add('active');
+			}
+			this.isSprintMenuPopoverVisible = true;
+		}
 	};
 
 	TrackView.prototype.initContextMenuOptions = function() {
@@ -257,10 +272,11 @@ define(function(require, exports, module) {
 
 	TrackView.prototype.preShow = function(state) {
 		BaseView.prototype.preShow.call(this);
-		this.popoverVisible = false;
+		this.isSprintMenuPopoverVisible = false;
 
+		var glowEntry;
 		if (state && (state.fromServer || state.entryDate)) { //Entry from the server or a push notification
-			var glowEntryDate, entries, glowEntry, currentDay;
+			var glowEntryDate, entries, currentDay;
 
 			if (state.fromServer) {
 				glowEntryDate = state.data.glowEntry.get("date");
@@ -274,7 +290,7 @@ define(function(require, exports, module) {
 			currentDay =  this.calendarView.getSelectedDate().setHours(0, 0, 0) == new Date(glowEntryDate).setHours(0, 0, 0);
 			if (currentDay) {
 				this.currentListView.refreshEntries(entries, glowEntry, function() {
-					this.showPopover(state, glowEntry);
+					this.showAllPopovers(state, glowEntry);
 				}.bind(this));
 				
 				return true;
@@ -283,7 +299,7 @@ define(function(require, exports, module) {
 
 		EntryCollection.clearCache();
 		this.changeDate(this.calendarView.selectedDate, function() {
-			this.showPopover(state, glowEntry);
+			this.showAllPopovers(state, glowEntry);
 		}.bind(this), glowEntry);
 		
 		return true;
@@ -316,8 +332,8 @@ define(function(require, exports, module) {
 		BaseView.prototype.killOverlayContent.call(this);
 		this.showMenuButton();
 		this.showSearchIcon();
-		if (this.isPopoverVisible) {
-			this.showPopover();
+		if (this.isSprintMenuPopoverVisible) {
+			this.showSprintMenuPopover();
 		}
 		this.setHeaderSurface(this.calendarView, new StateModifier({align: [0.5, 0.5], origin: [0.5, 0.5]}));
 	};
@@ -357,11 +373,12 @@ define(function(require, exports, module) {
 	};
 
 	TrackView.prototype.showEntryFormView = function(state) {
+		this.hideAllPopovers();
 		var continueShowForm = this.entryFormView.preShow(state);
 		if (continueShowForm) {
-			if (this.isPopoverVisible) {
-				this.hidePopover();
-				this.isPopoverVisible = true;
+			if (this.isSprintMenuPopoverVisible) {
+				this.hideSprintMenuPopover();
+				this.isSprintMenuPopoverVisible = true;
 			}
 			this.entryListContainer.setProperties({
 				webkitFilter: 'blur(5px)',

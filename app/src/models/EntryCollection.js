@@ -37,7 +37,8 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 			var argsToSend = u.getCSRFPreventionObject('getListDataCSRF', {
 				date: argDates,
 				userId: User.getCurrentUserId(),
-				timeZoneName: window.jstz.determine().name()
+				timeZoneName: window.jstz.determine().name(),
+				balloonData: true
 			});
 			console.log('Fetching entries from the server for dates: ' + dates);
 			u.queueJSON("loading entry list", u.makeGetUrl("getListData"), u.makeGetArgs(argsToSend),
@@ -59,6 +60,7 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 						}
 						store.set('showRemindAlertBalloon', data[1]);
 						if (!dataSentToCallback) {
+							// Earlier we were caching entries for 11 days but now caching entries for just one day
 							callback(collections[0]);
 						}
 					}

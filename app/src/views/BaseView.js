@@ -220,8 +220,8 @@ define(function(require, exports, module) {
 				console.log('footerSurface event');
 				if (_.contains(e.srcElement.classList, 'popover-content')) {
 					var trackView = App.pageView.getPage('TrackView');
-					trackView.hidePopover();
-					trackView.isPopoverVisible = false;
+					trackView.hideSprintMenuPopover();
+					trackView.isSprintMenuPopoverVisible = false;
 					return;
 				}
 				var pageName = e.srcElement.getAttribute('data');

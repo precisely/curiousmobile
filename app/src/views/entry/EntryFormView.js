@@ -170,7 +170,7 @@ define(function(require, exports, module) {
 		this.deleteButtonRenderController = new RenderController();
 		this.deleteButtonModifier = new StateModifier({
 			size: [App.width - 60, undefined],
-			transform: Transform.translate(30, 250, App.zIndex.formView)
+			transform: Transform.translate(30, 250, App.zIndex.formView + 5)
 		});
 		this.formContainerSurface.add(this.deleteButtonModifier).add(this.deleteButtonRenderController);
 	};
@@ -370,7 +370,7 @@ define(function(require, exports, module) {
 		var yTransformSubmitButtonModifier = this.submitButtonModifier.getTransform()[13];
 		if (yTransformSubmitButtonModifier > 150) {
 			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] - 100, App.zIndex.formView));
-			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] - 100, App.zIndex.formView + 2));
+			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] - 100, App.zIndex.formView + 5));
 		}
 	};
 
@@ -382,7 +382,7 @@ define(function(require, exports, module) {
 		var yTransformSubmitButtonModifier = this.submitButtonModifier.getTransform()[13];
 		if (yTransformSubmitButtonModifier < 500) {
 			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 100, App.zIndex.formView));
-			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 100, App.zIndex.formView + 2));
+			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 100, App.zIndex.formView + 5));
 		}
 	};
 

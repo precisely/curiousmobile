@@ -165,7 +165,7 @@ define(function (require, exports, module) {
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('leave-sprint') > -1) {
 						Sprint.unfollow(this.hash, function (data) {
-							this.loadDetails();
+							App.pageView.changePage('SprintListView');
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('join-sprint') > -1) {
 						Sprint.follow(this.hash, function (data) {

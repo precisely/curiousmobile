@@ -477,7 +477,7 @@ define(function(require, exports, module) {
 				this.surfaceList.splice(this.surfaceList.length - 1, 0, commentSurface);
 			} else if (this.isSharedGraph) {
 				this.surfaceList.splice(2, 0, commentSurface);
-			}else {
+			} else {
 				this.surfaceList.splice(1, 0, commentSurface);
 			}
 

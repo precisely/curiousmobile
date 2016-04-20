@@ -191,7 +191,7 @@ define(function(require, exports, module) {
 
 	};
 
-	EntryListView.prototype.refreshPinnedEntriesView = function() {
+	EntryListView.prototype.refreshPinnedEntriesView = function(callback) {
 		this.pinnedSequentialLayout.sequenceFrom(this.pinnedViews);
 		var heightOfPins = Math.min(this.heightOfPins(), 150);
 		var pinnedContainerSurface = new ContainerSurface({
@@ -226,7 +226,7 @@ define(function(require, exports, module) {
 			return Transform.translate(0, 0, App.zIndex.readView - 1);
 		}.bind(this));
 		this.pinnedEntriesController.show(pinnedContainerSurface, null, function() {
-			this._eventOutput.emit('render-pinned-entries');
+			this.handleGlowEntry(callback);
 		}.bind(this));
 	};
 
@@ -302,7 +302,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	EntryListView.prototype.refreshDraggableEntriesView = function() {
+	EntryListView.prototype.refreshDraggableEntriesView = function(callback) {
 		this.scrollNode.add(this.scrollView);
 		this.scrollWrapperSurface.add(this.scrollNode);
 		this.scrollView.sequenceFrom(this.draggableList);
@@ -325,7 +325,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.renderController.show(this.scrollWrapperSurface, null, function() {
-			this._eventOutput.emit('render-draggable-entries');
+			this.handleGlowEntry(callback);
 		}.bind(this));
 	};
 
@@ -354,9 +354,6 @@ define(function(require, exports, module) {
 			this.pinnedViews = [];
 			var bookmarkEntriesCount = 0;
 			this.initPinnedViews();
-			this.on('render-pinned-entries', function() {
-				this.handleGlowEntry(callback);
-			}.bind(this));
 		}
 
 		if (refreshDraggableEntries) {
@@ -365,9 +362,6 @@ define(function(require, exports, module) {
 			var nonBookmarkEntriesCount = 0;
 			var entriesGroupedByDeviceData = {};
 			this.initDraggableViews();
-			this.on('render-draggable-entries', function() {
-				this.handleGlowEntry(callback);
-			}.bind(this));
 		}
 
         //Filter out the device data
@@ -405,11 +399,11 @@ define(function(require, exports, module) {
 		}
 
 		if (refreshPinEntries) {
-			this.refreshPinnedEntriesView();
+			this.refreshPinnedEntriesView(callback);
 		}
 
 		if (refreshDraggableEntries) {
-			this.refreshDraggableEntriesView();
+			this.refreshDraggableEntriesView(callback);
 		}
 	};
 

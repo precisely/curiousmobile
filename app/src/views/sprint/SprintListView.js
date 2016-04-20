@@ -151,7 +151,7 @@ define(function(require, exports, module) {
 	SprintListView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 		User.markTrackathonVisited(function() {
-			App.pageView.getPage('TrackView').hidePopover();
+			App.pageView.getPage('TrackView').hideSprintMenuPopover();
 		});
 	};
 

@@ -139,11 +139,6 @@ define(function(require, exports, module) {
 					document.activeElement.blur();
 					var yOffset = document.getElementById('group-list-container').getBoundingClientRect().top;
 					this.groupsListScrollContainerModifier.setTransform(Transform.translate(this.xTranslate, yOffset - 65, App.zIndex.contextMenu));
-					_.each(document.getElementsByTagName('TEXTAREA'), function(inputElement){
-						inputElement.onfocus = function() {
-							u.setCursorAtEnd(this);
-						};
-					});
 					var chartTitleInputElement = document.getElementById('chart-title');
 					if (chartTitleInputElement) {
 						chartTitleInputElement.onfocus = function() {

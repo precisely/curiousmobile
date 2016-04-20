@@ -71,6 +71,7 @@ define(function(require, exports, module) {
 
 		this.plusSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
+				var className = e.srcElement.className;
 				if (!_.contains(['popover', 'arrow', 'popover-content', 'vline'], className)) {
 					var discussionCreateOptionsSurface = new DiscussionCreateOptionsSurface({createTrackathonDiscussion: true,
 							groupName: this.virtualGroupName});

@@ -122,6 +122,10 @@ define(function(require, exports, module) {
 						e.srcElement.focus();
 						if (e.srcElement.id === 'sprint-description') {
 							this.resizeDescreption();
+						} else {
+							setTimeout(function() {
+								e.srcElement.setSelectionRange(0, e.srcElement.value.length);
+							}, 50)
 						}
 					} else if (_.contains(classList, 'add-tags') || _.contains(e.srcElement.parentElement.classList, 'add-tags')) {
 						if (typeof cordova !== 'undefined') {

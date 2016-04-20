@@ -99,8 +99,12 @@ define(function(require, exports, module) {
 
 		searchBox.on('deploy', function() {
 			$('#curiosities-search').keyup(function(e) {
-				this.deck.splice(0, this.deck.length);
-				C.performSearch($('#curiosities-search').val(), true);
+				this.scrollView.goToPage(0);
+				setTimeout(function() {
+					this.deck.splice(0, this.deck.length);
+					C.performSearch($('#curiosities-search').val(), true);
+				}.bind(this), 50);
+				
 			}.bind(this));
 		}.bind(this));
 		this.mainContainerSurface.add(new StateModifier({transform: Transform.translate(0, 49, App.zIndex.readView + 5)})).add(searchBox);

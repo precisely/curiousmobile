@@ -77,8 +77,7 @@ define(function(require, exports, module) {
 			}
 		});
 
-		Engine.on('keyup', function (event) {
-			console.log(event);
+		this.searchBox.on('keyup', function (event) {
 			if (_.contains(event.srcElement.classList, 'tag-search-input')) {
 				if (event.which != 13) {
 					var searchTerm = document.getElementsByClassName('tag-search-input')[0].value;

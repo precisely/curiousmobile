@@ -443,14 +443,12 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		}
 
 		Utils.spinnerStart = function () {
-			//var spinnerDialog = window.plugins? window.plugins.spinnerDialog : false;
 			if (typeof wizSpinner !== 'undefined') {
-				wizSpinner.show({bgColor: 'transparent', opacity: 0.0, label: "Loading"});
+				wizSpinner.show({bgColor: 'transparent', opacity: 0.0, label: ''});
 			}
 		};
 
 		Utils.spinnerStop = function () {
-			//var spinnerDialog = window.plugins? window.plugins.spinnerDialog : false;
 			if (typeof wizSpinner !== 'undefined') {
 				wizSpinner.hide();
 			}
@@ -612,7 +610,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			setTimeout(function() {
 				inputElement.value = '';
 				inputElement.value = value;
-			}, 100);
+			}, 5);
 		};
 
 		var device = {};
