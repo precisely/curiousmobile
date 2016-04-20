@@ -366,7 +366,16 @@ define(function(require, exports, module) {
 		if (num instanceof Date) {
 			this.changeMonth(num.getMonth() + 1);
 		} else {
-			var monthNum = this.currentMonth.getMonth() + 1 + num;
+			var monthNum = this.currentMonth.getMonth();
+			if (monthNum === 0 && num === -1) {
+				this.navigateYear(-1);
+				monthNum =  12;
+			} else if (monthNum === 11 && num === 1) {
+				this.navigateYear(1);
+				monthNum =  1;
+			} else {
+				monthNum += 1 + num;
+			}
 			this.changeMonth(monthNum);
 		}
 	};
@@ -389,6 +398,6 @@ define(function(require, exports, module) {
 		this.changeYear(date.getFullYear());
 		this.renderDates(date);
 	};
-	
+
 	module.exports = DateGridView;
 });

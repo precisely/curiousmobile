@@ -99,9 +99,11 @@ define(function(require, exports, module) {
 						this.createSleepEntry(value, entryId, function(resp) {
 							if (resp.glowEntry) {
 								document.getElementById('sleep-hour').dataset.id = resp.glowEntry.id;
-								u.showAlert({message: 'Saved', showCheckBox: true, delay: 3000});
+								u.showAlert({message: 'Saved', showCheckBox: true, delay: 1000});
 							}
-							this.navigate(1);
+							setTimeout(function() {
+								this.navigate(1);
+							}.bind(this), 1000);
 						}.bind(this));
 					} else if (_.contains(classList, 'back') || _.contains(event.srcElement.parentElement.classList, 'back')) {
 						this.navigate(-1);
@@ -116,9 +118,11 @@ define(function(require, exports, module) {
 							createSingleEntry.call(this, {value: 'mood ' + value, entryId: entryId}, function(resp) {
 								if (resp.glowEntry) {
 									document.getElementById('mood-box').dataset.id = resp.glowEntry.id;
-									u.showAlert({message: 'Saved', showCheckBox: true, delay: 3000});
+									u.showAlert({message: 'Saved', showCheckBox: true, delay: 1000});
 								}
-								this.navigate(1);
+								setTimeout(function() {
+									this.navigate(1);
+								}.bind(this), 1000);
 							}.bind(this));
 						} else if (!value) {
 							this.navigate(1);
@@ -271,9 +275,11 @@ define(function(require, exports, module) {
 				this.createSleepEntry(value, entryId, function(resp) {
 					if (resp.glowEntry) {
 						document.getElementById('sleep-hour').dataset.id = resp.glowEntry.id;
-						u.showAlert({message: 'Saved', showCheckBox: true});
+						u.showAlert({message: 'Saved', showCheckBox: true, delay: 1000});
 					}
-					this.navigate(1);
+					setTimeout(function() {
+						this.navigate(1);
+					}.bind(this), 1000);
 				}.bind(this));
 			}
 		} else if (id === 'mood-box') {
@@ -284,9 +290,11 @@ define(function(require, exports, module) {
 					createSingleEntry.call(this, {value: 'mood ' + value, entryId: entryId}, function(resp) {
 						if (resp.glowEntry) {
 							document.getElementById('mood-box').dataset.id = resp.glowEntry.id;
-							u.showAlert({message: 'Saved', showCheckBox: true});
+							u.showAlert({message: 'Saved', showCheckBox: true, delay: 1000});
 						}
-						this.navigate(1);
+						setTimeout(function() {
+							this.navigate(1);
+						}.bind(this), 1000);
 					}.bind(this));
 				} else if (!value) {
 					this.navigate(1);

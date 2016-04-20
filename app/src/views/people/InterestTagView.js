@@ -17,6 +17,7 @@ define(function(require, exports, module) {
 
 	function InterestTagView(tag) {
 		EntryReadView.apply(this, arguments);
+		this.menu = 'interestTag';
 		_createTagSurface.call(this);
 	}
 

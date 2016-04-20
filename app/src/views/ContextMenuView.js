@@ -28,7 +28,10 @@ define(function (require, exports, module) {
 		],
 		discussion: [
 			{class: 'delete-discussion', label: 'Delete'},
-			{class: 'edit-discussion', label: 'edit'}
+			{class: 'edit-discussion', label: 'Edit'}
+		],
+		interestTag: [
+			{class: 'trigger-delete-entry', label: 'Delete Interest Tag'}
 		]
 	};
 
