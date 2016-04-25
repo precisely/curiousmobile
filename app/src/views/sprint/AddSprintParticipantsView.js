@@ -42,7 +42,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.on('new-sprint-participant', function(resp) {
-			var participant = '<p>' + resp + '<i class="fa fa-times-circle delete-participant" data-participant="' + resp + '"></i></p>';
+			var participant = '<p>' + resp + ' <i class="fa fa-times-circle delete-participant" data-participant="' + resp + '"></i></p>';
 			this.parentView.killAddSprintParticipantsOverlay(participant);
 		}.bind(this));
 	}

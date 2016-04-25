@@ -21,6 +21,7 @@ define(function(require, exports, module, store) {
 	var AddInterestTagView = require('views/people/AddInterestTagView');
 	var UpdateAvatarView = require('views/people/UpdateAvatarView');
 	var InterestTagView = require('views/people/InterestTagView');
+	var Scrollview = require('famous/views/Scrollview');
 	var Timer = require('famous/utilities/Timer');
 	var User = require('models/User');
 	var u = require('util/Utils');
@@ -39,22 +40,21 @@ define(function(require, exports, module, store) {
 			$(this).serializeArray().map(function(x) {params[x.name] = x.value;});
 			return params;
 		}
-
-
+		this.scrollView = new Scrollview();
+		this.surfaceList = [];
 		this.renderController = new RenderController();
 		var mod = new StateModifier({
-			size: [App.width, App.height - 120],
 			transform: Transform.translate(0, 64, App.zIndex.readView)
 		});
 
 		this.add(mod).add(this.renderController);
-		var backgroundSurface = new Surface({
+		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
-				background: '-webkit-linear-gradient(top,  #f14d43 0%,#f48157 100%)'
+				background: '-webkit-linear-gradient(top, #f14d43 0%, #f48157 100%)'
 			}
 		});
-		this.add(new StateModifier({translate: Transform.translate(0, 0, 0)})).add(backgroundSurface);
+		this.add(new StateModifier({translate: Transform.translate(0, 0, 0)})).add(this.backgroundSurface);
 	}
 
 	EditProfileView.prototype = Object.create(BaseView.prototype);
@@ -78,7 +78,7 @@ define(function(require, exports, module, store) {
 		this.showProfile(
 			function() {
 				if (state.lastDraggedPosition) {
-					this.draggableView.setPosition([0, state.lastDraggedPosition, 0])
+					this.scrollView.setPosition(state.lastDraggedPosition)
 				}
 			}.bind(this)
 		);
@@ -110,7 +110,7 @@ define(function(require, exports, module, store) {
 		this.showBackButton();
 		this.setHeaderLabel('EDIT PROFILE', '#fff');
 		state = state || this.getCurrentState();
-		state.lastDraggedPosition = this.draggableView.getPosition()[1];
+		state.lastDraggedPosition = this.scrollView.getAbsolutePosition();
 		this.preShow(state);
 	}
 
@@ -240,6 +240,7 @@ define(function(require, exports, module, store) {
 			});
 			_.each(peopleDetails.user.interestTags, function(tag) {
 				var tagView = new InterestTagView({entry: tag});
+				tagView.entrySurface.pipe(this.scrollView);
 				var draggableTag = new Draggable({
 					xRange: [-100, 0],
 					yRange: [0, 0],
@@ -252,12 +253,15 @@ define(function(require, exports, module, store) {
 			}.bind(this));
 			this.tagSequentialLayout.sequenceFrom(this.tagList);
 			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(editPeopleSurface);
-			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 1240, 0)})).add(this.tagSequentialLayout);
+			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 1200, 0)})).add(this.tagSequentialLayout);
 
-			// Calculating draggable container height according to the taglist height
-			this.draggableView = new DraggableView(this.editProfileContainerSurface, true, 1030 + (this.tagList.length * 50));
-			this.submitButtonModifier.setTransform(Transform.translate(0, (1330 + this.tagList.length * 40),  App.zIndex.readView + 62));
-			this.renderController.show(this.draggableView);
+			this.setContainerSize();
+			this.surfaceList = [this.editProfileContainerSurface, new Surface({size: [undefined, 20]})];
+			this.scrollView.sequenceFrom(this.surfaceList);
+			editPeopleSurface.pipe(this.scrollView);
+			this.submitSurface.pipe(this.scrollView);
+			this.submitButtonModifier.setTransform(Transform.translate(0, (1250 + this.tagList.length * 40),  App.zIndex.readView + 2));
+			this.renderController.show(this.scrollView);
 			if (callback) {
 				callback();
 			}
@@ -266,6 +270,11 @@ define(function(require, exports, module, store) {
 		}.bind(this));
 
 
+	};
+
+	EditProfileView.prototype.setContainerSize = function() {
+		// Calculating scrollable container height according to the taglist height
+		this.editProfileContainerSurface.setSize([undefined, 1500 + (this.tagList.length * 40)]);
 	};
 
 	function onTap(event) {
