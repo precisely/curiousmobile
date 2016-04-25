@@ -35,13 +35,17 @@ define(function(require, exports, module) {
 			}
 		});
 		this.setBody(this.backgroundSurface);
-
+		this.scrollView = new Scrollview();
+		this.scrollElements = [];
 		this.renderController = new RenderController();
 		var mod = new StateModifier({
 			size: [App.width, App.height - 120],
 			transform: Transform.translate(0, 75, 16)
 		});
 
+		this.spareSurface = new Surface({
+			size: [undefined, 20]
+		});
 		this.add(mod).add(this.renderController);
 	}
 
@@ -180,8 +184,12 @@ define(function(require, exports, module) {
 				}
 			}.bind(this));
 
-			this.draggableFormView = new DraggableView(this.sprintSurface, true);
-			this.renderController.show(this.draggableFormView);
+			//this.draggableFormView = new DraggableView(this.sprintSurface, true);
+			this.scrollElements = [this.sprintSurface, this.spareSurface];
+			this.scrollView.sequenceFrom(this.scrollElements);
+			this.sprintSurface.pipe(this.scrollView);
+			this.spareSurface.pipe(this.scrollView);
+			this.renderController.show(this.scrollView);
 		}.bind(this), function() {
 			App.pageView.goBack();
 		}.bind(this));
@@ -214,6 +222,7 @@ define(function(require, exports, module) {
 				document.getElementsByClassName('tags-wrapper')[0].removeChild(tagToRemove);
 			}
 		}
+		this.scrollView.sequenceFrom(this.scrollElements);
 	};
 
 	SprintFormView.prototype.resizeDescreption = function() {
@@ -222,12 +231,14 @@ define(function(require, exports, module) {
 			var commentBox = document.getElementById('sprint-description');
 			commentBox.style.cssText = 'height:auto;';
 			commentBox.style.cssText = 'height:' + commentBox.scrollHeight + 'px';
+			this.scrollView.sequenceFrom(this.scrollElements);
 		}.bind(this), 0);
 	};
 
 	SprintFormView.prototype.killAddSprintParticipantsOverlay = function(participant) {
 		this.killOverlayContent();
 		document.getElementsByClassName('participants-wrapper')[0].innerHTML += participant;
+		this.scrollView.sequenceFrom(this.scrollElements);
 	};
 
 	App.pages['SprintFormView'] = SprintFormView;
