@@ -66,7 +66,7 @@ define(function(require, exports, module) {
 
 	AddInterestTagView.prototype.submit = function() {
 		User.addInterestTags({tagName: document.getElementById('tag-name').value}, function(data) {
-			this.parentView.killOverlayContent(data.interestTags);
+			this.parentView.killOverlayContent({interestTags: data.interestTags});
 		}.bind(this));
 	};
 	module.exports = AddInterestTagView;

@@ -76,7 +76,7 @@ define(function(require, exports, module) {
 		User.deleteInterestTags(this.entry, function(interestTags) {
 			var currentView = App.pageView.getCurrentView();
 			if (typeof currentView !== 'undefined') {
-				currentView.killOverlayContent(interestTags);
+				currentView.killOverlayContent({interestTags: interestTags});
 			}
 		}.bind(this));
 	};

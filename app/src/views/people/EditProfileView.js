@@ -1,28 +1,22 @@
 define(function(require, exports, module, store) {
 	'use strict';
 	var BaseView = require('views/BaseView');
-	var Engine = require('famous/core/Engine');
-	var View = require('famous/core/View');
 	var Transitionable = require('famous/transitions/Transitionable');
 	var Transform = require('famous/core/Transform');
-	var ImageSurface = require('famous/surfaces/ImageSurface');
 	var Surface = require('famous/core/Surface');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
 	var Draggable = require("famous/modifiers/Draggable");
 	var StateView = require('views/StateView');
-	var DraggableView = require("views/widgets/DraggableView");
 	var RenderNode = require("famous/core/RenderNode");
 	var RenderController = require('famous/views/RenderController');
 	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var SequentialLayout = require("famous/views/SequentialLayout");
-	var FixedRenderNode = require('util/FixedRenderNode');
 	var EditUserProfileTemplate = require('text!templates/edit-user-profile.html');
 	var AddInterestTagView = require('views/people/AddInterestTagView');
 	var UpdateAvatarView = require('views/people/UpdateAvatarView');
 	var InterestTagView = require('views/people/InterestTagView');
 	var Scrollview = require('famous/views/Scrollview');
-	var Timer = require('famous/utilities/Timer');
 	var User = require('models/User');
 	var u = require('util/Utils');
 
@@ -34,7 +28,6 @@ define(function(require, exports, module, store) {
 		this.parentPage = 'FeedView';
 		this.addInterestTagView = new AddInterestTagView(this);
 		this.UpdateAvatarView = new UpdateAvatarView(this);
-		Engine.on('click', onTap.bind(this));
 		jQuery.fn.serializeObject = function() {
 			var params = {};
 			$(this).serializeArray().map(function(x) {params[x.name] = x.value;});
@@ -75,11 +68,8 @@ define(function(require, exports, module, store) {
 			return false;
 		}
 		this.hash = state.hash;
-		this.showProfile(
-			function() {
-				if (state.lastDraggedPosition) {
-					this.scrollView.setPosition(state.lastDraggedPosition)
-				}
+		this.showProfile(function() {
+				this.scrollView.setPosition(0)
 			}.bind(this)
 		);
 		if (state.message) {
@@ -97,11 +87,11 @@ define(function(require, exports, module, store) {
 		}.bind(this.addInterestTagView));
 	};
 
-	EditProfileView.prototype.killOverlayContent = function (interestTags) {
-		this.killInterestTagsForm(interestTags);
+	EditProfileView.prototype.killOverlayContent = function (args) {
+		this.killInterestTagsForm(args);
 	};
 
-	EditProfileView.prototype.killInterestTagsForm = function(interestTags) {
+	EditProfileView.prototype.killInterestTagsForm = function(args) {
 		this.addInterestTagView.clearForm();
 		BaseView.prototype.killOverlayContent.call(this);
 		console.log("overlay killed");
@@ -109,9 +99,11 @@ define(function(require, exports, module, store) {
 		this.showMenuButton();
 		this.showBackButton();
 		this.setHeaderLabel('EDIT PROFILE', '#fff');
-		if (interestTags) {
-			this.createInterestTagView(interestTags);
+		if (args.interestTags) {
+			this.createInterestTagView(args.interestTags);
 			this.submitButtonModifier.setTransform(Transform.translate(0, (1300 + this.tagList.length * 40),  App.zIndex.readView + 2));
+		} else if (args.updateView) {
+			this.preShow({hash: this.hash});
 		}
 	};
 
@@ -145,6 +137,7 @@ define(function(require, exports, module, store) {
 				content: _.template(EditUserProfileTemplate, peopleDetails, templateSettings),
 			});
 
+			editPeopleSurface.on('click', onTap.bind(this));
 			this.saveSurface = new Surface({
 				size: [90, 64],
 				content: 'SAVE',
@@ -245,7 +238,6 @@ define(function(require, exports, module, store) {
 			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(editPeopleSurface);
 			this.editProfileContainerSurface.add(new StateModifier({transform: Transform.translate(0, 1250, 0)})).add(this.tagSequentialLayout);
 
-			this.setContainerSize();
 			this.surfaceList = [this.editProfileContainerSurface, new Surface({size: [undefined, 20]})];
 			this.scrollView.sequenceFrom(this.surfaceList);
 			editPeopleSurface.pipe(this.scrollView);
@@ -275,6 +267,7 @@ define(function(require, exports, module, store) {
 			draggableNode.add(draggableTag).add(tagView);
 			this.tagList.push(draggableNode);
 		}.bind(this));
+		this.setContainerSize();
 	};
 
 	EditProfileView.prototype.setContainerSize = function() {
@@ -308,7 +301,8 @@ define(function(require, exports, module, store) {
 		}
 		User.update(formData, function (state) {
 			App.pageView.changePage('PeopleDetailView', state);
-			App.pageView.history.pop();
+			// To avoid cyclic history when going back to PeopleDetailView
+			App.pageView.history.splice(-2, 2);
 		});
 	};
 

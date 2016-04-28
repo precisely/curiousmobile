@@ -214,7 +214,7 @@ define(function(require, exports, module) {
 					noTagsLabel.parentNode.removeChild(noTagsLabel);
 				}
 				if (hasUpdatedTag) {
-					var tagToRemove = document.querySelectorAll("[data-id='"+ entryId +"']")[0];
+					var tagToRemove = document.querySelectorAll("[data-id='" + entryId + "']")[0];
 					if (tagToRemove) {
 						entryItem = u.htmlToElement(entryItem);
 						document.getElementsByClassName('tags-wrapper')[0].replaceChild(entryItem, tagToRemove);
@@ -223,7 +223,7 @@ define(function(require, exports, module) {
 					document.getElementsByClassName('tags-wrapper')[0].innerHTML += entryItem;
 				}
 			} else if (args.hasDeletedTag) {
-				var tagToRemove = document.querySelectorAll("[data-id='"+ entryId +"']")[0];
+				var tagToRemove = document.querySelectorAll("[data-id='" + entryId + "']")[0];
 				document.getElementsByClassName('tags-wrapper')[0].removeChild(tagToRemove);
 			}
 		}
@@ -251,6 +251,7 @@ define(function(require, exports, module) {
 
 	SprintFormView.prototype.killAddSprintParticipantsOverlay = function(participant) {
 		this.killOverlayContent();
+		document.getElementById('participant-label').innerHTML = 'PARTICIPANTS(' + (++this.totalParticipants) + ')';
 		document.getElementsByClassName('participants-wrapper')[0].innerHTML += participant;
 		this.resizeScrollView(30);
 		this.scrollView.sequenceFrom(this.scrollElements);
