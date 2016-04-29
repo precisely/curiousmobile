@@ -15,9 +15,10 @@ define(function(require, exports, module) {
 	var User = require('models/User');
 	var u = require('util/Utils');
 
-	function OverlayWithGroupListView(template, templateProperties) {
+	function OverlayWithGroupListView(template, templateProperties, onClickHandler) {
 		StateView.apply(this, arguments);
 		this.template = template;
+		this.onClickHandler = onClickHandler;
 		this.templateProperties = templateProperties;
 		this.createOverlay();
 		this.createGroupsListScrollView();
@@ -43,25 +44,7 @@ define(function(require, exports, module) {
 		this.overlayModalModifier = new StateModifier({
 			transform: Transform.translate(0, 0, App.zIndex.contextMenu)
 		});
-		this.overlayModal.on('click', function(e) {
-			if (e instanceof CustomEvent) {
-				var classList = e.srcElement.classList;
-				if (_.contains(classList, 'close') || _.contains(e.srcElement.parentElement.classList, 'close')) {
-					this.overlayRenderController.hide();
-				} else if (e.srcElement.id === 'share-chart') {
-					App.pageView.getCurrentView().shareChart({name: this.groupName, fullName: this.groupFullName});
-				} else if (_.contains(classList, 'submit-post')) {
-					var discussionTitle = document.getElementById('name').value;
-					var discussionDescription = document.getElementById('description').value;
-					var groupName = this.groupName;
-					if (!discussionTitle) {
-						u.showAlert('Discussion topic can not be blank');
-						return;
-					}
-					App.pageView.getCurrentView().updateDiscussion({name: discussionTitle, message: discussionDescription, group: groupName});
-				}
-			}
-		}.bind(this));
+		this.overlayModal.on('click', this.onClickHandler.bind(this));
 
 		this.overlayContainerSurface.add(this.overlayModalModifier).add(this.overlayModal);
 		this.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(this.overlayRenderController);

@@ -1,15 +1,19 @@
 <div class="alert alert-{{- type}} alert-dismissible" role="alert">
 	<button type="button" class="close"><span>&times;</span>
-    </button>
-    <div class="">
-        {{- message}}
-    </div>
-    <div class="">
-        <button class="a" type="button">
-            {{- a}}
-        </button>
-        <button class="b" type="button">
-            {{- b}}
-        </button>
-    </div>
+	</button>
+	<div class="">
+		{{- message}}
+	</div>
+	<div class="row">
+		<div class="col-md-6 col-xs-6 text-center">
+			<button class="a" type="button">
+				{{- a}}
+			</button>
+		</div>
+		<div class="col-md-6 col-xs-6 text-center">
+			<button class="b" type="button">
+				{{- b}}
+			</button>
+		</div>
+	</div>
 </div>

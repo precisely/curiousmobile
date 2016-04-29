@@ -198,13 +198,8 @@ define(function(require, exports, module) {
 			size: [84, 24]
 		});
 
-		if (this.constructor.name === 'TrackEntryFormView') {
-			this.firstOffset = (App.width - ((84 * 2) + 30)) / 2;
-			sequentialLayout.sequenceFrom([this.repeatSurface, this.remindSurface]);
-		} else {
-			this.firstOffset = (App.width - ((84 * 3) + 60)) / 2;
-			sequentialLayout.sequenceFrom([this.repeatSurface, this.remindSurface, this.pinSurface]);
-		}
+		this.firstOffset = (App.width - ((84 * 3) + 60)) / 2;
+		sequentialLayout.sequenceFrom([this.repeatSurface, this.remindSurface, this.pinSurface]);
 		this.buttonsAndHelp = new ContainerSurface({
 			size: [undefined, true],
 			classes: ['entry-form-buttons'],
@@ -275,7 +270,7 @@ define(function(require, exports, module) {
 			//TODO if no state
 			App.pageView.changePage(this.parentPage);
 			return;
-		} else if (state && state.createJustBookmark) {
+		} else if (state && state.bookmarkForm) {
 			this.setPinned = true;
 			this.buttonsRenderController.hide();
 			this.renderController.hide();

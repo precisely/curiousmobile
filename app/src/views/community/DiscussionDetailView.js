@@ -220,7 +220,7 @@ define(function(require, exports, module) {
 
 		discussionPostSurface.pipe(this.touchSync);
 
-		this.addCommentSurface = this.getAddCommentSurface({});
+		this.addCommentSurface = this.getCommentFormSurface({});
 
 		if (discussionPost.discussionDetails.isAdmin || (discussionPost.discussionDetails.canWrite && !discussionPost.discussionDetails.disableComments)) {
 			this.surfaceList.push(this.addCommentSurface.node);
@@ -235,6 +235,7 @@ define(function(require, exports, module) {
 			}.bind(this), 500)
 		}.bind(this));
 
+		// TODO: make this re-usable
 		this.touchSync.on('update', function(data) {
 			var movementX = Math.abs(data.position[0]);
 			var movementY = Math.abs(data.position[1]);
@@ -294,7 +295,21 @@ define(function(require, exports, module) {
 	function _setHandlers() {
 		this.on('edit-discussion', function() {
 			this.overlayWithGroupListView = new OverlayWithGroupListView(editDiscussionTemplate, {name: u.parseDivToNewLine(this.discussionDetails.discussionTitle), description: u.parseDivToNewLine(this.discussionDetails.firstPost.message),
-					groupName: this.discussionDetails.groupName || (this.discussionDetails.isPublic ? 'PUBLIC' : 'PRIVATE')});
+					groupName: this.discussionDetails.groupName || (this.discussionDetails.isPublic ? 'PUBLIC' : 'PRIVATE')}, function(e) {
+						if (e instanceof CustomEvent) {
+							var classList = e.srcElement.classList;
+							if (_.contains(classList, 'submit-post')) {
+								var discussionTitle = document.getElementById('name').value;
+								var discussionDescription = document.getElementById('description').value;
+								var groupName = this.groupName;
+								if (!discussionTitle) {
+									u.showAlert('Discussion topic can not be blank');
+									return;
+								}
+								App.pageView.getCurrentView().updateDiscussion({name: discussionTitle, message: discussionDescription, group: groupName});
+							}
+						}
+					});
 			this.showOverlayContent(this.overlayWithGroupListView);
 			this.setHeaderLabel('EDIT DISCUSSION');
 		}.bind(this));
@@ -303,7 +318,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 	}
 
-	DiscussionDetailView.prototype.getAddCommentSurface = function(post, currentIndex) {
+	DiscussionDetailView.prototype.getCommentFormSurface = function(post, currentIndex) {
 		var addCommentSurface = new Surface({
 			size: [undefined, true],
 			content: _.template(addCommentTemplate, {message: post.message || '', postId: post.id || undefined,
@@ -456,7 +471,7 @@ define(function(require, exports, module) {
 						this.selectionIndex = this.surfaceList.indexOf(commentSurface);
 						this.surfaceList.splice(this.surfaceList.indexOf(this.addCommentSurface), 1);
 						post.message = u.parseDivToNewLine(post.message);
-						var editCommentSurface = this.getAddCommentSurface(post, this.selectionIndex);
+						var editCommentSurface = this.getCommentFormSurface(post, this.selectionIndex);
 						this.surfaceList.splice(this.selectionIndex, 1, editCommentSurface.node);
 						editCommentSurface.pipe(this.scrollView);
 						setTimeout(function() {

@@ -272,11 +272,7 @@ define(function(require, exports, module) {
 				noMoreItemsCardView.setText('No results');
 			});
 
-			if (this.offset == 0) {
-				if (this.showExplanationCard && this.currentPill !== 'STARTED') {
-					this.showExplanationCard();
-				}
-			} else {
+			if (!this.offset == 0) {
 				noMoreItemsCardView.setText('No more results');
 			}
 			return;
@@ -319,8 +315,8 @@ define(function(require, exports, module) {
 		// Adding navigation pills below header
 		this.navPills.push(this.createPillsSurface('ALL', true));
 		this.navPills.push(this.createPillsSurface('NOTIFICATIONS'));
-		this.navPills.push(this.createPillsSurface('PEOPLE'));
 		this.navPills.push(this.createPillsSurface('DISCUSSIONS'));
+		this.navPills.push(this.createPillsSurface('PEOPLE'));
 		this.navPills.push(this.createPillsSurface('AUTHORED'));
 	};
 

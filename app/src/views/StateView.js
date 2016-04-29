@@ -69,7 +69,7 @@ define(function(require, exports, module) {
 			App.pageView.history.push(state.lastPage);
 		}
 
-		if (state && state.viewProperties) {
+		if (state.viewProperties) {
 			for (var i = 0, len = state.viewProperties.length; i < len; i++) {
 				var property = state.viewProperties[i];
 				var value = property.value;

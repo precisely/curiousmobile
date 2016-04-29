@@ -234,16 +234,16 @@ define(function(require, exports, module) {
 		this.on('share-snapshot', function() {
 			var overlayTemplateProperties = {};
 			var graphTitle;
-			var totalPlottetTags = this.tagsToPlot.length;
-			if (totalPlottetTags == 1) {
+			var totalPlottedTags = this.tagsToPlot.length;
+			if (totalPlottedTags == 1) {
 				graphTitle = 'What is the relationship between ' + this.tagsToPlot[0].description + ' and my health?';
-			} else if (totalPlottetTags > 1) {
+			} else if (totalPlottedTags > 1) {
 				graphTitle = 'Is there a relationship between';
 				_.each(this.tagsToPlot, function(tag, index) {
-					if (index == totalPlottetTags - 1) {
+					if (index == totalPlottedTags - 1) {
 						graphTitle += ' and ' + tag.description + '?';
 					} else {
-						graphTitle += ' ' + tag.description + ((index == totalPlottetTags - 2) ? '' : ',');
+						graphTitle += ' ' + tag.description + ((index == totalPlottedTags - 2) ? '' : ',');
 					}
 				});
 			} else {
@@ -252,7 +252,14 @@ define(function(require, exports, module) {
 			}
 			overlayTemplateProperties.graphTitle = graphTitle;
 			overlayTemplateProperties.groupName = this.groupToShareWith;
-			this.overlayWithGroupListView = new OverlayWithGroupListView(shareChartTemplate, overlayTemplateProperties);
+			this.overlayWithGroupListView = new OverlayWithGroupListView(shareChartTemplate, overlayTemplateProperties, function(e) {
+				if (e instanceof CustomEvent) {
+					var classList = e.srcElement.classList;
+					if (e.srcElement.id === 'share-chart') {
+						App.pageView.getCurrentView().shareChart({name: this.groupName, fullName: this.groupFullName});
+					}
+				}
+			});
 			this.showOverlayContent(this.overlayWithGroupListView);
 		}.bind(this));
 

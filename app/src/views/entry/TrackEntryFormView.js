@@ -109,7 +109,7 @@ define(function(require, exports, module) {
 					} else {
 						this.dateGrid = new DateGridView(this.selectedDate || new Date());
 						this.dateGridRenderController.show(this.dateGrid, null, function() {
-							App.pageView.getCurrentView().showBackDrop();
+							App.pageView.getCurrentView().showShimSurface();
 						});
 						this.dateGrid.on('select-date', function(date) {
 							console.log('CalenderView: Date selected');

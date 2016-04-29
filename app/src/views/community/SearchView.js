@@ -177,6 +177,8 @@ define(function(require, exports, module) {
 			}.bind(this), 350)
 		}
 		var lastVisitedPage = App.pageView.history.slice(-1)[0];
+		
+		// Avoiding cyclic history when going to a user profile page from user search
 		if (lastVisitedPage && (lastVisitedPage === 'PeopleDetailView' ||
 				App.pageView.getPage(lastVisitedPage).parentPage)) {
 			App.pageView.history.pop();

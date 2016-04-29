@@ -112,7 +112,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
-		
+
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(function(progress) {
 			return Transform.translate(0, 0, 0);
@@ -161,7 +161,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.on('close-date-grid', function(date) {
-			this.hideBackDrop();
+			this.hideShimSurface();
 			this.calendarView.renderController.hide();
 			this.calendarView.showingDateGrid = false;
 			this.entryFormView.dateGridRenderController.hide();
@@ -198,14 +198,14 @@ define(function(require, exports, module) {
 		var showEntryBalloon;
 		var showBookmarkBalloon;
 		var entryId;
-		
+
 		if (state && state.data) {
 			showEntryBalloon = state.data.showEntryBalloon ? state.data.showEntryBalloon : false;
 			showBookmarkBalloon = state.data.showBookmarkBalloon ? state.data.showBookmarkBalloon : false;
 			entryId = glowEntry ? glowEntry.id : null;
 		}
 		var elementId = "#entry-" + entryId;
-		
+
 		if (!store.get('hasVisitedMobileApp')) {
 			store.set('hasVisitedMobileApp', true);
 
@@ -292,7 +292,7 @@ define(function(require, exports, module) {
 				this.currentListView.refreshEntries(entries, glowEntry, function() {
 					this.showAllPopovers(state, glowEntry);
 				}.bind(this));
-				
+
 				return true;
 			}
 		}
@@ -301,7 +301,7 @@ define(function(require, exports, module) {
 		this.changeDate(this.calendarView.selectedDate, function() {
 			this.showAllPopovers(state, glowEntry);
 		}.bind(this), glowEntry);
-		
+
 		return true;
 	};
 
@@ -433,7 +433,7 @@ define(function(require, exports, module) {
 		});
 
 		this.on('add-bookmark', function(event) {
-			this.showEntryFormView({createJustBookmark: true});
+			this.showEntryFormView({bookmarkForm: true});
 		});
 	}
 

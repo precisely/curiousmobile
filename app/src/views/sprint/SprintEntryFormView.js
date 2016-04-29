@@ -131,6 +131,7 @@ define(function(require, exports, module) {
 	/**
 	 * If form loads in edit mode, this will initialize
 	 * entry modifier form according to properties of current entry
+	 * currently not in use
 	 */
 	SprintEntryFormView.prototype.showEntryModifiers = function(args) {
 		var buttonName = 'CREATE ENTRY';

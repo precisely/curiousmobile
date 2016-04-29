@@ -1751,29 +1751,31 @@ list-style-type: none;
 }
 
 .alert {
-	padding: 10px;
+	padding: 10px 15px;
 	min-height: 50px;
 	word-wrap: break-word;
 	color: #636363;
 }
 
 .alert .close {
-	margin-right: 0px;
 	background-color: #fff;
 	color: #676767;
 	font-size: 20px;
 	margin-top: -10px;
-	margin-right: -10px;
+	margin-right: -15px;
+	width: auto;
 }
 
 .alert button {
-	color: #fff;
-	background-color: #C34D7D;
+	color: #C34D7D;
+	background-color: #FFF;
 	padding: 5px 10px;
 	border-radius: 2px;
 	right: 0px !important;
 	margin-right: 10px;
 	margin-top: 3px;
+	text-transform: capitalize;
+	width: 100%;
 }
 
 .alert-alert, .alert-default {

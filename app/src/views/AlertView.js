@@ -19,6 +19,9 @@ define(function(require, exports, module) {
 		this.controller = new RenderController();
 		window.mainContext.add(this.controller);
 		this.controller.show(this, null, function() {
+			if (this.options.onShow) {
+				this.options.onShow();
+			}
 			Engine.on('click', closeAlert);
 			if (this.options.type === 'default') {
 				setTimeout(function() {
@@ -40,12 +43,14 @@ define(function(require, exports, module) {
 		onA: undefined,
 		onB: undefined,
 		tapOnBodyHandler: undefined,
-		delay: 3000
+		delay: 3000,
+		onShow: undefined,
+		onHide: undefined
 	};
 
 	function _createAlert() {
 		var messageModifier = new Modifier({
-			transform: Transform.translate(20, 74, 999),
+			transform: Transform.translate(20, App.height / 2 - 100, 999),
 			origin: [0, 0],
 		});
 

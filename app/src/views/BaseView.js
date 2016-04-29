@@ -40,7 +40,7 @@ define(function(require, exports, module) {
 			}
 		}));
 		this._createFooter();
-		this.createBackDrop();
+		this.createShimSurface();
 		_setListeners.call(this);
 	}
 
@@ -365,27 +365,27 @@ define(function(require, exports, module) {
 		this.currentOverlay = null;
 	}
 
-	BaseView.prototype.createBackDrop = function (first_argument) {
-		this.backdropTransparentSurface = new Surface({
+	BaseView.prototype.createShimSurface = function () {
+		this.shimSurface = new Surface({
 			size: [undefined, App.height]
 		});
-		this.backdropTransparentSurface.on('click',function(e) {
+		this.shimSurface.on('click',function(e) {
 			if (e instanceof CustomEvent) {
 				this._eventOutput.emit('close-date-grid');
 				return;
 			}
 		}.bind(this));
-		this.backDropRenderController = new RenderController();
+		this.shimSurfaceRenderController = new RenderController();
 		// Backdrop will also cover header and footer
-		this.add(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.datePicker - 1)})).add(this.backDropRenderController);
+		this.add(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.datePicker - 1)})).add(this.shimSurfaceRenderController);
 	};
 
-	BaseView.prototype.showBackDrop = function() {
-		this.backDropRenderController.show(this.backdropTransparentSurface);
+	BaseView.prototype.showShimSurface = function() {
+		this.shimSurfaceRenderController.show(this.shimSurface);
 	}
 
-	BaseView.prototype.hideBackDrop = function() {
-		this.backDropRenderController.hide();
+	BaseView.prototype.hideShimSurface = function() {
+		this.shimSurfaceRenderController.hide();
 	}
 	module.exports = BaseView;
 });

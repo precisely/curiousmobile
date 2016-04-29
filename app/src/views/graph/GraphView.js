@@ -216,7 +216,7 @@ define(function(require, exports, module) {
 			}
 			
 			this.dateGridRenderController.show(this.dateGrid, null, function() {
-				App.pageView.getCurrentView().showBackDrop();
+				App.pageView.getCurrentView().showShimSurface();
 			}.bind(this));
 		}
 		this.dateGridOpen = !this.dateGridOpen;
@@ -224,7 +224,7 @@ define(function(require, exports, module) {
 	GraphView.prototype.closeDateGrid = function() {
 		this.dateGridRenderController.hide();
 		this.dateGridOpen = false;
-		App.pageView.getCurrentView().hideBackDrop();
+		App.pageView.getCurrentView().hideShimSurface();
 	};
 
 	GraphView.prototype.setSelectedDate = function(date, dateType) {
