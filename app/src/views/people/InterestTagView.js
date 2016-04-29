@@ -73,10 +73,10 @@ define(function(require, exports, module) {
 	};
 
 	InterestTagView.prototype.delete = function() {
-		User.deleteInterestTags(this.entry, function() {
+		User.deleteInterestTags(this.entry, function(interestTags) {
 			var currentView = App.pageView.getCurrentView();
 			if (typeof currentView !== 'undefined') {
-				currentView.killOverlayContent();
+				currentView.killOverlayContent({interestTags: interestTags});
 			}
 		}.bind(this));
 	};

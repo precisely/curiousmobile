@@ -61,7 +61,7 @@ define(function (require, exports, module) {
 					User.saveAvatar(formData, function () {
 						var currentView = App.pageView.getCurrentView();
 						if (typeof currentView !== 'undefined') {
-							currentView.killOverlayContent();
+							currentView.killOverlayContent({updateView: true});
 							console.log('********************** profile picture updated ***********************************');
 						}
 					});
@@ -70,8 +70,6 @@ define(function (require, exports, module) {
 				}
 			}
 		}.bind(this));
-
-
 		this.add(mod).add(formContainerSurface);
 	}
 
