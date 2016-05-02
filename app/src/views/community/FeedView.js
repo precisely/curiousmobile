@@ -16,7 +16,7 @@ define(function(require, exports, module) {
 	var Sprint = require('models/Sprint');
 	var User = require('models/User');
 	var TrueSurface = require('surfaces/TrueSurface');
-	var u = require('util/Utils');
+	var u = require('util/Utils')
 	var DiscussionDetailView = require("views/community/DiscussionDetailView");
 	var CreatePostView = require('views/community/CreatePostView');
 	var SprintCardView = require('views/community/card/SprintCardView')
@@ -125,7 +125,7 @@ define(function(require, exports, module) {
 		});
 
 		var pillsScrollViewContainer = new ContainerSurface({
-			size: (this.constructor.name === 'FeedView') ? [App.width, 50]:[App.width - 50, 50],
+			size: [undefined, 50],
 			properties: {
 				backgroundColor: '#efefef',
 				textAlign: 'center'

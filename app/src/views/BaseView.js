@@ -35,6 +35,9 @@ define(function(require, exports, module) {
 			transform: Transform.translate(0, 0, 100)
 		})).add(new Surface({
 			size: [undefined, 0],
+			properties: {
+				zIndex: 50
+			},
 			attributes: {
 				id: 'popover-surface'
 			}
@@ -183,7 +186,7 @@ define(function(require, exports, module) {
 		});
 
 		this.searchOptionSurface.on('click', function(e) {
-			if (u.isAndroid() || e instanceof CustomEvent) {
+			if (e instanceof CustomEvent) {
 				App.pageView.changePage('SearchView');
 			}
 		}.bind(this));
@@ -206,7 +209,6 @@ define(function(require, exports, module) {
 
 		this.footerSurface = new Surface({
 			content: _.template(FooterTemplate, {activeMenu: this.options.activeMenu, currentPage: App.pageView.getCurrentPage()}, templateSettings),
-			classes: ['footer-surface'],
 			size: [undefined, 50],
 			properties: {
 				borderTop: '1px solid #c0c0c0',

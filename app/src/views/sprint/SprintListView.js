@@ -105,7 +105,7 @@ define(function(require, exports, module) {
 			}
 		});
 
-		this.explanationBoxModifier = new StateModifier({transform: Transform.translate(App.width - 50, 64, App.zIndex.header)});
+		this.explanationBoxModifier = new StateModifier({transform: Transform.translate(App.width - 50, 64, App.zIndex.header + 5)});
 		this.add(this.explanationBoxModifier).add(this.showExplanationRenderController);
 		this.showExplanationRenderController.show(this.showExplanationSurface);
 
@@ -129,7 +129,7 @@ define(function(require, exports, module) {
 			var explanationCardHeight = sprintExplanationCard.getSize()[1];
 			this.pillsScrollViewContainerModifier.setTransform(Transform.translate(0, 52 + explanationCardHeight, App.zIndex.header));
 			this.scrollViewMod.setTransform(Transform.translate(0, 110 + explanationCardHeight, App.zIndex.feedItem));
-			this.explanationBoxModifier.setTransform(Transform.translate(App.width - 50, 52 + explanationCardHeight, App.zIndex.header));
+			this.explanationBoxModifier.setTransform(Transform.translate(App.width - 50, 52 + explanationCardHeight, App.zIndex.header + 5));
 		}.bind(this));
 
 		this.showExplanationRenderController.hide();
@@ -143,7 +143,7 @@ define(function(require, exports, module) {
 			this.explanationVisible = false;
 			this.pillsScrollViewContainerModifier.setTransform(Transform.translate(0, 64, App.zIndex.header));
 			this.scrollViewMod.setTransform(Transform.translate(0, 110, App.zIndex.feedItem));
-			this.explanationBoxModifier.setTransform(Transform.translate(App.width - 50, 64, App.zIndex.header));
+			this.explanationBoxModifier.setTransform(Transform.translate(App.width - 50, 64, App.zIndex.header + 5));
 			this.showExplanationRenderController.show(this.showExplanationSurface);
 		}.bind(this));
 	};

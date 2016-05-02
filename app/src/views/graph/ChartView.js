@@ -177,6 +177,7 @@ define(function(require, exports, module) {
 		this.backRenderController.hide();
 		this.showBackButton();
 		this.removeRightIcon();
+		this.setHeaderLabel('LOAD CHART');
 		this.showOverlayContent(this.loadGraphOverlay);
 	};
 
@@ -254,6 +255,7 @@ define(function(require, exports, module) {
 			overlayTemplateProperties.groupName = this.groupToShareWith;
 			this.overlayWithGroupListView = new OverlayWithGroupListView(shareChartTemplate, overlayTemplateProperties);
 			this.showOverlayContent(this.overlayWithGroupListView);
+			this.setHeaderLabel('SHARE CHART');
 		}.bind(this));
 
 		this.on('load-snapshot', function() {
@@ -266,7 +268,6 @@ define(function(require, exports, module) {
 		this.removeRightIcon();
 		this.hideSearchIcon();
 		this.backRenderController.hide();
-		this.setHeaderLabel('SHARE CHART');
 		BaseView.prototype.showOverlayContent.call(this, renderable);
 	};
 

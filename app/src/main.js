@@ -79,7 +79,18 @@ define(function(require, exports, module) {
 	});
 	var mainContext = Engine.createContext();
 	window.mainContext = mainContext;
-
+	
+	if (u.isAndroid()) {
+		window.addEventListener('native.keyboardshow', function (e) {
+			App.coreEventHandler.emit('keyboard-up', e);
+		});
+		window.addEventListener('native.keyboardhide', function (e) {
+			setTimeout(function () {
+				App.coreEventHandler.emit('keyboard-down', e);
+			}, 100);
+		});
+	}
+	
 	var appView = new AppView();
 	App.setAppView(appView);
 	var mod = new Modifier({

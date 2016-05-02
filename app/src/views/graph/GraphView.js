@@ -141,6 +141,12 @@ define(function(require, exports, module) {
 				border: '1px solid #c3c3c3'
 			}
 		});
+		
+		this.dateGridContainer = new ContainerSurface({
+			properties: {
+				zIndex: 12
+			}
+		});
 
 		this.dateGrid = new DateGridView(new Date(), true);
 		
@@ -156,8 +162,9 @@ define(function(require, exports, module) {
 
 		this.dateGridRenderController = new RenderController();
 		var dateGridRenderControllerMod = new StateModifier({
-			transform: Transform.translate(18, 100, 0)
+			transform: Transform.translate(18, 100, 50)
 		});
+		this.dateGridContainer.add(this.dateGrid);
 		this.add(dateGridRenderControllerMod).add(this.dateGridRenderController);
 
 		var datePickerButtonProperties = {
@@ -215,7 +222,7 @@ define(function(require, exports, module) {
 				this.dateGrid.setSelectedDate(new Date());
 			}
 			
-			this.dateGridRenderController.show(this.dateGrid, null, function() {
+			this.dateGridRenderController.show(this.dateGridContainer, null, function() {
 				App.pageView.getCurrentView().showBackDrop();
 			}.bind(this));
 		}
