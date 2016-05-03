@@ -19,7 +19,9 @@ define(function(require, exports, module) {
 	var DiscussionCardView = require('views/community/card/DiscussionCardView');
 	var Sprint = require('models/Sprint');
 	var Discussion = require('models/Discussion');
+	var store = require('store');
 	var NoMoreItemsCardView = require('views/community/card/NoMoreItemsCardView');
+	var DiscussionCreateOptionsSurface = require('views/community/DiscussionOptionsOverlay');
 	var u = require('util/Utils');
 
 	function SprintActivityView() {
@@ -39,13 +41,6 @@ define(function(require, exports, module) {
 		});
 		this.setBody(this.backgroundSurface);
 
-		this.pencilSurface = new ImageSurface({
-			size: [44, 64],
-			content: 'content/images/edit-pencil.png',
-		});
-
-		// Pencil icon will appear after the sprint edit is functional
-		//this.setRightIcon(this.pencilSurface);
 		this.initContent();
 	}
 
@@ -59,6 +54,36 @@ define(function(require, exports, module) {
 		activeMenu: 'sprint'
 	};
 
+	SprintActivityView.prototype.createPlusSurface = function() {
+		this.plusSurface = new Surface({
+			size: [44, 64],
+			content: '<i class="fa fa-2x fa-plus-square-o" id="add-discussion"></i>',
+			properties: {
+				padding: '19px 0px 0px 5px',
+				color: '#f14a42'
+			},
+			attributes: {
+				id: 'plus-icon-surface'
+			}
+		});
+		this.removeRightIcon();
+		this.setRightIcon(this.plusSurface);
+
+		this.plusSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				var className = e.srcElement.className;
+				if (!_.contains(['popover', 'arrow', 'popover-content', 'vline'], className)) {
+					var discussionCreateOptionsSurface = new DiscussionCreateOptionsSurface({createTrackathonDiscussion: true,
+							groupName: this.virtualGroupName});
+					this.showBackButton();
+					this.removeRightIcon();
+					this.hideSearchIcon();
+					this.showOverlayContent(discussionCreateOptionsSurface);
+				}
+			}
+		}.bind(this));
+	};
+	
 	SprintActivityView.prototype.initContent = function() {
    		var sequentialLayout = new SequentialLayout({
    			direction: 1,
@@ -113,7 +138,7 @@ define(function(require, exports, module) {
 					sprintHash: this.hash,
 					offset: this.offset,
 					max: this.max
-				}
+				};
 
 				this.fetchDiscussions(args);
 			}
@@ -130,12 +155,27 @@ define(function(require, exports, module) {
 		this.add(mod).add(sequentialLayout);
 	};
 
+	SprintActivityView.prototype.killOverlayContent = function() {
+		BaseView.prototype.killOverlayContent.call(this);
+		this.showMenuButton();
+		this.showSearchIcon();
+		this.setRightIcon(this.plusSurface);
+	};
+
 	SprintActivityView.prototype.fetchDiscussions = function(args) {
 		var params = args;
 		var parsedTemplate = _.template(SprintActivityTitleTemplate, {name: this.name}, templateSettings);
 		this.sprintActivityTitleSurface.setContent(parsedTemplate);
 
-		Sprint.listDiscussions(args, addListItemsToScrollView.bind(this), function() {
+		Sprint.listDiscussions(args, function(data) {
+			if (store.get('showPostDiscussionBalloon')) {
+				App.showPopover('#add-discussion', {placement: 'bottom', key: 'addDiscussionTrackathon', autoHide: true, container: '#plus-icon-surface'});
+			}
+			if (data.isMember) {
+				this.createPlusSurface();
+			}
+			addListItemsToScrollView.call(this, data.listItems);
+		}.bind(this), function() {
 			Sprint.follow(args.sprintHash, function() {
 				this.fetchDiscussions(args);
 			}.bind(this), function() {
@@ -145,16 +185,22 @@ define(function(require, exports, module) {
 
 	};
 
+	SprintActivityView.prototype.preChangePage = function() {
+		$('#add-discussion').popover('destroy');
+	};
+	
 	SprintActivityView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 	};
 
 	SprintActivityView.prototype.preShow = function(state) {
-		if (!state || !state.hash) {
+		if (!state || (!state.hash && (state.new && !this.hash))) {
 			return false;
+		} else if (state.hash) {
+			this.hash = state.hash;
+			this.name = state.name;
+			this.virtualGroupName = state.virtualGroupName;
 		}
-		this.hash = state.hash;
-		this.name = state.name;
 		this.parentPage = state.parentPage || 'SprintListView';
 		this.initScrollView();
 		this.fetchDiscussions({sprintHash: this.hash, max: 5, offset: 0});
@@ -162,12 +208,21 @@ define(function(require, exports, module) {
 	};
 
 	function addListItemsToScrollView(listItems) {
-		if (typeof listItems === undefined || !listItems.length) {
-			var noActivityMessage = new NoMoreItemsCardView(); 
+		if (typeof listItems === 'undefined' || !listItems.length) {
+			var noActivityMessage = new NoMoreItemsCardView('No results');
 			this.deck.push(noActivityMessage);
 			noActivityMessage.setScrollView(this.scrollView);
 			this.itemsAvailable = false;
 			console.log('no more items available');
+
+			this.on('list-empty', function() {
+				noActivityMessage.setText('No results');
+			});
+
+			if (this.offset !== 0) {
+				noActivityMessage.setText('No more results')
+			}
+
 			return;
 		}
 		listItems.forEach(function(item) {

@@ -31,7 +31,16 @@ define(function(require, exports, module) {
 		StateView.apply(this, arguments);
 		_createLayout.call(this);
 		_createHeader.call(this);
+		this.add(new StateModifier({
+			transform: Transform.translate(0, 0, 100)
+		})).add(new Surface({
+			size: [undefined, 0],
+			attributes: {
+				id: 'popover-surface'
+			}
+		}));
 		this._createFooter();
+		this.createShimSurface();
 		_setListeners.call(this);
 	}
 
@@ -121,7 +130,7 @@ define(function(require, exports, module) {
 		this.layout.header.add(leftModifier).add(this.headerLeftIconController);
 		this.layout.header.add(rightModifier).add(this.headerRightIconController);
 		this.leftSurface = new Surface({
-			content: '<i class="fa fa-arrow-left"></i>',
+			content: '<img src="content/images/left.png" width="20px" height="18px" />',
 			size: [61, 64],
 			properties: {
 				padding: '15px 20px',
@@ -180,7 +189,6 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.rightIconsList = [];
-		this.rightIconsList.push(this.searchOptionSurface);
 		this.rightIconsSequenceView = new SequentialLayout({
 			direction: 0,
 			itemSpacing: 0,
@@ -212,8 +220,8 @@ define(function(require, exports, module) {
 				console.log('footerSurface event');
 				if (_.contains(e.srcElement.classList, 'popover-content')) {
 					var trackView = App.pageView.getPage('TrackView');
-					trackView.hidePopover();
-					trackView.isPopoverVisible = false;
+					trackView.hideSprintMenuPopover();
+					trackView.isSprintMenuPopoverVisible = false;
 					return;
 				}
 				var pageName = e.srcElement.getAttribute('data');
@@ -357,5 +365,27 @@ define(function(require, exports, module) {
 		this.currentOverlay = null;
 	}
 
+	BaseView.prototype.createShimSurface = function () {
+		this.shimSurface = new Surface({
+			size: [undefined, App.height]
+		});
+		this.shimSurface.on('click',function(e) {
+			if (e instanceof CustomEvent) {
+				this._eventOutput.emit('close-date-grid');
+				return;
+			}
+		}.bind(this));
+		this.shimSurfaceRenderController = new RenderController();
+		// Backdrop will also cover header and footer
+		this.add(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.datePicker - 1)})).add(this.shimSurfaceRenderController);
+	};
+
+	BaseView.prototype.showShimSurface = function() {
+		this.shimSurfaceRenderController.show(this.shimSurface);
+	}
+
+	BaseView.prototype.hideShimSurface = function() {
+		this.shimSurfaceRenderController.hide();
+	}
 	module.exports = BaseView;
 });

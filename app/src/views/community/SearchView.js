@@ -1,6 +1,7 @@
 define(function(require, exports, module) {
 	'use strict';
 	var View = require('famous/core/View');
+	var BaseView = require('views/BaseView');
 	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
@@ -26,7 +27,6 @@ define(function(require, exports, module) {
 	SearchView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
-		noBackButton: true
 	};
 
 	SearchView.prototype.createSearchHeader = function() {
@@ -89,8 +89,6 @@ define(function(require, exports, module) {
 		this.headerBackgroundSurface.setProperties({
 			backgroundColor: '#f14a42'
 		});
-
-		this.hamburgerSurface.setContent('content/images/hamburg-menu-white.png');
 	}
 
 	SearchView.prototype.createSearchPills = function() {
@@ -158,8 +156,47 @@ define(function(require, exports, module) {
 		Search.fetch(args, this.addListItemsToScrollView.bind(this));
 	}
 
-	SearchView.prototype.preShow = function() {
+	SearchView.prototype.preShow = function(state) {
+		BaseView.prototype.preShow.call(this);
+		this.leftSurface.setContent('<img src="content/images/left-white.png" width="20px" height="18px"/>');
+		if (state && state.lastPage) {
+			this.showBackButton();
+		}
 		return true;
+	};
+
+	SearchView.prototype.onShow = function(state) {
+		BaseView.prototype.onShow.call(this);
+		if (state) {
+			this.loadState(state);
+		}
+		if (state && state.lable) {
+			this.setCurrentPill(state.lable);
+			setTimeout(function() {
+				this.fetchFeedItems(state.lable);
+			}.bind(this), 350)
+		}
+		var lastVisitedPage = App.pageView.history.slice(-1)[0];
+		
+		// Avoiding cyclic history when going to a user profile page from user search
+		if (lastVisitedPage && (lastVisitedPage === 'PeopleDetailView' ||
+				App.pageView.getPage(lastVisitedPage).parentPage)) {
+			App.pageView.history.pop();
+		}
+	};;
+
+	SearchView.prototype.getCurrentState = function() {
+		var inputElement = document.getElementById('search-input');
+		var searchText = inputElement.value;
+		return {
+			lastPage: App.pageView.history.pop() || 'FeedView',
+			form: [{
+				id: 'search-input',
+				value: searchText,
+				selectionRange: [inputElement.selectionStart, inputElement.selectionEnd]
+			}],
+			lable: this.currentPill
+		}
 	}
 
 	App.pages['SearchView'] = SearchView;

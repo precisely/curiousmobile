@@ -6,20 +6,20 @@
 			{{ } else { }}
 				<img class="avatar" height="25" width="25" src="content/images/avatar2.png" alt="avatar">
 			{{ } }}
-			<span class="user-name"> 
+			<span class="user-name">
 				{{- authorName }}
 			</span>
 			<span class="posting-time">{{= prettyDate }}</span>
 		</a>
 		{{ if (isAdmin) { }}
 			<div class="pull-right actions">
-				<span class="edit"> 
-					<a href="#" class="edit-post"> 
+				<span class="edit">
+					<a href="#" class="edit-post">
 						<i class="fa fa-pencil"></i>
 					</a>
 				</span>
-				<span class="delete"> 
-					<a href="#" class="delete-post"> 
+				<span class="delete">
+					<a href="#" class="delete-post">
 						<i class="fa fa-times-circle"></i>
 					</a>
 				</span>

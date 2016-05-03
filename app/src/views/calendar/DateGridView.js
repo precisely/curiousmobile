@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 	var Transitionable = require('famous/transitions/Transitionable');
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var dateGridHeader = require("text!templates/date/date-header.html");
+	var ContainerSurface = require("famous/surfaces/ContainerSurface");
 	var u = require('util/Utils');
 	var DateUtil = require('util/DateUtil');
 	function DateGridView(date, withClearButton) {
@@ -26,13 +27,13 @@ define(function(require, exports, module) {
 
 	DateGridView.DEFAULT_OPTIONS = {
 		controlButtonProperties:  {
-			fontSize: '20px',
-			backgroundColor: '#333',
-			color: 'white',
+			fontSize: '14px',
+			backgroundColor: '#ffffff',
+			color: '#FC3F28',
 			textAlign: 'center',
 			borderRadius: '5px',
 			marginLeft: '10px',
-			padding : '3px',
+			paddingTop: '3px',
 			cursor: 'pointer'
 		}
 	};
@@ -56,7 +57,7 @@ define(function(require, exports, module) {
 			properties: {
 				backgroundColor: 'white',
 				border: '1px solid #c0c0c0',
-				borderRadius: '10px'
+				borderRadius: '4px'
 			}
 		});
 		this.backgroundSurface = backgroundSurface;
@@ -78,20 +79,21 @@ define(function(require, exports, module) {
 		//}.bind(this));
 
 		var monthSurface = new Surface({
-			size: [true, true],
+			size: [285, true],
 			content: this.getMonthHeaderTemplate(),
 			properties: {
 				fontSize: '12px',
+				color: '#FC3F28',
+				textAlign: 'center'
 			}
 		});
 
 		var monthModifier = new StateModifier({
-			transform: Transform.translate(5, 10, _zIndex() + 5)
+			transform: Transform.translate(0, 10, _zIndex() + 5)
 		});
 
 		this.add(monthModifier).add(monthSurface);
 		this.monthSurface = monthSurface;
-
 
 		monthSurface.on('click', function(e) {
 			if ((e instanceof CustomEvent)) {
@@ -132,8 +134,9 @@ define(function(require, exports, module) {
 				size: [rowItemWidth - 5, rowItemHeight - 5],
 				content: daysOfTheWeek[i],
 				properties: {
-					color: '#555555',
+					color: '#FC3F28',
 					padding: '5px',
+					textAlign: 'center'
 				}
 			});
 			dayLabelSurfaces.push(weekdaySurface);
@@ -141,11 +144,13 @@ define(function(require, exports, module) {
 
 		var dayLabelLayout = new SequentialLayout({
 			direction: 0,
-			itemSpacing: 12,
+			itemSpacing: 9,
 		});
 
+
+
 		var dayLabelModifier = new Modifier({
-			transform: Transform.translate(0, 40, _zIndex() + 1)
+			transform: Transform.translate(10, 45, _zIndex() + 1)
 		});
 		dayLabelLayout.sequenceFrom(dayLabelSurfaces);
 
@@ -158,10 +163,10 @@ define(function(require, exports, module) {
 				size: [rowItemWidth - 5, rowItemHeight - 5],
 				content: i,
 				properties: {
-					color: '#555555',
-					backgroundColor: '#c0c0c0',
-					border: '1px solid #555555',
-					borderRadius: '5px',
+					color: '#FC3F28',
+					textAlign: 'center',
+					backgroundColor: 'transparent',
+					borderRadius: '2px',
 					padding: '5px',
 				}
 			});
@@ -201,13 +206,13 @@ define(function(require, exports, module) {
 
 		var weekRowLayout = new SequentialLayout({
 			direction: 1,
-			itemSpacing: 9,
+			itemSpacing: 8,
 		});
 
 		weekRowLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
-			offset = 38 * index;
-			offset += 70;
+			offset = 30 * index;
+			offset += 75;
 			var transform = Transform.translate(0, offset, _zIndex() + 1);
 			return {
 				transform: transform,
@@ -215,10 +220,10 @@ define(function(require, exports, module) {
 			};
 		}.bind(this));
 
-		// Last render controller for the today button	
+		// Last render controller for the today button
 		this.todayButton = new Surface({
 			content: 'Today',
-			size: [65, 35],
+			size: [true, true],
 			properties: this.options.controlButtonProperties
 		});
 
@@ -233,7 +238,7 @@ define(function(require, exports, module) {
 		this.todayController = new RenderController();
 
 		this.todayController.inTransformFrom(function() {
-			return Transform.translate(0, 75 + (this.rowsToShow * 37), 999);
+			return Transform.translate(0, 75 + (this.rowsToShow * 30), 999);
 		}.bind(this));
 		this.add(this.todayController);
 		this.todayController.show(this.todayButton);
@@ -259,7 +264,7 @@ define(function(require, exports, module) {
 	DateGridView.prototype.setClearButton = function() {
 		this.clearButton = new Surface({
 			content: 'Clear',
-			size: [65, 35],
+			size: [true, true],
 			properties: this.options.controlButtonProperties
 		});
 
@@ -272,7 +277,7 @@ define(function(require, exports, module) {
 		this.clearController = new RenderController();
 
 		this.clearController.inTransformFrom(function() {
-			return Transform.translate(200, 75 + (this.rowsToShow * 37), 999);
+			return Transform.translate(230, 75 + (this.rowsToShow * 30), 999);
 		}.bind(this));
 		this.add(this.clearController);
 		this.clearController.show(this.clearButton);
@@ -301,12 +306,12 @@ define(function(require, exports, module) {
 		}
 		console.log('DateGridView: changing background height ' + rowsToShow);
 		// Adding 1 to the number of rows to show to accomodate the today button
-		this.backgroundSurface.transitionable.set(80 + (37 * (rowsToShow + 1)));
+		this.backgroundSurface.transitionable.set(80 + (30 * (rowsToShow + 1)));
 		for (var i = 0, len = this.weekRows.length; i < len; i++) {
 			if (i < rowsToShow) {
 				this.weekRenderControllers[i].show(this.weekRows[i]);
 			} else {
-				this.weekRenderControllers[i].hide();	
+				this.weekRenderControllers[i].hide();
 			}
 		}
 	}
@@ -315,13 +320,13 @@ define(function(require, exports, module) {
 		var leadDays = this.getLeadDays(date);
 		var totalDaysInTheGrid = leadDays + DateUtil.daysInMonth(date);
 		if (totalDaysInTheGrid > 28 && totalDaysInTheGrid < 36) {
-			return 5;	
+			return 5;
 		} else if (totalDaysInTheGrid > 35) {
-			return 6;	
+			return 6;
 		} else {
-			return 4;	
+			return 4;
 		}
-		//var curRows = Math.round(() / 7); // calculate the number of rows to generate		
+		//var curRows = Math.round(() / 7); // calculate the number of rows to generate
 		//return curRows;
 	}
 
@@ -356,7 +361,16 @@ define(function(require, exports, module) {
 		if (num instanceof Date) {
 			this.changeMonth(num.getMonth() + 1);
 		} else {
-			var monthNum = this.currentMonth.getMonth() + 1 + num;
+			var monthNum = this.currentMonth.getMonth();
+			if (monthNum === 0 && num === -1) {
+				this.navigateYear(-1);
+				monthNum = 12;
+			} else if (monthNum === 11 && num === 1) {
+				this.navigateYear(1);
+				monthNum =  1;
+			} else {
+				monthNum += 1 + num;
+			}
 			this.changeMonth(monthNum);
 		}
 	};
@@ -375,8 +389,10 @@ define(function(require, exports, module) {
 
 	DateGridView.prototype.setSelectedDate = function (date) {
 		this.selectedDate = date;
+		this.changeMonth(date.getMonth() + 1);
+		this.changeYear(date.getFullYear());
 		this.renderDates(date);
-	}
+	};
 
 	module.exports = DateGridView;
 });

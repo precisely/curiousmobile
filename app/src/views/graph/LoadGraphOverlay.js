@@ -37,7 +37,7 @@ define(function(require, exports, module) {
 
 	LoadGraphOverlay.prototype.initScrollView = function() {
 		this.scrollView = new Scrollview({
-			direction: 1,
+			direction: 1
 		});
 		this.contentsSurfaceList = [];
 		this.scrollView.sequenceFrom(this.contentsSurfaceList);
@@ -47,7 +47,7 @@ define(function(require, exports, module) {
 	LoadGraphOverlay.prototype.listContents = function() {
 		Graph.load({offset: 0}, function(graphList) {
 			if (!graphList.length) {
-				var noMoreItemsCardView = new NoMoreItemsCardView();
+				var noMoreItemsCardView = new NoMoreItemsCardView('No graph saved');
 				this.contentsSurfaceList.push(noMoreItemsCardView);
 				noMoreItemsCardView.setScrollView(this.scrollView);
 				return;
@@ -57,7 +57,7 @@ define(function(require, exports, module) {
 					size: [undefined, 50],
 					content: '<div class="graph-item-bar"><p>' + graphItem.name + '</p><div class="delete-graph"><i class="fa-2x fa fa-trash-o"></i></div></div>',
 					properties: {
-						backgroundColor: '#fff',
+						backgroundColor: '#fff'
 					}
 				});
 				graphItemSurface.on('click', function(e) {
@@ -66,6 +66,7 @@ define(function(require, exports, module) {
 						var currentView = App.pageView.getPage('ChartView');
 						if (_.contains(classList, 'delete-graph') || _.contains(e.srcElement.parentElement.classList, 'delete-graph')) {
 							u.showAlert({
+								type: 'alert',
 								message: 'Are you sure you want to delete the saved gaph?',
 								a: 'Yes',
 								b: 'No',
@@ -76,7 +77,7 @@ define(function(require, exports, module) {
 								}.bind(this),
 								onB: function() {
 									u.closeAlerts;
-								}.bind(this),
+								}.bind(this)
 							});
 
 						} else {
@@ -93,7 +94,7 @@ define(function(require, exports, module) {
 				graphItemSurface.pipe(this.scrollView);
 			}.bind(this));
 		}.bind(this));
-	}
+	};
 
 	module.exports = LoadGraphOverlay;
 });

@@ -22,7 +22,9 @@ define(function(require, exports, module) {
 	function SprintEntryFormView(parentView) {
 		EntryFormView.apply(this, arguments);
 		this.parentView = parentView;
+		this.buttonsRenderController.show(this.buttonsAndHelp);
 		this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">ADD TAG</button>');
+		this.createDeleteButton();
 	}
 
 	SprintEntryFormView.prototype = Object.create(EntryFormView.prototype);
@@ -30,6 +32,15 @@ define(function(require, exports, module) {
 
 	function _zIndex(argument) {
 		return window.App.zIndex.formView;
+	}
+
+	function getTagItem(createdEntry) {
+		var icon = createdEntry.isRepeat() ? '<i class="fa fa-repeat"></i>' :
+				createdEntry.isRemind() ? '<i class="fa fa-bell"></i>' :
+				createdEntry.isContinuous() ? '<i class="fa fa-bookmark"></i>' : '';
+		var entryItem = '<div class="tag-button-block" data-id="' + createdEntry.id + '"><button class="tag-button">' + createdEntry.get('description') + icon + '</button>&nbsp;' +
+				'<i class="fa fa-times-circle delete-tag"></i></div>';
+		return entryItem;
 	}
 
 	SprintEntryFormView.prototype._setListeners = function() {
@@ -51,38 +62,49 @@ define(function(require, exports, module) {
 
 		this.on('form-sprint-entry', function(resp) {
 			var createdEntry = resp.glowEntry;
-			console.log('Entry comment: ' + createdEntry.get('comment'));
-			var icon = (createdEntry.get('comment').indexOf('repeat') > -1) ? '<i class="fa fa-repeat"></i>' : 
-					(createdEntry.get('comment').indexOf('remind') > -1) ? '<i class="fa fa-bell"></i>' : 
-					((createdEntry.get('comment').indexOf('bookmark') > -1) || (createdEntry.get('comment').indexOf('pinned') > -1)) ? '<i class="fa fa-bookmark"></i>' : '';
-			var entryItem = '<button class="entry-button">' + createdEntry.get('description') + icon + '</button>';
-			this.parentView.killAddSprintTagsOverlay(entryItem);
+			var entryItem = getTagItem(createdEntry);
+			this.parentView.killAddSprintTagsOverlay({entryItem: entryItem, entry: createdEntry});
+		}.bind(this));
+
+		this.on('update-sprint-entry', function(resp) {
+			var updatedEntry = resp.glowEntry;
+			var entryItem = getTagItem(updatedEntry);
+			this.parentView.killAddSprintTagsOverlay({entryItem: entryItem, entry: updatedEntry, hasUpdatedTag: true});
+		}.bind(this));
+
+		this.on('delete-entry', function(resp) {
+			if (resp && resp.fail) {
+				u.showAlert('Could not delete entry');
+				this.parentView.killAddSprintTagsOverlay();
+			} else {
+				this.parentView.killAddSprintTagsOverlay({entryId: this.entry.get('id'), hasDeletedTag: true});
+			}
 		}.bind(this));
 
 		this.remindSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				this.removeSuffix();
-				if (this.toggleSuffix(' remind')) {
-					this.submit();
-				}
+				document.getElementById("entry-description").value = this.removeSuffix();
+				this.setRemind = !this.setRemind;
+				this.setRepeat = this.setPinned = false;
+				this.toggleSelector(this.remindSurface);
 			}
 		}.bind(this));
 
 		this.repeatSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				this.removeSuffix();
-				if (this.toggleSuffix(' repeat')) {
-					this.submit();
-				}
+				document.getElementById("entry-description").value = this.removeSuffix();
+				this.setRepeat = !this.setRepeat;
+				this.setRemind = this.setPinned = false;
+				this.toggleSelector(this.repeatSurface);
 			}
 		}.bind(this));
 
 		this.pinSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				this.removeSuffix();
-				if (this.toggleSuffix(' bookmark')) {
-					this.submit();
-				}
+				document.getElementById("entry-description").value = this.removeSuffix();
+				this.setPinned = !this.setPinned;
+				this.setRemind = this.setRepeat = false;
+				this.toggleSelector(this.pinSurface);
 			}
 		}.bind(this));
 	}
@@ -106,6 +128,89 @@ define(function(require, exports, module) {
 		this.loadState(state);
 	};
 
+	/**
+	 * If form loads in edit mode, this will initialize
+	 * entry modifier form according to properties of current entry
+	 * currently not in use
+	 */
+	SprintEntryFormView.prototype.showEntryModifiers = function(args) {
+		var buttonName = 'CREATE ENTRY';
+		var isInEditMode = false;
+
+		if (this.entry.get('id')) {
+			buttonName = 'UPDATE ENTRY';
+			isInEditMode = true;
+		}
+
+		this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">' + buttonName + '</button>');
+		this.submitButtonModifier.setTransform(Transform.translate(30, 180, App.zIndex.formView));
+
+		if (isInEditMode) {
+			this.deleteButtonModifier.setTransform(Transform.translate(30, 230, App.zIndex.formView));
+		}
+
+		this.buttonsRenderController.show(this.buttonsAndHelp);
+		this.submitButtonRenderController.show(this.submitSurface);
+		this.resetRepeatModifierForm();
+		var entry = this.entry;
+
+		if (entry.isRemind()) {
+			this.setRemind = true;
+			this.toggleSelector(this.remindSurface);
+		} else if (entry.isRepeat()) {
+			this.setRepeat = true;
+			this.toggleSelector(this.repeatSurface);
+		} else {
+			this.setPinned = true;
+			this.toggleSelector(this.pinSurface);
+		}
+
+		this.buttonsRenderController.show(this.buttonsAndHelp);
+
+		if (isInEditMode) {
+			this.deleteButtonRenderController.show(this.deleteButtonSurface);
+		}
+	};
+
+	SprintEntryFormView.prototype.buildStateFromEntry = function(entry) {
+		console.log('Build state for entry with id: ' + entry.id);
+		this.setPinned = this.setRemind = this.setRepeat = false;
+		this.entry = entry;
+		var entryText = entry.toString();
+		if (entry && entry.isContinuous()) {
+			entryText = this.removeSuffix(entryText);
+		}
+
+		var selectionRange = entry.getSelectionRange();
+		if (selectionRange !== undefined) {
+			if (selectionRange[2]) { // insert space at selectionRange[0]
+				entryText = entryText.substr(0, selectionRange[0] - 1) + " " + entryText.substr(selectionRange[0] - 1);
+			}
+		}
+
+		var state = {
+			viewProperties: {
+				name: 'entry',
+				value: entry,
+				model: 'entry'
+			},
+			form: [{
+				id: 'entry-description',
+				value: entryText,
+				selectionRange: selectionRange,
+				elementType: ElementType.domElement,
+				focus: true
+			}],
+			postLoadAction: {
+				name: 'showEntryModifiers',
+				args: {
+					entry: entry
+				}
+			}
+		};
+		return state;
+	};
+
 	SprintEntryFormView.prototype.toggleSuffix = function(suffix) {
 		var text = document.getElementById("entry-description").value;
 		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned')) {
@@ -122,35 +227,31 @@ define(function(require, exports, module) {
 		return text.length > 0;
 	};
 
-	SprintEntryFormView.prototype.processSuffix = function(text) {
-		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned') || text.endsWith(' bookmark')) {
-			return text;
-		} else {
-			return text + ' bookmark';
-		}
-	};
-
 	SprintEntryFormView.prototype.submit = function(e, directlyCreateEntry) {
-		var entry = null;
+		var entry = this.entry;
 		var newText = document.getElementById("entry-description").value;
-
-		if (e instanceof Entry && directlyCreateEntry) {
-			entry = e;
-			this.entry = entry;
-			newText = this.removeSuffix(entry.toString());
-		} else {
-			entry = this.entry;
-		}
+		var repeatTypeId;
 
 		if (!u.isOnline()) {
 			u.showAlert("You don't seem to be connected. Please wait until you are online to add an entry.");
 			return;
 		}
-		if (!entry || !entry.get('id') || entry.isContinuous()) {
+
+		if (this.setRepeat || this.setRemind) {
+			var repeatParams = Entry.getRepeatParams(this.setRepeat, this.setRemind);
+			repeatTypeId = repeatParams.repeatTypeId;
+		} else {
+			repeatTypeId = Entry.RepeatType.CONTINUOUSGHOST;
+		}
+
+		if (!entry || !entry.get('id')) {
 			var newEntry = new Entry();
+			if (repeatTypeId) {
+				newEntry.set("repeatType", repeatTypeId);
+			}
 			newEntry.set('date', window.App.selectedDate);
 			newEntry.userId = this.parentView.virtualUserId;
-			newEntry.setText(this.processSuffix(newText));
+			newEntry.setText(newText);
 			newEntry.create(function(resp) {
 				if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1 ||
 					newText.indexOf('pinned') > -1 || newText.indexOf('bookmark') > -1) {
@@ -161,6 +262,9 @@ define(function(require, exports, module) {
 			}.bind(this));
 			return;
 		} else {
+			if (repeatTypeId) {
+				entry.set("repeatType", repeatTypeId);
+			}
 			entry.setText(newText);
 		}
 
@@ -170,7 +274,7 @@ define(function(require, exports, module) {
 	SprintEntryFormView.prototype.saveEntry = function(allFuture) {
 		var entry = this.entry;
 		entry.save(allFuture, function(resp) {
-			this._eventOutput.emit('form-sprint-entry', resp);
+			this._eventOutput.emit('update-sprint-entry', resp);
 			this.blur();
 		}.bind(this));
 	};

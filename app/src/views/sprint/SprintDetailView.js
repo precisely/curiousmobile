@@ -15,7 +15,11 @@ define(function (require, exports, module) {
 	var SprintDetailsTemplate = require('text!templates/sprint-details.html');
 	var SprintFormView = require("views/sprint/SprintFormView");
 	var Sprint = require('models/Sprint');
+	var Entry = require('models/Entry');
 	var u = require('util/Utils');
+	var Scrollview = require('famous/views/Scrollview');
+	var Utility = require('famous/utilities/Utility');
+	var store = require('store');
 
 	function SprintDetailView() {
 		BaseView.apply(this, arguments);
@@ -76,6 +80,7 @@ define(function (require, exports, module) {
 		}
 		this.hash = state.hash;
 		this.name = state.name;
+		this.virtualGroupName = state.virtualGroupName;
 		this.parentPage = state.parentPage || 'SprintListView';
 		this.parentCard = state.parentCard;
 		this.loadDetails();
@@ -100,9 +105,14 @@ define(function (require, exports, module) {
 				sprintDetails.sprint.hasStarted = args.started;
 				sprintDetails.sprint.hasEnded = args.stopped;
 			}
+			this.entryMap = _.object(_.map(sprintDetails.entries, function(entry) {
+				entry.sprintEntry = true;
+				return [entry.id, new Entry(entry)]
+			}));
+			sprintDetails.entries = this.entryMap;
 			var parsedTemplate = _.template(SprintDetailsTemplate, sprintDetails, templateSettings);
 			var sprintSurface = new Surface({
-				size: [undefined, undefined],
+				size: [undefined, true],
 				content: parsedTemplate
 			});
 
@@ -114,6 +124,7 @@ define(function (require, exports, module) {
 						var state = {
 							hash: this.hash,
 							name: this.name,
+							virtualGroupName: this.virtualGroupName,
 							parentPage: this.parentPage != 'SprintActivityView' ? 'SprintDetailView' : undefined
 						};
 						App.pageView.changePage('SprintActivityView', state);
@@ -136,6 +147,11 @@ define(function (require, exports, module) {
 					} else if (e.srcElement.id.indexOf('start-sprint') > -1) {
 						Sprint.start(this.hash, function (data) {
 							this.loadDetails({started: true});
+							var showTrackathonTagsBalloon = false;
+							if (store.get('showSprintStartBalloon')) {
+								showTrackathonTagsBalloon = true;
+							}
+							App.pageView.changePage('TrackView', {showTrackathonTagsBalloon: showTrackathonTagsBalloon});
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('stop-sprint') > -1) {
 						Sprint.stop(this.hash, function (data) {
@@ -149,7 +165,7 @@ define(function (require, exports, module) {
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('leave-sprint') > -1) {
 						Sprint.unfollow(this.hash, function (data) {
-							this.loadDetails();
+							App.pageView.changePage('SprintListView');
 						}.bind(this));
 					} else if (e.srcElement.id.indexOf('join-sprint') > -1) {
 						Sprint.follow(this.hash, function (data) {
@@ -158,8 +174,21 @@ define(function (require, exports, module) {
 					}
 				}
 			}.bind(this));
-			this.draggableDetailsView = new DraggableView(sprintSurface, true);
-			this.renderController.show(this.draggableDetailsView);
+
+			this.scrollableSprintDetailView = new Scrollview({
+				direction: Utility.Direction.Y
+			});
+
+			var spareSurface = new Surface({
+				size: [undefined, 10]
+			});
+
+			this.scrollableSprintDetailView.sequenceFrom([sprintSurface, spareSurface]);
+
+			sprintSurface.pipe(this.scrollableSprintDetailView);
+			spareSurface.pipe(this.scrollableSprintDetailView);
+
+			this.renderController.show(this.scrollableSprintDetailView);
 		}.bind(this), function () {
 			App.pageView.goBack();
 		}.bind(this));

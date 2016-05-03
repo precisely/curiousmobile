@@ -111,8 +111,7 @@ define(function(require, exports, module) {
 			}
 		});
 		this.setRightIcon(this.plusSurface);
-		this.setHeaderLabel('SOCIAL');
-
+		this.setHeaderLabel('SOCIAL FEED');
 
 		this.plusSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
@@ -177,6 +176,16 @@ define(function(require, exports, module) {
 		return pillSurface;
 	};
 
+	FeedView.prototype.setCurrentPill = function(lable) {
+		var previousActivePill = document.getElementsByClassName('active-pill');
+		if (previousActivePill[0]) {
+			previousActivePill[0].classList.remove('active-pill');
+		}
+		var pillElement = document.getElementById(lable + '-pill');
+		pillElement.classList.add('active-pill');
+		this.currentPill = lable;
+	};
+
 	FeedView.prototype.getScrollPosition = function() {
 		return this.scrollView.getPosition();
 	};
@@ -186,10 +195,8 @@ define(function(require, exports, module) {
 	}
 
 	FeedView.prototype.preShow = function(state) {
-		if (this.deck.length <= 0 || (state && state.new)) {
-			this.initScrollView();
-			this.fetchFeedItems(this.currentPill || 'ALL');
-		}
+		this.initScrollView();
+		this.fetchFeedItems(this.currentPill || 'ALL');
 		return true;
 	};
 
@@ -257,17 +264,20 @@ define(function(require, exports, module) {
 		if (!listItems || listItems.length <= 0) {
 			this.itemsAvailable = false;
 			console.log('no more items available');
-			var noMoreItemsCardView = new NoMoreItemsCardView();
+			var noMoreItemsCardView = new NoMoreItemsCardView('No results');
 			this.deck.push(noMoreItemsCardView);
 			noMoreItemsCardView.setScrollView(this.scrollView);
 
-			if (this.offset == 0) {
-				if (this.showExplanationCard && this.currentPill !== 'STARTED') {
-					this.showExplanationCard();
-				}
+			this.on('list-empty', function () {
+				noMoreItemsCardView.setText('No results');
+			});
+
+			if (!this.offset == 0) {
+				noMoreItemsCardView.setText('No more results');
 			}
 			return;
 		}
+
 		if (nextSuggestionOffset) {
 			this.nextSuggestionOffset = nextSuggestionOffset;
 		}
@@ -291,7 +301,9 @@ define(function(require, exports, module) {
 				peopleCardView.setScrollView(this.scrollView);
 			}
 		}.bind(this));
-	}
+
+		this.saveState();
+	};
 
 	FeedView.prototype.refresh = function() {
 		this.initScrollView();
@@ -303,8 +315,8 @@ define(function(require, exports, module) {
 		// Adding navigation pills below header
 		this.navPills.push(this.createPillsSurface('ALL', true));
 		this.navPills.push(this.createPillsSurface('NOTIFICATIONS'));
-		this.navPills.push(this.createPillsSurface('PEOPLE'));
 		this.navPills.push(this.createPillsSurface('DISCUSSIONS'));
+		this.navPills.push(this.createPillsSurface('PEOPLE'));
 		this.navPills.push(this.createPillsSurface('AUTHORED'));
 	};
 

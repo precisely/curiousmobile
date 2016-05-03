@@ -56,6 +56,7 @@ define(function(require, exports, module) {
 				classList = e.srcElement.parentElement.classList;
 				if (_.contains(classList, 'close-discussion') || _.contains(e.srcElement.classList, 'close-discussion')) {
 					this.alert = u.showAlert({
+						type: 'alert',
 						message: 'Are you sure you want to delete ' + this.discussion.get("name") + ' ?',
 						a: 'Yes',
 						b: 'No',
@@ -65,6 +66,9 @@ define(function(require, exports, module) {
 							}, function(success) {
 								console.log('deleted successfully...');
 								this.cardViewCollection.splice(this.cardViewCollection.indexOf(this), 1);
+								if (this.cardViewCollection.length === 1) {
+									App.pageView.getCurrentView()._eventOutput.emit('list-empty');
+								}
 							}.bind(this));
 						}.bind(this),
 						onB: function() {

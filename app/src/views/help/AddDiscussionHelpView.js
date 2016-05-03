@@ -10,8 +10,7 @@ define(function(require, exports, module) {
 	AddDiscussionHelpView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
-		helpTemplate: AddHelpTemplate,
-		templateScrollHeight: 190
+		helpTemplate: AddHelpTemplate
 	};
 	AddDiscussionHelpView.prototype = Object.create(HelpView.prototype);
 

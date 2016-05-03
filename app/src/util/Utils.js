@@ -28,14 +28,18 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			var alert = new AlertView(options);
 			u.alertViewsOpen.push(alert);
 			if (typeof cordova	!== 'undefined') {
-				cordova.plugins.Keyboard.close();	
+				cordova.plugins.Keyboard.close();
 			}
 			return alert;
 		};
 
 		Utils.closeAlerts = function() {
 			_.each(u.alertViewsOpen, function(view) {
-				view.controller.hide();
+				view.controller.hide(null, function() {
+					if (this.options.onHide) {
+						this.options.onHide();
+					}
+				}.bind(view));
 				view.removeHandler();
 			});
 			u.alertViewsOpen = [];
@@ -238,9 +242,10 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			window.setTimeout(function() {
 				if (stillRunning) {
 					stillRunning = false;
-					window.location.reload();
+					u.showAlert(description + ": in progress");
 				}
-			}, 10000);
+			}, 6000);
+
 			if (typeof args == "function") {
 				background = requestMethod;
 				requestMethod = delay;
@@ -442,16 +447,14 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		}
 
 		Utils.spinnerStart = function () {
-			var spinnerDialog = window.plugins? window.plugins.spinnerDialog : false;
-			if (window.plugins && spinnerDialog) {
-				spinnerDialog.show(null, null, true);
+			if (typeof wizSpinner !== 'undefined') {
+				wizSpinner.show({bgColor: 'transparent', opacity: 0.0, label: ''});
 			}
-		}
+		};
 
 		Utils.spinnerStop = function () {
-			var spinnerDialog = window.plugins? window.plugins.spinnerDialog : false;
-			if (window.plugins && spinnerDialog) {
-				spinnerDialog.hide();
+			if (typeof wizSpinner !== 'undefined') {
+				wizSpinner.hide();
 			}
 		}
 
@@ -550,17 +553,23 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		}
 
 		Utils.parseNewLine = function(text) {
+			if (!text) {
+				return '';
+			}
 			var lines = text.split("\n");
 			var parsedText = '';
 			_.each(lines, function(line) {
 				if (line) {
-					parsedText += '<div>' + line + '</div>'
+					parsedText += '<div>' + Utils.escapeHTML(line) + '</div>'
 				}
 			});
 			return parsedText || text;
 		}
 
 		Utils.parseDivToNewLine = function(text) {
+			if (!text) {
+				return '';
+			}
 			var parsedText = text.replace(/<div>/g, '').replace(/<\/div>/g, "\n").replace(/^\s+|\s+$/g, '');;
 			return parsedText;
 		}
@@ -573,17 +582,39 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		Utils.checkAuthentication = function(e) {
 			var successIndex = e.url.indexOf('success=true');
 			var failureIndex = e.url.indexOf('success=false');
-			if (successIndex >= 0 || failureIndex >= 0) {
+			var homeRedirectOnDeny = e.url.indexOf(App.serverUrl + '/home/login') >= 0;
+			if (successIndex >= 0 || failureIndex >= 0 || homeRedirectOnDeny) {
 				u.oauthWindow.removeEventListener('loadstart', u.checkAuthentication);
 				u.oauthWindow.close();
 				App.pageView.getCurrentView().showProfile();
-				var message = decodeURI(e.url.split("message=")[1]);
-				u.showAlert(message);
+				if (!homeRedirectOnDeny) {
+					var message = decodeURI(e.url.split("message=")[1]);
+					u.showAlert(message);
+				}
 			}
 		};
 
 		Utils.isAndroid = function() {
 			return device.platform == 'android' || device.platform == 'Android';
+		};
+
+		/**
+		* @param {String} HTML representing a single element
+		* @return {Element}
+		*/
+		Utils.htmlToElement = function(html) {
+			var template = document.createElement('template');
+			template.innerHTML = html;
+			return template.content.firstChild;
+		};
+
+		Utils.setCursorAtEnd = function(inputElement) {
+			var value = inputElement.value;
+			inputElement.focus();
+			setTimeout(function() {
+				inputElement.value = '';
+				inputElement.value = value;
+			}, 5);
 		};
 
 		var device = {};

@@ -19,27 +19,38 @@ define(function(require, exports, module) {
 		this.controller = new RenderController();
 		window.mainContext.add(this.controller);
 		this.controller.show(this, null, function() {
+			if (this.options.onShow) {
+				this.options.onShow();
+			}
 			Engine.on('click', closeAlert);
-		});
+			if (this.options.type === 'default') {
+				setTimeout(function() {
+					closeAlert();
+				}, this.options.delay);
+			}
+		}.bind(this));
 	}
 
 	AlertView.prototype = Object.create(View.prototype);
 	AlertView.prototype.constructor = AlertView;
 
 	AlertView.DEFAULT_OPTIONS = {
-		type: 'info',
+		type: 'default',
 		message: 'Enter message',
 		verify: false,
 		a: 'OK',
 		b: 'Cancel',
 		onA: undefined,
 		onB: undefined,
-		tapOnBodyHandler: undefined
+		tapOnBodyHandler: undefined,
+		delay: 3000,
+		onShow: undefined,
+		onHide: undefined
 	};
 
 	function _createAlert() {
 		var messageModifier = new Modifier({
-			transform: Transform.translate(20, 74, 999),
+			transform: Transform.translate(20, App.height / 2 - 100, 999),
 			origin: [0, 0],
 		});
 
@@ -73,7 +84,7 @@ define(function(require, exports, module) {
 						this.options.tapOnBodyHandler();
 					}
 					u.closeAlerts();
-				} 
+				}
 			}
 		}.bind(this));
 

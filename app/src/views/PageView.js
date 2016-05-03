@@ -73,7 +73,12 @@ define(function(require, exports, module) {
 		});
 		this.add(this.hiddenModifier).add(this.renderController);
 
-		this.changePage(this.getCurrentPage(), { onLoad: true });
+		var currentPage = this.getCurrentPage();
+		var state = App.stateCache.getItem(currentPage);
+		if (state && state.lastPage) {
+			App.pageView.history.push(state.lastPage);
+		}
+		this.changePage(this.getCurrentPage(), state || { onLoad: true });
 
 		App.coreEventHandler.on('device-ready', function() {
 			Discussion.getNewNotificationCount();

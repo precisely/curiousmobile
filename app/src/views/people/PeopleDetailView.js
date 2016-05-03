@@ -19,6 +19,8 @@ define(function(require, exports, module) {
 	var User = require('models/User');
 	var u = require('util/Utils');
 	var EditUserView = require('views/people/EditProfileView');
+	var Scrollview = require('famous/views/Scrollview');
+	var Utility = require('famous/utilities/Utility');
 
 	function PeopleDetailView() {
 		BaseView.apply(this, arguments);
@@ -74,6 +76,7 @@ define(function(require, exports, module) {
 		User.show(this.hash, function(peopleDetails) {
 			this.setHeaderLabel(peopleDetails.user.name);
 			var profileTemplate = PeopleDetailsTemplate;
+			peopleDetails.user.bio = u.parseNewLine(peopleDetails.user.bio);
 			this.backgroundSurface.setProperties({
 				background: '#fff'
 			});
@@ -83,9 +86,11 @@ define(function(require, exports, module) {
 					background: '-webkit-linear-gradient(top,  #f14d43 0%, #f48157 100%)'
 				});
 			}
+
+			peopleDetails.user.buttonLabel = peopleDetails.user.followed ? 'UNFOLLOW' : 'FOLLOW';
 			var parsedTemplate = _.template(profileTemplate, peopleDetails, templateSettings);
 			var peopleSurface = new Surface({
-				size: [undefined, undefined],
+				size: [undefined, true],
 				content: parsedTemplate
 			});
 
@@ -122,12 +127,34 @@ define(function(require, exports, module) {
 						u.oauththirdparty('unregisterOura');
 					} else if (_.contains(classList, 'email-link')) {
 						User.sendVerificationLink();
+					} else if (e.srcElement.id === 'FOLLOW') {
+						User.follow({id: peopleDetails.user.hash}, function (data) {
+							e.srcElement.innerText = 'UNFOLLOW';
+							e.srcElement.id === 'UNFOLLOW'
+						});
+					} else if (e.srcElement.id === 'UNFOLLOW') {
+						User.follow({id: peopleDetails.user.hash, unfollow: true}, function (data) {
+							e.srcElement.innerText = 'FOLLOW';
+							e.srcElement.id === 'FOLLOW'
+						});
 					}
 				}
 			}.bind(this));
 
-			this.draggableDetailsView = new DraggableView(peopleSurface, true);
-			this.renderController.show(this.draggableDetailsView);
+			this.scrollableDetailsView = new Scrollview({
+				direction: Utility.Direction.Y
+			});
+		
+			var spareSurface = new Surface({
+				size: [undefined, 10]
+			});
+		
+			this.scrollableDetailsView.sequenceFrom([peopleSurface, spareSurface]);
+		
+			peopleSurface.pipe(this.scrollableDetailsView);
+			spareSurface.pipe(this.scrollableDetailsView);
+
+			this.renderController.show(this.scrollableDetailsView);
 		}.bind(this), function() {
 			App.pageView.goBack();
 		}.bind(this));

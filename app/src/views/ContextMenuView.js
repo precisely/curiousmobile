@@ -24,9 +24,15 @@ define(function (require, exports, module) {
 			{class: 'trigger-delete-entry', label: 'Delete Tag'},
 		],
 		pinnedEntry: [
-			{class: 'trigger-delete-entry', label: 'Delete Tag'},
+			{class: 'trigger-delete-entry', label: 'Delete Bookmark'},
 		],
-		discussion: {},
+		discussion: [
+			{class: 'delete-discussion', label: 'Delete'},
+			{class: 'edit-discussion', label: 'Edit'}
+		],
+		interestTag: [
+			{class: 'trigger-delete-entry', label: 'Delete Interest Tag'}
+		]
 	};
 
 	function _createView() {

@@ -16,12 +16,16 @@ define(function(require, exports, module) {
 
 	Discussion.max = 10;
 
-	Discussion.post = function(name, discussionPost, callback) {
+	Discussion.post = function(name, discussionPost, groupName, callback) {
+		if (!callback) {
+			callback = groupName;
+			groupName = '';
+		}
 		u.queuePostJSON("posting in", App.serverUrl + '/api/discussion',
 				u.makeGetArgs({
 					name: name,
 					discussionPost: discussionPost,
-					group: ""
+					group: groupName || ""
 				}),
 				function(data) {
 					callback(data);
@@ -46,7 +50,7 @@ define(function(require, exports, module) {
 			return;
 		}
 
-		u.queueJSON("Getting notifications count", u.makeGetUrl('getTotalNotificationsCount', 'search'),
+		u.queueJSON("Getting notifications count", u.makeGetUrl('getTotalNotificationsCount', 'search'), u.makeGetArgs({}),
 				function(data) {
 					if (u.checkData(data)) {
 						if (data.success) {
@@ -134,6 +138,25 @@ define(function(require, exports, module) {
 	Discussion.follow = function(args, successCallback, failCallback) {
 		var httpArgs = {requestMethod: 'GET'};
 		u.queueJSONAll('Following discussion', App.serverUrl + '/api/discussion/action/follow', args,
+				function(data) {
+					if (u.checkData(data)) {
+						if (data.success) {
+							successCallback();
+						} else {
+							u.showAlert(data.message);
+							if (failCallback) {
+								failCallback();
+							}
+						}
+					}
+				}, function(error) {
+					console.log('error: ', error);
+				}, null, httpArgs);
+	};
+
+	Discussion.update = function(args, successCallback, failCallback) {
+		var httpArgs = {requestMethod: 'PUT'};
+		u.queueJSONAll('Updating discussion', App.serverUrl + '/api/discussion/' + args.hash, JSON.stringify(args),
 				function(data) {
 					if (u.checkData(data)) {
 						if (data.success) {

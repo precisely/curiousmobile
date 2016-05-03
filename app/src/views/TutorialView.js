@@ -85,7 +85,7 @@ define(function(require, exports, module) {
 			size: [undefined, 60],
 			content: _.template(navigatorTemplate, templateSettings),
 			properties: {
-				backgroundColor: '#ff6f4c',
+				backgroundColor: 'rgb(241, 103, 70)',
 			}
 		});
 
@@ -96,12 +96,16 @@ define(function(require, exports, module) {
 					var value = document.getElementById('sleep-hour').value;
 					var entryId = document.getElementById('sleep-hour').dataset.id;
 					if (_.contains(classList, 'next') || _.contains(event.srcElement.parentElement.classList, 'next')) {
-						this.createSleepEntry(value, entryId, function(resp) {
-							if (resp.glowEntry) {
-								document.getElementById('sleep-hour').dataset.id = resp.glowEntry.id;
-							}
+						if (!value) {
 							this.navigate(1);
-						}.bind(this));
+						} else {
+							this.createSleepEntry(value, entryId, function(resp) {
+								if (resp.glowEntry) {
+									document.getElementById('sleep-hour').dataset.id = resp.glowEntry.id;
+									u.showAlert({message: 'Saved', showCheckBox: true, delay: 1000, onHide: this.navigate.bind(this)});
+								}
+							}.bind(this));
+						}
 					} else if (_.contains(classList, 'back') || _.contains(event.srcElement.parentElement.classList, 'back')) {
 						this.navigate(-1);
 					}
@@ -115,13 +119,13 @@ define(function(require, exports, module) {
 							createSingleEntry.call(this, {value: 'mood ' + value, entryId: entryId}, function(resp) {
 								if (resp.glowEntry) {
 									document.getElementById('mood-box').dataset.id = resp.glowEntry.id;
+									u.showAlert({message: 'Saved', showCheckBox: true, delay: 1000, onHide: this.navigate.bind(this)});
 								}
-								this.navigate(1);
 							}.bind(this));
 						} else if (!value) {
 							this.navigate(1);
 						}
-					} 
+					}
 				} else if (this.currentStepIndex === 4) {
 					if (_.contains(classList, 'back') || _.contains(event.srcElement.parentElement.classList, 'back')) {
 						this.navigate(-1);
@@ -180,7 +184,7 @@ define(function(require, exports, module) {
 		this.step1Surface = createStepSurfaces(HelpStep1Template);
 		this.step2Surface = createStepSurfaces(HelpStep2Template);
 
-		this.stepsSurfaceList = [this.tutorialIntro1, this.tutorialIntro2, this.step1Surface, 
+		this.stepsSurfaceList = [this.tutorialIntro1, this.tutorialIntro2, this.step1Surface,
 				this.step2Surface];
 		User.getSurveyTags(function(surveyOptions) {
 			this.step4Surface = createStepSurfaces(HelpStep4Template, {surveyOptions: surveyOptions});
@@ -212,6 +216,8 @@ define(function(require, exports, module) {
 					App.pageView.changePage('TrackView', {
 						new: true
 					});
+				} else if (_.contains(classList, 'form-control')) {
+					removeCursor('sleep-cursor');
 				}
 			}
 		}.bind(this));
@@ -224,6 +230,8 @@ define(function(require, exports, module) {
 					App.pageView.changePage('TrackView', {
 						new: true
 					});
+				} else if (_.contains(classList, 'form-control')) {
+					removeCursor('mood-cursor');
 				}
 			}
 		}.bind(this));
@@ -234,6 +242,13 @@ define(function(require, exports, module) {
 
 		this.currentStepIndex = -1;
 		this.navigate(1);
+	};
+
+	function removeCursor(elementId) {
+		var cursorElement = document.getElementById(elementId);
+		if (cursorElement) {
+			cursorElement.parentNode.removeChild(cursorElement);
+		}
 	};
 
 	function closeTutorial(event) {
@@ -258,8 +273,8 @@ define(function(require, exports, module) {
 				this.createSleepEntry(value, entryId, function(resp) {
 					if (resp.glowEntry) {
 						document.getElementById('sleep-hour').dataset.id = resp.glowEntry.id;
+						u.showAlert({message: 'Saved', showCheckBox: true, delay: 1000, onHide: this.navigate.bind(this)});
 					}
-					this.navigate(1);
 				}.bind(this));
 			}
 		} else if (id === 'mood-box') {
@@ -270,8 +285,8 @@ define(function(require, exports, module) {
 					createSingleEntry.call(this, {value: 'mood ' + value, entryId: entryId}, function(resp) {
 						if (resp.glowEntry) {
 							document.getElementById('mood-box').dataset.id = resp.glowEntry.id;
+							u.showAlert({message: 'Saved', showCheckBox: true, delay: 1000, onHide: this.navigate.bind(this)});
 						}
-						this.navigate(1);
 					}.bind(this));
 				} else if (!value) {
 					this.navigate(1);
@@ -371,7 +386,8 @@ define(function(require, exports, module) {
 	};
 
 	TutorialView.prototype.navigate = function(indexModifier) {
-		if ((this.currentStepIndex === 0 && indexModifier === -1) || 
+		indexModifier = indexModifier || 1;
+		if ((this.currentStepIndex === 0 && indexModifier === -1) ||
 				(this.currentStepIndex === 4 && indexModifier === 1)) {
 			return false;
 		}
@@ -389,7 +405,7 @@ define(function(require, exports, module) {
 				document.getElementsByClassName('back')[0].style.visibility = "visible";
 			}
 
-			_.each(document.getElementsByClassName('navigation-dots'), function(dot, index){
+			_.each(document.getElementsByClassName('navigation-dots'), function(dot, index) {
 				if (index === this.currentStepIndex) {
 					dot.classList.add('active');
 				} else {

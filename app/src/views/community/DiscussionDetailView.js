@@ -14,17 +14,20 @@ define(function(require, exports, module) {
 	var RenderNode = require("famous/core/RenderNode");
 	var RenderController = require('famous/views/RenderController');
 	var Discussion = require('models/Discussion');
+	var TouchSync = require("famous/inputs/TouchSync");
 	var DiscussionPost = require('models/DiscussionPost');
 	var discussionPostTemplate = require('text!templates/discussion-post.html');
 	var commentTemplate = require('text!templates/comments.html');
 	var addCommentTemplate = require('text!templates/post-comment.html');
 	var GraphView = require('views/graph/GraphView');
+	var OverlayWithGroupListView = require('views/community/OverlayWithGroupListView');
+	var editDiscussionTemplate = require('text!templates/edit-discussion.html');
 	var User = require('models/User');
 
 	function DiscussionDetailView() {
 		BaseView.apply(this, arguments);
 		this.parentPage = 'FeedView';
-		this.setHeaderLabel('SOCIAL');
+		this.setHeaderLabel('SOCIAL FEED');
 
 		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
@@ -46,6 +49,8 @@ define(function(require, exports, module) {
 				this.loadMoreItems = true;
 			}
 		}.bind(this));
+
+		_setHandlers.call(this);
 	}
 
 	DiscussionDetailView.prototype = Object.create(BaseView.prototype);
@@ -119,10 +124,17 @@ define(function(require, exports, module) {
 		this.itemsAvailable = true;
 		this.offset = 0;
 		var discussionPost = this.discussionPost;
+		this.touchSync = new TouchSync(function() {
+			return [0, 0];
+		});
+		this.discussionDetails = this.discussionPost.discussionDetails;
 		this.totalPostCount = discussionPost.discussionDetails.totalPostCount;
 		var prettyDate = u.prettyDate(new Date(discussionPost.discussionDetails.updated));
 		discussionPost.discussionDetails.updated = prettyDate;
 		discussionPost.discussionDetails.discussionTitle = u.parseNewLine(discussionPost.discussionDetails.discussionTitle);
+		if (discussionPost.discussionDetails.firstPost && discussionPost.discussionDetails.firstPost.message) {
+			discussionPost.discussionDetails.firstPost.message = u.parseNewLine(discussionPost.discussionDetails.firstPost.message);
+		}
 		var parsedTemplate = _.template(discussionPostTemplate, discussionPost.discussionDetails, templateSettings);
 		var discussionPostSurface = new Surface({
 			size: [undefined, true],
@@ -162,25 +174,7 @@ define(function(require, exports, module) {
 				if (this.isCommentSelected) {
 					this.unselectComment();
 				} else if (_.contains(classList, 'close-discussion') || _.contains(e.srcElement.parentElement.classList, 'close-discussion')) {
-					this.alert = u.showAlert({
-						message: 'Are you sure you want to delete this discussion?',
-						a: 'Yes',
-						b: 'No',
-						onA: function() {
-							Discussion.deleteDiscussion({
-								hash: this.discussionHash
-							}, function(success) {
-								u.spinnerStart();
-								setTimeout(function() {
-									u.spinnerStop();
-									App.pageView.changePage('FeedView', {
-										new: true
-									});
-								}, 1000);
-							}.bind(this));
-						}.bind(this),
-						onB: function() {}.bind(this),
-					});
+					this.deleteDiscussion();
 				} else if (_.contains(classList, 'submit-comment')) {
 					this.postComment();
 				} else if (_.contains(classList, 'share-button') || _.contains(e.srcElement.parentElement.classList, 'share-button')) {
@@ -215,20 +209,116 @@ define(function(require, exports, module) {
 							}
 						}
 					}.bind(this));
+				} else if (_.contains(e.srcElement.classList, 'add-description')) {
+					this.overlayWithGroupListView = new OverlayWithGroupListView(editDiscussionTemplate, {name: u.parseDivToNewLine(this.discussionDetails.discussionTitle), description: u.parseDivToNewLine(this.discussionDetails.firstPost.message),
+							groupName: this.discussionDetails.groupName || (this.discussionDetails.isPublic ? 'PUBLIC' : 'PRIVATE')});
+					this.showOverlayContent(this.overlayWithGroupListView);
+					this.setHeaderLabel('EDIT DISCUSSION');
 				}
 			}
 		}.bind(this));
 
-		this.addCommentSurface = this.getAddCommentSurface({});
+		discussionPostSurface.pipe(this.touchSync);
+
+		this.addCommentSurface = this.getCommentFormSurface({});
 
 		if (discussionPost.discussionDetails.isAdmin || (discussionPost.discussionDetails.canWrite && !discussionPost.discussionDetails.disableComments)) {
 			this.surfaceList.push(this.addCommentSurface.node);
 			this.addCommentSurface.pipe(this.scrollView);
 		}
+
+		this.touchSync.on('start', function(data) {
+			this.start = Date.now();
+			// Show context menu after the timeout regardless of tap end
+			this.touchTimeout = setTimeout(function() {
+
+			}.bind(this), 500)
+		}.bind(this));
+
+		// TODO: make this re-usable
+		this.touchSync.on('update', function(data) {
+			var movementX = Math.abs(data.position[0]);
+			var movementY = Math.abs(data.position[1]);
+			// Don't show context menu if there is intent to move something
+			if (movementX > 8 || movementY > 8) {
+				clearTimeout(this.touchTimeout);
+			}
+		}.bind(this));
+
+		this.touchSync.on('end', function(data) {
+			this.end = Date.now();
+			var movementX = Math.abs(data.position[0]);
+			var movementY = Math.abs(data.position[1]);
+			var timeDelta = this.end - this.start;
+			if (movementX < 8 && movementY < 8) {
+				if (timeDelta < 500) {
+					clearTimeout(this.touchTimeout);
+					return;
+				}
+				if (timeDelta > 600) {
+					App.pageView._eventOutput.emit('show-context-menu', {
+						menu: 'discussion',
+						target: this,
+						eventArg: this
+					});
+				}
+			}
+
+		}.bind(this));
+
 		this.showComments(discussionPost);
 	};
 
-	DiscussionDetailView.prototype.getAddCommentSurface = function(post, currentIndex) {
+	DiscussionDetailView.prototype.deleteDiscussion = function() {
+		this.alert = u.showAlert({
+			type: 'alert',
+			message: 'Are you sure you want to delete this discussion?',
+			a: 'Yes',
+			b: 'No',
+			onA: function() {
+				Discussion.deleteDiscussion({
+					hash: this.discussionHash
+				}, function(success) {
+					u.spinnerStart();
+					setTimeout(function() {
+						u.spinnerStop();
+						App.pageView.changePage('FeedView', {
+							new: true
+						});
+					}, 1000);
+				}.bind(this));
+			}.bind(this),
+			onB: function() {}.bind(this),
+		});
+	};
+
+	function _setHandlers() {
+		this.on('edit-discussion', function() {
+			this.overlayWithGroupListView = new OverlayWithGroupListView(editDiscussionTemplate, {name: u.parseDivToNewLine(this.discussionDetails.discussionTitle), description: u.parseDivToNewLine(this.discussionDetails.firstPost.message),
+					groupName: this.discussionDetails.groupName || (this.discussionDetails.isPublic ? 'PUBLIC' : 'PRIVATE')}, function(e) {
+						if (e instanceof CustomEvent) {
+							var classList = e.srcElement.classList;
+							if (_.contains(classList, 'submit-post')) {
+								var discussionTitle = document.getElementById('name').value;
+								var discussionDescription = document.getElementById('description').value;
+								var groupName = this.groupName;
+								if (!discussionTitle) {
+									u.showAlert('Discussion topic can not be blank');
+									return;
+								}
+								App.pageView.getCurrentView().updateDiscussion({name: discussionTitle, message: discussionDescription, group: groupName});
+							}
+						}
+					});
+			this.showOverlayContent(this.overlayWithGroupListView);
+			this.setHeaderLabel('EDIT DISCUSSION');
+		}.bind(this));
+		this.on('delete-discussion', function() {
+			this.deleteDiscussion();
+		}.bind(this));
+	}
+
+	DiscussionDetailView.prototype.getCommentFormSurface = function(post, currentIndex) {
 		var addCommentSurface = new Surface({
 			size: [undefined, true],
 			content: _.template(addCommentTemplate, {message: post.message || '', postId: post.id || undefined,
@@ -286,7 +376,7 @@ define(function(require, exports, module) {
 			commentBox.style.cssText = 'height:auto;';
 			commentBox.style.cssText = 'height:' + commentBox.scrollHeight + 'px';
 			this.addCommentSurface.trans.halt();
-			addCommentSurface.trans.set(commentBox.scrollHeight + 20);
+			this.addCommentSurface.trans.set(commentBox.scrollHeight + 20);
 			if (setInitialHeight) {
 				this.initialHeight = commentBox.scrollHeight + 20;
 			}
@@ -343,8 +433,6 @@ define(function(require, exports, module) {
 				content: parsedTemplate
 			});
 
-			commentSurface.discussionView = this;
-
 			commentSurface.on('deploy', function() {
 				Timer.every(function() {
 					var size = this.getSize();
@@ -358,10 +446,11 @@ define(function(require, exports, module) {
 				if (e instanceof CustomEvent) {
 					var classList;
 					classList = e.srcElement.parentElement.classList;
-					if (this.discussionView.isCommentSelected) {
-						this.discussionView.unselectComment();
+					if (this.isCommentSelected) {
+						this.unselectComment();
 					} else if (_.contains(classList, 'delete-post') || _.contains(e.srcElement.parentElement.classList, 'delete-post')) {
 						u.showAlert({
+							type: 'alert',
 							message: 'Are you sure you want to delete this comment?',
 							a: 'Yes',
 							b: 'No',
@@ -369,27 +458,26 @@ define(function(require, exports, module) {
 								DiscussionPost.deleteComment({
 									postId: post.id
 								}, function(sucess) {
-									this.discussionView.surfaceList.splice(
-										this.discussionView.surfaceList.indexOf(this),
-										1
-									);
+									this.surfaceList.splice(
+										this.surfaceList.indexOf(commentSurface), 1);
+										this.scrollView.sequenceFrom(this.surfaceList);
 								}.bind(this));
 							}.bind(this),
 							onB: function() {}.bind(this),
 						});
 					} else if (_.contains(classList, 'edit-post')) {
-						this.discussionView.isCommentSelected = true;
-						this.discussionView.selectedCommentSurface = commentSurface;
-						this.discussionView.selectionIndex = this.discussionView.surfaceList.indexOf(commentSurface);
-						this.discussionView.surfaceList.splice(this.discussionView.surfaceList.indexOf(this.discussionView.addCommentSurface), 1);
+						this.isCommentSelected = true;
+						this.selectedCommentSurface = commentSurface;
+						this.selectionIndex = this.surfaceList.indexOf(commentSurface);
+						this.surfaceList.splice(this.surfaceList.indexOf(this.addCommentSurface), 1);
 						post.message = u.parseDivToNewLine(post.message);
-						var editCommentSurface = this.discussionView.getAddCommentSurface(post, this.discussionView.selectionIndex);
-						this.discussionView.surfaceList.splice(this.discussionView.selectionIndex, 1, editCommentSurface.node);
-						editCommentSurface.pipe(this.discussionView.scrollView);
+						var editCommentSurface = this.getCommentFormSurface(post, this.selectionIndex);
+						this.surfaceList.splice(this.selectionIndex, 1, editCommentSurface.node);
+						editCommentSurface.pipe(this.scrollView);
 						setTimeout(function() {
-							this.discussionView.resizeCommentSurface(editCommentSurface, true, true);
+							this.resizeCommentSurface(editCommentSurface, true, true);
 							document.getElementById('add-comment-avatar').classList.add('invisible');
-							this.discussionView.commentScrollPosition = this.discussionView.scrollView.getPosition();
+							this.commentScrollPosition = this.scrollView.getPosition();
 							moveCaretToEnd(document.getElementById('message'));
 						}.bind(this), 400);
 					} else if (_.contains(classList, 'comment-author') || _.contains(e.srcElement.parentElement.classList, 'comment-author')) {
@@ -397,10 +485,12 @@ define(function(require, exports, module) {
 					}
 
 				}
-			});
+			}.bind(this));
 
 
-			if (this.isSharedGraph) {
+			if (post.newPost) {
+				this.surfaceList.splice(this.surfaceList.length - 1, 0, commentSurface);
+			} else if (this.isSharedGraph) {
 				this.surfaceList.splice(2, 0, commentSurface);
 			} else {
 				this.surfaceList.splice(1, 0, commentSurface);
@@ -423,8 +513,11 @@ define(function(require, exports, module) {
 			DiscussionPost.createComment({
 				discussionHash: this.discussionHash,
 				message: message
-			}, function(success) {
-				this.loadDetails();
+			}, function(data) {
+				messageBox.value = '';
+				this.resizeCommentSurface(messageBox);
+				data.post.newPost = true;
+				this.renderComment(data.post);
 			}.bind(this));
 		} else {
 			DiscussionPost.update({id: postId, message: message}, function(data) {
@@ -434,12 +527,26 @@ define(function(require, exports, module) {
 		}
 	};
 
+	DiscussionDetailView.prototype.updateDiscussion = function(args) {
+		args.discussionHash = this.discussionHash;
+		Discussion.update(args, function() {
+			this.killOverlayContent();
+			this.loadDetails();
+		}.bind(this), function() {
+		}.bind(this));
+	};
+
 	DiscussionDetailView.prototype.unselectComment = function() {
 		this.surfaceList.splice(this.selectionIndex, 1, this.selectedCommentSurface);
 		this.surfaceList.push(this.addCommentSurface);
 		this.isCommentSelected = false;
 		this.commentBoxHeight = 0;
 		this.initialHeight = 50;
+	};
+
+	DiscussionDetailView.prototype.killOverlayContent = function() {
+		BaseView.prototype.killOverlayContent.call(this);
+		this.setHeaderLabel('SOCIAL');
 	};
 
 	App.pages[DiscussionDetailView.name] = DiscussionDetailView;

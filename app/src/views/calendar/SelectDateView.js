@@ -19,7 +19,7 @@ define(function(require, exports, module) {
 
 	function _createNavigation(date) {
 		var leftSurface = new Surface({
-			content: '<img src="content/images/left.png" />',	
+			content: '<img src="content/images/left.png" width="20px" height="18px"/>',	
 			size: [50, 74],
 			properties: {
 				textAlign: 'center',
@@ -31,18 +31,18 @@ define(function(require, exports, module) {
 		var leftModifier = new StateModifier({
 			transform: Transform.translate(30, 0, window.App.zIndex.datePicker),
 		});
-		this.add(leftModifier).add(leftSurface);	
+		this.add(leftModifier).add(leftSurface);
 
 		leftSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				this._eventOutput.emit('date-minus');	
+				this._eventOutput.emit('date-minus');
 			}
 		}.bind(this));
 
 		var dateSurface = new Surface({
 			size: [115, 74],
 			properties: {
-				color: '#e83838',	
+				color: '#e83838',
 				textAlign: 'center',
 				paddingTop: '9px'
 			}
@@ -60,7 +60,7 @@ define(function(require, exports, module) {
 
 
 		var dateModifier = new StateModifier({
-			transform: Transform.translate((window.innerWidth/2) - 100, 0, window.App.zIndex.datePicker)	
+			transform: Transform.translate((window.innerWidth/2) - 100, 0, window.App.zIndex.datePicker)
 		});
 
 		this.add(dateModifier).add(dateSurface);
@@ -70,7 +70,7 @@ define(function(require, exports, module) {
 		});
 
 		var rightSurface = new Surface({
-			content: '<img src="content/images/right.png" />',	
+			content: '<img src="content/images/right.png" width="20px" height="18px"/>',
 			size: [50, 74],
 			properties: {
 				padding: '24px 0px 24px 29px'
@@ -79,7 +79,7 @@ define(function(require, exports, module) {
 		this.add(rightModifier).add(rightSurface);
 		rightSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				this._eventOutput.emit('date-add');	
+				this._eventOutput.emit('date-add');
 			}
 		}.bind(this));
 

@@ -3,7 +3,7 @@
 
 	<head>
 		<title>We are curious</title>
-		<meta charset="utf-8" />
+		<meta http-equiv="Content-Type" content="text/html;charset=utf-8">
 		<meta name="format-detection" content="telephone=no" />
 		<meta name="msapplication-tap-highlight" content="no" />
 		<!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
@@ -98,6 +98,7 @@
 				StatusBar.hide();
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 				window.Keyboard = cordova.plugins.Keyboard;
+				window.open = cordova.InAppBrowser.open;
 				function refresh() {
 					if (!App || !App.coreEventHandler) {
 						setTimeout(refresh, 500);

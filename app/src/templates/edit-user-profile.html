@@ -3,7 +3,10 @@
 		<div class="edit-image">
 			<p>PROFILE PICTURE</p>
 			{{ if (user.avatarURL == null) { }}
-				<i class="fa fa-circle fa-4x"></i>
+				<span class="fa-stack fa-2x">
+					<i class="fa fa-circle fa-stack-2x grey-circle"></i>
+					<i class="fa fa-user fa-stack-1x fa-inverse"></i>
+				</span>
 			{{ } else { }}
 				<img src="{{- user.avatarURL }}" class="img-circle">
 			{{ } }}
@@ -18,9 +21,9 @@
 					<div class="media-body">
 						<input type="text" name="name" id= "user-name" value="{{- user.name }}"/>
 						<div class="radio-public-private">
-							<input type="radio" class="name-radio-public" name="name-radio" id="name-public-id" value="public" checked>
+							<input type="radio" class="name-radio-public" name="namePrivacy" id="name-public-id" value="public" {{= user.isNamePublic ? 'checked' : '' }}>
 							<label for="name-public-id" class="name-public-label">Public</label>
-							<input type="radio" class="name-radio-private" name="name-radio" id="name-private-id" value="private">
+							<input type="radio" class="name-radio-private" name="namePrivacy" id="name-private-id" value="private" {{= !user.isNamePublic ? 'checked' : '' }}>
 							<label for="name-private-id" class="name-private-label">Private</label>
 						</div>
 					</div>
@@ -38,9 +41,9 @@
 							<textarea name="bio">{{- user.bio }}</textarea>
 						{{ } }}
 						<div class="radio-public-private">
-							<input type="radio" class="bio-radio-public" name="bio-radio" id="bio-public-id" value="public" checked>
+							<input type="radio" class="bio-radio-public" name="bioPrivacy" id="bio-public-id" value="public" {{= user.isBioPublic ? 'checked' : '' }}>
 							<label for="bio-public-id" class="bio-public-label">Public</label>
-							<input type="radio" class="bio-radio-private" name="bio-radio" id="bio-private-id" value="private">
+							<input type="radio" class="bio-radio-private" name="bioPrivacy" id="bio-private-id" value="private" {{= !user.isBioPublic ? 'checked' : '' }}>
 							<label for="bio-private-id" class="bio-private-label">Private</label>
 						</div>
 					</div>
@@ -104,9 +107,9 @@
 				</label>
 				<div class="media">
 					<div class="media-body">
-						<input type="radio" class="email-notifications-yes" name="email-notifications" id="email-notifications-yes" value="public" checked>
+						<input type="radio" class="email-notifications-yes" name="notifyOnComments" id="email-notifications-yes" value="on" {{= user.notifyOnComments ? 'checked' : '' }}>
 						<label for="email-notifications-yes" class="email-notifications-yes-label">Email me when someone comments</label> <br><br>
-						<input type="radio" class="email-notifications-no" name="email-notifications" id="email-notifications-no" value="private">
+						<input type="radio" class="email-notifications-no" name="notifyOnComments" id="email-notifications-no" value="off" {{= !user.notifyOnComments ? 'checked' : '' }}>
 						<label for="email-notifications-no" class="email-notifications-no-label">Don't email me when someone comments</label>
 					</div>
 				</div>

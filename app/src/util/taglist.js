@@ -379,7 +379,7 @@ function TagStore(args) {
 			id : args['id'],
 			treeStore : this,
 			state: args['state'],
-			useCount: args['c']
+			useCount: args['lastThreeMonthsCount']
 		};
 
 		if (typeClass === TagGroup) {

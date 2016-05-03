@@ -123,9 +123,11 @@ define(function(require, exports, module) {
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
 		this.formContainerSurface = formContainerSurface;
 
-		this.showEntryButtons();
+		if (!this.justBookmark) {
+			this.showEntryButtons();
+		}
 		this.submitSurface = new Surface({
-			content: '<button type="button" class="full-width-button create-entry-button">CREATE/UPDATE ENTRY</button>'
+			content: '<button type="button" class="full-width-button create-entry-button">CREATE/UPDATE ENTRY</button>',
 		});
 
 		this.submitSurface.on('click', function(e) {
@@ -151,6 +153,28 @@ define(function(require, exports, module) {
 		})).add(this.draggableEntryFormView);
 	}
 
+	EntryFormView.prototype.createDeleteButton = function() {
+		this.deleteButtonSurface = new Surface({
+			content: '<button type="button" class="full-width-button create-entry-button">DELETE ENTRY</button>',
+			size: [undefined, true]
+		});
+
+		this.deleteButtonSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				this.entry.delete(function(data) {
+					this._eventOutput.emit('delete-entry', data);
+				}.bind(this));
+			}
+		}.bind(this));
+
+		this.deleteButtonRenderController = new RenderController();
+		this.deleteButtonModifier = new StateModifier({
+			size: [App.width - 60, undefined],
+			transform: Transform.translate(30, 250, App.zIndex.formView + 5)
+		});
+		this.formContainerSurface.add(this.deleteButtonModifier).add(this.deleteButtonRenderController);
+	};
+
 	EntryFormView.prototype.showEntryButtons = function() {
 		this.buttonsRenderController = new RenderController();
 		var sequentialLayout = new SequentialLayout({
@@ -159,15 +183,13 @@ define(function(require, exports, module) {
 			defaultItemSize: [80, 24],
 		});
 
-		this.firstOffset = (App.width - ((84 * 3) + 60)) / 2;
-
 		this.repeatSurface = new Surface({
 			content: '<div class="text-center"><i class="fa fa-repeat"></i> <br/> Set Repeat</div>',
 			size: [84, 24]
 		});
 
 		this.remindSurface = new Surface({
-			content: '<div class="text-center"><i class="fa fa-bell"></i> <br/>' + ((this.constructor.name === 'TrackEntryFormView') ? ' Set Alert' : ' Daily Alert') + '</div>',
+			content: '<div id="remind-surface" class="text-center"><i class="fa fa-bell"></i> <br/>' + ((this.constructor.name === 'TrackEntryFormView') ? ' Set Alert' : ' Daily Alert') + '</div>',
 			size: [84, 24]
 		});
 
@@ -176,9 +198,10 @@ define(function(require, exports, module) {
 			size: [84, 24]
 		});
 
+		this.firstOffset = (App.width - ((84 * 3) + 60)) / 2;
 		sequentialLayout.sequenceFrom([this.repeatSurface, this.remindSurface, this.pinSurface]);
 		this.buttonsAndHelp = new ContainerSurface({
-			size: [undefined, undefined],
+			size: [undefined, true],
 			classes: ['entry-form-buttons'],
 			properties: {
 				color: '#fff',
@@ -225,6 +248,21 @@ define(function(require, exports, module) {
 		}
 		return true;
 	};
+
+	EntryFormView.prototype.toggleSelector = function(selectorSurface) {
+		var isHilighted = selectorSurface ? _.contains(selectorSurface.getClassList(), 'highlight-surface') : null;
+		if (this.constructor.name === 'SprintEntryFormView') {
+			this.repeatSurface.removeClass('highlight-surface');
+			this.remindSurface.removeClass('highlight-surface');
+			this.pinSurface.removeClass('highlight-surface');
+		}
+		if (selectorSurface && !isHilighted) {
+			selectorSurface.addClass('highlight-surface');
+		} else if (selectorSurface && isHilighted) {
+			selectorSurface.removeClass('highlight-surface');
+		}
+	};
+
 	EntryFormView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 		console.log('FormView: on-show ' + state);
@@ -232,8 +270,25 @@ define(function(require, exports, module) {
 			//TODO if no state
 			App.pageView.changePage(this.parentPage);
 			return;
+		} else if (state && state.bookmarkForm) {
+			this.setPinned = true;
+			this.buttonsRenderController.hide();
+			this.renderController.hide();
+			this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">CREATE BOOKMARK</button>');
+			this.submitButtonModifier.setTransform(Transform.translate(30, 200, App.zIndex.datePicker - 1));
+			this.submitButtonRenderController.show(this.submitSurface);
+			return;
 		}
 		this.loadState(state);
+	};
+
+	EntryFormView.prototype.resetRepeatModifierForm = function() {
+		this.repeatSurface.removeClass('highlight-surface');
+		this.pinSurface.removeClass('highlight-surface');
+		this.remindSurface.removeClass('highlight-surface');
+		if (document.getElementById('repeat-modifier-form')) {
+			document.getElementById('repeat-modifier-form').reset();
+		}
 	};
 
 	EntryFormView.prototype.toggleSuffix = function(suffix) {
@@ -310,7 +365,7 @@ define(function(require, exports, module) {
 		var yTransformSubmitButtonModifier = this.submitButtonModifier.getTransform()[13];
 		if (yTransformSubmitButtonModifier > 150) {
 			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] - 100, App.zIndex.formView));
-			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] - 100, App.zIndex.formView + 2));
+			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] - 100, App.zIndex.formView + 5));
 		}
 	};
 
@@ -322,7 +377,7 @@ define(function(require, exports, module) {
 		var yTransformSubmitButtonModifier = this.submitButtonModifier.getTransform()[13];
 		if (yTransformSubmitButtonModifier < 500) {
 			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 100, App.zIndex.formView));
-			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 100, App.zIndex.formView + 2));
+			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 100, App.zIndex.formView + 5));
 		}
 	};
 

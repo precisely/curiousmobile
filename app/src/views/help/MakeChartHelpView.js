@@ -10,8 +10,7 @@ define(function(require, exports, module) {
 	MakeChartHelpView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
-		helpTemplate: MakeChartTemplate,
-		templateScrollHeight: 680
+		helpTemplate: MakeChartTemplate
 	};
 	MakeChartHelpView.prototype = Object.create(HelpView.prototype);
 

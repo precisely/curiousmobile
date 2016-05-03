@@ -73,6 +73,10 @@ define(function(require, exports, module) {
 				this.setRemind = !this.setRemind;
 				this.setPinned = false;
 				this.toggleSelector(this.remindSurface);
+				if (store.get('showRemindAlertBalloon') && this.setRemind) {
+					App.showPopover('#remind-surface', {key: 'setAlert', autoHide: true, container: '#remind-surface'});
+					store.set('showRemindAlertBalloon', false);
+				}
 			}
 		}.bind(this));
 
@@ -104,12 +108,18 @@ define(function(require, exports, module) {
 						this.dateGridRenderController.hide();
 					} else {
 						this.dateGrid = new DateGridView(this.selectedDate || new Date());
-						this.dateGridRenderController.show(this.dateGrid);
+						this.dateGridRenderController.show(this.dateGrid, null, function() {
+							App.pageView.getCurrentView().showShimSurface();
+						});
 						this.dateGrid.on('select-date', function(date) {
 							console.log('CalenderView: Date selected');
 							this.setSelectedDate(date);
 							this.dateGridRenderController.hide();
 							this.dateGridOpen = false;
+						}.bind(this));
+
+						this.dateGrid.on('close-date-grid', function(date) {
+							this.dateGridRenderController.hide();
 						}.bind(this));
 					}
 					this.dateGridOpen = !this.dateGridOpen;
@@ -123,8 +133,8 @@ define(function(require, exports, module) {
 			this.renderController.hide();
 			var currentListView = this.trackView.currentListView;
 			window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],resp.tagStats[3], resp.tagStats[4])
+			this.trackView.initContextMenuOptions();
 			this.trackView.preShow({data: resp, fromServer: true});
-			this.trackView.showPopover();
 		}.bind(this));
 
 		this.on('update-entry', function(resp) {
@@ -138,8 +148,8 @@ define(function(require, exports, module) {
 			if (resp.tagStats[1]) {
 				window.autocompleteCache.update(resp.tagStats[1][0], resp.tagStats[1][1], resp.tagStats[1][2],resp.tagStats[1][3], resp.tagStats[1][4])
 			}
+			this.trackView.initContextMenuOptions();
 			this.trackView.preShow({data: resp, fromServer: true});
-			this.trackView.showPopover();
 		}.bind(this));
 
 		this.on('delete-entry', function(resp) {
@@ -147,31 +157,11 @@ define(function(require, exports, module) {
 			if (resp && resp.fail) {
 				u.showAlert('Could not delete entry');
 			}
+			this.trackView.initContextMenuOptions();
 			this.trackView.currentListView.refreshEntries(resp);
 		}.bind(this));
 	};
 
-	TrackEntryFormView.prototype.createDeleteButton = function() {
-		this.deleteButtonSurface = new Surface({
-			content: '<button type="button" class="full-width-button create-entry-button">DELETE ENTRY</button>',
-			size: [undefined, true]
-		});
-
-		this.deleteButtonSurface.on('click', function(e) {
-			if (e instanceof CustomEvent) {
-				this.entry.delete(function(data) {
-					this._eventOutput.emit('delete-entry', data);
-				}.bind(this));
-			}
-		}.bind(this));
-
-		this.deleteButtonRenderController = new RenderController();
-		this.deleteButtonModifier = new StateModifier({
-			size: [App.width - 60, undefined],
-			transform: Transform.translate(30, 250, App.zIndex.formView)
-		});
-		this.formContainerSurface.add(this.deleteButtonModifier).add(this.deleteButtonRenderController);
-	};
 	/**
 	 * If form loads in edit mode, this will initialize
 	 * entry modifier form according to properties of current entry
@@ -186,10 +176,10 @@ define(function(require, exports, module) {
 		}
 
 		this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">' + buttonName + '</button>');
-		this.submitButtonModifier.setTransform(Transform.translate(30, 180, App.zIndex.formView));
+		this.submitButtonModifier.setTransform(Transform.translate(30, 180, App.zIndex.formView + 5));
 
 		if (isInEditMode) {
-			this.deleteButtonModifier.setTransform(Transform.translate(30, 230, App.zIndex.formView));
+			this.deleteButtonModifier.setTransform(Transform.translate(30, 230, App.zIndex.formView + 5));
 		}
 
 		this.buttonsRenderController.show(this.buttonsAndHelp);
@@ -198,9 +188,22 @@ define(function(require, exports, module) {
 		this.renderController.hide();
 		this.selectedDate = null;
 		var entry = this.entry;
-		if (entry.isContinuous()) {
+		if (isInEditMode) {
+			if(!entry.isContinuous() || entry.state === 'bookmarkEdit') {
+				this.deleteButtonRenderController.show(this.deleteButtonSurface);
+			}
+		}
+		if (entry.isContinuous() && entry.state !== 'bookmarkEdit') {
 			this.setRepeat = false;
 			this.setRemind = false;
+			this.setPinned = false;
+			this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">CREATE ENTRY</button>');
+			return;
+		} else if (entry.state === 'bookmarkEdit') {
+			this.setPinned = true;
+			this.buttonsRenderController.hide();
+			this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">UPDATE BOOKMARK</button>');
+			this.deleteButtonSurface.setContent('<button type="button" class="full-width-button create-entry-button">DELETE BOOKMARK</button>');
 			return;
 		}
 
@@ -225,8 +228,8 @@ define(function(require, exports, module) {
 					this.setSelectedDate(repeatEnd);
 				}
 			}.bind(this);
-			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.formView));
-			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 220, App.zIndex.formView));
+			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.formView + 5));
+			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 220, App.zIndex.formView + 5));
 			this.renderController.show(this.repeatModifierSurface, null, function() {
 				if (radioSelector) {
 					document.getElementById(radioSelector).checked = true;
@@ -244,19 +247,6 @@ define(function(require, exports, module) {
 			this.toggleSelector(this.repeatSurface);
 		}
 		this.buttonsRenderController.show(this.buttonsAndHelp);
-
-		if (isInEditMode) {
-			this.deleteButtonRenderController.show(this.deleteButtonSurface);
-		}
-	};
-
-	TrackEntryFormView.prototype.toggleSelector = function(selectorSurface) {
-		var isHilighted = selectorSurface ? _.contains(selectorSurface.getClassList(), 'highlight-surface') : null;
-		if (selectorSurface && !isHilighted) {
-			selectorSurface.addClass('highlight-surface');
-		} else if (selectorSurface && isHilighted) {
-			selectorSurface.removeClass('highlight-surface');
-		}
 	};
 
 	TrackEntryFormView.prototype.buildStateFromEntry = function(entry) {
@@ -264,14 +254,24 @@ define(function(require, exports, module) {
 		this.setPinned = this.setRemind = this.setRepeat = false;
 		this.entry = entry;
 		var directlyCreateEntry = false;
-		if (entry.isContinuous() || ((entry.isRemind() || entry.isRepeat()) && entry.isGhost())) {
+		if (entry.state !== 'bookmarkEdit' && (entry.isContinuous() || ((entry.isRemind() || entry.isRepeat()) && entry.isGhost()))) {
 			var tag = this.removeSuffix(entry.toString());
 			var tagStatsMap = autocompleteCache.tagStatsMap.get(tag);
+			var nullAmount = false;
+			if ((entry.get('amountPrecision') < 0) && (entry.get('amount') == null)) {
+				nullAmount = true;
+ 			}
 			if (!tagStatsMap) {
 				tagStatsMap = autocompleteCache.tagStatsMap.getFromText(tag);
 			}
-			if (!tagStatsMap || (tagStatsMap.typicallyNoAmount || entry.get("amount")) || tag.indexOf('start') > -1 ||
-				tag.indexOf('begin') > -1 || tag.indexOf('stop') > -1 || tag.indexOf('end') > -1 || (entry.isRepeat() && entry.isGhost())) {
+			if (!tagStatsMap || tagStatsMap.typicallyNoAmount) {
+				if (nullAmount) {
+					directlyCreateEntry = false;
+				} else {
+					directlyCreateEntry = true;
+				}
+			} else if (tag.indexOf('start') > -1 || tag.indexOf('begin') > -1 ||
+					tag.indexOf('stop') > -1 || tag.indexOf('end') > -1 || (entry.isRepeat() && entry.isGhost())) {
 				directlyCreateEntry = true;
 			}
 		}
@@ -341,6 +341,7 @@ define(function(require, exports, module) {
 
 	TrackEntryFormView.prototype.submit = function(e, directlyCreateEntry) {
 		this.autoCompleteView.hide();
+		$('#remind-surface').popover('destroy');
 		if (typeof cordova !== 'undefined') {
 			cordova.plugins.Keyboard.close();
 		}
@@ -382,7 +383,7 @@ define(function(require, exports, module) {
 			repeatTypeId = Entry.RepeatType.CONTINUOUSGHOST;
 		}
 
-		if (!entry || !entry.get('id') || entry.isContinuous()) {
+		if (!entry || !entry.get('id') || (entry.isContinuous() && entry.state !== 'bookmarkEdit')) {
 			var newEntry = new Entry();
 			newEntry.setText(newText);
 			if (repeatTypeId) {
@@ -417,6 +418,7 @@ define(function(require, exports, module) {
 
 		if (this.hasFuture()) {
 			this.alert = u.showAlert({
+				type: 'alert',
 				message: 'Update just this one event or also future events?',
 				a: 'One',
 				b: 'All Future',
@@ -453,15 +455,6 @@ define(function(require, exports, module) {
 	TrackEntryFormView.prototype.hasFuture = function() {
 		var entry = this.entry;
 		return ((entry.isRepeat() && !entry.isRemind()) || entry.isGhost()) && !entry.isTodayOrLater();
-	};
-
-	TrackEntryFormView.prototype.resetRepeatModifierForm = function() {
-		this.repeatSurface.removeClass('highlight-surface');
-		this.pinSurface.removeClass('highlight-surface');
-		this.remindSurface.removeClass('highlight-surface');
-		if (document.getElementById('repeat-modifier-form')) {
-			document.getElementById('repeat-modifier-form').reset();
-		}
 	};
 
 	App.pages[TrackEntryFormView.name] = TrackEntryFormView;

@@ -51,6 +51,16 @@ define(function(require, exports, module) {
 		});
 
 		this.graphSurface.pipe(this._eventOutput);
+
+		this.pillsSurfaceList = [];
+		this.pillsView = new PillsView(this.pillsSurfaceList);
+		var pillsViewMod = new StateModifier({
+			transform: Transform.translate(0, -1, 5)
+		});
+		this.add(pillsViewMod).add(this.pillsView);
+	};
+
+	GraphView.prototype.renderGraph = function(callback) {
 		this.renderController.show(this.graphSurface, null, function() {
 			this.plotProperties = new PlotProperties({
 				'startDateInit':'start date and/or tag',
@@ -63,37 +73,37 @@ define(function(require, exports, module) {
 				'logout':'#logoutLink'
 			});
 			this.plot = new PlotMobile(App.tagListWidget.list, User.getCurrentUserId(), User.getCurrentUser().get("username"), '#' + this.plotAreaId, true, false, this.plotProperties);
-			this.graphIsRendered = true;
-			this._eventOutput.emit('graph-visible');
+			if (callback) {
+				callback();
+			}
 		}.bind(this));
-
-		this.pillsSurfaceList = [];
-		this.pillsView = new PillsView(this.pillsSurfaceList);
-		var pillsViewMod = new StateModifier({
-			transform: Transform.translate(0, -1, App.zIndex.readView)
-		});
-		this.add(pillsViewMod).add(this.pillsView);
 	};
-
+	
 	GraphView.prototype.clearPillsSurfaceList = function() {
 		// Splicing instead of initializing with [] to retrieve the original reference
 		this.pillsSurfaceList.splice(0, this.pillsSurfaceList.length);
 	};
 
-	GraphView.prototype.drawGraph = function(tags, isAreaChart) {
+	GraphView.prototype.drawGraph = function(tags) {
 		this.plottedTags.splice(0, this.plottedTags.length);
 		this.tags = tags;
-		if (this.tags) {
-			if (this.graphIsRendered) {
+		var plotChart = function() {
+			this.renderGraph(function() {
+				if (!document.getElementById(this.plotAreaId)) {
+					setTimeout(function() {
+						plotChart.call(this);
+					}.bind(this), 10);
+					return;
+				}
 				this.clearPillsSurfaceList();
-				this.plot.initiateAddLine(this.tags, isAreaChart);
+				this.plot.initiateAddLine(this.tags, false);
 				this.addDateFooter();
-			} else {
-				this.on('graph-visible', function() {
-					this.plot.initiateAddLine(this.tags, isAreaChart);
-					this.addDateFooter();
-				}.bind(this));
-			}
+				this.plotProperties.setStartDate(this.startDate);
+				this.plotProperties.setEndDate(this.endDate);
+			}.bind(this));
+		};
+		if (this.tags) {
+			plotChart.call(this);
 		}
 	};
 
@@ -111,7 +121,13 @@ define(function(require, exports, module) {
 	};
 
 	GraphView.prototype.showDiscussionChart = function(plotDataId, discussionHash) {
-		this.on('graph-visible', function() {
+		this.renderGraph(function() {
+			if (!document.getElementById(this.plotAreaId)) {
+				setTimeout(function() {
+					this.showDiscussionChart(plotDataId, discussionHash);
+				}.bind(this), 10);
+				return;
+			}
 			this.plot.loadSnapshotId(plotDataId, discussionHash);
 			this.addDateFooter();
 		}.bind(this));
@@ -125,6 +141,18 @@ define(function(require, exports, module) {
 				border: '1px solid #c3c3c3'
 			}
 		});
+
+		this.dateGrid = new DateGridView(new Date(), true);
+		
+		this.dateGrid.on('select-date', function(date) {
+			console.log('CalenderView: Date selected');
+			this.setSelectedDate(date, this.dateType);
+			this.closeDateGrid();
+		}.bind(this));
+
+		this.on('close-date-grid', function(date) {
+			this.closeDateGrid();
+		}.bind(this));
 
 		this.dateGridRenderController = new RenderController();
 		var dateGridRenderControllerMod = new StateModifier({
@@ -172,24 +200,31 @@ define(function(require, exports, module) {
 
 	GraphView.prototype.toggleDatePicker = function(dateType) {
 		var datePickerDate;
+		this.dateType = dateType;
 		if(this.dateGridOpen) {
 			this.dateGridRenderController.hide();
 		} else {
-			if (dateType == 'startDate') {
+			if (this.dateType == 'startDate') {
 				datePickerDate = this.startDate;
 			} else {
 				datePickerDate = this.endDate;
 			}
-			this.dateGrid = new DateGridView(datePickerDate || new Date(), true);
-			this.dateGridRenderController.show(this.dateGrid);
-			this.dateGrid.on('select-date', function(date) {
-				console.log('CalenderView: Date selected');
-				this.setSelectedDate(date, dateType);
-				this.dateGridRenderController.hide();
-				this.dateGridOpen = false;
+			if (datePickerDate) {
+				this.dateGrid.setSelectedDate(datePickerDate);
+			} else {
+				this.dateGrid.setSelectedDate(new Date());
+			}
+			
+			this.dateGridRenderController.show(this.dateGrid, null, function() {
+				App.pageView.getCurrentView().showShimSurface();
 			}.bind(this));
 		}
 		this.dateGridOpen = !this.dateGridOpen;
+	};
+	GraphView.prototype.closeDateGrid = function() {
+		this.dateGridRenderController.hide();
+		this.dateGridOpen = false;
+		App.pageView.getCurrentView().hideShimSurface();
 	};
 
 	GraphView.prototype.setSelectedDate = function(date, dateType) {
@@ -223,7 +258,7 @@ define(function(require, exports, module) {
 			}
 			var pillSurface = new Surface({
 				content: '<button class="tag-pill btn' + '" id="' + tag.id + '" style="border-left: 2px solid' + color +
-						'; color: ' + color + ';">' + tag.description + deleteAffordance + '</button>',
+						'; color: ' + color + ';">' + u.escapeHTML(tag.description) + deleteAffordance + '</button>',
 				size: [true, 50],
 				properties: {
 					backgroundColor: '#efefef',
@@ -243,6 +278,9 @@ define(function(require, exports, module) {
 							currentView.tagsToPlot.splice(currentView.tagsToPlot.indexOf(tag), 1)
 						}
 						this.pillsView.pillsScrollView.sequenceFrom(this.pillsSurfaceList);
+						if (this.pillsSurfaceList.length === 0) {
+							App.pageView.changePage('CreateChartView');
+						}
 					} else {
 						var plotLine = this.plot.getLine(lineId);
 						var plot = this.plot;
@@ -281,6 +319,8 @@ define(function(require, exports, module) {
 
 	GraphView.prototype.clearGraph = function() {
 		this.clearPillsSurfaceList();
+		this.startDate = null;
+		this.endDate = null;
 		if (this.tags && this.tags.length) {
 			this.tags.splice(0, this.tags.length);
 		}

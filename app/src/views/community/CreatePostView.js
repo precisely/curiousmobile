@@ -18,7 +18,7 @@ define(function(require, exports, module) {
 
 	CreatePostView.DEFAULT_OPTIONS = {
 		header: true,
-		footer: false,
+		footer: true,
 	};
 
 	function _createView() {
@@ -27,8 +27,8 @@ define(function(require, exports, module) {
 		this.postSurface = new Surface({
 			content: _.template(template, this.options, templateSettings),
 			properties: {
-				backgroundColor: 'white',
-				padding: '10px'
+				backgroundColor: '#EFEFEF',
+				padding: '15px'
 			}
 		});
 
@@ -44,19 +44,13 @@ define(function(require, exports, module) {
 				}
 			}
 		}.bind(this));
-
-		this.postSurface.on('deploy', function(e) {
-			document.getElementById('name').onkeyup = function(e) {
-				if (e.which === 13) {
-					this.submit();
-				}
-			}.bind(this);
-		}.bind(this));
 		this.setBody(this.postSurface);
 	}
 
 	CreatePostView.prototype.clear = function() {
-		document.forms["postForm"]["name"].value = '';
+		if (document.forms["postForm"] && document.forms["postForm"]["name"]) {
+			document.forms["postForm"]["name"].value = '';
+		}
 	};
 
 	CreatePostView.prototype.onShow = function(state) {
@@ -66,6 +60,14 @@ define(function(require, exports, module) {
 			this.hashTag = state.hashTag;
 		}
 	}
+
+	CreatePostView.prototype.preShow = function(state) {
+		BaseView.prototype.preShow.call(this);
+		if (state && state.groupName) {
+			this.groupName = state.groupName;
+		}
+		return true;
+	};
 
 	CreatePostView.prototype.submit = function() {
 		var value = document.forms["postForm"]["name"].value;
@@ -77,6 +79,7 @@ define(function(require, exports, module) {
 			Discussion.post(
 				extractedData.name,
 				extractedData.post,
+				this.groupName,
 				function(result) {
 					this.clear();
 					console.log('Posted a new discussion');
@@ -84,9 +87,7 @@ define(function(require, exports, module) {
 					u.spinnerStart();
 					setTimeout(function(){
 						u.spinnerStop();
-						App.pageView.changePage('FeedView', {
-							new: true
-						});
+						App.pageView.goBack(null, {new: true});
 					}, 1000);
 				}.bind(this)
 			);

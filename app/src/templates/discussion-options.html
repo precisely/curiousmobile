@@ -1,16 +1,27 @@
 <div class="discussion-multi-select">
 	<h3>Would you like to:</h3>
-	<div class="radio">
-		<input type="radio" name="option" value="chart" checked id="discuss-chart">
-		<label for="discuss-chart">Share a question about a chart of your data?</label>
-	</div>
-	<div class="radio">
-		<input type="radio" name="option" value="how-to" id="how-to">
-		<label for="how-to">Post a how-to article?</label>
-	</div>
-	<div class="radio">
-		<input type="radio" name="option" value="support" id="support-discussion">
-		<label for="support-discussion">Ask the community a support question?</label>
-	</div>
-	<button class="full-width">NEXT</button>
+	{{ if (typeof createTrackathonDiscussion !== 'undefined' && createTrackathonDiscussion) { }}
+		<div class="radio">
+			<input type="radio" name="option" value="chart" checked id="discuss-chart">
+			<label for="discuss-chart">Share a chart?</label>
+		</div>
+		<div class="radio">
+			<input type="radio" name="option" value="discuss-trackathon" id="discuss-trackathon">
+			<label for="discuss-trackathon">Create new trackathon discussion topic?</label>
+		</div>
+	{{ } else { }}
+		<div class="radio">
+			<input type="radio" name="option" value="chart" checked id="discuss-chart">
+			<label for="discuss-chart">Share a question about a chart of your data?</label>
+		</div>
+		<div class="radio">
+			<input type="radio" name="option" value="how-to" id="how-to">
+			<label for="how-to">Post a how-to article?</label>
+		</div>
+		<div class="radio">
+			<input type="radio" name="option" value="support" id="support-discussion">
+			<label for="support-discussion">Ask the community a support question?</label>
+		</div>
+	{{ } }}
+	<button class="full-width-button">NEXT</button>
 </div>

@@ -50,6 +50,7 @@ define(function(require, exports, module) {
 		this.size = readSurfaceOptions.size = [window.innerWidth, this.options.entryHeight];
 		readSurfaceOptions.content = this.getDisplayText();
 		readSurfaceOptions.classes = this.entry.repeatTypeAsClass();
+		readSurfaceOptions.attributes = {id: 'entry-' + this.entry.get('id')};
 		if (this.entry.isContinuous()) {
 			readSurfaceOptions.properties.margin = '5px';
 			size[0] = size[0] - 10;
@@ -102,7 +103,7 @@ define(function(require, exports, module) {
 	EntryReadView.prototype.getDisplayText = function() {
 		var date = new Date(this.entry.date);
 		var time = u.formatAMPM(date);
-		var displayText = this.entry.removeSuffix();
+		var displayText = u.escapeHTML(this.entry.removeSuffix());
 		if (this.entry.isRemind() && this.entry.isRepeat()) {
 			if (this.entry.isDaily()) {
 				return '<div class="help"><i class="fa fa-repeat"></i> Alert + Repeat every day </div>' + displayText;

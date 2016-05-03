@@ -86,10 +86,12 @@ define(function(require, exports, module) {
 		if (typeof this.showingDateGrid == 'undefined' || !this.showingDateGrid) {
 			this.dateGrid.changeMonth(this.selectedDate.getMonth() + 1);
 			this.renderController.show(this.dateGrid, null, function() {
+				App.pageView.getCurrentView().showShimSurface();
 			}.bind(this));
 			this.showingDateGrid = true;
 		} else {
 			this.renderController.hide();
+			App.pageView.getCurrentView().hideShimSurface();
 			this.showingDateGrid = false;
 		}
 	}

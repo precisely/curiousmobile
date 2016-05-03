@@ -109,7 +109,8 @@ define(function(require, exports, module) {
 		function(data) {
 			if (u.checkData(data)) {
 				if (data.success) {
-					successCallback(data.listItems);
+					store.set('showPostDiscussionBalloon', data.showPostDiscussionBalloon);
+					successCallback(data);
 				} else {
 					failCallback();
 				}
@@ -172,6 +173,7 @@ define(function(require, exports, module) {
 				return;
 
 			if (data.success) {
+				store.set('showSprintStartBalloon', data.showSprintStartBalloon);
 				if (successCallback) {
 					successCallback();
 				}
@@ -187,6 +189,7 @@ define(function(require, exports, module) {
 	Sprint.delete = function(sprintHash, successCallback) {
 		var httpArgs ={requestMethod:'delete'};
 		u.showAlert({
+			type: 'alert',
 			message: 'Are you sure you want to delete this trackathon?',
 			a: 'Yes',
 			b: 'No',
@@ -258,15 +261,35 @@ define(function(require, exports, module) {
 	Sprint.disableComments = function(args, callback) {
 		u.queueJSON("Modifying comment preferences", App.serverUrl + '/api/sprint/action/disableComments',
 				u.makeGetArgs(args),
-				function(data) {
-					if (u.checkData(data)) {
-						if (data.success) {
-							if (callback) {
-								callback(data.disableComments);
-							}
+			function(data) {
+				if (u.checkData(data)) {
+					if (data.success) {
+						if (callback) {
+							callback(data.disableComments);
 						}
 					}
-				});
-	}
+				}
+			});
+	};
+
+	Sprint.deleteParticipant = function(args, callback) {
+		args.timeZoneName = jstz.determine().name();
+		queuePostJSON('Removing members', App.serverUrl + '/api/sprint/action/deleteMember', u.getCSRFPreventionObject('deleteMemberCSRF', args),
+			function(data) {
+				if (!checkData(data))
+					return;
+
+				if (data.success) {
+					if (callback) {
+						callback();
+					}
+				} else {
+					u.showAlert(data.errorMessage);
+				}
+			}, function(xhr) {
+				console.log('error: ', xhr);
+			});
+	};
+
 	module.exports = Sprint;
 });

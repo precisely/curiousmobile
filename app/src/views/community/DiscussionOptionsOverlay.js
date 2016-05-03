@@ -9,8 +9,10 @@ define(function (require, exports, module) {
 	var discussionOptionsSurfaceTemplate = require('text!templates/discussion-options.html');
 	var u = require('util/Utils');
 
-	function DiscussionOptionsOverlay() {
+	function DiscussionOptionsOverlay(args) {
 		View.apply(this, arguments);
+		this.createTrackathonDiscussion = args ? args.createTrackathonDiscussion : '';
+		this.groupName = args ? args.groupName : 'PUBLIC';
 		_createView.call(this);
 	}
 
@@ -24,24 +26,26 @@ define(function (require, exports, module) {
 		this.DiscussionOptionsSurface = new Surface({
 			size: [undefined, undefined],
 			origin: [0, 0.5],
-			content: _.template(discussionOptionsSurfaceTemplate, templateSettings),
+			content: _.template(discussionOptionsSurfaceTemplate, {createTrackathonDiscussion: this.createTrackathonDiscussion}, templateSettings),
 			properties: {
-				backgroundColor: '#ffffff'
+				backgroundColor: 'rgb(239, 239, 239)'
 			}
 		});
 
 		this.DiscussionOptionsSurface.on('click', function (e) {
 			if (e instanceof CustomEvent) {
 				var classList = e.srcElement.classList;
-				if (_.contains(classList, 'full-width')) {
+				if (_.contains(classList, 'full-width-button')) {
 					var selectedOption = document.querySelector('input[name="option"]:checked').value;
 					App.pageView.getCurrentView().killOverlayContent();
 					if (selectedOption === 'how-to') {
 						App.pageView.changePage('CreatePostView', {hashTag: '#howto'});
 					} else if (selectedOption === 'support') {
 						App.pageView.changePage('CreatePostView', {hashTag: '#support'});
+					} else if (selectedOption === 'discuss-trackathon') {
+						App.pageView.changePage('CreatePostView', {groupName: this.groupName});
 					} else {
-						App.pageView.changePage('ChartView', {shareDiscussion: true});
+						App.pageView.changePage('ChartView', {shareDiscussion: true, groupName: this.groupName});
 					}
 				}
 			}

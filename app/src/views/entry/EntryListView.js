@@ -2,7 +2,6 @@ define(function(require, exports, module) {
 	var View = require('famous/core/View'),
 	Surface = require('famous/core/Surface'),
 	Transform = require('famous/core/Transform'),
-	Easing = require("famous/transitions/Easing"),
 	Modifier = require('famous/core/Modifier'),
 	StateModifier = require('famous/modifiers/StateModifier'),
 	RenderController = require("famous/views/RenderController"),
@@ -22,10 +21,8 @@ define(function(require, exports, module) {
 	var Transitionable  = require('famous/transitions/Transitionable');
 	var SnapTransition  = require('famous/transitions/SnapTransition');
 
-	Transitionable.registerMethod('snap',SnapTransition);
-
-	var snap = { method:'snap', period:200, dampingRatio:0.4 };
-
+	Transitionable.registerMethod('snap', SnapTransition);
+	var snap = {method: 'snap', period: 200, dampingRatio: 0.4};
 
 	function EntryListView(collection, glowEntry) {
 		View.apply(this, arguments);
@@ -56,10 +53,13 @@ define(function(require, exports, module) {
 
 		this.add(new StateModifier({transform: Transform.translate(0,0,0)})).add(backgroundSurface);
 		backgroundSurface.pipe(this._eventOutput);
-		this.add(this.pinnedEntriesController);
+		this.pinControllerMod = new StateModifier({
+			size: [undefined, 100],
+			transform: Transform.translate(0, 0, 0)
+		});
+		this.add(this.pinControllerMod).add(this.pinnedEntriesController);
 		this.add(this.renderController);
 		this.refreshEntries(entries, glowEntry);
-
 	}
 
 	EntryListView.prototype.addEntry = function(entry) {
@@ -105,7 +105,8 @@ define(function(require, exports, module) {
 
 	EntryListView.prototype.addPinnedEntry = function (entry) {
 		var pinnedEntryView = new PinnedView({entry: entry});
-		this.draggablePin.subscribe(pinnedEntryView.entrySurface);
+		pinnedEntryView.entrySurface.setOptions({attributes: {id: 'entry-' + entry.id}});
+		//this.draggablePin.subscribe(pinnedEntryView.entrySurface);
 		this.pinnedViews.push(pinnedEntryView);
 		this.entryEventListeners(pinnedEntryView);
 		return pinnedEntryView;
@@ -118,7 +119,14 @@ define(function(require, exports, module) {
 				console.log('EntryListView:85 failed to delete entry. Reloading cache');
 				this._eventOutput.emit('delete-failed');
 			} else {
-				this.refreshEntries(entries);
+				if (entryView instanceof TrackEntryView) {
+					var deletedSurfaceIndex = this.trackEntryViews.indexOf(entryView);
+					this.trackEntryViews.splice(deletedSurfaceIndex, 1);
+					this.draggableList.splice(deletedSurfaceIndex, 1);
+				} else {
+					this.pinnedViews.splice(this.pinnedViews.indexOf(entryView), 1);
+					this.pinnedContainerSurface.setSize([undefined, this.heightOfPins() + 10]);
+				}
 			}
 		}.bind(this));
 
@@ -130,32 +138,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 	}
 
-	EntryListView.prototype.refreshEntries = function(entries, glowEntry) {
-		this.trackEntryViews = [];
-		this.pinnedViews = [];
-		this.draggableList = [];
-		this.glowEntry = glowEntry;
-		this.minYRange = 0;
-		this.createDraggable();
-
-		if (!entries && this.entries) {
-			entries = EntryCollection.getFromCache(this.entries.key);
-		}
-
-		if (entries instanceof EntryCollection) {
-			this.entries = entries;
-		} else if (entries instanceof Array){
-			this.entries = new EntryCollection(entries);
-		} else {
-			this.entries.set(entries);
-		}
-
-		entries = this.entries;
-
-		if (this.scrollView) {
-			this.renderController.hide({duration:0});
-		}
-
+	EntryListView.prototype.initPinnedViews = function() {
 		if (this.pinnedSequentialLayout) {
 			this.pinnedEntriesController.hide({duration:0});
 		}
@@ -170,7 +153,7 @@ define(function(require, exports, module) {
 		this.pinnedSequentialLayout.setOutputFunction(function(input, offset, index) {
 			//Bumping the offset to add additional padding on the left
 			var lastView = this.pinnedSequentialLayout._items._.getValue(index-1);
-			var size = [0,0];
+			var size = [0, 0];
 			if (lastView) {
 				size = lastView.getSize();
 			}
@@ -186,14 +169,10 @@ define(function(require, exports, module) {
 				this.pinnedSequentialLayout.nextYOffset = 8;
 			}
 			xOffset = size[0] + 8;
-			//console.log(this.pinnedSequentialLayout.lastXOffset + ':' + currentSize);
 			if (_.contains(this.pinnedEdgeIndex, index)) {
 				this.pinnedSequentialLayout.lastXOffset = 0;
 				xOffset = 8;
-				//console.log('EntryListView: heightOfPins: ' + this.heightOfPins());
-				//console.log('EntryListView this.pinnedSequentialLayout index: ' + index);
 				this.pinnedSequentialLayout.nextYOffset += 40;
-				//console.log('EntryListView: Adding a pinned row: ' + this.pinnedSequentialLayout.nextYOffset);
 			} else {
 				xOffset += this.pinnedSequentialLayout.lastXOffset;
 			}
@@ -204,16 +183,58 @@ define(function(require, exports, module) {
 				target: input.render()
 			};
 		}.bind(this));
-		var scrollModifier = new Modifier();
-		scrollModifier.sizeFrom(function(){
+
+
+	};
+
+	EntryListView.prototype.refreshPinnedEntriesView = function(callback) {
+		this.pinnedSequentialLayout.sequenceFrom(this.pinnedViews);
+		var heightOfPins = Math.min(this.heightOfPins(), 150);
+		this.pinnedContainerSurface = new ContainerSurface({
+			size: [undefined, true],
+			classes: ['pin-container'],
+			properties: {
+				backgroundColor: '#ebebeb',
+				padding: '23px 10px 10px 10px',
+				overflowY: 'hidden',
+				borderBottom: '8px solid #ebebeb'
+			}
+		});
+
+		this.pinnedContainerSurface.add(this.pinnedSequentialLayout);
+		this.pinnedEntriesController.inTransformFrom(function() {
+			return Transform.translate(0, 0, App.zIndex.readView - 1);
+		}.bind(this));
+		this.pinnScrollView = new Scrollview();
+		var spareSurface = new Surface({size: [undefined, 20]});
+		this.pinnScrollView.sequenceFrom([this.pinnedContainerSurface, spareSurface]);
+		this.pinnedContainerSurface.pipe(this.pinnScrollView);
+		spareSurface.pipe(this.pinnScrollView);
+		this.pinnedContainerSurface.on('deploy', function() {
+			setTimeout(function() {
+				this.pinnedContainerSurface.setSize([undefined, this.heightOfPins() + 10]);
+			}.bind(this), 500);
+		}.bind(this));
+		this.pinnedEntriesController.show(this.pinnScrollView, null, function() {
+			this.handleGlowEntry(callback);
+		}.bind(this));
+	};
+
+	EntryListView.prototype.initDraggableViews = function() {
+		this.draggableList = [];
+		if (this.scrollView) {
+			this.renderController.hide({duration:0});
+		}
+		this.scrollModifier = new Modifier();
+		this.scrollModifier.sizeFrom(function(){
 			if (this.pinnedViews) {
 				return [320,window.App.height - 185 - Math.min(this.heightOfPins(), 140)]
 			} else {
-
 				return [320,window.App.height - 185]
 			}
 		}.bind(this));
-		var scrollWrapperSurface = new ContainerSurface({
+
+		this.scrollWrapperSurface = new ContainerSurface({
 			size: [undefined, undefined],
 			properties: {
 				overflow: 'hidden',
@@ -221,7 +242,7 @@ define(function(require, exports, module) {
 			}
 		});
 
-		var scrollNode = new RenderNode(scrollModifier);
+		this.scrollNode = new RenderNode(this.scrollModifier);
 		this.scrollView = new Scrollview({
 			direction: 1,
 			defaultitemsize: [320, 55],
@@ -269,27 +290,82 @@ define(function(require, exports, module) {
 				this.scrollView.trans.set(0);
 			}
 		}.bind(this));
+	};
 
-		scrollNode.add(this.scrollView);
-		scrollWrapperSurface.add(scrollNode);
-		var nonBookmarkEntriesCount = 0;
-		var bookmarkEntriesCount = 0;
-        var entriesGroupedByDeviceData = {};
+	EntryListView.prototype.refreshDraggableEntriesView = function(callback) {
+		this.scrollNode.add(this.scrollView);
+		this.scrollWrapperSurface.add(this.scrollNode);
+		this.scrollView.sequenceFrom(this.draggableList);
+		var scrollerBackgroundSurface = new Surface({
+			size: [undefined, undefined],
+			properties: {
+				backgroundColor: '#fff',
+			}
+		});
+		this.scrollWrapperSurface.add(new Modifier({transform: Transform.translate(0, 0, 0)})).add(scrollerBackgroundSurface);
 
-        //Filter out the device data
+		this.renderController.inTransformFrom(function() {
+			var heightOfPins = 20 + Math.min(this.heightOfPins(), 140);
+			return Transform.translate(0, heightOfPins, App.zIndex.readView);
+		}.bind(this));
+
+		this.scrollModifier.transformFrom(function() {
+			var heightOfPins = Math.min(this.heightOfPins(), 135);
+			return Transform.translate(0, 0, App.zIndex.readView + 22);
+		}.bind(this));
+
+		this.renderController.show(this.scrollWrapperSurface, null, function() {
+			this.handleGlowEntry(callback);
+		}.bind(this));
+	};
+
+	EntryListView.prototype.refreshEntries = function(entries, glowEntry, callback) {
+		this.glowEntry = glowEntry;
+		this.minYRange = 0;
+		var refreshPinEntries = (!glowEntry || glowEntry.isContinuous());
+		var refreshDraggableEntries = (!glowEntry || !glowEntry.isContinuous());
+
+
+		if (!entries && this.entries) {
+			entries = EntryCollection.getFromCache(this.entries.key);
+		}
+
+		if (entries instanceof EntryCollection) {
+			this.entries = entries;
+		} else if (entries instanceof Array){
+			this.entries = new EntryCollection(entries);
+		} else {
+			this.entries.set(entries);
+		}
+
+		entries = this.entries;
+
+		if (refreshPinEntries) {
+			this.pinnedViews = [];
+			var bookmarkEntriesCount = 0;
+			this.initPinnedViews();
+		}
+
+		if (refreshDraggableEntries) {
+			this.trackEntryViews = [];
+			this.draggableList = [];
+			var nonBookmarkEntriesCount = 0;
+			var entriesGroupedByDeviceData = {};
+			this.initDraggableViews();
+		}
+
+		//Filter out the device data
 		entries.forEach(function(entry) {
 			var addedView = null;
-			if (entry.get('sourceName')) {
+			if (entry.get('sourceName') && refreshDraggableEntries) {
 				var source = entry.get('sourceName');
 				this.deviceEntries[source] = this.deviceEntries[source] || [];
 				this.deviceEntries[source].push(entry);
 				return;
-			}
-
-			if (entry.isContinuous()) {
+			} else if (entry.isContinuous() && refreshPinEntries) {
 				bookmarkEntriesCount++;
 				addedView = this.addPinnedEntry(entry);
-			} else {
+			} else if (!entry.isContinuous() && refreshDraggableEntries){
 				nonBookmarkEntriesCount++;
 				addedView = this.addEntry(entry);
 			}
@@ -310,85 +386,27 @@ define(function(require, exports, module) {
 			this.addEntry(this.deviceEntries[device]);
 		}
 
-		this.scrollView.sequenceFrom(this.draggableList);
-		this.pinnedSequentialLayout.sequenceFrom(this.pinnedViews);
+		if (refreshPinEntries) {
+			this.refreshPinnedEntriesView(callback);
+		}
 
-		var heightOfPins = Math.min(this.heightOfPins(), 150);
-		var pinnedContainerSurface = new ContainerSurface({
-			size: [undefined, true],
-			classes: ['pin-container'],
-			properties: {
-				backgroundColor: '#ebebeb',
-				padding: '20px 10px 10px 10px',
-				overflowY: 'hidden',
-				borderBottom: '8px solid #ebebeb'
-			}
-		});
+		if (refreshDraggableEntries) {
+			this.refreshDraggableEntriesView(callback);
+		}
+	};
 
-		pinnedContainerSurface.on('deploy', function() {
-			Timer.every(function() {
-				pinnedContainerSurface.setSize([undefined, Math.min(this.heightOfPins(), 150) + 10]);
-				/*pinnedContainerSurface.setProperties({
-					height: Math.min(this.heightOfPins(), 150) + 'px',
-					backgroundColor: '#ebebeb',
-					overflowY: 'hidden'
-				});*/
-				this.minYRange = (this.heightOfPins() - 90);
-				this.draggablePin.setOptions({
-					yRange: [-Math.max(this.minYRange, 0), 0]
-				});
-			}.bind(this), 2);
-		}.bind(this));
-
-		scrollModifier.transformFrom(function() {
-			var heightOfPins = Math.min(this.heightOfPins(), 135);
-			return Transform.translate(0, 0, App.zIndex.readView + 22);
-		}.bind(this));
-
-		var nodePlayer = new RenderNode();
-		nodePlayer.add(this.draggablePin).add(this.pinnedSequentialLayout);
-		pinnedContainerSurface.add(nodePlayer);
-
-		var scrollerBackgroundSurface = new Surface({
-			size: [undefined, undefined],
-			properties: {
-				backgroundColor: '#fff',
-			}
-		});
-		scrollWrapperSurface.add(new Modifier({transform: Transform.translate(0, 0, 0)})).add(scrollerBackgroundSurface);
-
-		this.renderController.inTransformFrom(function() {
-			var heightOfPins = 20 + Math.min(this.heightOfPins(), 140);
-			return Transform.translate(0, heightOfPins, App.zIndex.readView);
-		}.bind(this));
-
-		this.pinnedEntriesController.inTransformFrom(function() {
-			return Transform.translate(0, 0, App.zIndex.readView - 1);
-		}.bind(this));
-		this.pinnedEntriesController.show(pinnedContainerSurface, {duration: 0});
-
-		this.renderController.show(scrollWrapperSurface, {duration:0});
+	EntryListView.prototype.handleGlowEntry = function(callback) {
 		if (this.glowView) {
 			if (this.glowView.entry.isContinuous()) {
-				setTimeout(function(){
-					this.draggablePin.setPosition([0, -this.pinPosition(this.glowView.position), 0]);
-				}.bind(this), 200);
+				this.pinnScrollView.setPosition(this.pinPosition(this.glowView.position));
 			} else {
 				this.scrollView.goToPage(this.glowView.position);
 			}
 			this.glowView.glow();
 		}
-	};
-
-	EntryListView.prototype.createDraggable = function() {
-		this.min
-		this.draggablePin = new Draggable({
-			xRange: [0, 0],
-			yRange: [-this.minYRange, 0]
-		});
-		this.draggablePin.on('update', function(e) {
-			console.log(e);
-		});
+		if (callback) {
+			callback();
+		}
 	};
 
 	EntryListView.prototype.heightOfPins = function () {

@@ -58,6 +58,7 @@ define(function(require, exports, module) {
 		},
 		getUserData: function(data) {
 			store.set('mobileSessionId', data['mobileSessionId']);
+			store.set('hasVisitedMobileApp', data['hasVisitedMobileApp']);
 			if (data.user) {
 				return this.cache(data.user);
 			} else {
@@ -214,7 +215,7 @@ define(function(require, exports, module) {
 			function(data) {
 				if (u.checkData(data)) {
 					if (data.interestTags) {
-						successCallback();
+						successCallback(data);
 					} else {
 						u.showAlert(data.message);
 						if (failCallback) {
@@ -236,7 +237,7 @@ define(function(require, exports, module) {
 		function(data) {
 			if (u.checkData(data)) {
 				if (data.interestTags) {
-					successCallback();
+					successCallback(data.interestTags);
 				} else {
 					u.showAlert(data.message);
 					if (failCallback) {
@@ -353,14 +354,14 @@ define(function(require, exports, module) {
 						return false;
 					}
 					if (data.success) {
-						u.showAlert('Email verification link sent');
+						u.showAlert('Verification email sent. Be sure to check your spam folder for an email from curious@wearecurio.us');
 					} else {
 						u.showAlert(data.message);
 					}
 				}
 		);
 	};
-	
+
 	User.getGroupsToShare = function(successCallback) {
 		u.queueJSON('Loading group list', App.serverUrl + '/api/user/action/getGroupsToShare?' + u.getCSRFPreventionURI('getGroupsList') + '&callback=?', function(data) {
 			if (!checkData(data) || !data.success) {
@@ -379,7 +380,7 @@ define(function(require, exports, module) {
 			}
 
 			data.groups = groups;
-			
+
 			successCallback(data);
 		});
 	};

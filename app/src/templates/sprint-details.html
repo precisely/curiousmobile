@@ -13,8 +13,8 @@
 					<button id="start-sprint" class="prompted-action sprint-button">Start</button>
 				{{ } }}
 			{{ } else { }}
-				<button id="join-sprint" class="sprint-button">Follow</button>
 				<button id="start-sprint" class="prompted-action  sprint-button">Start</button>
+				<button id="join-sprint" class="sprint-button">Follow</button>
 			{{ } }}
 			{{ if (sprint.hasAdmin) { }}
 				<button id="delete-sprint" class="sprint-button">Delete</button>
@@ -60,39 +60,45 @@
 			<p id="no-tags-added">No tags added yet.</p>
 			{{ } }}
 
-			{{ _.each(entries, function(entry) { }}
-			<button>
-				{{- entry.description }}
-				{{ if (entry.comment.indexOf("repeat") > -1) { }}
-					<i class="fa fa-repeat"></i>
-				{{ } else if ((entry.comment.indexOf("pinned") > -1) || (entry.comment.indexOf("bookmark") > -1)) { }}
-					<i class="fa fa-bookmark"></i>
-				{{ } else if (entry.comment.indexOf("remind") > -1) { }}
-					<i class="fa fa-bell"></i>
-				{{ } }}
-			</button>
+			{{ _.map(entries, function(entry, key) { }}
+				<div class="tag-button-block" data-id="{{= entry.id }}">
+					<button class="tag-button" data-id="{{= entry.id }}">
+						{{- entry.get("description") }}
+						{{ if (entry.isRemind()) { }}
+							<i class="fa fa-bell" data-id="{{= entry.id }}"></i>
+						{{ } else if ((entry.isContinuous())) { }}
+							<i class="fa fa-bookmark" data-id="{{= entry.id }}"></i>
+						{{ } else if (entry.isRepeat()) { }}
+							<i class="fa fa-repeat" data-id="{{= entry.id }}"></i>
+						{{ } }}
+					</button>
+					{{ if (isFormView) { }}
+						<i class="fa fa-times-circle delete-tag"></i>
+					{{ } }}
+				</div>
 			{{ }); }}
 		</div>
 	</div>
 
 	<div class="participants-div">
-		<label class="sprint-default-label">
+		<label class="sprint-default-label" id="participant-label">
 			PARTICIPANTS ({{- totalParticipants }})
 		</label>
 		{{ if (isFormView) { }}
 		<div class="right-icons add-participants">
 			<img src="content/images/plus-circle.png" alt="+">
-
 			<p>INVITE</p>
 		</div>
 		{{ } }}
 		<div class="participants-wrapper">
-			<p id="sprint-participants">
 				{{ _.each(participants, function(participant) { }}
-				{{- participant.name || participant.username }}
-				<br>
+				<p>
+					{{- participant.name || participant.username }}
+					{{ if (isFormView) { }}
+						<i class="fa fa-times-circle delete-participant" data-participant="{{= participant.username }}"></i>
+					{{ } }}
+				</p>
 				{{ }); }}
-			</p>
 			{{ if (totalParticipants > 10) { print('<h5 id="more-participants">See All Participants</h5>'); } }}
 		</div>
 	</div>

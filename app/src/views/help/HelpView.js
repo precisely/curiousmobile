@@ -8,6 +8,8 @@ define(function(require, exports, module) {
 	var DraggableView = require("views/widgets/DraggableView");
 	var u = require('util/Utils');
 	var BaseView = require('views/BaseView');
+	var Scrollview = require('famous/views/Scrollview');
+	var Utility = require('famous/utilities/Utility');
 
 	function HelpView() {
 		BaseView.apply(this, arguments);
@@ -33,11 +35,24 @@ define(function(require, exports, module) {
 		});
 		this.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(backgroundSurface);
 		var bodySurface = new Surface({
-			size: [undefined, undefined],
+			size: [undefined, true],
 			content: _.template(this.options.helpTemplate, templateSettings)
 		});
-		this.draggableView = new DraggableView(bodySurface, true, this.options.templateScrollHeight);
-		this.setBody(this.draggableView);
+
+		this.scrollableHelpView = new Scrollview({
+			direction: Utility.Direction.Y
+		});
+	
+		var spareSurface = new Surface({
+			size: [undefined, 20]
+		});
+	
+		this.scrollableHelpView.sequenceFrom([bodySurface, spareSurface]);
+	
+		bodySurface.pipe(this.scrollableHelpView);
+		spareSurface.pipe(this.scrollableHelpView);
+
+		this.setBody(this.scrollableHelpView);
 	};
 
 	HelpView.prototype.preShow = function() {

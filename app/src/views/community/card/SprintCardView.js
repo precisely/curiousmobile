@@ -46,6 +46,7 @@ define(function(require, exports, module) {
 					var state = {
 						hash: this.sprint.hash,
 						name: this.sprint.name,
+						virtualGroupName: this.sprint.virtualGroupName,
 						parentPage: App.pageView.getCurrentPage(),
 						parentCard: this
 					};
@@ -54,12 +55,13 @@ define(function(require, exports, module) {
 					var state = {
 						hash: this.sprint.hash,
 						name: this.sprint.name,
+						virtualGroupName: this.sprint.virtualGroupName,
 						parentPage: App.pageView.getCurrentPage()
 					};
 					App.pageView.changePage('SprintActivityView', state);
 				}
 			}
-		
+
 		}.bind(this));
 
 		this.add(this.cardSurface);
@@ -67,4 +69,3 @@ define(function(require, exports, module) {
 
 	module.exports = SprintCardView;
 });
-

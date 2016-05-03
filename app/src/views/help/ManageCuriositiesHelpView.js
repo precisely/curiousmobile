@@ -10,8 +10,7 @@ define(function(require, exports, module) {
 	ManageCuriositiesHelpView.DEFAULT_OPTIONS = {
 		header: true,
 		footer: true,
-		helpTemplate: CuriositiesTemplate,
-		templateScrollHeight: 480
+		helpTemplate: CuriositiesTemplate
 	};
 	ManageCuriositiesHelpView.prototype = Object.create(HelpView.prototype);
 

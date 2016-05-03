@@ -126,14 +126,22 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				var entryStr = escapeHTML(entry.description);
 				var amounts = entry.amounts;
 				var i = 0, iString;
-				while ((iString = (i++).toString()) in amounts) {
-					var amountEntry = amounts[iString];
-					var amount = amountEntry.amount;
-					var amountPrecision = amountEntry.amountPrecision;
-					var units = amountEntry.units;
+				if (this.isContinuous()) {
+					if (this.get('amountPrecision') > 0) {
+						entryStr += ' ' + this.get('amount') + ' ' + escapehtml(this.get('units'));
+					} else if (this.get('amount') == null) {
+						entryStr += ' # ' + escapehtml(this.get('units'));
+					}
+				} else {
+					while ((iString = (i++).toString()) in amounts) {
+						var amountEntry = amounts[iString];
+						var amount = amountEntry.amount;
+						var amountPrecision = amountEntry.amountPrecision;
+						var units = amountEntry.units;
 
-					var formattedAmount = this.formattedAmount({amount: amount, amountPrecision: amountPrecision});
-					entryStr += escapeHTML(formattedAmount) + escapeHTML(this.formatUnits(units))
+						var formattedAmount = this.formattedAmount({amount: amount, amountPrecision: amountPrecision});
+						entryStr += escapeHTML(formattedAmount) + escapeHTML(this.formatUnits(units))
+					}
 				}
 
 				entryStr += escapeHTML(this.dateStr()) + (entry.comment != '' ? ' ' + escapeHTML(entry.comment) : '')
@@ -146,7 +154,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				} else {
 					entry = this.attributes;
 				}
-				if (entry.amount == null) return " ___";
+				if (entry.amount == null) return " #";
 				if (entry.amountPrecision < 0) return "";
 				if (entry.amountPrecision == 0) {
 					return entry.amount ? " yes" : " no";
@@ -228,7 +236,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 							}
 						}, function (data) {
 							console.log('Entry creation failed: ' + this.toString());
-						}.bind(this), 0, false, false);
+						}.bind(this), 0, false, true);
 			},
 
 			create: function(callback) {
@@ -265,6 +273,8 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 							entries: entries[0],
 							glowEntry: new Entry(entries[3]),
 							tagStats: entries[2],
+							showEntryBalloon: entries[5],
+							showBookmarkBalloon: entries[6],
 							key: Entry.getCacheKey(baseDate)
 						});
 						//if (entries[2] != null)
@@ -290,7 +300,8 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					baseDate: baseDate.toUTCString(),
 					timeZoneName: u.getTimezone(),
 					defaultToNow: 1, //TODO Is this going to be configurable
-					allFuture: allFuture ? '1' : '0'
+					allFuture: allFuture ? '1' : '0',
+					bookmarkEdit: this.state === 'bookmarkEdit' ? true : false
 				});
 
 				if (this.get("repeatType")) {
@@ -336,11 +347,12 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			},
 			delete: function(callback) {
 				var collectionCache = window.App.collectionCache;
-				if (this.isGhost()) {
+				if (this.isGhost() && !this.get('sprintEntry')) {
 					if (this.isContinuous() || this.isTodayOrLater()) {
 						this.deleteGhost(true, callback);
 					} else {
 						u.showAlert({
+							type: 'alert',
 							message: 'Delete just this one event or also future events?',
 							verify: false,
 							a: 'One',
@@ -364,7 +376,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 							displayDate: baseDate
 						});
 
-						u.queueJSON("deleting entry", u.makeGetUrl("deleteEntrySData"), u.makeGetArgs(argsToSend),
+						u.backgroundJSON("deleting entry", u.makeGetUrl("deleteEntrySData"), u.makeGetArgs(argsToSend),
 						function(entries) {
 							if (u.checkData(entries)) {
 								var collectionCache = window.App.collectionCache;
@@ -387,7 +399,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				var collectionCache = window.App.collectionCache;
 				var selectedDate = window.App.selectedDate;
 				var baseDate = window.App.selectedDate.toUTCString();
-				u.queueJSON("deleting entry", u.makeGetUrl("deleteGhostEntryData"),
+				u.backgroundJSON("deleting entry", u.makeGetUrl("deleteGhostEntryData"),
 				u.makeGetArgs(u.getCSRFPreventionObject(
 					"deleteGhostEntryDataCSRF", {
 						entryId: this.id,
