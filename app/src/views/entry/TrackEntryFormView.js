@@ -84,6 +84,7 @@ define(function(require, exports, module) {
 			if (e instanceof CustomEvent) {
 				this.removeSuffix();
 				this.setPinned = !this.setPinned;
+				this.setRepeat = this.setRemind = false;
 				this.toggleSelector(this.pinSurface);
 				this.dateGridRenderController.hide();
 				this.renderController.hide();

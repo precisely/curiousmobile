@@ -121,6 +121,7 @@ define(function(require, exports, module) {
 			} else {
 				if (entryView instanceof TrackEntryView) {
 					var deletedSurfaceIndex = this.trackEntryViews.indexOf(entryView);
+					this.nonBookmarkEntries.splice(deletedSurfaceIndex, 1);
 					this.trackEntryViews.splice(deletedSurfaceIndex, 1);
 					this.draggableList.splice(deletedSurfaceIndex, 1);
 				} else {
@@ -325,7 +326,6 @@ define(function(require, exports, module) {
 		var refreshPinEntries = (!glowEntry || glowEntry.isContinuous());
 		var refreshDraggableEntries = (!glowEntry || !glowEntry.isContinuous());
 
-
 		if (!entries && this.entries) {
 			entries = EntryCollection.getFromCache(this.entries.key);
 		}
@@ -342,12 +342,14 @@ define(function(require, exports, module) {
 
 		if (refreshPinEntries) {
 			this.pinnedViews = [];
+			this.bookmarkEntries = [];
 			var bookmarkEntriesCount = 0;
 			this.initPinnedViews();
 		}
 
 		if (refreshDraggableEntries) {
 			this.trackEntryViews = [];
+			this.nonBookmarkEntries = [];
 			this.draggableList = [];
 			var nonBookmarkEntriesCount = 0;
 			var entriesGroupedByDeviceData = {};
@@ -364,9 +366,11 @@ define(function(require, exports, module) {
 				return;
 			} else if (entry.isContinuous() && refreshPinEntries) {
 				bookmarkEntriesCount++;
+				this.bookmarkEntries.push(entry);
 				addedView = this.addPinnedEntry(entry);
 			} else if (!entry.isContinuous() && refreshDraggableEntries){
 				nonBookmarkEntriesCount++;
+				this.nonBookmarkEntries.push(entry);
 				addedView = this.addEntry(entry);
 			}
 
@@ -398,11 +402,25 @@ define(function(require, exports, module) {
 	EntryListView.prototype.handleGlowEntry = function(callback) {
 		if (this.glowView) {
 			if (this.glowView.entry.isContinuous()) {
-				this.pinnScrollView.setPosition(this.pinPosition(this.glowView.position));
+				var entryToDelete = _.filter(this.nonBookmarkEntries, function (entry) {
+					return entry.id === this.glowView.entry.id;
+				}.bind(this));
+				if (entryToDelete) {
+					var deletedSurfaceIndex = this.nonBookmarkEntries.indexOf(entryToDelete[0]);
+					this.nonBookmarkEntries.splice(deletedSurfaceIndex, 1);
+					this.trackEntryViews.splice(deletedSurfaceIndex, 1);
+					this.draggableList.splice(deletedSurfaceIndex, 1);
+				}
+				this.pinnScrollView.goToPage(0);
+				setTimeout(function() {
+					this.pinnScrollView.setPosition(this.pinPosition(this.glowView.position));
+					this.glowView.glow();
+				}.bind(this), 100);
 			} else {
 				this.scrollView.goToPage(this.glowView.position);
+				this.glowView.glow();
 			}
-			this.glowView.glow();
+
 		}
 		if (callback) {
 			callback();
