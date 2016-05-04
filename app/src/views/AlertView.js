@@ -61,7 +61,10 @@ define(function(require, exports, module) {
 
 		var messageSurface = new Surface({
 			size: [App.width - 40, true],
-			content: _.template(template, this.options, templateSettings)
+			content: _.template(template, this.options, templateSettings),
+			properties: {
+				zIndex: 350
+			}
 		});
 
 		messageSurface.on('click', function(e) {

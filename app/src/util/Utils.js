@@ -448,7 +448,11 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 
 		Utils.spinnerStart = function () {
 			if (typeof wizSpinner !== 'undefined') {
-				wizSpinner.show({bgColor: 'transparent', opacity: 0.0, label: ''});
+				var label = '';
+				if (this.isAndroid()) {
+					label = 'Loading, Please wait.';
+				}
+				wizSpinner.show({bgColor: 'transparent', opacity: 0.0, label: label});
 			}
 		};
 

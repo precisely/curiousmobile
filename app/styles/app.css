@@ -912,7 +912,24 @@ button.close {
 
 .share-groups label {
 	padding-left: 5px;
-	padding-top: 2px;
+	padding-top: 4px;
+}
+
+input[type=radio] {
+	-webkit-appearance: radio;
+}
+
+.share-groups input[type=radio] {
+	-webkit-appearance: none;
+	height: 20px;
+	width: 20px;
+	border-radius: 50%;
+	background-color: #ffffff;
+	border: 1px solid #BFBFBF;
+}
+
+.share-groups input[type=radio]:checked {
+	background-color: #000000;
 }
 
 #share-chart-close-button {
@@ -1527,7 +1544,7 @@ button.close {
 	margin-left: 35px;
 }
 
-@media screen and (max-width: 320px) {
+@media screen and (max-width: 360px) {
 	.feed-item .footer-label {
 		display: none;
 	}

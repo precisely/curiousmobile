@@ -286,6 +286,9 @@ define(function(require, exports, module) {
 				glowEntryDate = state.entryDate;
 				this.calendarView.setSelectedDate(glowEntryDate);
 				entries = EntryCollection.getFromCache(glowEntryDate);
+				glowEntry = _.filter(entries, function(entry) {
+					return entry.id === state.entryId;
+				});
 			}
 			currentDay =  this.calendarView.getSelectedDate().setHours(0, 0, 0) == new Date(glowEntryDate).setHours(0, 0, 0);
 			if (currentDay) {

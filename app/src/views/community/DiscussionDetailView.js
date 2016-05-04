@@ -23,6 +23,7 @@ define(function(require, exports, module) {
 	var OverlayWithGroupListView = require('views/community/OverlayWithGroupListView');
 	var editDiscussionTemplate = require('text!templates/edit-discussion.html');
 	var User = require('models/User');
+	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 
 	function DiscussionDetailView() {
 		BaseView.apply(this, arguments);
@@ -36,7 +37,7 @@ define(function(require, exports, module) {
 			}
 		});
 
-		this.setBody(this.backgroundSurface);
+		this.add(this.backgroundSurface);
 
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.Y,
@@ -49,6 +50,21 @@ define(function(require, exports, module) {
 				this.loadMoreItems = true;
 			}
 		}.bind(this));
+
+		this.scrollViewContainer = new ContainerSurface({
+			properties: {
+				zIndex: 1
+			}
+		});
+		
+		this.add(this.scrollViewContainer);
+		
+		this.scrollViewControllerMod = new StateModifier({
+			size: [undefined, App.height - 130],
+			transform: Transform.translate(0, 75, App.zIndex.feedItem)
+		});
+
+		this.scrollViewContainer.add(this.scrollViewControllerMod).add(this.scrollView);
 
 		_setHandlers.call(this);
 	}
@@ -96,17 +112,7 @@ define(function(require, exports, module) {
 		this.surfaceList = [];
 		this.scrollView.setPosition(0);
 		this.isCommentSelected = false;
-		this.commentBoxHeight = 0;
-		var transition = new Transitionable(Transform.translate(0, 75, App.zIndex.feedItem));
-		this.renderController = new RenderController();
-		this.renderController.inTransformFrom(transition);
-
-		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
-		this.scrollViewControllerMod = new StateModifier({
-			size: [undefined, App.height - 130],
-			transform: Transform.translate(0, 75, App.zIndex.feedItem)
-		});
-		this.add(this.scrollViewControllerMod).add(this.scrollView);
+		
 		this.scrollView.sequenceFrom(this.surfaceList);
 
 		DiscussionPost.fetch({
@@ -288,7 +294,7 @@ define(function(require, exports, module) {
 					}, 1000);
 				}.bind(this));
 			}.bind(this),
-			onB: function() {}.bind(this),
+			onB: function() {}.bind(this)
 		});
 	};
 
@@ -322,9 +328,7 @@ define(function(require, exports, module) {
 		var addCommentSurface = new Surface({
 			size: [undefined, true],
 			content: _.template(addCommentTemplate, {message: post.message || '', postId: post.id || undefined,
-				authorAvatarURL: post.authorAvatarURL, commentIndex: currentIndex}, templateSettings),
-				properties: {
-				}
+				authorAvatarURL: post.authorAvatarURL, commentIndex: currentIndex}, templateSettings)
 		});
 
 		addCommentSurface.on('deploy', function(e) {
@@ -540,7 +544,6 @@ define(function(require, exports, module) {
 		this.surfaceList.splice(this.selectionIndex, 1, this.selectedCommentSurface);
 		this.surfaceList.push(this.addCommentSurface);
 		this.isCommentSelected = false;
-		this.commentBoxHeight = 0;
 		this.initialHeight = 50;
 	};
 

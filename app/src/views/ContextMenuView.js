@@ -41,7 +41,12 @@ define(function (require, exports, module) {
 			return Transform.translate(0, 0, App.zIndex.contextMenu);
 		});
 
-		this.contextMenuContainer = new ContainerSurface({});
+		this.contextMenuContainer = new ContainerSurface({
+			properties: {
+				zIndex: 95
+			}
+		});
+		
 		var backdropSurface = new Surface({
 			size: [undefined, undefined],
 			align: [0, 1],

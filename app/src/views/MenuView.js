@@ -19,7 +19,7 @@ define(function(require, exports, module) {
 				backgroundColor: '#ffffff'
 			}
 		});
-		this.backgroundModifier = new StateModifier({transform: Transform.behind});
+		this.backgroundModifier = new StateModifier({transform: Transform.translate(-this.options.menuItemWidth, 0, -2)});
 		this.add(this.backgroundModifier).add(backgroundSurface);
 		_createMenuItems.call(this);
 
@@ -80,7 +80,7 @@ define(function(require, exports, module) {
 			var menuItem = new MenuItem(this.options.menuData[i]);
 
 			var menuItemModifier = new StateModifier({
-				transform: Transform.translate(0, yOffset, 0)
+				transform: Transform.translate(-this.options.menuItemWidth, yOffset, 0)
 			});
 
 			menuItem.pipe(this._eventOutput);

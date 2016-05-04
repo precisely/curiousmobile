@@ -11,6 +11,8 @@ define(function(require, exports, module) {
 	var MenuView = require('views/MenuView');
 	var	MenuData = require('data/MenuData');
 	var	Discussion = require('models/Discussion');
+	var u = require('util/Utils');
+
 	function AppView() {
 		View.apply(this, arguments);
 		this.menuToggle = false;
@@ -55,6 +57,21 @@ define(function(require, exports, module) {
 	}
 
 	function _setListeners() {
+		if (u.isAndroid()) {
+			App.coreEventHandler.on('keyboard-up', function(e) {
+				var activeElement = $(document.activeElement);
+				var heightDifference = App.height - activeElement.offset().top;
+				if(heightDifference < e.keyboardHeight) {
+					var yTransform = (e.keyboardHeight - heightDifference) + (activeElement.height() + 2);
+					this.pageModifier.setTransform(Transform.translate(0, -yTransform, 0));
+				}
+			}.bind(this));
+
+			App.coreEventHandler.on('keyboard-down', function(e) {
+				this.pageModifier.setTransform(Transform.translate(0, 0, 0));
+			}.bind(this));
+		}
+
 		this.pageView.on('page-change-complete', function(contents) {
 			if (this.showingMenu) {
 				this.toggleMenu();
@@ -97,7 +114,7 @@ define(function(require, exports, module) {
 
 	AppView.prototype.getSelectedDate = function () {
 		this.pageView.trackView.getSelectedDate();
-	}
+	};
 
 	module.exports = AppView;
 });

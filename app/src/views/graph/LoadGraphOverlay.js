@@ -10,6 +10,7 @@ define(function(require, exports, module) {
 	var RenderController = require('famous/views/RenderController');
 	var Graph = require('models/Graph');
 	var NoMoreItemsCardView = require('views/community/card/NoMoreItemsCardView');
+	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 
 	var u = require('util/Utils');
 
@@ -19,7 +20,8 @@ define(function(require, exports, module) {
 		var backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
-				backgroundColor: '#fff'
+				backgroundColor: '#fff',
+				zIndex: 11
 			}
 		});
 		this.add(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.contextMenu)})).add(backgroundSurface);
@@ -36,12 +38,18 @@ define(function(require, exports, module) {
 	};
 
 	LoadGraphOverlay.prototype.initScrollView = function() {
+		this.scrollViewContainer = new ContainerSurface({
+			properties: {
+				zIndex: 12
+			}
+		});
 		this.scrollView = new Scrollview({
 			direction: 1
 		});
 		this.contentsSurfaceList = [];
 		this.scrollView.sequenceFrom(this.contentsSurfaceList);
-		this.renderController.show(this.scrollView);
+		this.scrollViewContainer.add(this.scrollView);
+		this.renderController.show(this.scrollViewContainer);
 	};
 
 	LoadGraphOverlay.prototype.listContents = function() {
