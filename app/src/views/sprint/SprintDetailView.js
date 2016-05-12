@@ -72,6 +72,7 @@ define(function (require, exports, module) {
 
 	SprintDetailView.prototype.onShow = function (state) {
 		BaseView.prototype.onShow.call(this);
+		this.saveState();
 	};
 
 	SprintDetailView.prototype.preShow = function (state) {
@@ -192,6 +193,15 @@ define(function (require, exports, module) {
 		}.bind(this), function () {
 			App.pageView.goBack();
 		}.bind(this));
+	};
+
+	SprintDetailView.prototype.getCurrentState = function() {
+		return {
+			hash: this.hash,
+			name: this.name,
+			virtualGroupName: this.virtualGroupName,
+			lastPage: App.pageView.history.slice(-1)[0]
+		}
 	};
 
 	App.pages['SprintDetailView'] = SprintDetailView;

@@ -34,7 +34,9 @@ var App = function() {
 		enterTag: 'Enter tag to track',
 		addDiscussionTrackathon: 'Post new discussion topic',
 		trackathonBookmarks: "The trackathon’s tags have been added to your bookmarks! " +
-				"Go to the Trackathon/STARTED tab to see your started trackathons and discuss your progress with other users"
+				"Go to the Trackathon/STARTED tab to see your started trackathons and discuss your progress with" +
+				" other users",
+		firstChartPlot: 'Tap tag to change graphing style'
 	};
 	
 	//Global popover settings applied to every popup in the app.

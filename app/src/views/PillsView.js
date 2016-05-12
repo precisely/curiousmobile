@@ -31,7 +31,7 @@ define(function(require, exports, module) {
 			direction: Utility.Direction.X,
 		});
 
-		var pillsScrollViewContainer = new ContainerSurface({
+		this.pillsScrollViewContainer = new ContainerSurface({
 			size: [undefined, 50],
 			properties: {
 				backgroundColor: '#efefef',
@@ -50,8 +50,8 @@ define(function(require, exports, module) {
 			this.setScrollView(pillsSurface);
 		}.bind(this));
 
-		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
-		this.add(pillsScrollViewContainer);
+		this.pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
+		this.add(this.pillsScrollViewContainer);
 	}
 
  	PillsView.prototype.setScrollView = function (pillSurface) {

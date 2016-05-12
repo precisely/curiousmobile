@@ -347,24 +347,22 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			},
 			delete: function(callback) {
 				var collectionCache = window.App.collectionCache;
-				if (this.isGhost() && !this.get('sprintEntry')) {
-					if (this.isContinuous() || this.isTodayOrLater()) {
-						this.deleteGhost(true, callback);
-					} else {
-						u.showAlert({
-							type: 'alert',
-							message: 'Delete just this one event or also future events?',
-							verify: false,
-							a: 'One',
-							b: 'Future',
-							onA: function() {
-								this.deleteGhost(false, callback);
-							}.bind(this),
-							onB: function() {
-								this.deleteGhost(true, callback);
-							}.bind(this),
-						});
-					}
+				if (this.isRepeat() && !this.isTodayOrLater() && !this.get('sprintEntry')) {
+					u.showAlert({
+						type: 'alert',
+						message: 'Delete just this one event or also future events?',
+						verify: false,
+						a: 'One',
+						b: 'Future',
+						onA: function () {
+							this.deleteGhost(false, callback);
+						}.bind(this),
+						onB: function () {
+							this.deleteGhost(true, callback);
+						}.bind(this),
+					});
+				} else if (this.isGhost() && !this.get('sprintEntry') && (this.isContinuous() || this.isTodayOrLater())) {
+					this.deleteGhost(true, callback);
 				} else {
 					var baseDate = window.App.selectedDate.toUTCString();
 					var argsToSend = u.getCSRFPreventionObject(

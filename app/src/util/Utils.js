@@ -292,8 +292,9 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 						u.showAlert("Server down... giving up");
 						return;
 					}
-					if (!(delay > 0))
+					if (!(delay > 0)) {
 						u.showAlert("Server not responding... retrying " + description);
+					}
 					delay = (delay > 0 ? delay * 2 : 5000);
 					window.setTimeout(function() {
 						u.queueJSON(description, url, args, successCallback, failCallback, delay, background);
@@ -303,37 +304,44 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			if ((!background) && (u.numJSONCalls > 0)) { // json call in progress
 				var jsonCall = function() {
 					console.log('Requesting url' + url);
-					u.spinnerStart();
-					$.ajax({
-						type: requestMethod,
-						dataType: "json",
-						contentType: (requestMethod == 'PUT') ? 'application/json; charset=UTF-8' : 'application/x-www-form-urlencoded; charset=UTF-8',
-						url: url,
-						data: args,
-						timeout: 20000 + (delay > 0 ? delay : 0)
-					})
-					.done(wrapSuccessCallback)
-					.fail(wrapFailCallback);
+					if (Utils.isOnline()) {
+						$.ajax({
+							type: requestMethod,
+							dataType: "json",
+							contentType: (requestMethod == 'PUT') ? 'application/json; charset=UTF-8' : 'application/x-www-form-urlencoded; charset=UTF-8',
+							url: url,
+							data: args,
+							timeout: 20000 + (delay > 0 ? delay : 0)
+						})
+						.done(wrapSuccessCallback)
+						.fail(wrapFailCallback);
+					} else {
+						wrapFailCallback({}, 'timeout');
+					}
 				};
 				++u.numJSONCalls;
 				u.pendingJSONCalls.push(jsonCall);
 			} else { // first call
 				if (!background) {
 					++u.numJSONCalls;
-					u.spinnerStart();
 				}
 
-				$.ajax({
-					type: requestMethod,
-					dataType: "json",
-					contentType: contentType,
-					processData: processData,
-					url: url,
-					data: args,
-					timeout: 20000 + (delay > 0 ? delay : 0)
-				})
-				.done(wrapSuccessCallback)
-				.fail(wrapFailCallback);
+				if (Utils.isOnline()) {
+					u.spinnerStart();
+					$.ajax({
+						type: requestMethod,
+						dataType: "json",
+						contentType: contentType,
+						processData: processData,
+						url: url,
+						data: args,
+						timeout: 20000 + (delay > 0 ? delay : 0)
+					})
+					.done(wrapSuccessCallback)
+					.fail(wrapFailCallback);
+				} else {
+					wrapFailCallback({}, 'timeout');
+				}
 			}
 		}
 

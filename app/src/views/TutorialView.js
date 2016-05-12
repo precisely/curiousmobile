@@ -396,7 +396,9 @@ define(function(require, exports, module) {
 		this.currentList = [currentSurface, this.spareSurface];
 		this.scrollView.sequenceFrom(this.currentList);
 		this.scrollView.setPosition(0);
-		currentSurface.pipe(this.scrollView);
+		if (currentSurface) {
+			currentSurface.pipe(this.scrollView);
+		}
 		this.spareSurface.pipe(this.scrollView);
 		setTimeout(function() {
 			if (this.currentStepIndex == 0) {

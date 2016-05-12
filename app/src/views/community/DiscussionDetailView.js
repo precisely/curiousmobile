@@ -93,6 +93,7 @@ define(function(require, exports, module) {
 
 	DiscussionDetailView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
+		this.saveState();
 	};
 
 	DiscussionDetailView.prototype.preShow = function(state) {
@@ -217,7 +218,21 @@ define(function(require, exports, module) {
 					}.bind(this));
 				} else if (_.contains(e.srcElement.classList, 'add-description')) {
 					this.overlayWithGroupListView = new OverlayWithGroupListView(editDiscussionTemplate, {name: u.parseDivToNewLine(this.discussionDetails.discussionTitle), description: u.parseDivToNewLine(this.discussionDetails.firstPost.message),
-							groupName: this.discussionDetails.groupName || (this.discussionDetails.isPublic ? 'PUBLIC' : 'PRIVATE')});
+							groupName: this.discussionDetails.groupName || (this.discussionDetails.isPublic ? 'PUBLIC' : 'PRIVATE')}, function(e) {
+						if (e instanceof CustomEvent) {
+							var classList = e.srcElement.classList;
+							if (_.contains(classList, 'submit-post')) {
+								var discussionTitle = document.getElementById('name').value;
+								var discussionDescription = document.getElementById('description').value;
+								var groupName = this.groupName;
+								if (!discussionTitle) {
+									u.showAlert('Discussion topic can not be blank');
+									return;
+								}
+								App.pageView.getCurrentView().updateDiscussion({name: discussionTitle, message: discussionDescription, group: groupName});
+							}
+						}
+					});
 					this.showOverlayContent(this.overlayWithGroupListView);
 					this.setHeaderLabel('EDIT DISCUSSION');
 				}
@@ -397,17 +412,18 @@ define(function(require, exports, module) {
 	};
 
 	DiscussionDetailView.prototype.getCurrentState = function() {
-		var inputElement = document.getElementById("message");
 		var state = {
-			viewProperties: {
-				discussionHash: this.discussionHash,
-			},
-			form: [{
+			discussionHash: this.discussionHash,
+			lastPage: App.pageView.history.slice(-1)[0]
+		};
+		var inputElement = document.getElementById("message");
+		if (inputElement) {
+			state.form = [{
 				id: 'message',
 				value: inputElement.value,
-				elementType: ElementType.domElement,
+				elementType: ElementType.domElement
 			}]
-		};
+		}
 		return state;
 	};
 

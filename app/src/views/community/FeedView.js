@@ -54,6 +54,7 @@ define(function(require, exports, module) {
 
 	function init() {
 		this.deck = [];
+		this.pillNames = ['ALL', 'NOTIFICATIONS', 'DISCUSSIONS', 'PEOPLE', 'AUTHORED'];
 		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
@@ -133,14 +134,10 @@ define(function(require, exports, module) {
 		});
 		this.add(this.pillsScrollViewContainerModifier).add(pillsScrollViewContainer);
 
-		this.pillsScrollViewModifier = new StateModifier({
-			origin: [0.5, 0],
-			align: [0.5, 0]
-		});
 		this.navPills = [];
 		this.pillsScrollView.sequenceFrom(this.navPills);
 		this.renderPills();
-		pillsScrollViewContainer.add(this.pillsScrollViewModifier).add(this.pillsScrollView);
+		pillsScrollViewContainer.add(this.pillsScrollView);
 	};
 
 	FeedView.prototype.createPillsSurface = function(pillFor, active) {
@@ -163,12 +160,7 @@ define(function(require, exports, module) {
 				this.deck = [];
 				this.initScrollView();
 				this.fetchFeedItems(pillFor);
-				var previousActivePill = document.getElementsByClassName('active-pill');
-				if (previousActivePill[0]) {
-					previousActivePill[0].classList.remove('active-pill');
-				}
-				var pillElement = document.getElementById(pillFor + '-pill');
-				pillElement.classList.add('active-pill');
+				this.setCurrentPill(pillFor);
 			}
 		}.bind(this));
 
@@ -184,6 +176,7 @@ define(function(require, exports, module) {
 		var pillElement = document.getElementById(lable + '-pill');
 		pillElement.classList.add('active-pill');
 		this.currentPill = lable;
+		this.saveState();
 	};
 
 	FeedView.prototype.getScrollPosition = function() {
@@ -192,19 +185,24 @@ define(function(require, exports, module) {
 
 	FeedView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
-	}
+		if (state && state.currentPill) {
+			this.setCurrentPill(state.currentPill);
+		}
+	};
 
 	FeedView.prototype.preShow = function(state) {
 		this.initScrollView();
-		this.fetchFeedItems(this.currentPill || 'ALL');
+		var lable = this.currentPill || 'ALL';
+		if (state && state.currentPill) {
+			lable = state.currentPill;
+		}
+		this.fetchFeedItems(lable);
 		return true;
 	};
 
 	FeedView.prototype.getCurrentState = function() {
 		var state = {
-			viewProperties: {
-				currentPill: this.currentPill,
-			}
+			currentPill: this.currentPill
 		};
 		return state;
 	};
@@ -301,8 +299,6 @@ define(function(require, exports, module) {
 				peopleCardView.setScrollView(this.scrollView);
 			}
 		}.bind(this));
-
-		this.saveState();
 	};
 
 	FeedView.prototype.refresh = function() {
@@ -313,11 +309,10 @@ define(function(require, exports, module) {
 	FeedView.prototype.renderPills = function() {
 		this.navPills.splice(0, this.navPills.length);
 		// Adding navigation pills below header
-		this.navPills.push(this.createPillsSurface('ALL', true));
-		this.navPills.push(this.createPillsSurface('NOTIFICATIONS'));
-		this.navPills.push(this.createPillsSurface('DISCUSSIONS'));
-		this.navPills.push(this.createPillsSurface('PEOPLE'));
-		this.navPills.push(this.createPillsSurface('AUTHORED'));
+		_.each(this.pillNames, function(pillName) {
+			var active = (pillName === 'ALL');
+			this.navPills.push(this.createPillsSurface(pillName, active));
+		}.bind(this));
 	};
 
 	FeedView.prototype.initScrollView = function() {

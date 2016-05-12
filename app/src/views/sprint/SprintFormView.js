@@ -87,6 +87,8 @@ define(function(require, exports, module) {
 			sprintDetails.entries = this.entryMap;
 			sprintDetails.isFormView = true;
 			sprintDetails.isCreateForm = (this.parentPage == 'SprintDetailView') ? false : true;
+			sprintDetails.isOpen = sprintDetails.sprint.visibility === 'PUBLIC';
+			sprintDetails.isClosed = (sprintDetails.sprint.visibility === 'PRIVATE') || (sprintDetails.sprint.visibility === 'NEW');
 			this.sprintSurface = new Surface({
 				size: [undefined, true],
 				content: _.template(SprintEditTemplate, sprintDetails, templateSettings),
@@ -107,6 +109,7 @@ define(function(require, exports, module) {
 					if (_.contains(classList, 'submit')) {
 						var name = document.getElementById('sprint-title').value;
 						var description = document.getElementById('sprint-description').value;
+						var visibility = document.querySelector('input[type=radio]:checked').value;
 						if (name == '') {
 							u.showAlert('Sprint title can not be blank');
 							return false;
@@ -118,11 +121,12 @@ define(function(require, exports, module) {
 						Sprint.update({
 							name: name,
 							description: description,
-							id: this.hash
+							id: this.hash,
+							visibility: visibility
 						}, function(state) {
 							App.pageView.changePage('SprintDetailView', state);
 						});
-					} else if (e.srcElement.tagName == 'INPUT' || e.srcElement.tagName == 'TEXTAREA') {
+					} else if ((e.srcElement.tagName == 'INPUT' && e.srcElement.type !== 'radio') || e.srcElement.tagName == 'TEXTAREA') {
 						e.srcElement.focus();
 						if (e.srcElement.id === 'sprint-description') {
 							this.resizeDescreption();

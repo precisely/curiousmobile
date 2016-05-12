@@ -49,6 +49,7 @@ define(function(require, exports, module) {
 
 	PeopleDetailView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
+		this.saveState();
 	};
 
 	PeopleDetailView.prototype.preShow = function(state) {
@@ -68,7 +69,7 @@ define(function(require, exports, module) {
 
 	PeopleDetailView.prototype.getCurrentState = function() {
 		return {
-			viewProperties: {hash: this.hash}
+			hash: this.hash
 		};
 	};
 

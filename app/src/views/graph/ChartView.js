@@ -66,7 +66,8 @@ define(function(require, exports, module) {
 			size: [true, true],
 			content: '<div id="share-button-popover"><img height="30" src="content/images/share-red.png" id="share-button"></div>',
 			properties: {
-				padding: '10px'
+				padding: '10px',
+				zIndex: 11
 			}
 		});
 
@@ -114,7 +115,7 @@ define(function(require, exports, module) {
 	};
 
 	ChartView.prototype.showShareButtonPopover = function() {
-		App.showPopover('#share-button', {key: 'shareChart', container: '#share-button-popover'});
+		App.showPopover('#share-button', {key: 'shareChart', container: '#share-button-popover', autoHide: true});
 	};
 
 	ChartView.prototype.hideShareButtonPopover = function() {
@@ -124,6 +125,7 @@ define(function(require, exports, module) {
 	ChartView.prototype.preChangePage = function() {
 		BaseView.prototype.preChangePage.call(this);
 		this.hideShareButtonPopover();
+		this.killOverlayContent();
 		if (this.graphView.dateGridRenderController) {
 			this.graphView.dateGridRenderController.hide();
 		}
@@ -132,11 +134,11 @@ define(function(require, exports, module) {
 	ChartView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 		if ((!this.tagsToPlot || !this.tagsToPlot.length) && (!state || !state.tagsByDescription)) {
-			var viewProperties = {};
+			var forwardState = {};
 			if (state && state.shareDiscussion) {
-				viewProperties = {name: 'shareDiscussion', value: true, groupName: this.groupToShareWith};
+				forwardState = {shareDiscussion: true, groupName: this.groupToShareWith};
 			}
-			App.pageView.changePage('CreateChartView', viewProperties);
+			App.pageView.changePage('CreateChartView', forwardState);
 		} else if (state && state.triggerLoadGraph) {
 			this.showLoadGraphOverlay();
 		} else if (this.tagsToPlot && this.tagsToPlot.length) {

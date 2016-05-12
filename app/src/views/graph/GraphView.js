@@ -20,6 +20,7 @@ define(function(require, exports, module) {
 	var datejs = require('util/date');
 	var PlotMobile = require('util/plot.mobile');
 	var plotProperties = require('util/plot.properties');
+	var store = require('store');
 
 	function GraphView(tagsToPlot, plotAreaId) {
 		StateView.apply(this, arguments);
@@ -54,6 +55,12 @@ define(function(require, exports, module) {
 
 		this.pillsSurfaceList = [];
 		this.pillsView = new PillsView(this.pillsSurfaceList);
+		this.pillsView.pillsScrollViewContainer.attributes = {
+			id: 'graph-pills-container'
+		};
+		this.pillsView.pillsScrollViewContainer.on('click', function() {
+			this.hideGraphStylePopover();
+		}.bind(this));
 		var pillsViewMod = new StateModifier({
 			transform: Transform.translate(0, -1, 5)
 		});
@@ -100,11 +107,28 @@ define(function(require, exports, module) {
 				this.addDateFooter();
 				this.plotProperties.setStartDate(this.startDate);
 				this.plotProperties.setEndDate(this.endDate);
+				if (!store.get('firstChartPlotted')) {
+					this.showGraphStylePopover();
+					User.markFirstChartPlotted();
+				}
 			}.bind(this));
 		};
 		if (this.tags) {
 			plotChart.call(this);
 		}
+	};
+
+	GraphView.prototype.showGraphStylePopover = function() {
+		App.showPopover('#graph-pills-container', {
+			key: 'firstChartPlot',
+			container: '#popover-surface',
+			placement: 'bottom',
+			autoHide: true
+		});
+	};
+
+	GraphView.prototype.hideGraphStylePopover = function() {
+		$('#graph-pills-container').popover('destroy');
 	};
 
 	GraphView.prototype.addDateFooter = function() {
@@ -151,6 +175,7 @@ define(function(require, exports, module) {
 		this.dateGrid = new DateGridView(new Date(), true);
 		
 		this.dateGrid.on('select-date', function(date) {
+			this.hideGraphStylePopover();
 			console.log('CalenderView: Date selected');
 			this.setSelectedDate(date, this.dateType);
 			this.closeDateGrid();
@@ -191,6 +216,7 @@ define(function(require, exports, module) {
 		});
 
 		this.dateLabelSurface.on('click', function(e) {
+			this.hideGraphStylePopover();
 			if (e instanceof CustomEvent) {
 				var classList = e.srcElement.classList;
 				if (_.contains(classList, 'start-date')) {
@@ -274,6 +300,7 @@ define(function(require, exports, module) {
 			});
 			pillSurface.lineId = lineId;
 			pillSurface.on('click', function(e) {
+				this.hideGraphStylePopover();
 				if (e instanceof CustomEvent) {
 					var classList = e.srcElement.classList;
 					if (_.contains(classList, 'fa')) {

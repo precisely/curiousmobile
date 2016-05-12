@@ -156,8 +156,8 @@ define(function(require, exports, module) {
 	};
 
 	SprintListView.prototype.preShow = function(state) {
-		if (this.deck.length <= 0 || (state && state.new)) {
-			this.currentPill = this.currentPill || 'ALL';
+		if (state) {
+			this.currentPill = state.currentPill || 'ALL';
 		}
 		this.initScrollView();
 		this.fetchSprints();
@@ -165,7 +165,9 @@ define(function(require, exports, module) {
 	};
 
 	SprintListView.prototype.getCurrentState = function() {
-		var state = {};
+		var state = {
+			currentPill: this.currentPill
+		};
 		return state;
 	};
 

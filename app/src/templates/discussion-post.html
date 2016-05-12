@@ -25,7 +25,8 @@
 					<a href="#">
 						<span> {{= discussionTitle ? discussionTitle : '(No Title)' }}</span>
 					</a>
-					<p>{{= (firstPost && firstPost.message) ? linkify(firstPost.message) : '<a class="add-description">Click to add description</a>' }}</p>
+					<p>{{= (firstPost && firstPost.message) ? linkify(firstPost.message) :
+							(isAdmin ? '<a class="add-description">Click to add description</a>' : '') }}</p>
 				</div>
 				<hr>
 				<div class="text-left disable-button-option">

@@ -55,12 +55,12 @@ define(function(require, exports, module) {
 					this.renderController.show(this.repeatModifierSurface, null, function() {
 						this.setSelectedDate(this.selectedDate);
 					}.bind(this));
-					this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.formView));
+					this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.formView + 5));
 					this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 220, App.zIndex.formView + 5));
 				} else {
 					this.dateGridRenderController.hide();
 					this.renderController.hide();
-					this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] - 220, App.zIndex.formView));
+					this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] - 220, App.zIndex.formView + 5));
 					this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] - 220, App.zIndex.formView + 5));
 				}
 				this.toggleSelector(this.repeatSurface);
@@ -159,7 +159,6 @@ define(function(require, exports, module) {
 				u.showAlert('Could not delete entry');
 			}
 			this.trackView.initContextMenuOptions();
-			this.trackView.currentListView.refreshEntries(resp);
 		}.bind(this));
 	};
 
@@ -341,6 +340,7 @@ define(function(require, exports, module) {
 
 
 	TrackEntryFormView.prototype.submit = function(e, directlyCreateEntry) {
+		this.trackView.hideBookmarkShimSurface();
 		this.autoCompleteView.hide();
 		$('#remind-surface').popover('destroy');
 		if (typeof cordova !== 'undefined') {
@@ -406,6 +406,7 @@ define(function(require, exports, module) {
 			console.log("TrackEntryFormView: No changes made");
 			this.blur();
 			this.trackView.killEntryForm(null);
+			this.trackView._eventOutput.emit('done-edit-bookmarks');
 			return;
 		} else {
 			entry.setText(newText);

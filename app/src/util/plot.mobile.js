@@ -89,7 +89,7 @@ define(function(require, exports, module) {
 	PlotMobile.prototype.saveSnapshot = function(groupToShareWith) {
 		var group = groupToShareWith.name;
 		var groupFullName = groupToShareWith.fullName;
-		this.sharedChartContext = (groupFullName == 'Public') ? 'publically' : (groupFullName == 'Private') ? 'privately' : 'with ' + groupFullName;
+		this.sharedChartContext = (groupFullName == 'Public') ? 'publicly' : (groupFullName == 'Private') ? 'privately' : 'with ' + groupFullName;
 		var plotDataStr = this.storeSnapshot();
 		if (plotDataStr == null) {
 			this.showAlert("No plotted data to save");

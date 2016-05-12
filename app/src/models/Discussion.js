@@ -28,7 +28,13 @@ define(function(require, exports, module) {
 					group: groupName || ""
 				}),
 				function(data) {
-					callback(data);
+					if (u.checkData(data)) {
+						if (data.success) {
+							callback(data);
+						} else {
+							u.showAlert(data.message);
+						}
+					}
 				});
 	};
 
@@ -56,7 +62,7 @@ define(function(require, exports, module) {
 						if (data.success) {
 							App.setNotificationCount(data.totalNotificationCount);
 							var currentView = App.pageView.getCurrentView();
-							if (currentView.resetNotificationCount) {
+							if (currentView && currentView.resetNotificationCount) {
 								currentView.resetNotificationCount();
 							} else {
 								for (var i in App.pageView.pageMap) {

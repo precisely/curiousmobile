@@ -331,6 +331,24 @@ define(function(require, exports, module) {
 			});
 	};
 
+	User.markFirstChartPlotted = function(successCallback) {
+		u.queueJSON('Mark first chat plotted', App.serverUrl + '/api/user/action/markFirstChartPlotted?' +
+			u.getCSRFPreventionURI('markFirstChartPlottedCSRF') + '&callback=?', null, function(data) {
+			if (checkData(data)) {
+				if (data.success) {
+					store.set('firstChartPlotted', true);
+					if(successCallback) {
+						successCallback();
+					}
+				} else {
+					u.showAlert(data.message);
+				}
+			}
+		}, function(xhr) {
+			console.log(xhr);
+		});
+	};
+
 	User.getSurveyTags = function(callback) {
 		u.queueJSON('Getting survey options', App.serverUrl + '/public/getSurveyOptions?callback=?', null,
 				function(surveyOptions) {
