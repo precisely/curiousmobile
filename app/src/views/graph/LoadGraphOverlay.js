@@ -81,6 +81,7 @@ define(function(require, exports, module) {
 								onA: function() {
 									Graph.delete(graphItem.id, function() {
 										this.contentsSurfaceList.splice(this.contentsSurfaceList.indexOf(graphItemSurface), 1);
+										this.scrollView.sequenceFrom(this.contentsSurfaceList);
 									}.bind(this));
 								}.bind(this),
 								onB: function() {

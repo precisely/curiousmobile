@@ -72,6 +72,10 @@ define(function(require, exports, module) {
 			hash: this.hash
 		};
 	};
+	
+	PeopleDetailView.prototype.goBack = function() {
+		BaseView.prototype.goBack.call(this, {lable: 'PEOPLE'});
+	};
 
 	PeopleDetailView.prototype.showProfile = function() {
 		User.show(this.hash, function(peopleDetails) {

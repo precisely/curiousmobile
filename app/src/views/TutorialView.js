@@ -138,14 +138,14 @@ define(function(require, exports, module) {
 						});
 						User.saveTrackingTags(tagOptions, function(data) {
 							App.pageView.changePage('TrackView', {
-								new: true
+								onLoad: true
 							});
 						}.bind(this));
 					}
 				} else {
 					if (_.contains(classList, 'skip')) {
 						App.pageView.changePage('TrackView', {
-							new: true
+							onLoad: true
 						});
 					} else if (_.contains(classList, 'next') || _.contains(event.srcElement.parentElement.classList, 'next')) {
 						this.navigate(1);
@@ -199,7 +199,7 @@ define(function(require, exports, module) {
 						event.srcElement.parentElement.firstElementChild.checked = !event.srcElement.parentElement.firstElementChild.checked;
 					} else if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
 						App.pageView.changePage('TrackView', {
-							new: true
+							onLoad: true
 						});
 					}
 				}
@@ -214,7 +214,7 @@ define(function(require, exports, module) {
 				var entryId = document.getElementById('sleep-hour').dataset.id;
 				if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
 					App.pageView.changePage('TrackView', {
-						new: true
+						onLoad: true
 					});
 				} else if (_.contains(classList, 'form-control')) {
 					removeCursor('sleep-cursor');
@@ -228,7 +228,7 @@ define(function(require, exports, module) {
 				classList = event.srcElement.classList;
 				if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
 					App.pageView.changePage('TrackView', {
-						new: true
+						onLoad: true
 					});
 				} else if (_.contains(classList, 'form-control')) {
 					removeCursor('mood-cursor');
@@ -257,7 +257,7 @@ define(function(require, exports, module) {
 			classList = event.srcElement.classList;
 			if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
 				App.pageView.changePage('TrackView', {
-					new: true
+					onLoad: true
 				});
 			}
 		}

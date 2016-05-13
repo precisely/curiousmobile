@@ -327,7 +327,9 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				}
 
 				if (Utils.isOnline()) {
-					u.spinnerStart();
+					if (!background) {
+						u.spinnerStart();
+					}
 					$.ajax({
 						type: requestMethod,
 						dataType: "json",

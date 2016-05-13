@@ -32,9 +32,6 @@ define(function(require, exports, module) {
 		FeedView.apply(this, arguments);
 		this.max = 10;
 		initSprintView.call(this);
-		if (!store.get('hideSprintExplanation')) {
-			this.showExplanationCard();
-		}
 	}
 
 	SprintListView.prototype = Object.create(FeedView.prototype);
@@ -127,9 +124,9 @@ define(function(require, exports, module) {
 		this.sprintRenderController.show(sprintExplanationCard, function() {
 			this.explanationVisible = true;
 			var explanationCardHeight = sprintExplanationCard.getSize()[1];
-			this.pillsScrollViewContainerModifier.setTransform(Transform.translate(0, 52 + explanationCardHeight, App.zIndex.header));
+			this.pillsScrollViewContainerModifier.setTransform(Transform.translate(0, 64 + explanationCardHeight, App.zIndex.header));
 			this.scrollViewMod.setTransform(Transform.translate(0, 110 + explanationCardHeight, App.zIndex.feedItem));
-			this.explanationBoxModifier.setTransform(Transform.translate(App.width - 50, 52 + explanationCardHeight, App.zIndex.header + 5));
+			this.explanationBoxModifier.setTransform(Transform.translate(App.width - 50, 64 + explanationCardHeight, App.zIndex.header + 5));
 		}.bind(this));
 
 		this.showExplanationRenderController.hide();
@@ -153,11 +150,20 @@ define(function(require, exports, module) {
 		User.markTrackathonVisited(function() {
 			App.pageView.getPage('TrackView').hideSprintMenuPopover();
 		});
+		if (state && state.currentPill) {
+			this.setCurrentPill(state.currentPill);
+		}
+		if (!store.get('hideSprintExplanation')) {
+			this.showExplanationCard();
+		}
 	};
 
 	SprintListView.prototype.preShow = function(state) {
 		if (state) {
-			this.currentPill = state.currentPill || 'ALL';
+			this.currentPill = state.currentPill || this.currentPill;
+		}
+		if (!this.currentPill) {
+			this.currentPill = 'ALL';
 		}
 		this.initScrollView();
 		this.fetchSprints();

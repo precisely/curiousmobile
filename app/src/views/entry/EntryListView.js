@@ -55,10 +55,10 @@ define(function(require, exports, module) {
 		backgroundSurface.pipe(this._eventOutput);
 		this.pinControllerMod = new StateModifier({
 			size: [undefined, 100],
-			transform: Transform.translate(0, 0, 0)
+			transform: Transform.translate(0, 0, 10)
 		});
 		this.renderControllerMod = new StateModifier({
-			transform: Transform.translate(0, 0, 0)
+			transform: Transform.translate(0, 0, 10)
 		});
 		this.add(this.pinControllerMod).add(this.pinnedEntriesController);
 		this.add(this.renderControllerMod).add(this.renderController);

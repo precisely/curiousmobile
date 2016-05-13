@@ -168,7 +168,7 @@ define(function(require, exports, module) {
 		return pillSurface;
 	};
 
-	FeedView.prototype.setCurrentPill = function(lable) {
+	FeedView.prototype.setCurrentPill = function(lable, position) {
 		var previousActivePill = document.getElementsByClassName('active-pill');
 		if (previousActivePill[0]) {
 			previousActivePill[0].classList.remove('active-pill');
@@ -176,6 +176,9 @@ define(function(require, exports, module) {
 		var pillElement = document.getElementById(lable + '-pill');
 		pillElement.classList.add('active-pill');
 		this.currentPill = lable;
+		if (position) {
+			this.pillsScrollView.setPosition(position);
+		}
 		this.saveState();
 	};
 
@@ -186,7 +189,7 @@ define(function(require, exports, module) {
 	FeedView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 		if (state && state.currentPill) {
-			this.setCurrentPill(state.currentPill);
+			this.setCurrentPill(state.currentPill, state.position);
 		}
 	};
 
@@ -202,7 +205,8 @@ define(function(require, exports, module) {
 
 	FeedView.prototype.getCurrentState = function() {
 		var state = {
-			currentPill: this.currentPill
+			currentPill: this.currentPill,
+			position: this.pillsScrollView.getPosition()
 		};
 		return state;
 	};

@@ -137,6 +137,7 @@ define(function(require, exports, module) {
 			classes: ['entry-list-container'],
 			properties: {
 				overflow: 'hidden',
+				zIndex: 2
 			}
 		});
 
@@ -430,14 +431,14 @@ define(function(require, exports, module) {
 	TrackView.prototype.getCurrentState = function() {
 		if (this.currentOverlay == 'EntryFormView') {
 			return {
-				new: true,
+				onLoad: true,
 				postLoadAction: {
 					name: 'showEntryFormView',
 					args: this.entryFormView.getCurrentState()
 				}
 			};
 		} else {
-			return {new: true};
+			return {onLoad: true};
 		}
 	};
 

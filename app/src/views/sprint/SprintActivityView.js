@@ -194,7 +194,7 @@ define(function(require, exports, module) {
 	};
 
 	SprintActivityView.prototype.preShow = function(state) {
-		if (!state || (!state.hash && (state.new && !this.hash))) {
+		if (!state || (!state.hash && (state.onLoad && !this.hash))) {
 			return false;
 		} else if (state.hash) {
 			this.hash = state.hash;

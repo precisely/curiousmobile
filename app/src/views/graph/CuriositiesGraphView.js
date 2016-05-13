@@ -44,6 +44,9 @@ define(function(require, exports, module) {
 			App.tagListWidget = initTagListWidget(function () {
 				this.tagsToPlot.push(App.tagListWidget.list.searchItemByDescription(state.tagsByDescription[0]));
 				this.tagsToPlot.push(App.tagListWidget.list.searchItemByDescription(state.tagsByDescription[1]));
+				if (this.tagsToPlot && this.tagsToPlot.length) {
+					this.graphView.drawGraph(this.tagsToPlot);
+				}
 			}.bind(this));
 		}
 		return true;
@@ -53,8 +56,12 @@ define(function(require, exports, module) {
 		BaseView.prototype.onShow.call(this);
 		if (!state || !state.tagsByDescription) {
 			App.pageView.changePage('CuriositiesListView');
-		} else if (this.tagsToPlot && this.tagsToPlot.length) {
-			this.graphView.drawGraph(this.tagsToPlot);
+		}
+	};
+
+	CuriositiesGraphView.prototype.preChangePage = function() {
+		if (this.graphView) {
+			this.graphView.hideGraphStylePopover();
 		}
 	};
 

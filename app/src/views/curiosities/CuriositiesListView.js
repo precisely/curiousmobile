@@ -24,9 +24,6 @@ define(function(require, exports, module) {
 	function CuriositiesListView() {
 		FeedView.apply(this, arguments);
 		this.max = 10;
-		if (!store.get('hideCuriositiesExplanation')) {
-			this.showExplanationCard();
-		}
 		this.mainContainerSurface = new ContainerSurface({
 			size: [undefined, true]
 		});
@@ -69,8 +66,9 @@ define(function(require, exports, module) {
 		this.add(new StateModifier({transform: Transform.translate(0, 64, App.zIndex.header)})).add(this.explanationRenderController);
 
 		this.explanationRenderController.show(curiosityExplanationCard, null, function() {
-			var explanationCardHeight = curiosityExplanationCard.getSize()[1]
-			this.containerModifierState.set(52 + explanationCardHeight);
+			var explanationCardHeight = curiosityExplanationCard.getSize()[1];
+			this.containerModifierState.set(64 + explanationCardHeight);
+			this.searchBoxModifier.setTransform(Transform.translate(0, 49, App.zIndex.readView + 5));
 			this.scrollViewMod.setTransform(Transform.translate(0, this.options.scrollViewYTransform + explanationCardHeight, App.zIndex.feedItem));
 		}.bind(this));
 
@@ -107,7 +105,8 @@ define(function(require, exports, module) {
 				
 			}.bind(this));
 		}.bind(this));
-		this.mainContainerSurface.add(new StateModifier({transform: Transform.translate(0, 49, App.zIndex.readView + 5)})).add(searchBox);
+		this.searchBoxModifier = new StateModifier({transform: Transform.translate(0, 49, App.zIndex.readView + 5)});
+		this.mainContainerSurface.add(this.searchBoxModifier).add(searchBox);
 	};
 
 	CuriositiesListView.prototype.createCuriositiesPills = function() {
@@ -199,6 +198,9 @@ define(function(require, exports, module) {
 
 	CuriositiesListView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
+		if (!store.get('hideCuriositiesExplanation')) {
+			this.showExplanationCard();
+		}
 	}
 
 	CuriositiesListView.prototype.preShow = function(state) {

@@ -87,7 +87,7 @@ define(function(require, exports, module) {
 					u.spinnerStart();
 					setTimeout(function(){
 						u.spinnerStop();
-						App.pageView.goBack(null, {new: true});
+						App.pageView.goBack(null, {onLoad: true});
 					}, 1000);
 				}.bind(this)
 			);

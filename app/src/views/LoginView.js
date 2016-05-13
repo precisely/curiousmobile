@@ -92,7 +92,7 @@ define(function(require, exports, module) {
 					Discussion.getNewNotificationCount(function(data) {
 						App.setNotificationCount(data.totalNotificationCount);
 					});
-					App.pageView.changePage('TrackView', { new: true });
+					App.pageView.changePage('TrackView', { onLoad: true });
 					push.register();
 				}.bind(this)
 			)

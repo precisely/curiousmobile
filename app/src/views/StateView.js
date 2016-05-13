@@ -130,7 +130,7 @@ define(function(require, exports, module) {
 		// For views that we simply will always get the latest data from the
 		// server and have no saved state
 		return {
-			new: true
+			onLoad: true
 		};
 	};
 

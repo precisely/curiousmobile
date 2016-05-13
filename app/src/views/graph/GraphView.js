@@ -227,8 +227,8 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		dateContainerSurface.add(new StateModifier({align:[0.5, 0.5], origin: [0.5, 0.5], transform: Transform.translate(0, 0, 2)})).add(this.dateLabelSurface);
-		this.add(new StateModifier({transform: Transform.translate(0, (App.height - 172), -5)})).add(dateContainerSurface);
+		dateContainerSurface.add(new StateModifier({align:[0.5, 0.5], origin: [0.5, 0.5], transform: Transform.translate(0, 0, 5)})).add(this.dateLabelSurface);
+		this.add(new StateModifier({transform: Transform.translate(0, (App.height - 172), 0)})).add(dateContainerSurface);
 	};
 
 	GraphView.prototype.toggleDatePicker = function(dateType) {

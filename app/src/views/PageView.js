@@ -80,9 +80,6 @@ define(function(require, exports, module) {
 		}
 		this.changePage(this.getCurrentPage(), state || { onLoad: true });
 
-		App.coreEventHandler.on('device-ready', function() {
-			Discussion.getNewNotificationCount();
-		}.bind(this));
 		App.coreEventHandler.on('app-paused', function() {
 			this.saveState();
 		}.bind(this));
@@ -188,7 +185,7 @@ define(function(require, exports, module) {
 			return false;
 		} else if (state && state.onLoad) {
 			if (view.parentPage) {
-				this.goBack(view.parentPage, {new: true});
+				this.goBack(view.parentPage, {onLoad: true});
 				return false;
 			}
 		}
@@ -303,7 +300,7 @@ define(function(require, exports, module) {
 		var view = this.getCurrentView();
 		if (view.options.reloadOnResume) {
 			this.changePage(view.constructor.name, {
-				new: true
+				onLoad: true
 			});
 		} else {
 			view.getStateFromCache();

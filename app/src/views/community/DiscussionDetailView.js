@@ -96,6 +96,11 @@ define(function(require, exports, module) {
 		this.saveState();
 	};
 
+	DiscussionDetailView.prototype.preChangePage = function() {
+		BaseView.prototype.preChangePage.call(this);
+		this.killOverlayContent();
+	};
+	
 	DiscussionDetailView.prototype.preShow = function(state) {
 		if (!state || !state.discussionHash) {
 			return false;
@@ -304,7 +309,7 @@ define(function(require, exports, module) {
 					setTimeout(function() {
 						u.spinnerStop();
 						App.pageView.changePage('FeedView', {
-							new: true
+							onLoad: true
 						});
 					}, 1000);
 				}.bind(this));

@@ -908,9 +908,20 @@ button.close {
 	margin-top: 0px;
 }
 
-.share-groups label, .sprint-privacy label {
+.share-groups label {
 	padding-left: 5px;
 	padding-top: 4px;
+}
+
+.sprint-privacy {
+	display: inline-block;
+	margin-right: 40px;
+}
+
+.sprint-privacy label {
+	margin-left: 9px;
+	padding-top: 6px;
+	padding-left: 0px;
 }
 
 input[type=radio] {
@@ -936,14 +947,9 @@ input[type=radio] {
 }
 
 .sprint-open {
-	float: left;
-	width: 50%;
 }
 
 .sprint-closed {
-	float: right;
-	width: 50%;
-	margin-top: 10px !important;
 }
 
 #share-chart-close-button {

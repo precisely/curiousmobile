@@ -125,6 +125,7 @@ define(function(require, exports, module) {
 	ChartView.prototype.preChangePage = function() {
 		BaseView.prototype.preChangePage.call(this);
 		this.hideShareButtonPopover();
+		this.graphView.hideGraphStylePopover();
 		this.killOverlayContent();
 		if (this.graphView.dateGridRenderController) {
 			this.graphView.dateGridRenderController.hide();
