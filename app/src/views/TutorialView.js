@@ -247,7 +247,7 @@ define(function(require, exports, module) {
 	function removeCursor(elementId) {
 		var cursorElement = document.getElementById(elementId);
 		if (cursorElement) {
-			cursorElement.parentNode.removeChild(cursorElement);
+			cursorElement.classList.remove('blinking-cursor-solid');
 		}
 	};
 

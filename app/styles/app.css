@@ -1710,7 +1710,7 @@ list-style-type: none;
 }
 
 #sleep-hour, #mood-box {
-	padding: 10px 10px 10px 1px;
+	padding: 10px 10px 10px 0px;
 	height: 50px;
 	width: 100%;
 }
@@ -3751,19 +3751,23 @@ input.cropit-image-zoom-input {
 }
 
 .blinking-cursor {
-	font-weight: 100;
+	font-weight: 700;
 	font-size: 18px;
-	color: #8C8C8C;
-	margin-right: -3px;
+	color: transparent;
+	margin-right: -5px;
 	margin-top: -4px;
 	margin-left: -3px;
 	display: inline-block;
+}
+
+.blinking-cursor-solid {
 	text-decoration: blink;
 	-webkit-animation-name: blinker;
 	-webkit-animation-duration: 1s;
 	-webkit-animation-iteration-count:infinite;
 	-webkit-animation-timing-function:ease-in-out;
 	-webkit-animation-direction: alternate;
+	color: #8c8c8c;
 }
 
 @keyframes blinker {
