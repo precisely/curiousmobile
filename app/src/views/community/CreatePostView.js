@@ -65,6 +65,8 @@ define(function(require, exports, module) {
 		BaseView.prototype.preShow.call(this);
 		if (state && state.groupName) {
 			this.groupName = state.groupName;
+		} else {
+			this.groupName = null;
 		}
 		return true;
 	};

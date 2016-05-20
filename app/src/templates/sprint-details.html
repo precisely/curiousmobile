@@ -99,15 +99,15 @@
 					{{ } }}
 				</p>
 				{{ }); }}
-			{{ if (totalParticipants > 10) { print('<h5 id="more-participants">See All Participants</h5>'); } }}
 		</div>
+		{{ if (totalParticipants > 10) { print('<h5 id="more-participants">See All Participants</h5>'); } }}
 	</div>
 	{{ if (isFormView) { }}
 		<div>
 			<label class="sprint-default-label" id="privacy-label">PRIVACY</label>
 			<div class="sprint-privacy-radio">
 				<div class="radio sprint-privacy sprint-open">
-					<input type="radio" name="sprintPrivacy" id="sprint-open" value="PUBLIC" 
+					<input type="radio" name="sprintPrivacy" id="sprint-open" value="PUBLIC"
 							{{= isOpen ? 'checked' : '' }}>
 					<label for="sprint-open" class="sprint-privacy-label">Open</label>
 				</div>
