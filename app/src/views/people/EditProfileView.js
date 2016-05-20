@@ -68,6 +68,7 @@ define(function(require, exports, module, store) {
 			return false;
 		}
 		this.hash = state.hash;
+		this.leftSurface.setContent('<img src="content/images/left-white.png" width="20px" height="18px"/>');
 		this.showProfile(function() {
 				this.scrollView.setPosition(0)
 			}.bind(this)

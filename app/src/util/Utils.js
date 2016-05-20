@@ -457,20 +457,12 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		}
 
 		Utils.spinnerStart = function () {
-			if (typeof wizSpinner !== 'undefined') {
-				var label = '';
-				if (this.isAndroid()) {
-					label = 'Loading, Please wait.';
-				}
-				wizSpinner.show({bgColor: 'transparent', opacity: 0.0, label: label});
-			}
+			App.pageView.spinnerView.show();
 		};
 
 		Utils.spinnerStop = function () {
-			if (typeof wizSpinner !== 'undefined') {
-				wizSpinner.hide();
-			}
-		}
+			App.pageView.spinnerView.hide();
+		};
 
 		Utils.makeGetArgs = function(args) {
 			args['mobileSessionId'] = store.get('mobileSessionId');

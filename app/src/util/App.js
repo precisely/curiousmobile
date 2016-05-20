@@ -19,7 +19,8 @@ var App = function() {
 		autocomplete: 99,
 		alertView: 999,
 		contextMenu: 90,
-		overlay: 20
+		overlay: 20,
+		spinner: 150
 	};
 
 	// Global popover contents, so that any popover content can be changed here without visiting any views.
@@ -38,7 +39,7 @@ var App = function() {
 				" other users",
 		firstChartPlot: 'Tap tag to change graphing style'
 	};
-	
+
 	//Global popover settings applied to every popup in the app.
 	this.getDefaultPopoverSettings = function(customCss) {
 		return {
@@ -58,7 +59,7 @@ var App = function() {
 			popover.placement = customSettings.placement || popover.placement;
 			popover.container = customSettings.container || popover.container;
 
-			var $element = $(elementId); 
+			var $element = $(elementId);
 			$element.popover(popover);
 			$element.popover('show');
 

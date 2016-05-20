@@ -69,9 +69,12 @@ define(function(require, exports, module) {
 	};
 
 	function createStepSurfaces(helpStepTemplate, templateData) {
+		templateData = templateData || {
+			userAgent: (navigator.userAgent.match(/(iPad|iPhone|iPod)/i)) ? 'iOS' : 'android'
+		};
 		var stepSurface = new Surface({
 			size: [undefined, true],
-			content: templateData ? _.template(helpStepTemplate, templateData, templateSettings) : _.template(helpStepTemplate, templateSettings),
+			content: _.template(helpStepTemplate, templateData, templateSettings),
 			properties: {
 				backgroundColor: '#ff6f4c',
 				paddingTop: '30px'

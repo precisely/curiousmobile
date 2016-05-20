@@ -1715,6 +1715,20 @@ list-style-type: none;
 	width: 100%;
 }
 
+.iOS-addon-label, .android-addon-label {
+	margin-right: 5px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.iOS-addon-label {
+	margin-bottom: 6px;
+}
+
+.android-addon-label {
+	margin-bottom: 3px;
+}
+
 .help-wizard .left-carousel-control {
 	float: left;
 	color: #fff;
@@ -3755,7 +3769,6 @@ input.cropit-image-zoom-input {
 	font-size: 18px;
 	color: transparent;
 	margin-right: -5px;
-	margin-top: -4px;
 	margin-left: -3px;
 	display: inline-block;
 }
@@ -3768,6 +3781,14 @@ input.cropit-image-zoom-input {
 	-webkit-animation-timing-function:ease-in-out;
 	-webkit-animation-direction: alternate;
 	color: #8c8c8c;
+}
+
+.iOS-cursor {
+	margin-top: 6px;
+}
+
+.android-cursor {
+	margin-top: 2px;
 }
 
 @keyframes blinker {

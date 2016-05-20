@@ -42,13 +42,13 @@ define(function(require, exports, module) {
 		this.scrollableHelpView = new Scrollview({
 			direction: Utility.Direction.Y
 		});
-	
+
 		var spareSurface = new Surface({
-			size: [undefined, 20]
+			size: [undefined, 30]
 		});
-	
+
 		this.scrollableHelpView.sequenceFrom([bodySurface, spareSurface]);
-	
+
 		bodySurface.pipe(this.scrollableHelpView);
 		spareSurface.pipe(this.scrollableHelpView);
 
