@@ -478,7 +478,7 @@ define(function(require, exports, module) {
 	};
 
 	EntryListView.prototype.numberOfPinRows = function (pinIndex) {
-		var numberOfRows = this.pinnedViews.length ? 1 : 0;
+		var numberOfRows = (this.pinnedViews && this.pinnedViews.length) ? 1 : 0;
 		var rowWidthSoFar = 20;
 		this.pinnedEdgeIndex = [];
 		_.each(this.pinnedViews, function (pinnedView, index) {

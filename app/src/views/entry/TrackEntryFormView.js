@@ -53,6 +53,7 @@ define(function(require, exports, module) {
 				this.setPinned = false;
 				if (this.setRepeat) {
 					this.renderController.show(this.repeatModifierSurface, null, function() {
+						document.getElementById('daily').checked = true;
 						this.setSelectedDate(this.selectedDate);
 					}.bind(this));
 					this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.formView + 5));
@@ -91,7 +92,6 @@ define(function(require, exports, module) {
 				this.submit();
 			}
 		}.bind(this));
-
 
 		this.repeatModifierSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
@@ -207,7 +207,7 @@ define(function(require, exports, module) {
 			return;
 		}
 
-		var radioSelector;
+		var radioSelector = 'daily';
 		if (entry.isWeekly()) {
 			radioSelector = 'weekly';
 		} else if (entry.isMonthly()) {
@@ -219,7 +219,7 @@ define(function(require, exports, module) {
 		this.isUpdating = false;
 		this.setRepeat = entry.isRepeat();
 		this.setRemind = entry.isRemind();
-		if (radioSelector || this.setRepeat) {
+		if (this.setRepeat) {
 			this.isUpdating = true;
 			var setDate = function(entry) {
 				if (entry.get("repeatEnd")) {
@@ -231,9 +231,7 @@ define(function(require, exports, module) {
 			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.formView + 5));
 			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 220, App.zIndex.formView + 5));
 			this.renderController.show(this.repeatModifierSurface, null, function() {
-				if (radioSelector) {
-					document.getElementById(radioSelector).checked = true;
-				}
+				document.getElementById(radioSelector).checked = true;
 				if (entry.isGhost()) {
 					document.getElementById('confirm-each-repeat').checked = true;
 				}

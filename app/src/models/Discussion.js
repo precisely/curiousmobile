@@ -56,7 +56,7 @@ define(function(require, exports, module) {
 			return;
 		}
 
-		u.queueJSON("Getting notifications count", u.makeGetUrl('getTotalNotificationsCount', 'search'), u.makeGetArgs({}),
+		u.backgroundJSON("Getting notifications count", u.makeGetUrl('getTotalNotificationsCount', 'search'), u.makeGetArgs({}),
 				function(data) {
 					if (u.checkData(data)) {
 						if (data.success) {
