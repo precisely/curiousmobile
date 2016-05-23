@@ -271,9 +271,17 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 					u.closeAlerts();
 				if (currentLoginSession != u._loginSessionNumber)
 					return; // if current login session is over, cancel callbacks
-				if (u.checkData(data) && successCallback)
-					successCallback(data);
-				u.nextJSONCall(background);
+
+				try {
+					if (u.checkData(data) && successCallback) {
+						successCallback(data);
+					}
+				} catch (error) {
+					u.showAlert('Some error occured while ' + description);
+					console.error(error);
+				} finally {
+					u.nextJSONCall(background);
+				}
 			};
 			var wrapFailCallback = function(data, msg) {
 				stillRunning = false;
@@ -282,23 +290,30 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 					u.closeAlerts();
 				if (currentLoginSession != u._loginSessionNumber)
 					return; // if current login session is over, cancel callbacks
-				if (u.checkData(data) && failCallback)
-					failCallback(data);
 
-				u.nextJSONCall(background);
-				if (msg == "timeout") {
-					if (delay * 2 > 1000000) { // stop retrying after delay too large
-						console.log('server down...');
-						u.showAlert("Server down... giving up");
-						return;
+				try {
+					if (u.checkData(data) && failCallback) {
+						failCallback(data);
 					}
-					if (!(delay > 0)) {
-						u.showAlert("Server not responding... retrying " + description);
+				} catch (error) {
+					u.showAlert('Some error occured while ' + description);
+					console.error(error);
+				} finally {
+					u.nextJSONCall(background);
+					if (msg == "timeout") {
+						if (delay * 2 > 1000000) { // stop retrying after delay too large
+							console.log('server down...');
+							u.showAlert("Server down... giving up");
+							return;
+						}
+						if (!(delay > 0)) {
+							u.showAlert("Server not responding... retrying " + description);
+						}
+						delay = (delay > 0 ? delay * 2 : 5000);
+						window.setTimeout(function() {
+							u.queueJSON(description, url, args, successCallback, failCallback, delay, background);
+						}, delay);
 					}
-					delay = (delay > 0 ? delay * 2 : 5000);
-					window.setTimeout(function() {
-						u.queueJSON(description, url, args, successCallback, failCallback, delay, background);
-					}, delay);
 				}
 			};
 			if ((!background) && (u.numJSONCalls > 0)) { // json call in progress
