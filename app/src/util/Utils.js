@@ -242,7 +242,9 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			window.setTimeout(function() {
 				if (stillRunning) {
 					stillRunning = false;
-					u.showAlert(description + ": in progress");
+					if (!background) {
+						u.showAlert(description + ": in progress");
+					}
 				}
 			}, 6000);
 
