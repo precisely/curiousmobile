@@ -16,12 +16,12 @@ define(function(require, exports, module) {
 	var Sprint = require('models/Sprint');
 	var User = require('models/User');
 	var TrueSurface = require('surfaces/TrueSurface');
-	var u = require('util/Utils')
+	var u = require('util/Utils');
 	var DiscussionDetailView = require("views/community/DiscussionDetailView");
 	var CreatePostView = require('views/community/CreatePostView');
-	var SprintCardView = require('views/community/card/SprintCardView')
-	var PeopleCardView = require('views/community/card/PeopleCardView')
-	var DiscussionCardView = require('views/community/card/DiscussionCardView')
+	var SprintCardView = require('views/community/card/SprintCardView');
+	var PeopleCardView = require('views/community/card/PeopleCardView');
+	var DiscussionCardView = require('views/community/card/DiscussionCardView');
 	var NoMoreItemsCardView = require('views/community/card/NoMoreItemsCardView');
 	var DiscussionCreateOptionsSurface = require('views/community/DiscussionOptionsOverlay');
 
@@ -29,10 +29,10 @@ define(function(require, exports, module) {
 		BaseView.apply(this, arguments);
 		console.log('FeedView Constructor');
 		this.scrollView = new Scrollview({
-			direction: Utility.Direction.Y,
+			direction: Utility.Direction.Y
 		});
 		this.pillsScrollView = new Scrollview({
-			direction: Utility.Direction.X,
+			direction: Utility.Direction.X
 		});
 		this.max = 10;
 		this.currentPill = 'ALL';
@@ -49,7 +49,7 @@ define(function(require, exports, module) {
 		header: true,
 		footer: true,
 		noBackButton: true,
-		activeMenu: 'feed',
+		activeMenu: 'feed'
 	};
 
 	function init() {
@@ -80,7 +80,7 @@ define(function(require, exports, module) {
 				var args = {
 					offset: this.offset,
 					max: this.max
-				}
+				};
 
 				if (_.contains(['FeedView', 'SprintListView'], this.constructor.name)) {
 					this.fetchFeedItems(this.currentPill, args);
@@ -100,7 +100,7 @@ define(function(require, exports, module) {
 		});
 		this.add(this.scrollViewMod).add(this.renderController);
 		this.initScrollView();
-	};
+	}
 
 	FeedView.prototype.initFeedSpecificContents = function() {
 		this.plusSurface = new Surface({
@@ -343,7 +343,7 @@ define(function(require, exports, module) {
 		this.showMenuButton();
 		this.showSearchIcon();
 		this.setRightIcon(this.plusSurface);
-	}
+	};
 
 	App.pages[FeedView.name] = FeedView;
 	module.exports = FeedView;

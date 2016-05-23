@@ -255,10 +255,9 @@ define(function(require, exports, module) {
 	}
 
 	DateGridView.prototype.getMonthHeaderTemplate = function(date) {
-	date = date || this.selectedDate;
+		date = date || this.selectedDate;
 
-		return  _.template(dateGridHeader, {month: DateUtil.getMonth(date),
-					year: date.getFullYear()}, templateSettings);
+		return  _.template(dateGridHeader, {month: DateUtil.getMonth(date), year: date.getFullYear()}, templateSettings);
 	};
 
 	DateGridView.prototype.setClearButton = function() {
@@ -367,7 +366,7 @@ define(function(require, exports, module) {
 				monthNum = 12;
 			} else if (monthNum === 11 && num === 1) {
 				this.navigateYear(1);
-				monthNum =  1;
+				monthNum = 1;
 			} else {
 				monthNum += 1 + num;
 			}
