@@ -62,7 +62,7 @@ define(function(require, exports, module) {
 		});
 		this.add(this.pinControllerMod).add(this.pinnedEntriesController);
 		this.add(this.renderControllerMod).add(this.renderController);
-		this.refreshEntries(entries, glowEntry);
+		this.refreshEntries(entries, glowEntry, null, true);
 	}
 
 	EntryListView.prototype.addEntry = function(entry) {
@@ -316,11 +316,15 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	EntryListView.prototype.refreshEntries = function(entries, glowEntry, callback) {
+	EntryListView.prototype.refreshEntries = function(entries, glowEntry, callback, refreshAll) {
 		this.glowEntry = glowEntry;
 		this.minYRange = 0;
-		var refreshPinEntries = (!glowEntry || glowEntry.isContinuous());
-		var refreshDraggableEntries = (!glowEntry || !glowEntry.isContinuous());
+		if (refreshAll) {
+			refreshPinEntries = refreshDraggableEntries = true;
+		} else {
+			var refreshPinEntries = (!glowEntry || glowEntry.isContinuous());
+			var refreshDraggableEntries = (!glowEntry || !glowEntry.isContinuous());
+		}
 
 		if (!entries && this.entries) {
 			entries = EntryCollection.getFromCache(this.entries.key);

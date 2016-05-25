@@ -222,24 +222,7 @@ define(function(require, exports, module) {
 						}
 					}.bind(this));
 				} else if (_.contains(e.srcElement.classList, 'add-description')) {
-					this.overlayWithGroupListView = new OverlayWithGroupListView(editDiscussionTemplate, {name: u.parseDivToNewLine(this.discussionDetails.discussionTitle), description: u.parseDivToNewLine(this.discussionDetails.firstPost.message),
-							groupName: this.discussionDetails.groupName || (this.discussionDetails.isPublic ? 'PUBLIC' : 'PRIVATE')}, function(e) {
-						if (e instanceof CustomEvent) {
-							var classList = e.srcElement.classList;
-							if (_.contains(classList, 'submit-post')) {
-								var discussionTitle = document.getElementById('name').value;
-								var discussionDescription = document.getElementById('description').value;
-								var groupName = this.groupName;
-								if (!discussionTitle) {
-									u.showAlert('Discussion topic can not be blank');
-									return;
-								}
-								App.pageView.getCurrentView().updateDiscussion({name: discussionTitle, message: discussionDescription, group: groupName});
-							}
-						}
-					});
-					this.showOverlayContent(this.overlayWithGroupListView);
-					this.setHeaderLabel('EDIT DISCUSSION');
+					this._eventOutput.emit('edit-discussion');
 				}
 			}
 		}.bind(this));
@@ -320,22 +303,27 @@ define(function(require, exports, module) {
 
 	function _setHandlers() {
 		this.on('edit-discussion', function() {
-			this.overlayWithGroupListView = new OverlayWithGroupListView(editDiscussionTemplate, {name: u.parseDivToNewLine(this.discussionDetails.discussionTitle), description: u.parseDivToNewLine(this.discussionDetails.firstPost.message),
-					groupName: this.discussionDetails.groupName || (this.discussionDetails.isPublic ? 'PUBLIC' : 'PRIVATE')}, function(e) {
-						if (e instanceof CustomEvent) {
-							var classList = e.srcElement.classList;
-							if (_.contains(classList, 'submit-post')) {
-								var discussionTitle = document.getElementById('name').value;
-								var discussionDescription = document.getElementById('description').value;
-								var groupName = this.groupName;
-								if (!discussionTitle) {
-									u.showAlert('Discussion topic can not be blank');
-									return;
-								}
-								App.pageView.getCurrentView().updateDiscussion({name: discussionTitle, message: discussionDescription, group: groupName});
+			var groupName = this.discussionDetails.isPublic ? 'PUBLIC' : 'PRIVATE';
+			this.overlayWithGroupListView = new OverlayWithGroupListView(editDiscussionTemplate,
+				{name: u.parseDivToNewLine(this.discussionDetails.discussionTitle),
+					description: u.parseDivToNewLine(this.discussionDetails.firstPost.message),
+					groupName: this.discussionDetails.groupName || groupName},
+				function(e) {
+					if (e instanceof CustomEvent) {
+						var classList = e.srcElement.classList;
+						if (_.contains(classList, 'submit-post')) {
+							var discussionTitle = document.getElementById('name').value;
+							var discussionDescription = document.getElementById('description').value;
+							var groupName = this.groupName;
+							if (!discussionTitle) {
+								u.showAlert('Discussion topic can not be blank');
+								return;
 							}
+							App.pageView.getCurrentView().updateDiscussion({name: discussionTitle,
+								message: discussionDescription, group: groupName});
 						}
-					});
+					}
+				});
 			this.showOverlayContent(this.overlayWithGroupListView);
 			this.setHeaderLabel('EDIT DISCUSSION');
 		}.bind(this));
@@ -557,7 +545,6 @@ define(function(require, exports, module) {
 		Discussion.update(args, function() {
 			this.killOverlayContent();
 			this.loadDetails();
-		}.bind(this), function() {
 		}.bind(this));
 	};
 

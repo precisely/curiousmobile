@@ -262,7 +262,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				argsToSend.text = argsToSend.text.replace('Remind', 'remind');
 				argsToSend.text = argsToSend.text.replace('Button', 'button');
 
-				u.backgroundJSON("adding new entry", u.makeGetUrl("addEntrySData"), u.makeGetArgs(argsToSend), function(
+				u.queueJSON("adding new entry", u.makeGetUrl("addEntrySData"), u.makeGetArgs(argsToSend), function(
 				entries) {
 					if (u.checkData(entries)) {
 						if (entries[1] != null) {
@@ -311,7 +311,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					argsToSend.repeatEnd = this.get('repeatEnd') ? new Date(this.get('repeatEnd')).toUTCString() : null;
 				}
 
-				u.backgroundJSON("saving entry", u.makeGetUrl("updateEntrySData"), u.makeGetArgs(argsToSend),
+				u.queueJSON("saving entry", u.makeGetUrl("updateEntrySData"), u.makeGetArgs(argsToSend),
 				function(entries) {
 					if (entries == "") {
 						return;
@@ -374,7 +374,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 							displayDate: baseDate
 						});
 
-						u.backgroundJSON("deleting entry", u.makeGetUrl("deleteEntrySData"), u.makeGetArgs(argsToSend),
+						u.queueJSON("deleting entry", u.makeGetUrl("deleteEntrySData"), u.makeGetArgs(argsToSend),
 						function(entries) {
 							if (u.checkData(entries)) {
 								var collectionCache = window.App.collectionCache;
@@ -397,7 +397,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				var collectionCache = window.App.collectionCache;
 				var selectedDate = window.App.selectedDate;
 				var baseDate = window.App.selectedDate.toUTCString();
-				u.backgroundJSON("deleting entry", u.makeGetUrl("deleteGhostEntryData"),
+				u.queueJSON("deleting entry", u.makeGetUrl("deleteGhostEntryData"),
 				u.makeGetArgs(u.getCSRFPreventionObject(
 					"deleteGhostEntryDataCSRF", {
 						entryId: this.id,

@@ -41,7 +41,7 @@ var App = function() {
 		firstChartPlot: 'Tap tag to change graphing style'
 	};
 
-	//Global popover settings applied to every popup in the app.
+	// Global popover settings applied to every popup in the app.
 	this.getDefaultPopoverSettings = function(customCss) {
 		return {
 			placement: 'top',
