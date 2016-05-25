@@ -153,7 +153,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				return Date.parse(date);
 			}
 			return date.getTime();
-		}
+		};
 
 		Utils.dateToTimeStr = function(d, shortForm) {
 			var ap = "";
@@ -205,21 +205,27 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 
 		Utils.getTimezone = function() {
 			return window.jstz.determine().name();
-		}
+		};
 
 		Utils.backgroundPostJSON = function(description, url, args, successCallback, failCallback, delay) {
 			u.queueJSON(description, url, args, successCallback, failCallback, delay, true, true);
-		}
+		};
 
 		Utils.queuePostJSON = function(description, url, args, successCallback, failCallback, delay) {
 			u.queueJSON(description, url, args, successCallback, failCallback, delay, true, false);
-		}
+		};
 
 		Utils.queueJSON = function(description, url, args, successCallback, failCallback, delay, post, background) {
 			u.queueJSONAll(description, url, args, successCallback, failCallback, delay, post ? {requestMethod: 'POST'} : {requestMethod: 'GET'}, background);
-		}
+		};
 
 		Utils.queueJSONAll = function(description, url, args, successCallback, failCallback, delay, httpArgs, background) {
+			if (u.isOnline()) {
+				var currentView = App.pageView.getCurrentView();
+				if (currentView) {
+					currentView.noInternetRenderController.hide();
+				}
+			}
 			var currentLoginSession = u._loginSessionNumber; // cache current login session
 			var stillRunning = true;
 			var alertShown = false;
@@ -248,11 +254,17 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				}
 			}, 6000);
 
+			setTimeout(function () {
+				if (!u.isOnline()) {
+					App.pageView.getCurrentView().showNoInternetSurface();
+				}
+			}, 12000);
+
 			if (typeof args == "function") {
 				background = requestMethod;
 				requestMethod = delay;
 				delay = failCallback;
-				failCallback = successCallback
+				failCallback = successCallback;
 				successCallback = args;
 				args = undefined;
 			}
@@ -308,20 +320,21 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 							u.showAlert("Server down... giving up");
 							return;
 						}
-						if (!(delay > 0)) {
+						if (!(delay > 0) && !background) {
 							u.showAlert("Server not responding... retrying " + description);
 						}
 						delay = (delay > 0 ? delay * 2 : 5000);
 						window.setTimeout(function() {
-							u.queueJSON(description, url, args, successCallback, failCallback, delay, background);
+							u.queueJSONAll(description, url, args, successCallback, failCallback, delay, httpArgs, background);
 						}, delay);
 					}
 				}
 			};
-			if ((!background) && (u.numJSONCalls > 0)) { // json call in progress
-				var jsonCall = function() {
-					console.log('Requesting url' + url);
-					if (Utils.isOnline()) {
+			if ((!background) && ((u.numJSONCalls > 0) || !u.isOnline())) { // json call in progress
+				if (!u.isOnline()) {
+					wrapFailCallback({}, 'timeout');
+				} else {
+					var jsonCall = function() {
 						$.ajax({
 							type: requestMethod,
 							dataType: "json",
@@ -330,39 +343,33 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 							data: args,
 							timeout: 20000 + (delay > 0 ? delay : 0)
 						})
-						.done(wrapSuccessCallback)
-						.fail(wrapFailCallback);
-					} else {
-						wrapFailCallback({}, 'timeout');
-					}
-				};
-				++u.numJSONCalls;
-				u.pendingJSONCalls.push(jsonCall);
+							.done(wrapSuccessCallback)
+							.fail(wrapFailCallback);
+					};
+					++u.numJSONCalls;
+					u.pendingJSONCalls.push(jsonCall);
+				}
 			} else { // first call
 				if (!background) {
 					++u.numJSONCalls;
 				}
 
-				if (Utils.isOnline()) {
-					if (!background) {
-						u.spinnerStart();
-					}
-					$.ajax({
-						type: requestMethod,
-						dataType: "json",
-						contentType: contentType,
-						processData: processData,
-						url: url,
-						data: args,
-						timeout: 20000 + (delay > 0 ? delay : 0)
-					})
-					.done(wrapSuccessCallback)
-					.fail(wrapFailCallback);
-				} else {
-					wrapFailCallback({}, 'timeout');
+				if (!background) {
+					u.spinnerStart();
 				}
+				$.ajax({
+					type: requestMethod,
+					dataType: "json",
+					contentType: contentType,
+					processData: processData,
+					url: url,
+					data: args,
+					timeout: 20000 + (delay > 0 ? delay : 0)
+				})
+				.done(wrapSuccessCallback)
+				.fail(wrapFailCallback);
 			}
-		}
+		};
 
 		Utils.nextJSONCall = function(background) {
 			if (!background) {
@@ -374,15 +381,15 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 					nextCall();
 				}
 			}
-		}
+		};
 		Utils.backgroundJSON = function(description, url, args, successCallback, failCallback, delay, post) {
 			u.queueJSON(description, url, args, successCallback, failCallback, delay, post, true);
-		}
+		};
 
 		Utils.clearJSONQueue = function() {
 			u.numJSONCalls = 0;
 			u.pendingJSONCalls = [];
-		}
+		};
 
 
 		/**
@@ -402,7 +409,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				console.error("Missing mobileSessionId for CSRF protection");
 			}
 			return preventionURI;
-		}
+		};
 
 		/**
 		 * A method which returns an object containing key & its token based on given key.
@@ -422,7 +429,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			}
 
 			return $.extend(CSRFPreventionObject, data);
-		}
+		};
 
 		/*
 		 * Curious data json return value check
@@ -460,18 +467,18 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				return false;
 			}
 			return true;
-		}
+		};
 
 		Utils.isLoggedIn = function() {
 			return store.get('mobileSessionId') != null;
-		}
+		};
 
 		Utils.makeGetUrl = function(action, controller) {
 			if (controller) {
 				return u.getServerUrl() + '/' + controller + '/' + action + '?callback=?';
 			}
 			return u.getServerUrl() + '/mobiledata/' + action + '?callback=?';
-		}
+		};
 
 		Utils.spinnerStart = function () {
 			App.pageView.spinnerView.show();
@@ -485,38 +492,38 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			args['mobileSessionId'] = store.get('mobileSessionId');
 
 			return args;
-		}
+		};
 
 		Utils.makePostUrl = function(action, controller) {
 			if (controller) {
 				return u.getServerUrl() + '/' + controller + '/' + action;
 			}
 			return u.getServerUrl() + "/mobiledata/" + action;
-		}
+		};
 
 		Utils.makePostArgs = function(args) {
 			args['mobileSessionId'] = store.get('mobileSessionId');
 
 			return args;
-		}
+		};
 
 		Utils.makePlainUrl = function(url) {
 			var url = u.getServerUrl() + "/mobile/" + url;
 			url = url;
 			return url;
-		}
+		};
 
 		/*
 		 * HTML escape utility methods
 		 */
 		Utils.escapeHTML = function(str) {
 			return ('' + str).replace(/&/g, '&amp;').replace(/>/g, '&gt;').replace(/</g, '&lt;').replace(/"/g, '&quot;').replace(/  /g, '&nbsp;&nbsp;');
-		}
+		};
 
 		Utils.addSlashes = function(str) {
 			return str.replace(/\'/g, '\\\'').replace(/\"/g, '\\"')
 				.replace(/\\/g, '\\\\').replace(/\0/g, '\\0');
-		}
+		};
 
 
 		Utils.formatAmount = function(amount, amountPrecision) {
@@ -526,12 +533,12 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				return amount ? " yes" : " no";
 			}
 			return " " + amount;
-		}
+		};
 
 		Utils.getWindowSize = function() {
 			var mainContext = window.mainContext;
 			return mainContext.getSize();
-		}
+		};
 
 		Utils.getMobileSessionId = function() {
 			return store.get('mobileSessionId');
@@ -558,11 +565,11 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				day_diff == 1 && "Yesterday" ||
 				day_diff < 7 && day_diff + " days ago" ||
 				day_diff < 31 && Math.ceil(day_diff / 7) + " weeks ago";
-		}
+		};
 
 		Utils.mmddyy = function(date) {
 			return (date.getDate() + date.getMonth() + 1) + '/' + '/' + date.getFullYear()
-		}
+		};
 
 		Utils.formatAMPM = function formatAMPM(date) {
 			var hours = date.getHours();
@@ -573,7 +580,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			minutes = minutes < 10 ? '0' + minutes : minutes;
 			var strTime = hours + ':' + minutes + ' ' + ampm;
 			return strTime;
-		}
+		};
 
 		Utils.parseNewLine = function(text) {
 			if (!text) {
@@ -587,7 +594,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				}
 			});
 			return parsedText || text;
-		}
+		};
 
 		Utils.parseDivToNewLine = function(text) {
 			if (!text) {
@@ -595,12 +602,12 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			}
 			var parsedText = text.replace(/<div>/g, '').replace(/<\/div>/g, "\n").replace(/^\s+|\s+$/g, '');;
 			return parsedText;
-		}
+		};
 
 		Utils.oauththirdparty = function(actionName, callback) {
 			u.oauthWindow = window.open(App.serverUrl + '/home/' + actionName + '?mobileRequest=1&mobileSessionId=' + u.getMobileSessionId(), '_blank');
 			u.oauthWindow.addEventListener('loadstart', u.checkAuthentication);
-		}
+		};
 
 		Utils.checkAuthentication = function(e) {
 			var successIndex = e.url.indexOf('success=true');

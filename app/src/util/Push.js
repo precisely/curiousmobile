@@ -8,6 +8,7 @@ define(function(require, exports, module) {
 	var push = {};
 	window.push = push;
 
+	// This is the basic initialization options required by the PushPlugin before registering a device.
 	var initOptions = {
 		android: {
 			senderID: '852521907580',
@@ -22,6 +23,7 @@ define(function(require, exports, module) {
 		}
 	};
 
+	// This is the registration handler for the PushPlugin which is triggered when the registration is successful.
 	function onRegistration(data) {
 		console.log('PushPlugin: onRegistration event');
 
@@ -56,6 +58,7 @@ define(function(require, exports, module) {
 		});
 	}
 
+	// This is the notification handler for the PushPlugin which is triggered when a push notification is received.
 	function onNotification(data) {
 		console.log('PushPlugin: onNotification event');
 
@@ -80,10 +83,15 @@ define(function(require, exports, module) {
 		});
 	}
 
+	// This is the error handler for the PushPlugin which is triggered when any call to push plugin fails.
 	function onError(e) {
 		console.log('PushPlugin: onError event' + e.message);
 	}
 
+	/*
+	 * This is the start point for the PushPlugin where the Initialization and the Registration process is executed.
+	 * This function needs to be invoked each time the device ready event is fired (i.e App loads itself completely).
+	*/
 	push.register = function() {
 		var user = store.get('user');
 		if ((user && user.id) && (typeof PushNotification !== 'undefined')) {
@@ -100,6 +108,10 @@ define(function(require, exports, module) {
 		push.checkPermission();
 	};
 
+	/*
+	 * This method is invoked whenever the user logs out of the App and also when the hasPermission call returns false.
+	 * This method removes the Push plugin token for the user from the server.
+	 */
 	push.unregister = function() {
 		if (typeof push.pushNotification !== 'undefined') {
 			push.pushNotification.unregister(function() {
@@ -143,6 +155,10 @@ define(function(require, exports, module) {
 		}
 	};
 
+	/*
+	 * This method is invoked after each init call to check whether the user has granted the Notifications permission
+	 * for the App.
+	 */
 	push.checkPermission = function() {
 		// Checking after 30 seconds for permission, if the User denys notification permissions, then unregister.
 		setTimeout(function () {

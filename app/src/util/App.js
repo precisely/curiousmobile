@@ -18,9 +18,10 @@ var App = function() {
 		datePicker: 50,
 		autocomplete: 99,
 		alertView: 999,
+		noInternet: 900,
 		contextMenu: 90,
 		overlay: 20,
-		spinner: 150
+		spinner: 950
 	};
 
 	// Global popover contents, so that any popover content can be changed here without visiting any views.

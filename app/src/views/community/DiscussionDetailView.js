@@ -281,7 +281,7 @@ define(function(require, exports, module) {
 					clearTimeout(this.touchTimeout);
 					return;
 				}
-				if (timeDelta > 600) {
+				if (timeDelta > 600 && discussionPost.discussionDetails.isAdmin) {
 					App.pageView._eventOutput.emit('show-context-menu', {
 						menu: 'discussion',
 						target: this,

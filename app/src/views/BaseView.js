@@ -44,6 +44,7 @@ define(function(require, exports, module) {
 		}));
 		this._createFooter();
 		this.createShimSurface();
+		this.createNoInternetAffordanceSurface();
 		_setListeners.call(this);
 	}
 
@@ -171,6 +172,28 @@ define(function(require, exports, module) {
 		}
 		this.layout.header.add(this.headerContainer);
 	}
+
+	BaseView.prototype.createNoInternetAffordanceSurface = function() {
+		this.noInternetSurface = new Surface({
+			size: [undefined, App.height - (113)],
+			content: '<span class="fa-stack fa-5x"><i class="fa fa-ban fa-stack-2x"></i>' +
+					'<i class="fa fa-wifi fa-stack-1x"></i></span>',
+			properties: {
+				textAlign: 'center',
+				backgroundColor: 'rgb(239, 239, 239)',
+				color: 'rgb(123, 123, 123)',
+				paddingTop: '45%',
+				fontSize: '18px'
+			}
+		});
+
+		this.noInternetRenderController = new RenderController();
+		this.addContent(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.noInternet)}), this.noInternetRenderController);
+	};
+
+	BaseView.prototype.showNoInternetSurface = function() {
+		this.noInternetRenderController.show(this.noInternetSurface);
+	};
 
 	BaseView.prototype.createRightIconView = function() {
 		this.searchOptionSurface = new Surface({
