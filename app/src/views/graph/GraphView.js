@@ -20,6 +20,7 @@ define(function(require, exports, module) {
 	var datejs = require('util/date');
 	var PlotMobile = require('util/plot.mobile');
 	var plotProperties = require('util/plot.properties');
+	var store = require('store');
 
 	function GraphView(tagsToPlot, plotAreaId) {
 		StateView.apply(this, arguments);
@@ -54,6 +55,12 @@ define(function(require, exports, module) {
 
 		this.pillsSurfaceList = [];
 		this.pillsView = new PillsView(this.pillsSurfaceList);
+		this.pillsView.pillsScrollViewContainer.attributes = {
+			id: 'graph-pills-container'
+		};
+		this.pillsView.pillsScrollViewContainer.on('click', function() {
+			this.hideGraphStylePopover();
+		}.bind(this));
 		var pillsViewMod = new StateModifier({
 			transform: Transform.translate(0, -1, 5)
 		});
@@ -100,11 +107,28 @@ define(function(require, exports, module) {
 				this.addDateFooter();
 				this.plotProperties.setStartDate(this.startDate);
 				this.plotProperties.setEndDate(this.endDate);
+				if (!store.get('firstChartPlotted')) {
+					this.showGraphStylePopover();
+					User.markFirstChartPlotted();
+				}
 			}.bind(this));
 		};
 		if (this.tags) {
 			plotChart.call(this);
 		}
+	};
+
+	GraphView.prototype.showGraphStylePopover = function() {
+		App.showPopover('#graph-pills-container', {
+			key: 'firstChartPlot',
+			container: '#popover-surface',
+			placement: 'bottom',
+			autoHide: true
+		});
+	};
+
+	GraphView.prototype.hideGraphStylePopover = function() {
+		$('#graph-pills-container').popover('destroy');
 	};
 
 	GraphView.prototype.addDateFooter = function() {
@@ -141,10 +165,17 @@ define(function(require, exports, module) {
 				border: '1px solid #c3c3c3'
 			}
 		});
+		
+		this.dateGridContainer = new ContainerSurface({
+			properties: {
+				zIndex: 12
+			}
+		});
 
 		this.dateGrid = new DateGridView(new Date(), true);
 		
 		this.dateGrid.on('select-date', function(date) {
+			this.hideGraphStylePopover();
 			console.log('CalenderView: Date selected');
 			this.setSelectedDate(date, this.dateType);
 			this.closeDateGrid();
@@ -156,8 +187,9 @@ define(function(require, exports, module) {
 
 		this.dateGridRenderController = new RenderController();
 		var dateGridRenderControllerMod = new StateModifier({
-			transform: Transform.translate(18, 100, 0)
+			transform: Transform.translate(18, 100, 50)
 		});
+		this.dateGridContainer.add(this.dateGrid);
 		this.add(dateGridRenderControllerMod).add(this.dateGridRenderController);
 
 		var datePickerButtonProperties = {
@@ -184,6 +216,7 @@ define(function(require, exports, module) {
 		});
 
 		this.dateLabelSurface.on('click', function(e) {
+			this.hideGraphStylePopover();
 			if (e instanceof CustomEvent) {
 				var classList = e.srcElement.classList;
 				if (_.contains(classList, 'start-date')) {
@@ -194,8 +227,8 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		dateContainerSurface.add(new StateModifier({align:[0.5, 0.5], origin: [0.5, 0.5], transform: Transform.translate(0, 0, 2)})).add(this.dateLabelSurface);
-		this.add(new StateModifier({transform: Transform.translate(0, (App.height - 172), -5)})).add(dateContainerSurface);
+		dateContainerSurface.add(new StateModifier({align:[0.5, 0.5], origin: [0.5, 0.5], transform: Transform.translate(0, 0, 5)})).add(this.dateLabelSurface);
+		this.add(new StateModifier({transform: Transform.translate(0, (App.height - 172), 0)})).add(dateContainerSurface);
 	};
 
 	GraphView.prototype.toggleDatePicker = function(dateType) {
@@ -215,7 +248,7 @@ define(function(require, exports, module) {
 				this.dateGrid.setSelectedDate(new Date());
 			}
 			
-			this.dateGridRenderController.show(this.dateGrid, null, function() {
+			this.dateGridRenderController.show(this.dateGridContainer, null, function() {
 				App.pageView.getCurrentView().showShimSurface();
 			}.bind(this));
 		}
@@ -267,6 +300,7 @@ define(function(require, exports, module) {
 			});
 			pillSurface.lineId = lineId;
 			pillSurface.on('click', function(e) {
+				this.hideGraphStylePopover();
 				if (e instanceof CustomEvent) {
 					var classList = e.srcElement.classList;
 					if (_.contains(classList, 'fa')) {

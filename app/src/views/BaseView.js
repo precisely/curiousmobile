@@ -35,12 +35,16 @@ define(function(require, exports, module) {
 			transform: Transform.translate(0, 0, 100)
 		})).add(new Surface({
 			size: [undefined, 0],
+			properties: {
+				zIndex: 50
+			},
 			attributes: {
 				id: 'popover-surface'
 			}
 		}));
 		this._createFooter();
 		this.createShimSurface();
+		this.createNoInternetAffordanceSurface();
 		_setListeners.call(this);
 	}
 
@@ -169,6 +173,28 @@ define(function(require, exports, module) {
 		this.layout.header.add(this.headerContainer);
 	}
 
+	BaseView.prototype.createNoInternetAffordanceSurface = function() {
+		this.noInternetSurface = new Surface({
+			size: [undefined, App.height - (113)],
+			content: '<span class="fa-stack fa-5x"><i class="fa fa-ban fa-stack-2x"></i>' +
+					'<i class="fa fa-wifi fa-stack-1x"></i></span>',
+			properties: {
+				textAlign: 'center',
+				backgroundColor: 'rgb(239, 239, 239)',
+				color: 'rgb(123, 123, 123)',
+				paddingTop: '45%',
+				fontSize: '18px'
+			}
+		});
+
+		this.noInternetRenderController = new RenderController();
+		this.addContent(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.noInternet)}), this.noInternetRenderController);
+	};
+
+	BaseView.prototype.showNoInternetSurface = function() {
+		this.noInternetRenderController.show(this.noInternetSurface);
+	};
+
 	BaseView.prototype.createRightIconView = function() {
 		this.searchOptionSurface = new Surface({
 			size: [45, 50],
@@ -183,7 +209,7 @@ define(function(require, exports, module) {
 		});
 
 		this.searchOptionSurface.on('click', function(e) {
-			if (u.isAndroid() || e instanceof CustomEvent) {
+			if (e instanceof CustomEvent) {
 				App.pageView.changePage('SearchView');
 			}
 		}.bind(this));
@@ -206,7 +232,6 @@ define(function(require, exports, module) {
 
 		this.footerSurface = new Surface({
 			content: _.template(FooterTemplate, {activeMenu: this.options.activeMenu, currentPage: App.pageView.getCurrentPage()}, templateSettings),
-			classes: ['footer-surface'],
 			size: [undefined, 50],
 			properties: {
 				borderTop: '1px solid #c0c0c0',
@@ -259,6 +284,9 @@ define(function(require, exports, module) {
 	};
 
 	BaseView.prototype.setRightIcon = function (iconSurface) {
+		if (this.rightIconsList.indexOf(iconSurface) > -1) {
+			return;
+		}
 		this.rightIconsList.push(iconSurface);
 	};
 
@@ -267,6 +295,9 @@ define(function(require, exports, module) {
 	};
 
 	BaseView.prototype.showSearchIcon = function() {
+		if (this.rightIconsList && this.rightIconsList.indexOf(this.searchOptionSurface) > -1) {
+			return;
+		}
 		if (this.headerRightIconController) {
 			this.rightIconsList.splice(0, 0, this.searchOptionSurface);
 		}
@@ -376,16 +407,71 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 		this.shimSurfaceRenderController = new RenderController();
+
+		this.shimSurfaceModifier = new StateModifier({transform: Transform.translate(0, 0, App.zIndex.datePicker - 1)});
 		// Backdrop will also cover header and footer
-		this.add(new StateModifier({transform: Transform.translate(0, 0, App.zIndex.datePicker - 1)})).add(this.shimSurfaceRenderController);
+		this.add(this.shimSurfaceModifier).add(this.shimSurfaceRenderController);
 	};
 
 	BaseView.prototype.showShimSurface = function() {
 		this.shimSurfaceRenderController.show(this.shimSurface);
-	}
+	};
 
 	BaseView.prototype.hideShimSurface = function() {
 		this.shimSurfaceRenderController.hide();
-	}
+		this.shimSurfaceModifier.setTransform(Transform.translate(0, 0, App.zIndex.datePicker - 1));
+	};
+
+	BaseView.prototype.createBookmarkEditShimSurface = function() {
+		this.bookmarkShimContainerSurface = new ContainerSurface();
+		this.aboveBookmarkShimSurface = new Surface({
+			size: [undefined, 119],
+			attributes: {
+				id: 'above-bookmark'
+			}
+		});
+		this.aboveBookmarkShimSurface.on('click',function(e) {
+			if (e instanceof CustomEvent) {
+				this._eventOutput.emit('done-edit-bookmarks');
+			}
+		}.bind(this));
+
+		var yTransformForBelowSurface = 119 + Math.min(this.currentListView.heightOfPins(), 140) + 10;
+		this.bookmarkEditShimSurfaceRenderController = new RenderController();
+		this.aboveBookmarkEditShimSurfaceModifier = new StateModifier({transform: Transform.translate(0, 0, App.zIndex.datePicker + 50)});
+		this.belowBookmarkEditShimSurfaceModifier = new StateModifier({transform: Transform.translate(0, yTransformForBelowSurface, App.zIndex.datePicker + 50)});
+
+		this.belowBookmarkShimSurface = new Surface({
+			size: [undefined, App.height - yTransformForBelowSurface],
+			attributes: {
+				id: 'below-bookmark'
+			}
+		});
+		this.belowBookmarkShimSurface.on('click',function(e) {
+			if (e instanceof CustomEvent) {
+				this._eventOutput.emit('done-edit-bookmarks');
+			}
+		}.bind(this));
+
+		this.bookmarkShimContainerSurface.add(this.aboveBookmarkEditShimSurfaceModifier).add(this.aboveBookmarkShimSurface);
+		
+		this.bookmarkShimContainerSurface.add(this.belowBookmarkEditShimSurfaceModifier).add(this.belowBookmarkShimSurface);
+
+		this.add(this.bookmarkEditShimSurfaceRenderController);
+	};
+
+	BaseView.prototype.showBookmarkShimSurface = function() {
+		if (!this.bookmarkShimContainerSurface) {
+			this.createBookmarkEditShimSurface();
+		}
+		this.bookmarkEditShimSurfaceRenderController.show(this.bookmarkShimContainerSurface);
+	};
+
+	BaseView.prototype.hideBookmarkShimSurface = function() {
+		if (this.bookmarkEditShimSurfaceRenderController) {
+			this.bookmarkEditShimSurfaceRenderController.hide();
+		}
+	};
+
 	module.exports = BaseView;
 });

@@ -41,7 +41,13 @@ define(function (require, exports, module) {
 			return Transform.translate(0, 0, App.zIndex.contextMenu);
 		});
 
-		this.contextMenuContainer = new ContainerSurface({});
+		this.contextMenuContainer = new ContainerSurface({
+			size: [undefined, undefined],
+			properties: {
+				zIndex: 95
+			}
+		});
+		
 		var backdropSurface = new Surface({
 			size: [undefined, undefined],
 			align: [0, 1],
@@ -52,7 +58,7 @@ define(function (require, exports, module) {
 			}
 		});
 
-		var backdropModifer = new Modifier({
+		this.backdropModifer = new Modifier({
 			opacity: 0.5,
 		});
 
@@ -71,7 +77,7 @@ define(function (require, exports, module) {
 			}
 		}.bind(this));
 
-		this.contextMenuContainer.add(backdropModifer).add(backdropSurface);
+		this.contextMenuContainer.add(this.backdropModifer).add(backdropSurface);
 		this.contextMenuContainer.add(this.contextMenu);
 	};
 
@@ -80,6 +86,9 @@ define(function (require, exports, module) {
 		this.eventArg = e.eventArg;
 		var template = ContextMenuTemplate;
 		this.contextMenu.setContent(_.template(template, {buttons: (this.options[e.menu] || e.target.options.contextMenuOptions)}, templateSettings));
+		this.backdropModifer.sizeFrom(function() {
+			return [App.width, App.height]
+		});
 		this.renderController.show(this.contextMenuContainer);
 	};
 

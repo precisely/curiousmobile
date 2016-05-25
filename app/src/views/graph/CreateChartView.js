@@ -73,11 +73,11 @@ define(function(require, exports, module) {
 			content: '<div class="tag-search-div input-group input-group-lg"><i class="input-group-addon fa fa-search fa-2x"></i>' +
 				'<input type="text" class="form-control tag-search-input" placeholder="Search Tags"></div>',
 			properties: {
-				color: '#d8d8d8',
+				color: '#d8d8d8'
 			}
 		});
 
-		this.searchBox.on('keyup', function (event) {
+		this.searchBox.on('keyup', function(event) {
 			if (_.contains(event.srcElement.classList, 'tag-search-input')) {
 				if (event.which != 13) {
 					var searchTerm = document.getElementsByClassName('tag-search-input')[0].value;

@@ -163,7 +163,6 @@ define(function(require, exports, module) {
 	};
 
 	SprintActivityView.prototype.fetchDiscussions = function(args) {
-		var params = args;
 		var parsedTemplate = _.template(SprintActivityTitleTemplate, {name: this.name}, templateSettings);
 		this.sprintActivityTitleSurface.setContent(parsedTemplate);
 
@@ -191,10 +190,11 @@ define(function(require, exports, module) {
 	
 	SprintActivityView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
+		this.saveState();
 	};
 
 	SprintActivityView.prototype.preShow = function(state) {
-		if (!state || (!state.hash && (state.new && !this.hash))) {
+		if (!state || (!state.hash && (state.onLoad && !this.hash))) {
 			return false;
 		} else if (state.hash) {
 			this.hash = state.hash;
@@ -241,6 +241,15 @@ define(function(require, exports, module) {
 		this.offset = 0;
 		this.scrollView.setPosition(0);
 		this.scrollView.sequenceFrom(this.deck);
+	};
+	
+	SprintActivityView.prototype.getCurrentState = function() {
+		return {
+			hash: this.hash,
+			name: this.name,
+			virtualGroupName: this.virtualGroupName,
+			lastPage: App.pageView.history.slice(-1)[0]
+		}
 	};
 
 	App.pages['SprintActivityView'] = SprintActivityView;

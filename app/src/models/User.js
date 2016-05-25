@@ -168,7 +168,7 @@ define(function(require, exports, module) {
 	};
 
 	User.show = function(hash, successCallback, failCallback) {
-		u.queueJSON('Getting user data', App.serverUrl + '/api/user/' + hash + '?callback=?',
+		u.queueJSON('Getting user details', App.serverUrl + '/api/user/' + hash + '?callback=?',
 			u.getCSRFPreventionObject('getUserData'),
 			function(data) {
 				if (u.checkData(data)) {
@@ -299,7 +299,7 @@ define(function(require, exports, module) {
 
 	User.hideExplanationCard = function(cardType, successCallback) {
 		var actionName = (cardType === 'curiosity') ? 'closeExplanationCardCuriosity' : 'closeExplanationCardTrackathon';
-		u.queueJSON('Closing explanation', App.serverUrl + '/api/user/action/' + actionName + '?' +
+		u.backgroundJSON('Closing explanation', App.serverUrl + '/api/user/action/' + actionName + '?' +
 			u.getCSRFPreventionURI('closeExplanationCardCSRF') + '&callback=?', null, function(data) {
 				if (checkData(data)) {
 					if (data.success) {
@@ -314,7 +314,7 @@ define(function(require, exports, module) {
 	};
 
 	User.markTrackathonVisited = function(successCallback) {
-		u.queueJSON('Mark trackathon visited', App.serverUrl + '/api/user/action/markTrackathonVisited?' +
+		u.backgroundJSON('Mark trackathon visited', App.serverUrl + '/api/user/action/markTrackathonVisited?' +
 			u.getCSRFPreventionURI('markTrackathonVisitedCSRF') + '&callback=?', null, function(data) {
 				if (checkData(data)) {
 					if (data.success) {
@@ -329,6 +329,24 @@ define(function(require, exports, module) {
 			}, function(xhr) {
 				console.log(xhr);
 			});
+	};
+
+	User.markFirstChartPlotted = function(successCallback) {
+		u.backgroundJSON('Mark first chart plotted', App.serverUrl + '/api/user/action/markFirstChartPlotted?' +
+			u.getCSRFPreventionURI('markFirstChartPlottedCSRF') + '&callback=?', null, function(data) {
+			if (checkData(data)) {
+				if (data.success) {
+					store.set('firstChartPlotted', true);
+					if(successCallback) {
+						successCallback();
+					}
+				} else {
+					u.showAlert(data.message);
+				}
+			}
+		}, function(xhr) {
+			console.log(xhr);
+		});
 	};
 
 	User.getSurveyTags = function(callback) {

@@ -50,6 +50,7 @@ define(function(require, exports, module) {
 						this.deck.splice(0, this.deck.length);
 						this.fetchFeedItems(this.currentPill);
 						this.originalSearchTerm = searchTerm;
+						this.saveState();
 					}
 					if (cordova) {
 						cordova.plugins.Keyboard.close();
@@ -173,6 +174,7 @@ define(function(require, exports, module) {
 		if (state && state.lable) {
 			this.setCurrentPill(state.lable);
 			setTimeout(function() {
+				this.initScrollView();
 				this.fetchFeedItems(state.lable);
 			}.bind(this), 350)
 		}

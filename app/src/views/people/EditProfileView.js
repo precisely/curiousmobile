@@ -68,6 +68,7 @@ define(function(require, exports, module, store) {
 			return false;
 		}
 		this.hash = state.hash;
+		this.leftSurface.setContent('<img src="content/images/left-white.png" width="20px" height="18px"/>');
 		this.showProfile(function() {
 				this.scrollView.setPosition(0)
 			}.bind(this)
@@ -99,10 +100,10 @@ define(function(require, exports, module, store) {
 		this.showMenuButton();
 		this.showBackButton();
 		this.setHeaderLabel('EDIT PROFILE', '#fff');
-		if (args.interestTags) {
+		if (args && args.interestTags) {
 			this.createInterestTagView(args.interestTags);
 			this.submitButtonModifier.setTransform(Transform.translate(0, (1300 + this.tagList.length * 40),  App.zIndex.readView + 2));
-		} else if (args.updateView) {
+		} else if (args && args.updateView) {
 			this.preShow({hash: this.hash});
 		}
 	};

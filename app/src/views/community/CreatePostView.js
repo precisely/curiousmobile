@@ -65,6 +65,8 @@ define(function(require, exports, module) {
 		BaseView.prototype.preShow.call(this);
 		if (state && state.groupName) {
 			this.groupName = state.groupName;
+		} else {
+			this.groupName = null;
 		}
 		return true;
 	};
@@ -87,7 +89,7 @@ define(function(require, exports, module) {
 					u.spinnerStart();
 					setTimeout(function(){
 						u.spinnerStop();
-						App.pageView.goBack(null, {new: true});
+						App.pageView.goBack(null, {onLoad: true});
 					}, 1000);
 				}.bind(this)
 			);

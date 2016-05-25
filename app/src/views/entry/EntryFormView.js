@@ -128,6 +128,7 @@ define(function(require, exports, module) {
 		}
 		this.submitSurface = new Surface({
 			content: '<button type="button" class="full-width-button create-entry-button">CREATE/UPDATE ENTRY</button>',
+			size: [undefined, true]
 		});
 
 		this.submitSurface.on('click', function(e) {
@@ -140,7 +141,7 @@ define(function(require, exports, module) {
 
 		this.submitButtonModifier = new StateModifier({
 			size: [App.width - 60, undefined],
-			transform: Transform.translate(30, 180, App.zIndex.formView)
+			transform: Transform.translate(30, 180, App.zIndex.formView + 5)
 		});
 
 		this.submitButtonRenderController = new RenderController();
@@ -149,7 +150,7 @@ define(function(require, exports, module) {
 
 		this.draggableEntryFormView = new DraggableView(this.formContainerSurface, true, 300);
 		this.add(new StateModifier({
-			transform: Transform.translate(0, 0, 0)
+			transform: Transform.translate(0, 0, App.zIndex.formView + 2)
 		})).add(this.draggableEntryFormView);
 	}
 
@@ -161,6 +162,7 @@ define(function(require, exports, module) {
 
 		this.deleteButtonSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
+				this.trackView.currentListView.deleteEntry(this.entry);
 				this.entry.delete(function(data) {
 					this._eventOutput.emit('delete-entry', data);
 				}.bind(this));
@@ -272,10 +274,11 @@ define(function(require, exports, module) {
 			return;
 		} else if (state && state.bookmarkForm) {
 			this.setPinned = true;
+			this.setRemind = this.setRepeat = false;
 			this.buttonsRenderController.hide();
 			this.renderController.hide();
 			this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">CREATE BOOKMARK</button>');
-			this.submitButtonModifier.setTransform(Transform.translate(30, 200, App.zIndex.datePicker - 1));
+			this.submitButtonModifier.setTransform(Transform.translate(30, 200, App.zIndex.formView + 5));
 			this.submitButtonRenderController.show(this.submitSurface);
 			return;
 		}
@@ -364,7 +367,7 @@ define(function(require, exports, module) {
 		this.dateGridRenderControllerMod.setTransform(Transform.translate(18, 220, 16));
 		var yTransformSubmitButtonModifier = this.submitButtonModifier.getTransform()[13];
 		if (yTransformSubmitButtonModifier > 150) {
-			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] - 100, App.zIndex.formView));
+			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] - 100, App.zIndex.formView + 5));
 			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] - 100, App.zIndex.formView + 5));
 		}
 	};
@@ -376,7 +379,7 @@ define(function(require, exports, module) {
 		this.dateGridRenderControllerMod.setTransform(Transform.translate(18, 320, 16));
 		var yTransformSubmitButtonModifier = this.submitButtonModifier.getTransform()[13];
 		if (yTransformSubmitButtonModifier < 500) {
-			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 100, App.zIndex.formView));
+			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 100, App.zIndex.formView + 5));
 			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 100, App.zIndex.formView + 5));
 		}
 	};

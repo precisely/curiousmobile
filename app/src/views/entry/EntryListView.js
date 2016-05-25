@@ -55,11 +55,14 @@ define(function(require, exports, module) {
 		backgroundSurface.pipe(this._eventOutput);
 		this.pinControllerMod = new StateModifier({
 			size: [undefined, 100],
-			transform: Transform.translate(0, 0, 0)
+			transform: Transform.translate(0, 0, 10)
+		});
+		this.renderControllerMod = new StateModifier({
+			transform: Transform.translate(0, 0, 10)
 		});
 		this.add(this.pinControllerMod).add(this.pinnedEntriesController);
-		this.add(this.renderController);
-		this.refreshEntries(entries, glowEntry);
+		this.add(this.renderControllerMod).add(this.renderController);
+		this.refreshEntries(entries, glowEntry, null, true);
 	}
 
 	EntryListView.prototype.addEntry = function(entry) {
@@ -83,7 +86,6 @@ define(function(require, exports, module) {
 		trackEntryView.pipe(this.scrollView);
 		this.trackEntryViews.push(trackEntryView);
 		this.draggableList.push(draggableNode);
-		//trackEntryView.pipe(this.scrollView);
 
 		var snapTransition = {
 			method: 'snap',
@@ -119,15 +121,7 @@ define(function(require, exports, module) {
 				console.log('EntryListView:85 failed to delete entry. Reloading cache');
 				this._eventOutput.emit('delete-failed');
 			} else {
-				if (entryView instanceof TrackEntryView) {
-					var deletedSurfaceIndex = this.trackEntryViews.indexOf(entryView);
-					this.nonBookmarkEntries.splice(deletedSurfaceIndex, 1);
-					this.trackEntryViews.splice(deletedSurfaceIndex, 1);
-					this.draggableList.splice(deletedSurfaceIndex, 1);
-				} else {
-					this.pinnedViews.splice(this.pinnedViews.indexOf(entryView), 1);
-					this.pinnedContainerSurface.setSize([undefined, this.heightOfPins() + 10]);
-				}
+				this.deleteEntry(entryView);
 			}
 		}.bind(this));
 
@@ -306,8 +300,10 @@ define(function(require, exports, module) {
 		this.scrollWrapperSurface.add(new Modifier({transform: Transform.translate(0, 0, 0)})).add(scrollerBackgroundSurface);
 
 		this.renderController.inTransformFrom(function() {
-			var heightOfPins = 20 + Math.min(this.heightOfPins(), 140);
-			return Transform.translate(0, heightOfPins, App.zIndex.readView);
+			if (this.pinnedViews) {
+				var heightOfPins = 20 + Math.min(this.heightOfPins(), 140);
+				return Transform.translate(0, heightOfPins, App.zIndex.readView);
+			}
 		}.bind(this));
 
 		this.scrollModifier.transformFrom(function() {
@@ -320,11 +316,15 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	EntryListView.prototype.refreshEntries = function(entries, glowEntry, callback) {
+	EntryListView.prototype.refreshEntries = function(entries, glowEntry, callback, refreshAll) {
 		this.glowEntry = glowEntry;
 		this.minYRange = 0;
-		var refreshPinEntries = (!glowEntry || glowEntry.isContinuous());
-		var refreshDraggableEntries = (!glowEntry || !glowEntry.isContinuous());
+		if (refreshAll) {
+			refreshPinEntries = refreshDraggableEntries = true;
+		} else {
+			var refreshPinEntries = (!glowEntry || glowEntry.isContinuous());
+			var refreshDraggableEntries = (!glowEntry || !glowEntry.isContinuous());
+		}
 
 		if (!entries && this.entries) {
 			entries = EntryCollection.getFromCache(this.entries.key);
@@ -352,7 +352,6 @@ define(function(require, exports, module) {
 			this.nonBookmarkEntries = [];
 			this.draggableList = [];
 			var nonBookmarkEntriesCount = 0;
-			var entriesGroupedByDeviceData = {};
 			this.initDraggableViews();
 		}
 
@@ -402,9 +401,7 @@ define(function(require, exports, module) {
 	EntryListView.prototype.handleGlowEntry = function(callback) {
 		if (this.glowView) {
 			if (this.glowView.entry.isContinuous()) {
-				var entryToDelete = _.filter(this.nonBookmarkEntries, function (entry) {
-					return entry.id === this.glowView.entry.id;
-				}.bind(this));
+				var entryToDelete = this.getEntry(this.glowView.entry.id);
 				if (entryToDelete) {
 					var deletedSurfaceIndex = this.nonBookmarkEntries.indexOf(entryToDelete[0]);
 					this.nonBookmarkEntries.splice(deletedSurfaceIndex, 1);
@@ -427,6 +424,53 @@ define(function(require, exports, module) {
 		}
 	};
 
+	EntryListView.prototype.getEntry = function(entryId) {
+		var entryList = _.filter(this.nonBookmarkEntries, function(entry) {
+			return entry.id === entryId;
+		});
+
+		return entryList[0];
+	};
+
+	EntryListView.prototype.getTrackEntryView = function(entryId) {
+		var trackEntryViewList = _.filter(this.trackEntryViews, function(trackEntryView) {
+			return trackEntryView.entry.id === entryId;
+		});
+
+		return trackEntryViewList[0];
+	};
+
+	EntryListView.prototype.getPinnedEntryView = function(entryId) {
+		var pinnedEntryViewList = _.filter(this.pinnedViews, function(pinnedEntryView) {
+			return pinnedEntryView.entry.id === entryId;
+		});
+
+		return pinnedEntryViewList[0];
+	};
+
+	EntryListView.prototype.deleteEntry = function(entry) {
+		var entryView = entry;
+		if (entry instanceof Entry) {
+			if (entry.isContinuous()) {
+				entryView = this.getPinnedEntryView(entry.get('id'));
+			} else {
+				entryView = this.getTrackEntryView(entry.get('id'));
+			}
+		}
+
+		if (entryView instanceof TrackEntryView) {
+			var deletedSurfaceIndex = this.trackEntryViews.indexOf(entryView);
+			this.nonBookmarkEntries.splice(deletedSurfaceIndex, 1);
+			this.trackEntryViews.splice(deletedSurfaceIndex, 1);
+			this.draggableList.splice(deletedSurfaceIndex, 1);
+			this.scrollView.sequenceFrom(this.draggableList);
+		} else {
+			this.keepBookmarkEditMode = true;
+			this.pinnedViews.splice(this.pinnedViews.indexOf(entryView), 1);
+			this.pinnedContainerSurface.setSize([undefined, this.heightOfPins() + 10]);
+		}
+	};
+
 	EntryListView.prototype.heightOfPins = function () {
 		var numberOfRows = this.numberOfPinRows();
 		return numberOfRows ? ((numberOfRows * 40) + 15) : 15;
@@ -438,7 +482,7 @@ define(function(require, exports, module) {
 	};
 
 	EntryListView.prototype.numberOfPinRows = function (pinIndex) {
-		var numberOfRows = this.pinnedViews.length ? 1 : 0;
+		var numberOfRows = (this.pinnedViews && this.pinnedViews.length) ? 1 : 0;
 		var rowWidthSoFar = 20;
 		this.pinnedEdgeIndex = [];
 		_.each(this.pinnedViews, function (pinnedView, index) {

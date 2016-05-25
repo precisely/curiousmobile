@@ -69,9 +69,12 @@ define(function(require, exports, module) {
 	};
 
 	function createStepSurfaces(helpStepTemplate, templateData) {
+		templateData = templateData || {
+			userAgent: (navigator.userAgent.match(/(iPad|iPhone|iPod)/i)) ? 'iOS' : 'android'
+		};
 		var stepSurface = new Surface({
 			size: [undefined, true],
-			content: templateData ? _.template(helpStepTemplate, templateData, templateSettings) : _.template(helpStepTemplate, templateSettings),
+			content: _.template(helpStepTemplate, templateData, templateSettings),
 			properties: {
 				backgroundColor: '#ff6f4c',
 				paddingTop: '30px'
@@ -138,14 +141,14 @@ define(function(require, exports, module) {
 						});
 						User.saveTrackingTags(tagOptions, function(data) {
 							App.pageView.changePage('TrackView', {
-								new: true
+								onLoad: true
 							});
 						}.bind(this));
 					}
 				} else {
 					if (_.contains(classList, 'skip')) {
 						App.pageView.changePage('TrackView', {
-							new: true
+							onLoad: true
 						});
 					} else if (_.contains(classList, 'next') || _.contains(event.srcElement.parentElement.classList, 'next')) {
 						this.navigate(1);
@@ -199,7 +202,7 @@ define(function(require, exports, module) {
 						event.srcElement.parentElement.firstElementChild.checked = !event.srcElement.parentElement.firstElementChild.checked;
 					} else if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
 						App.pageView.changePage('TrackView', {
-							new: true
+							onLoad: true
 						});
 					}
 				}
@@ -214,7 +217,7 @@ define(function(require, exports, module) {
 				var entryId = document.getElementById('sleep-hour').dataset.id;
 				if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
 					App.pageView.changePage('TrackView', {
-						new: true
+						onLoad: true
 					});
 				} else if (_.contains(classList, 'form-control')) {
 					removeCursor('sleep-cursor');
@@ -228,7 +231,7 @@ define(function(require, exports, module) {
 				classList = event.srcElement.classList;
 				if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
 					App.pageView.changePage('TrackView', {
-						new: true
+						onLoad: true
 					});
 				} else if (_.contains(classList, 'form-control')) {
 					removeCursor('mood-cursor');
@@ -247,7 +250,7 @@ define(function(require, exports, module) {
 	function removeCursor(elementId) {
 		var cursorElement = document.getElementById(elementId);
 		if (cursorElement) {
-			cursorElement.parentNode.removeChild(cursorElement);
+			cursorElement.classList.remove('blinking-cursor-solid');
 		}
 	};
 
@@ -257,7 +260,7 @@ define(function(require, exports, module) {
 			classList = event.srcElement.classList;
 			if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
 				App.pageView.changePage('TrackView', {
-					new: true
+					onLoad: true
 				});
 			}
 		}
@@ -396,7 +399,9 @@ define(function(require, exports, module) {
 		this.currentList = [currentSurface, this.spareSurface];
 		this.scrollView.sequenceFrom(this.currentList);
 		this.scrollView.setPosition(0);
-		currentSurface.pipe(this.scrollView);
+		if (currentSurface) {
+			currentSurface.pipe(this.scrollView);
+		}
 		this.spareSurface.pipe(this.scrollView);
 		setTimeout(function() {
 			if (this.currentStepIndex == 0) {

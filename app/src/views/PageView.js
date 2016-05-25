@@ -11,12 +11,14 @@ define(function(require, exports, module) {
 	var HelpContentsView = require('views/help/HelpContentsView');
 	var HomeView = require('views/HomeView');
 	var LoginView = require('views/LoginView');
+	var Transform = require('famous/core/Transform');
 	var RegisterView = require('views/RegisterView');
 	var TermsView = require('views/TermsView');
 	var ForgotPasswordView = require('views/ForgotPasswordView');
 	var FeedView = require('views/community/FeedView');
 	var SearchView = require('views/community/SearchView');
 	var ChartView = require('views/graph/ChartView');
+	var SpinnerView = require('views/widgets/SpinnerView');
 	var CreateTagHelpView = require('views/help/CreateTagHelpView');
 	var CuriositiesGraphView = require('views/graph/CuriositiesGraphView');
 	var ShareHelpView = require('views/help/ShareHelpView');
@@ -48,6 +50,9 @@ define(function(require, exports, module) {
 		_onLoad.call(this);
 		_menuHandlers.call(this);
 		_createContextMenu.call(this);
+		setTimeout(function() {
+			navigator.splashscreen.hide();
+		}, 100);
 		//		window.onclick = function() {
 		//			Utils.closeAlerts();
 		//		};
@@ -72,7 +77,8 @@ define(function(require, exports, module) {
 			size: [App.width, App.height],
 		});
 		this.add(this.hiddenModifier).add(this.renderController);
-
+		this.spinnerView = new SpinnerView();
+		this.add(new Modifier({transform: Transform.translate(0, 0, App.zIndex.spinner)})).add(this.spinnerView);
 		var currentPage = this.getCurrentPage();
 		var state = App.stateCache.getItem(currentPage);
 		if (state && state.lastPage) {
@@ -80,9 +86,6 @@ define(function(require, exports, module) {
 		}
 		this.changePage(this.getCurrentPage(), state || { onLoad: true });
 
-		App.coreEventHandler.on('device-ready', function() {
-			Discussion.getNewNotificationCount();
-		}.bind(this));
 		App.coreEventHandler.on('app-paused', function() {
 			this.saveState();
 		}.bind(this));
@@ -188,7 +191,7 @@ define(function(require, exports, module) {
 			return false;
 		} else if (state && state.onLoad) {
 			if (view.parentPage) {
-				this.goBack(view.parentPage, {new: true});
+				this.goBack(view.parentPage, {onLoad: true});
 				return false;
 			}
 		}
@@ -303,7 +306,7 @@ define(function(require, exports, module) {
 		var view = this.getCurrentView();
 		if (view.options.reloadOnResume) {
 			this.changePage(view.constructor.name, {
-				new: true
+				onLoad: true
 			});
 		} else {
 			view.getStateFromCache();

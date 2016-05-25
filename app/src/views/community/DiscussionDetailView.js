@@ -23,6 +23,7 @@ define(function(require, exports, module) {
 	var OverlayWithGroupListView = require('views/community/OverlayWithGroupListView');
 	var editDiscussionTemplate = require('text!templates/edit-discussion.html');
 	var User = require('models/User');
+	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 
 	function DiscussionDetailView() {
 		BaseView.apply(this, arguments);
@@ -36,7 +37,7 @@ define(function(require, exports, module) {
 			}
 		});
 
-		this.setBody(this.backgroundSurface);
+		this.add(this.backgroundSurface);
 
 		this.scrollView = new Scrollview({
 			direction: Utility.Direction.Y,
@@ -49,6 +50,21 @@ define(function(require, exports, module) {
 				this.loadMoreItems = true;
 			}
 		}.bind(this));
+
+		this.scrollViewContainer = new ContainerSurface({
+			properties: {
+				zIndex: 1
+			}
+		});
+		
+		this.add(this.scrollViewContainer);
+		
+		this.scrollViewControllerMod = new StateModifier({
+			size: [undefined, App.height - 130],
+			transform: Transform.translate(0, 75, App.zIndex.feedItem)
+		});
+
+		this.scrollViewContainer.add(this.scrollViewControllerMod).add(this.scrollView);
 
 		_setHandlers.call(this);
 	}
@@ -77,8 +93,14 @@ define(function(require, exports, module) {
 
 	DiscussionDetailView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
+		this.saveState();
 	};
 
+	DiscussionDetailView.prototype.preChangePage = function() {
+		BaseView.prototype.preChangePage.call(this);
+		this.killOverlayContent();
+	};
+	
 	DiscussionDetailView.prototype.preShow = function(state) {
 		if (!state || !state.discussionHash) {
 			return false;
@@ -96,17 +118,7 @@ define(function(require, exports, module) {
 		this.surfaceList = [];
 		this.scrollView.setPosition(0);
 		this.isCommentSelected = false;
-		this.commentBoxHeight = 0;
-		var transition = new Transitionable(Transform.translate(0, 75, App.zIndex.feedItem));
-		this.renderController = new RenderController();
-		this.renderController.inTransformFrom(transition);
-
-		// This is to modify renderController so that items in scroll view are not hidden behind footer menu
-		this.scrollViewControllerMod = new StateModifier({
-			size: [undefined, App.height - 130],
-			transform: Transform.translate(0, 75, App.zIndex.feedItem)
-		});
-		this.add(this.scrollViewControllerMod).add(this.scrollView);
+		
 		this.scrollView.sequenceFrom(this.surfaceList);
 
 		DiscussionPost.fetch({
@@ -210,10 +222,7 @@ define(function(require, exports, module) {
 						}
 					}.bind(this));
 				} else if (_.contains(e.srcElement.classList, 'add-description')) {
-					this.overlayWithGroupListView = new OverlayWithGroupListView(editDiscussionTemplate, {name: u.parseDivToNewLine(this.discussionDetails.discussionTitle), description: u.parseDivToNewLine(this.discussionDetails.firstPost.message),
-							groupName: this.discussionDetails.groupName || (this.discussionDetails.isPublic ? 'PUBLIC' : 'PRIVATE')});
-					this.showOverlayContent(this.overlayWithGroupListView);
-					this.setHeaderLabel('EDIT DISCUSSION');
+					this._eventOutput.emit('edit-discussion');
 				}
 			}
 		}.bind(this));
@@ -255,7 +264,7 @@ define(function(require, exports, module) {
 					clearTimeout(this.touchTimeout);
 					return;
 				}
-				if (timeDelta > 600) {
+				if (timeDelta > 600 && discussionPost.discussionDetails.isAdmin) {
 					App.pageView._eventOutput.emit('show-context-menu', {
 						menu: 'discussion',
 						target: this,
@@ -283,33 +292,38 @@ define(function(require, exports, module) {
 					setTimeout(function() {
 						u.spinnerStop();
 						App.pageView.changePage('FeedView', {
-							new: true
+							onLoad: true
 						});
 					}, 1000);
 				}.bind(this));
 			}.bind(this),
-			onB: function() {}.bind(this),
+			onB: function() {}.bind(this)
 		});
 	};
 
 	function _setHandlers() {
 		this.on('edit-discussion', function() {
-			this.overlayWithGroupListView = new OverlayWithGroupListView(editDiscussionTemplate, {name: u.parseDivToNewLine(this.discussionDetails.discussionTitle), description: u.parseDivToNewLine(this.discussionDetails.firstPost.message),
-					groupName: this.discussionDetails.groupName || (this.discussionDetails.isPublic ? 'PUBLIC' : 'PRIVATE')}, function(e) {
-						if (e instanceof CustomEvent) {
-							var classList = e.srcElement.classList;
-							if (_.contains(classList, 'submit-post')) {
-								var discussionTitle = document.getElementById('name').value;
-								var discussionDescription = document.getElementById('description').value;
-								var groupName = this.groupName;
-								if (!discussionTitle) {
-									u.showAlert('Discussion topic can not be blank');
-									return;
-								}
-								App.pageView.getCurrentView().updateDiscussion({name: discussionTitle, message: discussionDescription, group: groupName});
+			var groupName = this.discussionDetails.isPublic ? 'PUBLIC' : 'PRIVATE';
+			this.overlayWithGroupListView = new OverlayWithGroupListView(editDiscussionTemplate,
+				{name: u.parseDivToNewLine(this.discussionDetails.discussionTitle),
+					description: u.parseDivToNewLine(this.discussionDetails.firstPost.message),
+					groupName: this.discussionDetails.groupName || groupName},
+				function(e) {
+					if (e instanceof CustomEvent) {
+						var classList = e.srcElement.classList;
+						if (_.contains(classList, 'submit-post')) {
+							var discussionTitle = document.getElementById('name').value;
+							var discussionDescription = document.getElementById('description').value;
+							var groupName = this.groupName;
+							if (!discussionTitle) {
+								u.showAlert('Discussion topic can not be blank');
+								return;
 							}
+							App.pageView.getCurrentView().updateDiscussion({name: discussionTitle,
+								message: discussionDescription, group: groupName});
 						}
-					});
+					}
+				});
 			this.showOverlayContent(this.overlayWithGroupListView);
 			this.setHeaderLabel('EDIT DISCUSSION');
 		}.bind(this));
@@ -322,9 +336,7 @@ define(function(require, exports, module) {
 		var addCommentSurface = new Surface({
 			size: [undefined, true],
 			content: _.template(addCommentTemplate, {message: post.message || '', postId: post.id || undefined,
-				authorAvatarURL: post.authorAvatarURL, commentIndex: currentIndex}, templateSettings),
-				properties: {
-				}
+				authorAvatarURL: post.authorAvatarURL, commentIndex: currentIndex}, templateSettings)
 		});
 
 		addCommentSurface.on('deploy', function(e) {
@@ -393,17 +405,18 @@ define(function(require, exports, module) {
 	};
 
 	DiscussionDetailView.prototype.getCurrentState = function() {
-		var inputElement = document.getElementById("message");
 		var state = {
-			viewProperties: {
-				discussionHash: this.discussionHash,
-			},
-			form: [{
+			discussionHash: this.discussionHash,
+			lastPage: App.pageView.history.slice(-1)[0]
+		};
+		var inputElement = document.getElementById("message");
+		if (inputElement) {
+			state.form = [{
 				id: 'message',
 				value: inputElement.value,
-				elementType: ElementType.domElement,
+				elementType: ElementType.domElement
 			}]
-		};
+		}
 		return state;
 	};
 
@@ -532,7 +545,6 @@ define(function(require, exports, module) {
 		Discussion.update(args, function() {
 			this.killOverlayContent();
 			this.loadDetails();
-		}.bind(this), function() {
 		}.bind(this));
 	};
 
@@ -540,7 +552,6 @@ define(function(require, exports, module) {
 		this.surfaceList.splice(this.selectionIndex, 1, this.selectedCommentSurface);
 		this.surfaceList.push(this.addCommentSurface);
 		this.isCommentSelected = false;
-		this.commentBoxHeight = 0;
 		this.initialHeight = 50;
 	};
 

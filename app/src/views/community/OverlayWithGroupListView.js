@@ -33,7 +33,11 @@ define(function(require, exports, module) {
 
 	OverlayWithGroupListView.prototype.createOverlay = function() {
 		this.overlayRenderController = new RenderController();
-		this.overlayContainerSurface = new ContainerSurface({});
+		this.overlayContainerSurface = new ContainerSurface({
+			properties: {
+				zIndex: 12
+			}
+		});
 		this.overlayModal = new Surface({
 			size: [undefined, App.height - 110],
 			properties: {

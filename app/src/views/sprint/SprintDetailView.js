@@ -72,6 +72,7 @@ define(function (require, exports, module) {
 
 	SprintDetailView.prototype.onShow = function (state) {
 		BaseView.prototype.onShow.call(this);
+		this.saveState();
 	};
 
 	SprintDetailView.prototype.preShow = function (state) {
@@ -134,13 +135,16 @@ define(function (require, exports, module) {
 							offset: this.participantsOffset,
 							max: 10
 						}, function (participantsList) {
+							var participantsWrapper = document.getElementsByClassName('participants-wrapper')[0];
 							_.each(participantsList, function (participant) {
-								document.getElementById('sprint-participants').insertAdjacentHTML('beforeend', participant.username + '<br>');
+								participantsWrapper.innerHTML +=  '<p>' + participant.username + '</p>';
 							});
 							this.participantsOffset += 10;
 							if (this.participantsOffset >= this.totalParticipants) {
 								document.getElementById('more-participants').style.visibility = 'hidden';
 							}
+							var newHeight = document.getElementsByClassName('sprint-details')[0].offsetHeight;
+							sprintSurface.setSize([undefined, newHeight]);
 						}.bind(this), function () {
 
 						});
@@ -192,6 +196,15 @@ define(function (require, exports, module) {
 		}.bind(this), function () {
 			App.pageView.goBack();
 		}.bind(this));
+	};
+
+	SprintDetailView.prototype.getCurrentState = function() {
+		return {
+			hash: this.hash,
+			name: this.name,
+			virtualGroupName: this.virtualGroupName,
+			lastPage: App.pageView.history.slice(-1)[0]
+		}
 	};
 
 	App.pages['SprintDetailView'] = SprintDetailView;

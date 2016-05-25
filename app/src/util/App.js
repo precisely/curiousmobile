@@ -18,8 +18,10 @@ var App = function() {
 		datePicker: 50,
 		autocomplete: 99,
 		alertView: 999,
+		noInternet: 900,
 		contextMenu: 90,
-		overlay: 20
+		overlay: 20,
+		spinner: 950
 	};
 
 	// Global popover contents, so that any popover content can be changed here without visiting any views.
@@ -34,10 +36,12 @@ var App = function() {
 		enterTag: 'Enter tag to track',
 		addDiscussionTrackathon: 'Post new discussion topic',
 		trackathonBookmarks: "The trackathon’s tags have been added to your bookmarks! " +
-				"Go to the Trackathon/STARTED tab to see your started trackathons and discuss your progress with other users"
+				"Go to the Trackathon/STARTED tab to see your started trackathons and discuss your progress with" +
+				" other users",
+		firstChartPlot: 'Tap tag to change graphing style'
 	};
-	
-	//Global popover settings applied to every popup in the app.
+
+	// Global popover settings applied to every popup in the app.
 	this.getDefaultPopoverSettings = function(customCss) {
 		return {
 			placement: 'top',
@@ -56,7 +60,7 @@ var App = function() {
 			popover.placement = customSettings.placement || popover.placement;
 			popover.container = customSettings.container || popover.container;
 
-			var $element = $(elementId); 
+			var $element = $(elementId);
 			$element.popover(popover);
 			$element.popover('show');
 

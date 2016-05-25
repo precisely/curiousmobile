@@ -262,7 +262,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				argsToSend.text = argsToSend.text.replace('Remind', 'remind');
 				argsToSend.text = argsToSend.text.replace('Button', 'button');
 
-				u.backgroundJSON("adding new entry", u.makeGetUrl("addEntrySData"), u.makeGetArgs(argsToSend), function(
+				u.queueJSON("adding new entry", u.makeGetUrl("addEntrySData"), u.makeGetArgs(argsToSend), function(
 				entries) {
 					if (u.checkData(entries)) {
 						if (entries[1] != null) {
@@ -311,7 +311,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					argsToSend.repeatEnd = this.get('repeatEnd') ? new Date(this.get('repeatEnd')).toUTCString() : null;
 				}
 
-				u.backgroundJSON("saving entry", u.makeGetUrl("updateEntrySData"), u.makeGetArgs(argsToSend),
+				u.queueJSON("saving entry", u.makeGetUrl("updateEntrySData"), u.makeGetArgs(argsToSend),
 				function(entries) {
 					if (entries == "") {
 						return;
@@ -347,24 +347,22 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			},
 			delete: function(callback) {
 				var collectionCache = window.App.collectionCache;
-				if (this.isGhost() && !this.get('sprintEntry')) {
-					if (this.isContinuous() || this.isTodayOrLater()) {
-						this.deleteGhost(true, callback);
-					} else {
-						u.showAlert({
-							type: 'alert',
-							message: 'Delete just this one event or also future events?',
-							verify: false,
-							a: 'One',
-							b: 'Future',
-							onA: function() {
-								this.deleteGhost(false, callback);
-							}.bind(this),
-							onB: function() {
-								this.deleteGhost(true, callback);
-							}.bind(this),
-						});
-					}
+				if (this.isRepeat() && !this.isTodayOrLater() && !this.get('sprintEntry')) {
+					u.showAlert({
+						type: 'alert',
+						message: 'Delete just this one event or also future events?',
+						verify: false,
+						a: 'One',
+						b: 'Future',
+						onA: function () {
+							this.deleteGhost(false, callback);
+						}.bind(this),
+						onB: function () {
+							this.deleteGhost(true, callback);
+						}.bind(this),
+					});
+				} else if (this.isGhost() && !this.get('sprintEntry') && (this.isContinuous() || this.isTodayOrLater())) {
+					this.deleteGhost(true, callback);
 				} else {
 					var baseDate = window.App.selectedDate.toUTCString();
 					var argsToSend = u.getCSRFPreventionObject(
@@ -376,7 +374,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 							displayDate: baseDate
 						});
 
-						u.backgroundJSON("deleting entry", u.makeGetUrl("deleteEntrySData"), u.makeGetArgs(argsToSend),
+						u.queueJSON("deleting entry", u.makeGetUrl("deleteEntrySData"), u.makeGetArgs(argsToSend),
 						function(entries) {
 							if (u.checkData(entries)) {
 								var collectionCache = window.App.collectionCache;
@@ -399,7 +397,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				var collectionCache = window.App.collectionCache;
 				var selectedDate = window.App.selectedDate;
 				var baseDate = window.App.selectedDate.toUTCString();
-				u.backgroundJSON("deleting entry", u.makeGetUrl("deleteGhostEntryData"),
+				u.queueJSON("deleting entry", u.makeGetUrl("deleteGhostEntryData"),
 				u.makeGetArgs(u.getCSRFPreventionObject(
 					"deleteGhostEntryDataCSRF", {
 						entryId: this.id,

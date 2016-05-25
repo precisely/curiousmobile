@@ -418,7 +418,7 @@ function initCuriosities() {
 			if (data.length <= 0) {
 				if (isMobile) {
 					var currentView = App.pageView.getCurrentView();
-					if (typeof currentView !== 'undefined') {
+					if (typeof currentView !== 'undefined' && currentView.addListItemsToScrollView) {
 						currentView.addListItemsToScrollView([]);
 					}
 				} else if (pageNumber && pageNumber == 1) {
