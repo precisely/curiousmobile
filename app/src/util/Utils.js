@@ -221,6 +221,10 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 
 		Utils.queueJSONAll = function(description, url, args, successCallback, failCallback, delay, httpArgs, background) {
 			if (u.isOnline()) {
+				/* 
+				 * Searching for current page in pageMap instead of calling getCurentView() so that it does not try to 
+				 * create new instance of view if view does not exist
+				 */
 				var currentView = App.pageView.pageMap[App.pageView.getCurrentPage()];
 				if (currentView) {
 					currentView.noInternetRenderController.hide();
@@ -281,10 +285,6 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			var wrapSuccessCallback = function(data, msg) {
 				u.spinnerStop();
 				stillRunning = false;
-				var currentView = App.pageView.pageMap[App.pageView.getCurrentPage()];
-				if (currentView) {
-					currentView.noInternetRenderController.hide();
-				}
 				if (alertShown)
 					u.closeAlerts();
 				if (currentLoginSession != u._loginSessionNumber)

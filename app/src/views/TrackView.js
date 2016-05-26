@@ -28,7 +28,7 @@ define(function(require, exports, module) {
 	require('bootstrap');
 	var DateUtil = require('util/DateUtil');
 	var inputSurfaceTemplate = require('text!templates/input-surface-dummy.html');
-	
+
 	function TrackView() {
 		BaseView.apply(this, arguments);
 		this.pageChange = false; //making sure the pageChange even is disregarded on page reload
@@ -293,7 +293,7 @@ define(function(require, exports, module) {
 			var glowEntryId = state.entryId;
 			var glowEntryDate = state.entryDate;
 			this.processingNotification = true;
-			
+
 			this.calendarView.setSelectedDate(glowEntryDate);
 			this.changeDate(this.calendarView.selectedDate, function() {
 				var glowEntry = this.currentListView.getEntry(glowEntryId);
@@ -301,7 +301,7 @@ define(function(require, exports, module) {
 				this.currentListView.handleGlowEntry();
 				this.processingNotification = false;
 			}.bind(this), null);
-			
+
 			return true;
 		}
 
@@ -319,7 +319,7 @@ define(function(require, exports, module) {
 	};
 
 	TrackView.prototype.isCurrentDay = function(date) {
-		return (this.calendarView.getSelectedDate().setHours(0, 0, 0) == new Date(date).setHours(0, 0, 0));
+		return (this.calendarView.getSelectedDate().setHours(0, 0, 0, 0) == new Date(date).setHours(0, 0, 0, 0));
 	};
 
 	TrackView.prototype.onShow = function(state) {
