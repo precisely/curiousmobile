@@ -272,15 +272,19 @@ define(function(require, exports, module) {
 			//TODO if no state
 			App.pageView.changePage(this.parentPage);
 			return;
-		} else if (state && state.bookmarkForm) {
-			this.setPinned = true;
-			this.setRemind = this.setRepeat = false;
-			this.buttonsRenderController.hide();
-			this.renderController.hide();
-			this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">CREATE BOOKMARK</button>');
-			this.submitButtonModifier.setTransform(Transform.translate(30, 200, App.zIndex.formView + 5));
-			this.submitButtonRenderController.show(this.submitSurface);
-			return;
+		} else if (state) {
+			if (state.bookmarkForm) {
+				this.setPinned = true;
+				this.setRemind = this.setRepeat = false;
+				this.buttonsRenderController.hide();
+				this.renderController.hide();
+				this.submitSurface.setContent('<button type="button" class="full-width-button create-entry-button">CREATE BOOKMARK</button>');
+				this.submitButtonModifier.setTransform(Transform.translate(30, 200, App.zIndex.formView + 5));
+				this.submitButtonRenderController.show(this.submitSurface);
+				return;
+			} else if (!this.entry && state.viewProperties) {
+				this.entry  = state.viewProperties.value;
+			}
 		}
 		this.loadState(state);
 	};
