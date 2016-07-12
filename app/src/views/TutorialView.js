@@ -26,7 +26,6 @@ define(function(require, exports, module) {
 
 	function TutorialView() {
 		BaseView.apply(this, arguments);
-
 		this.renderController = new RenderController();
 		var mod = new Modifier({
 			transform: Transform.translate(0, 0, 16)
@@ -68,7 +67,7 @@ define(function(require, exports, module) {
 		footer: true,
 	};
 
-	function createStepSurfaces(helpStepTemplate, templateData) {
+	TutorialView.prototype.createStepSurfaces = function(helpStepTemplate, templateData) {
 		templateData = templateData || {
 			userAgent: (navigator.userAgent.match(/(iPad|iPhone|iPod)/i)) ? 'iOS' : 'android'
 		};
@@ -178,19 +177,19 @@ define(function(require, exports, module) {
 		this.spareSurface = new Surface({
 			size: [undefined, 30],
 			properties: {
-				backgroundColor: '#ff6f4c',
+				backgroundColor: 'transparent',
 			}
 		});
 		this.currentList.push(this.spareSurface);
-		this.tutorialIntro1 = createStepSurfaces(TutorialIntro1Template);
-		this.tutorialIntro2 = createStepSurfaces(TutorialIntro2Template);
-		this.step1Surface = createStepSurfaces(HelpStep1Template);
-		this.step2Surface = createStepSurfaces(HelpStep2Template);
+		this.tutorialIntro1 = this.createStepSurfaces(TutorialIntro1Template);
+		this.tutorialIntro2 = this.createStepSurfaces(TutorialIntro2Template);
+		this.step1Surface = this.createStepSurfaces(HelpStep1Template);
+		this.step2Surface = this.createStepSurfaces(HelpStep2Template);
 
 		this.stepsSurfaceList = [this.tutorialIntro1, this.tutorialIntro2, this.step1Surface,
 				this.step2Surface];
 		User.getSurveyTags(function(surveyOptions) {
-			this.step4Surface = createStepSurfaces(HelpStep4Template, {surveyOptions: surveyOptions});
+			this.step4Surface = this.createStepSurfaces(HelpStep4Template, {surveyOptions: surveyOptions});
 			this.stepsSurfaceList.push(this.step4Surface);
 			this.step4Surface.on('click', function(event) {
 				var classList;
@@ -409,6 +408,9 @@ define(function(require, exports, module) {
 			} else {
 				document.getElementsByClassName('back')[0].style.visibility = "visible";
 			}
+			var documentHeight = document.getElementsByClassName('help-wizard')[0].offsetHeight;
+			currentSurface.setSize([undefined, documentHeight]);
+			this.scrollView.sequenceFrom(this.currentList);
 
 			_.each(document.getElementsByClassName('navigation-dots'), function(dot, index) {
 				if (index === this.currentStepIndex) {

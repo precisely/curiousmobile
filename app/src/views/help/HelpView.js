@@ -39,12 +39,18 @@ define(function(require, exports, module) {
 			content: _.template(this.options.helpTemplate, templateSettings)
 		});
 
-		this.scrollableHelpView = new Scrollview({
-			direction: Utility.Direction.Y
-		});
-
 		var spareSurface = new Surface({
 			size: [undefined, 30]
+		});
+
+		bodySurface.on('deploy', function(e) {
+			u.reloadDOMWithImage.call(this, 'help-container', bodySurface, function() {
+				this.scrollableHelpView.sequenceFrom([bodySurface, spareSurface]);
+			}.bind(this));
+		}.bind(this));
+
+		this.scrollableHelpView = new Scrollview({
+			direction: Utility.Direction.Y
 		});
 
 		this.scrollableHelpView.sequenceFrom([bodySurface, spareSurface]);

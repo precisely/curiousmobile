@@ -395,6 +395,31 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			u.pendingJSONCalls = [];
 		};
 
+		/*
+		 * This method reloads DOM with images in it to 
+		 * get actual size of the surface in scroll view
+		 *
+		 */
+		Utils.reloadDOMWithImage = function(domContainerId, currentSurface, callback) {
+			var addListener = function() {
+				var containerDOM = document.getElementsByClassName(domContainerId)[0];
+				if (typeof containerDOM === 'undefined') {
+					setTimeout(addListener.bind(this), 100);
+				} else {
+					var images = containerDOM.getElementsByTagName('img');
+					_.each(images, function(image) {
+						image.addEventListener('load', function(e) {
+							var documentHeight = document.getElementsByClassName(domContainerId)[0].offsetHeight;
+							currentSurface.setSize([undefined, documentHeight]);
+							if (callback) {
+								callback();
+							}
+						}.bind(this));
+					}.bind(this));
+				}
+			};
+			addListener.call(this);
+		};
 
 		/**
 		 * A method which returns an string representation of an url containing parameters
