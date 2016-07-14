@@ -182,6 +182,7 @@ define(function(require, exports, module) {
 	function _createCalendar() {
 		this.calendarView = new CalendarView();
 		this.calendarView.on('manual-date-change', function(e) {
+			this.dateNotToday = false;
 			this.changeDate(e.date);
 		}.bind(this));
 		App.selectedDate = DateUtil.getMidnightDate(this.calendarView.selectedDate);
@@ -369,7 +370,6 @@ define(function(require, exports, module) {
 
 	TrackView.prototype.changeDate = function(date, callback, glowEntry) {
 		date = u.getMidnightDate(date);
-		this.dateNotToday = false;
 		App.selectedDate = date;
 		this.calendarView.setSelectedDate(date);
 		EntryCollection.fetchEntries(_getDefaultDates(date), function(entries) {

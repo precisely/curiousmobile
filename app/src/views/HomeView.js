@@ -86,7 +86,7 @@ define(function(require, exports, module) {
 
 		this.buttonsModifier = new Modifier();
 		this.buttonsModifier.transformFrom(function() {
-			return Transform.translate(0, App.height - 60, 4);
+			return Transform.translate(0, window.innerHeight - 60, 4);
 		});
 		this.add(this.buttonsModifier).add(this.buttonSurface);
 	};
