@@ -91,6 +91,10 @@ define(function(require, exports, module) {
 		}.bind(this));
 		App.coreEventHandler.on('app-resume', function() {
 			this.getStateFromCache();
+			var currentView = this.getCurrentView();
+			if (currentView.constructor.name === 'TrackView' && App.selectedDate) {
+				currentView.dateNotToday = App.selectedDate.setHours(0, 0, 0, 0) != new Date().setHours(0, 0, 0, 0);
+			}
 			Discussion.getNewNotificationCount();
 		}.bind(this));
 	}

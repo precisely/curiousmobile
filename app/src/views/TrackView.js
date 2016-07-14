@@ -286,15 +286,18 @@ define(function(require, exports, module) {
 				this.currentListView.refreshEntries(entries, glowEntry, function() {
 					this.showAllPopovers(state, glowEntry);
 				}.bind(this));
-
+				return true;
+			} else if (glowEntryDate.getTime() > App.selectedDate.getTime()) {
+				this.changeDate(glowEntryDate, function() {
+					this.currentListView.glowView = this.currentListView.getTrackEntryView(glowEntry.id);
+					this.currentListView.handleGlowEntry();
+				}.bind(this), null);
 				return true;
 			}
 		} else if (state && state.isPushNotificaton) {
 			var glowEntryId = state.entryId;
 			var glowEntryDate = state.entryDate;
 			this.processingNotification = true;
-
-			this.calendarView.setSelectedDate(glowEntryDate);
 			this.changeDate(this.calendarView.selectedDate, function() {
 				var glowEntry = this.currentListView.getEntry(glowEntryId);
 				this.currentListView.glowView = this.currentListView.getTrackEntryView(glowEntryId);
@@ -366,10 +369,10 @@ define(function(require, exports, module) {
 
 	TrackView.prototype.changeDate = function(date, callback, glowEntry) {
 		date = u.getMidnightDate(date);
-
+		this.dateNotToday = false;
 		App.selectedDate = date;
+		this.calendarView.setSelectedDate(date);
 		EntryCollection.fetchEntries(_getDefaultDates(date), function(entries) {
-			//5 days before and 5 days after today
 			this.currentListView = new EntryListView(entries, glowEntry);
 			//Handle entry selection handler
 			this.currentListView.on('select-entry', function(entry) {
