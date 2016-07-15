@@ -102,9 +102,6 @@
 				document.addEventListener("pause", function() {
 					App.coreEventHandler.emit('app-paused');
 				}, false);
-				if (device && device.platform === 'iOS') {
-					StatusBar.hide();
-				}
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 				window.Keyboard = cordova.plugins.Keyboard;
 				window.open = cordova.InAppBrowser.open;

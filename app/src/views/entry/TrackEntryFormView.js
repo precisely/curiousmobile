@@ -351,7 +351,6 @@ define(function(require, exports, module) {
 			entry = e;
 			this.entry = entry;
 			newText = this.removeSuffix(entry.toString());
-
 			// Checking if entry is ghost but not pinned
 			if (entry.isGhost() && !entry.isContinuous()) {
 				this.entry.setText(newText);
@@ -360,7 +359,6 @@ define(function(require, exports, module) {
 			}
 		} else {
 			entry = this.entry;
-
 			newText = document.getElementById("entry-description").value;
 			if (!newText) {
 				return false;
@@ -382,7 +380,8 @@ define(function(require, exports, module) {
 			repeatTypeId = Entry.RepeatType.CONTINUOUSGHOST;
 		}
 
-		if (!entry || !entry.get('id') || (entry.isContinuous() && entry.state !== 'bookmarkEdit')) {
+		if (!entry || !entry.get('id') || (entry.isContinuous() && entry.state !== 'bookmarkEdit') ||
+				(!entry.isContinuous() && repeatTypeId && repeatTypeId === Entry.RepeatType.CONTINUOUSGHOST)) {
 			var newEntry = new Entry();
 			newEntry.setText(newText);
 			if (repeatTypeId) {

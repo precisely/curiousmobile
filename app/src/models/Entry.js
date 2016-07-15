@@ -243,6 +243,9 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				var now = new Date();
 				var collectionCache = window.App.collectionCache;
 				var baseDate = window.App.selectedDate || new Date(now.setHours(0, 0, 0, 0));
+				if (App.pageView.getCurrentView().dateNotToday) {
+					baseDate = new Date(now.setHours(0, 0, 0, 0));
+				}
 				var argsToSend = u.getCSRFPreventionObject("addEntryCSRF", {
 					currentTime: new Date().toUTCString(),
 					userId: this.userId || User.getCurrentUserId(),

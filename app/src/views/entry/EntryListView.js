@@ -410,8 +410,10 @@ define(function(require, exports, module) {
 					this.glowView.glow();
 				}.bind(this), 100);
 			} else {
-				this.scrollView.goToPage(this.glowView.position);
-				this.glowView.glow();
+				setTimeout(function() {
+					this.scrollView.goToPage(this.trackEntryViews.indexOf(this.glowView));
+					this.glowView.glow();
+				}.bind(this), 100);
 			}
 
 		}
