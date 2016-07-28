@@ -329,7 +329,7 @@ define(function(require, exports, module) {
 		if (entries instanceof EntryCollection) {
 			this.entries = entries;
 		} else if (entries instanceof Array){
-			this.entries = new EntryCollection(entries);
+			this.entries = EntryCollection.sortDescByTime(new EntryCollection(entries));
 		} else {
 			this.entries.set(entries);
 		}
