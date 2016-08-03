@@ -310,7 +310,12 @@ define(function(require, exports, module) {
 		}
 
 		EntryCollection.clearCache();
-		this.changeDate(this.calendarView.selectedDate, function() {
+		// Refresh all entries(pinned and normal) if entry is created on
+		// different date than what is set currently on calendar
+		if (glowEntry) {
+			glowEntry.refreshAll = true;
+		}
+		this.changeDate(glowEntry ? glowEntry.get('date') : this.calendarView.selectedDate, function() {
 			this.showAllPopovers(state, glowEntry);
 		}.bind(this), glowEntry);
 

@@ -319,8 +319,8 @@ define(function(require, exports, module) {
 	EntryListView.prototype.refreshEntries = function(entries, glowEntry, callback) {
 		this.glowEntry = glowEntry;
 		this.minYRange = 0;
-		var refreshPinEntries = (!glowEntry || glowEntry.isContinuous());
-		var refreshDraggableEntries = (!glowEntry || !glowEntry.isContinuous());
+		var refreshPinEntries = (!glowEntry || glowEntry.refreshAll || glowEntry.isContinuous());
+		var refreshDraggableEntries = (!glowEntry || glowEntry.refreshAll || !glowEntry.isContinuous());
 
 		if (!entries && this.entries) {
 			entries = EntryCollection.getFromCache(this.entries.key);

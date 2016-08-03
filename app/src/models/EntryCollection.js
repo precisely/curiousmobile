@@ -8,9 +8,6 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 
 		var EntryCollection = Backbone.Collection.extend({
 			model: Entry,
-			comparator: function (entry) {
-				return entry.get("date");
-			}
 		});
 
 
