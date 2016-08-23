@@ -219,7 +219,7 @@ define(function(require, exports, module) {
 			transform: Transform.translate(90, 5, 0)
 		})).add(createChartSurface);
 		this.formContainerMod = new StateModifier({
-			transform: Transform.translate(0, App.height - 105, App.zIndex.readView + 1)
+			transform: Transform.translate(0, window.innerHeight - 105, App.zIndex.readView + 1)
 		});
 		this.add(this.formContainerMod).add(this.submitFormContainer);
 		Timer.every(function() {

@@ -7,7 +7,7 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 		var u = require('util/Utils');
 
 		var EntryCollection = Backbone.Collection.extend({
-			model: Entry
+			model: Entry,
 		});
 
 
@@ -61,11 +61,24 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 						store.set('showRemindAlertBalloon', data[1]);
 						if (!dataSentToCallback) {
 							// Earlier we were caching entries for 11 days but now caching entries for just one day
-							callback(collections[0]);
+							var sortedEntries = this.sortDescByTime(collections[0]);
+							callback(sortedEntries);
 						}
 					}
-				});
+				}.bind(this));
 		};
+
+		// This method will sort entries in EntryCollection in descending order by date
+		EntryCollection.sortDescByTime = function(entries) {
+			entries.models.sort(function(item1, item2) {
+				if (new Date(item1.get('date')) < new Date(item2.get('date')))
+					return 1;
+				if (new Date(item1.get('date')) > new Date(item2.get('date')))
+					return -1;
+				return 0;
+			});
+			return entries;
+		}
 
 		EntryCollection.getFromCache = function(key){
 			var collectionCache = window.App.collectionCache;
