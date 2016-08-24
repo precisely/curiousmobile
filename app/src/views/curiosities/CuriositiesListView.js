@@ -37,6 +37,7 @@ define(function(require, exports, module) {
 		this.add(this.mainContainerModifier).add(this.mainContainerSurface);
 		this.createCuriositiesPills();
 		this.createSearchBar();
+		this.previousSearchKey = '';
 		initCuriosityView.call(this);
 	}
 
@@ -48,7 +49,7 @@ define(function(require, exports, module) {
 		footer: true,
 		noBackButton: true,
 		activeMenu: 'curiosities',
-		scrollViewYTransform: 160
+		scrollViewYTransform: 170
 	};
 
 	function initCuriosityView() {
@@ -96,17 +97,26 @@ define(function(require, exports, module) {
 		});
 
 		searchBox.on('deploy', function() {
-			$('#curiosities-search').keyup(function(e) {
+			var searchPerformer = function(e) {
+				// To avoid unnecessary reload on blur event
+				var currentSearchKey = $('#curiosities-search').val();
+				if ((e.which !== 13 && e.type !== 'blur') ||
+						(this.previousSearchKey === currentSearchKey)) {
+					return;
+				}
 				this.scrollView.goToPage(0);
 				setTimeout(function() {
 					this.deck.splice(0, this.deck.length);
-					C.performSearch($('#curiosities-search').val(), true);
+					C.performSearch(currentSearchKey, true);
+					this.previousSearchKey = currentSearchKey;
 				}.bind(this), 50);
-				
-			}.bind(this));
+			};
+			$('#curiosities-search').keyup(searchPerformer.bind(this));
+			$('#curiosities-search').blur(searchPerformer.bind(this))
 		}.bind(this));
 		this.searchBoxModifier = new StateModifier({transform: Transform.translate(0, 49, App.zIndex.readView + 5)});
 		this.mainContainerSurface.add(this.searchBoxModifier).add(searchBox);
+		this.scrollViewMod.setTransform(Transform.translate(0, this.options.scrollViewYTransform, App.zIndex.feedItem));
 	};
 
 	CuriositiesListView.prototype.createCuriositiesPills = function() {

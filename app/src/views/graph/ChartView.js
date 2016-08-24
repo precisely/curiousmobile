@@ -73,7 +73,7 @@ define(function(require, exports, module) {
 
 		this.shareModifier = new Modifier();
 		this.shareModifier.transformFrom(function() {
-			return Transform.translate(App.width - 50, App.height - 105, App.zIndex.readView + 3);
+			return Transform.translate(App.width - 50, window.innerHeight - 105, App.zIndex.readView + 3);
 		});
 		this.add(this.shareModifier).add(this.shareButton);
 

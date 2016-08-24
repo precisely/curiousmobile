@@ -279,23 +279,21 @@ define(function(require, exports, module) {
 					}
 				}.bind(this));
 			}
-		} else if (id === 'mood-box') {
-			if (event.which === 13) {
-				var value = document.getElementById('mood-box').value;
-				var entryId = document.getElementById('mood-box').dataset.id;
-				if (value != '' && validateMoodEntry(value)) {
-					createSingleEntry.call(this, {value: 'mood ' + value, entryId: entryId}, function(resp) {
-						if (resp.glowEntry) {
-							document.getElementById('mood-box').dataset.id = resp.glowEntry.id;
-							u.showAlert({message: 'Saved', showCheckBox: true, delay: 1000, onHide: this.navigate.bind(this)});
-						}
-					}.bind(this));
-				} else if (!value) {
-					this.navigate(1);
-				}
+		} else if (event.which === 13 || event.which === 9) { // 9 is keycode for Tab
+			var value = document.getElementById('mood-box').value;
+			var entryId = document.getElementById('mood-box').dataset.id;
+			if (value != '' && validateMoodEntry(value)) {
+				createSingleEntry.call(this, {value: 'mood ' + value, entryId: entryId}, function(resp) {
+					if (resp.glowEntry) {
+						document.getElementById('mood-box').dataset.id = resp.glowEntry.id;
+						u.showAlert({message: 'Saved', showCheckBox: true, delay: 1000, onHide: this.navigate.bind(this)});
+					}
+				}.bind(this));
+			} else if (!value) {
+				this.navigate(1);
 			}
-
-		}else if (event.which === 13) {
+		}
+		/*else if (event.which === 13) {
 			if (id === 'cardio') {
 				document.getElementById('resistance').focus();
 			} else if (id === 'resistance') {
@@ -305,7 +303,7 @@ define(function(require, exports, module) {
 			} else if (id === 'metabolic') {
 				createEntries.call(this);
 			}
-		}
+		}*/
 	}
 
 	function validateMoodEntry(value) {
@@ -316,6 +314,7 @@ define(function(require, exports, module) {
 		}
 		return true;
 	}
+
 	TutorialView.prototype.createSleepEntry = function(value, entryId, callback) {
 		if (value != '') {
 			if (isNaN(value.charAt(0))) {

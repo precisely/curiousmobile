@@ -43,7 +43,7 @@ define(function(require, exports, module) {
 
 	GraphView.prototype.init = function() {
 		this.graphSurface = new Surface({
-			size: [undefined, App.height - 222],
+			size: [undefined, window.innerHeight - 222],
 			content: _.template(GraphTemplate, {plotAreaId: this.plotAreaId}, templateSettings),
 			properties: {
 				backgroundColor: '#fff',
@@ -85,7 +85,7 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 	};
-	
+
 	GraphView.prototype.clearPillsSurfaceList = function() {
 		// Splicing instead of initializing with [] to retrieve the original reference
 		this.pillsSurfaceList.splice(0, this.pillsSurfaceList.length);
@@ -135,13 +135,13 @@ define(function(require, exports, module) {
 		if (App.pageView.getCurrentPage() !== 'DiscussionDetailView') {
 			this.drawDateFooter();
 		} else {
-			this.graphSurface.setSize([undefined, App.height - 190]);
+			this.graphSurface.setSize([undefined, window.innerHeight - 190]);
 		}
 	};
 
 	// Considering height of graph and the date footer, required for scrollview in discussion
 	GraphView.prototype.getSize = function() {
-		return (App.height - 220);
+		return (window.innerHeight - 220);
 	};
 
 	GraphView.prototype.showDiscussionChart = function(plotDataId, discussionHash) {
@@ -165,7 +165,7 @@ define(function(require, exports, module) {
 				border: '1px solid #c3c3c3'
 			}
 		});
-		
+
 		this.dateGridContainer = new ContainerSurface({
 			properties: {
 				zIndex: 12
@@ -173,7 +173,7 @@ define(function(require, exports, module) {
 		});
 
 		this.dateGrid = new DateGridView(new Date(), true);
-		
+
 		this.dateGrid.on('select-date', function(date) {
 			this.hideGraphStylePopover();
 			console.log('CalenderView: Date selected');
@@ -247,7 +247,7 @@ define(function(require, exports, module) {
 			} else {
 				this.dateGrid.setSelectedDate(new Date());
 			}
-			
+
 			this.dateGridRenderController.show(this.dateGridContainer, null, function() {
 				App.pageView.getCurrentView().showShimSurface();
 			}.bind(this));

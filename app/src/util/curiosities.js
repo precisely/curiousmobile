@@ -325,11 +325,6 @@ function initCuriosities() {
 		C.searchWithDefaults(afterSearch(q), q, C.curiositiesPageNumber[searchId]);
 	};
 
-	// search
-	$('#search-input').keyup(function(e) {
-		C.performSearch();
-	});
-
 	$('#search-image').click(function() {
 		C.performSearch();
 	});
@@ -513,7 +508,7 @@ function initCuriosities() {
 	C.handleScroll = function() {
 		// Infinite scroll.
 		if (shouldLoad()) {
-			var q = $('#search-input').val() || '';
+			var q = $('#curiosities-search').val() || '';
 			var searchId = getSearchId(q);
 			if ( noMoreSearchResults(searchId) ) {
 				log("no more search results:", searchId);
