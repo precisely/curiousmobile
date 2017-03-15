@@ -31,7 +31,6 @@ define(function(require, exports, module) {
 
 	function TrackView() {
 		BaseView.apply(this, arguments);
-		this.pageChange = false; //making sure the pageChange even is disregarded on page reload
 		this.entryFormView = new TrackEntryFormView({trackView: this});
 		this.popoversList = [];
 		_createBody.call(this);
@@ -55,14 +54,7 @@ define(function(require, exports, module) {
 	};
 
 	function _getDefaultDates(date) {
-		var dates = [date];
-		// var date = new Date(date.getFullYear(), date.getMonth(), date.getDate() - 5);
-		// date = u.getMidnightDate(date);
-		//
-		// for (var i = 0, len = 11; i < len; i++) {
-		// 	dates.push(new Date(date.getFullYear(), date.getMonth(), date.getDate() + i));
-		// }
-		return dates;
+		return [date];
 	}
 
 	function _createBody() {
@@ -392,7 +384,7 @@ define(function(require, exports, module) {
 					u.showAlert("Error deleting entry");
 					console.log('TrackView: Entries refreshed after a failed delete');
 				}.bind(this));
-			});
+			}.bind(this));
 			//setting the scroll position to today
 			//this.scrollView.goToPage(5);
 			this.renderController.hide({
