@@ -62,7 +62,8 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 						if (!dataSentToCallback) {
 							// Earlier we were caching entries for 11 days but now caching entries for just one day
 							var sortedEntries = this.sortDescByTime(collections[0]);
-							callback(sortedEntries);
+							var sortedTags = data[2];
+							callback(sortedEntries, sortedTags);
 						}
 					}
 				}.bind(this));

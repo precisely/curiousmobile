@@ -1,5 +1,6 @@
 define(function(require, exports, module) {
 	'use strict';
+
 	var SizeAwareView = require('famous/views/SizeAwareView');
 	var Surface = require('famous/core/Surface');
 	var Transform = require('famous/core/Transform');
@@ -11,12 +12,11 @@ define(function(require, exports, module) {
 	var TrackView = require('views/TrackView');
 	var u = require('util/Utils');
 
-	var entrySurface = null;
-
 	function EntryView(options) {
 		SizeAwareView.apply(this, arguments);
 		this.entry = options.entry;
-		_createView.call(this);
+		this.createView();
+		this.addGlowSurface();
 	}
 
 	EntryView.prototype = Object.create(SizeAwareView.prototype);
@@ -24,32 +24,32 @@ define(function(require, exports, module) {
 
 	EntryView.DEFAULT_OPTIONS = {};
 
-	function _createView() {
+	EntryView.prototype.createView = function() {
 		this.start = 0;
 		this.update = 0;
 		this.end = 0;
 		this.delta = [0, 0];
 		this.position = [0, 0];
+
 		this.entrySurface = new Surface();
-		this.entrySurface.on('click', function(argument) {
-			console.log('Entry was clicked');
-		});
+
 		this.on('trigger-delete-entry', this.delete.bind(this));
+
 		if (!this.options.doNotAddEntrySurface) {
 			this.add(this.entrySurface);
 		}
+
 		this.touchSync = new TouchSync(function() {
 			return position;
 		});
 
 		this.entrySurface.pipe(this.touchSync);
+
 		this.touchSync.on('start', function(data) {
 			console.log('Entry touched: ' + this.entry.id);
 			this.start = Date.now();
 			// Show context menu after the timeout regardless of tap end
-			this.touchTimeout = setTimeout(function() {
-
-			}.bind(this), 500)
+			this.touchTimeout = setTimeout(function() {}.bind(this), 500)
 		}.bind(this));
 
 		this.touchSync.on('update', function(data) {
@@ -81,10 +81,10 @@ define(function(require, exports, module) {
 					});
 				}
 			}
-
 		}.bind(this));
+	};
 
-		//Glow surface
+	EntryView.prototype.addGlowSurface = function() {
 		this.glowSurface = new Surface();
 		this.glowController = new RenderController();
 		this.glowControllerModifier = new StateModifier({transform: Transform.translate(0, 0, 555)});
@@ -92,16 +92,18 @@ define(function(require, exports, module) {
 	};
 
 	EntryView.prototype.glow = function() {
-		this.glowController.show(this.glowSurface, null
-			, function() {
-				setTimeout(function () {
-					//Calling just hide() was not allowing the glow surface to persist so modifying the z-Index first and then hiding the glow surface.
-					//Also since glow surface was displayed on the top of entry surface zIndex had to be given so added a state modifier.
-					this.glowControllerModifier.setTransform(Transform.translate(0, 0, 0), {duration: 3000});
-					this.glowController.hide();
-				 }.bind(this), 1000);
+		this.glowController.show(this.glowSurface, null, function() {
+			setTimeout(function() {
+				/* 
+				 * Calling just hide() was not allowing the glow surface to persist so modifying the z-Index first
+				 * and then hiding the glow surface. Also since glow surface was displayed on the top of entry surface 
+				 * zIndex had to be given so added a state modifier.
+				*/
+				this.glowControllerModifier.setTransform(Transform.translate(0, 0, 0), {duration: 3000});
+				this.glowController.hide();
+			 }.bind(this), 1000);
 		}.bind(this));
-	}
+	};
 
 	EntryView.prototype.glowInit = function (options) {
 		var glowSurfaceOptions = Object.create(options);
@@ -127,7 +129,7 @@ define(function(require, exports, module) {
 				this._eventOutput.emit('delete-entry', data);
 			}.bind(this));
 		}
-	}
+	};
 
 	module.exports = EntryView;
 });

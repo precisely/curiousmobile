@@ -69,9 +69,11 @@ define(function(require, exports, module) {
 			aggregateIndex++;
 		}
 	};
+
 	DeviceDataSummaryView.prototype.getDisplayText = function () {
 		var text = '&nbsp;&nbsp;&nbsp;&nbsp;' + this.getTriangle() + '&nbsp;';
 		text += this.aggregatedEntry.toString();
+
 		return text;
 	};
 
@@ -85,9 +87,19 @@ define(function(require, exports, module) {
 					}
 				}
 			});
+
+			childView.on('delete-entry', function() {
+				var indexOfChildView = this.children.indexOf(childView);
+				if (indexOfChildView > -1) {
+					this.children.splice(indexOfChildView, 1);
+					this._eventOutput.emit('delete-device-entry');
+				}
+			}.bind(this));
+
 			childView.pipe(this.options.scrollView);
 			this.children.push(childView);
 		}.bind(this));
 	};
+
 	module.exports = DeviceDataSummaryView;
 });

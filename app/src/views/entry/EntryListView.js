@@ -1,4 +1,5 @@
 define(function(require, exports, module) {
+
 	var View = require('famous/core/View'),
 	Surface = require('famous/core/Surface'),
 	Transform = require('famous/core/Transform'),
@@ -10,6 +11,7 @@ define(function(require, exports, module) {
 	TrackEntryView = require('views/entry/TrackEntryView'),
 	PinnedView = require('views/entry/PinnedView');
 	var DeviceDataGroupView = require('views/entry/DeviceDataGroupView');
+	var InputWidgetGroupView = require('views/entry/InputWidgetGroupView');
 	var Scrollview = require("famous/views/Scrollview");
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
@@ -24,14 +26,15 @@ define(function(require, exports, module) {
 	Transitionable.registerMethod('snap', SnapTransition);
 	var snap = {method: 'snap', period: 200, dampingRatio: 0.4};
 
-	function EntryListView(collection, glowEntry) {
+	function EntryListView(collection, glowEntry, sortedTags) {
 		View.apply(this, arguments);
 		this.trackEntryViews = [];
 		this.entries = collection;
+		this.sortedTags = sortedTags || [];
 		this.renderController = new RenderController();
-		this.pinnedEntriesController = new RenderController();
 		this.deviceEntries = [];
-		_createList.call(this, this.entries, glowEntry);
+		this.tagGroupEntries = [];
+		this.createList(this.entries, glowEntry);
 	}
 
 	EntryListView.prototype = Object.create(View.prototype);
@@ -42,7 +45,7 @@ define(function(require, exports, module) {
 		selectionPadding: 24,
 	};
 
-	function _createList(entries, glowEntry) {
+	EntryListView.prototype.createList = function(entries, glowEntry) {
 		var backgroundSurface = new Surface({
 			classes: ['entry-list-background'],
 			size: [undefined, undefined],
@@ -51,39 +54,61 @@ define(function(require, exports, module) {
 			}
 		});
 
-		this.add(new StateModifier({transform: Transform.translate(0,0,0)})).add(backgroundSurface);
+		var backgroundSurfaceModifier = new StateModifier({
+			transform: Transform.translate(0,0,0)
+		}); 
+		this.add(backgroundSurfaceModifier).add(backgroundSurface);
+
 		backgroundSurface.pipe(this._eventOutput);
-		this.pinControllerMod = new StateModifier({
-			size: [undefined, 100],
-			transform: Transform.translate(0, 0, 10)
-		});
+
 		this.renderControllerMod = new StateModifier({
 			transform: Transform.translate(0, 0, 10)
 		});
-		this.add(this.pinControllerMod).add(this.pinnedEntriesController);
 		this.add(this.renderControllerMod).add(this.renderController);
-		this.refreshEntries(entries, glowEntry, null);
-	}
 
-	EntryListView.prototype.addEntry = function(entry) {
-		var draggable = new Draggable( {
+		this.refreshEntries(entries, glowEntry, this.sortedTags, null);
+	};
+
+	EntryListView.prototype.addEntry = function(entries, entryInfo) {
+		var draggable = new Draggable({
 			xRange: [-90, 0],
 			yRange: [0, 0],
 		});
 
 		var draggableNode;
 		var trackEntryView;
-		if (entry instanceof Array) {
+
+		if (entryInfo.areDeviceEntries) {
 			draggableNode = new RenderNode(draggable);
-		   trackEntryView = new DeviceDataGroupView({entry: entry,
-			   entryZIndex: App.zIndex.readView + 2, scrollView: this.scrollView});
+
+			trackEntryView = new DeviceDataGroupView({
+				entry: entries,
+				entryZIndex: App.zIndex.readView + 2,
+				scrollView: this.scrollView
+			});
+
+			trackEntryView.on('delete-device-entry', function() {
+				var indexOfTrackEntryView = this.trackEntryViews.indexOf(trackEntryView);
+
+				if ((indexOfTrackEntryView > -1) && trackEntryView.children.length === 0) {
+					this.trackEntryViews.splice(indexOfTrackEntryView, 1);
+					this.draggableList.splice(indexOfTrackEntryView, 1);
+				}
+
+				this.scrollView.sequenceFrom(this.draggableList);
+			}.bind(this));
 		} else {
 			draggableNode = new FixedRenderNode(draggable);
-			trackEntryView = new TrackEntryView({entry: entry})
+			trackEntryView = new InputWidgetGroupView({
+				entryDetails: entries, // An object containing grouped entries with tag.
+				scrollView: this.scrollView
+			})
 		}
+
 		trackEntryView.pipe(draggable);
 		draggableNode.add(trackEntryView);
 		trackEntryView.pipe(this.scrollView);
+
 		this.trackEntryViews.push(trackEntryView);
 		this.draggableList.push(draggableNode);
 
@@ -101,20 +126,12 @@ define(function(require, exports, module) {
 			}
 		}.bind(trackEntryView));
 
-		this.entryEventListeners(trackEntryView);
+		this.addEntryEventListeners(trackEntryView);
+
 		return trackEntryView;
-	}
+	};
 
-	EntryListView.prototype.addPinnedEntry = function (entry) {
-		var pinnedEntryView = new PinnedView({entry: entry});
-		pinnedEntryView.entrySurface.setOptions({attributes: {id: 'entry-' + entry.id}});
-		//this.draggablePin.subscribe(pinnedEntryView.entrySurface);
-		this.pinnedViews.push(pinnedEntryView);
-		this.entryEventListeners(pinnedEntryView);
-		return pinnedEntryView;
-	}
-
-	EntryListView.prototype.entryEventListeners = function (entryView) {
+	EntryListView.prototype.addEntryEventListeners = function(entryView) {
 		entryView.on('delete-entry', function(entries) {
 			console.log('EntryListView: Deleting an entry');
 			if (entries && entries.fail) {
@@ -130,88 +147,6 @@ define(function(require, exports, module) {
 			if (entryView.select) {
 				entryView.select();
 			}
-		}.bind(this));
-	}
-
-	EntryListView.prototype.initPinnedViews = function() {
-		if (this.pinnedSequentialLayout) {
-			this.pinnedEntriesController.hide({duration:0});
-		}
-
-		// TODO fix the item sizes to be true sizes
-		this.pinnedSequentialLayout = new SequentialLayout({
-			direction: 0,
-		});
-
-		this.pinnedSequentialLayout.nextYOffset = 40;
-
-		this.pinnedSequentialLayout.setOutputFunction(function(input, offset, index) {
-			//Bumping the offset to add additional padding on the left
-			var lastView = this.pinnedSequentialLayout._items._.getValue(index-1);
-			var size = [0, 0];
-			if (lastView) {
-				size = lastView.getSize();
-			}
-
-			if (!size || !size[0]) {
-				size = [0, 0];
-			}
-
-			var xOffset;
-			// TODO for larger phones
-			if (index == 0) {
-				this.pinnedSequentialLayout.lastXOffset = 0;
-				this.pinnedSequentialLayout.nextYOffset = 8;
-			}
-			xOffset = size[0] + 8;
-			if (_.contains(this.pinnedEdgeIndex, index)) {
-				this.pinnedSequentialLayout.lastXOffset = 0;
-				xOffset = 8;
-				this.pinnedSequentialLayout.nextYOffset += 40;
-			} else {
-				xOffset += this.pinnedSequentialLayout.lastXOffset;
-			}
-			var transform = Transform.translate(xOffset, this.pinnedSequentialLayout.nextYOffset, App.zIndex.readView + 2);
-			this.pinnedSequentialLayout.lastXOffset = xOffset;
-			return {
-				transform: transform,
-				target: input.render()
-			};
-		}.bind(this));
-
-
-	};
-
-	EntryListView.prototype.refreshPinnedEntriesView = function(callback) {
-		this.pinnedSequentialLayout.sequenceFrom(this.pinnedViews);
-		var heightOfPins = Math.min(this.heightOfPins(), 150);
-		this.pinnedContainerSurface = new ContainerSurface({
-			size: [undefined, true],
-			classes: ['pin-container'],
-			properties: {
-				backgroundColor: '#ebebeb',
-				padding: '23px 10px 10px 10px',
-				overflowY: 'hidden',
-				borderBottom: '8px solid #ebebeb'
-			}
-		});
-
-		this.pinnedContainerSurface.add(this.pinnedSequentialLayout);
-		this.pinnedEntriesController.inTransformFrom(function() {
-			return Transform.translate(0, 0, App.zIndex.readView - 1);
-		}.bind(this));
-		this.pinnScrollView = new Scrollview();
-		var spareSurface = new Surface({size: [undefined, 20]});
-		this.pinnScrollView.sequenceFrom([this.pinnedContainerSurface, spareSurface]);
-		this.pinnedContainerSurface.pipe(this.pinnScrollView);
-		spareSurface.pipe(this.pinnScrollView);
-		this.pinnedContainerSurface.on('deploy', function() {
-			setTimeout(function() {
-				this.pinnedContainerSurface.setSize([undefined, this.heightOfPins() + 10]);
-			}.bind(this), 500);
-		}.bind(this));
-		this.pinnedEntriesController.show(this.pinnScrollView, null, function() {
-			this.handleGlowEntry(callback);
 		}.bind(this));
 	};
 
@@ -260,7 +195,7 @@ define(function(require, exports, module) {
 
 			this.scrollView.trans.halt();
 
-			var pos = this.scrollView.trans.get()
+			var pos = this.scrollView.trans.get();
 
 			if (pos != 0) this.scrollView.setPosition(pos);
 
@@ -291,23 +226,21 @@ define(function(require, exports, module) {
 		this.scrollNode.add(this.scrollView);
 		this.scrollWrapperSurface.add(this.scrollNode);
 		this.scrollView.sequenceFrom(this.draggableList);
+
 		var scrollerBackgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
 				backgroundColor: '#fff',
 			}
 		});
-		this.scrollWrapperSurface.add(new Modifier({transform: Transform.translate(0, 0, 0)})).add(scrollerBackgroundSurface);
 
-		this.renderController.inTransformFrom(function() {
-			if (this.pinnedViews) {
-				var heightOfPins = 20 + Math.min(this.heightOfPins(), 140);
-				return Transform.translate(0, heightOfPins, App.zIndex.readView);
-			}
-		}.bind(this));
+		var scrollWrapperSurfaceModifier = new Modifier({
+			transform: Transform.translate(0, 0, 0)
+		});
+
+		this.scrollWrapperSurface.add(scrollWrapperSurfaceModifier).add(scrollerBackgroundSurface);
 
 		this.scrollModifier.transformFrom(function() {
-			var heightOfPins = Math.min(this.heightOfPins(), 135);
 			return Transform.translate(0, 0, App.zIndex.readView + 22);
 		}.bind(this));
 
@@ -316,10 +249,10 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	EntryListView.prototype.refreshEntries = function(entries, glowEntry, callback) {
+	EntryListView.prototype.refreshEntries = function(entries, glowEntry, sortedTags, callback) {
 		this.glowEntry = glowEntry;
 		this.minYRange = 0;
-		var refreshPinEntries = (!glowEntry || glowEntry.refreshAll || glowEntry.isContinuous());
+
 		var refreshDraggableEntries = (!glowEntry || glowEntry.refreshAll || !glowEntry.isContinuous());
 
 		if (!entries && this.entries) {
@@ -335,13 +268,6 @@ define(function(require, exports, module) {
 		}
 
 		entries = this.entries;
-
-		if (refreshPinEntries) {
-			this.pinnedViews = [];
-			this.bookmarkEntries = [];
-			var bookmarkEntriesCount = 0;
-			this.initPinnedViews();
-		}
 
 		if (refreshDraggableEntries) {
 			this.trackEntryViews = [];
@@ -359,14 +285,6 @@ define(function(require, exports, module) {
 				this.deviceEntries[source] = this.deviceEntries[source] || [];
 				this.deviceEntries[source].push(entry);
 				return;
-			} else if (entry.isContinuous() && refreshPinEntries) {
-				bookmarkEntriesCount++;
-				this.bookmarkEntries.push(entry);
-				addedView = this.addPinnedEntry(entry);
-			} else if (!entry.isContinuous() && refreshDraggableEntries){
-				nonBookmarkEntriesCount++;
-				this.nonBookmarkEntries.push(entry);
-				addedView = this.addEntry(entry);
 			}
 
 			if (this.glowEntry) {
@@ -374,19 +292,32 @@ define(function(require, exports, module) {
 					this.glowView = addedView;
 					if (!entry.isContinuous()) {
 						this.glowView.position = nonBookmarkEntriesCount - 1;
-					} else {
-						this.glowView.position = bookmarkEntriesCount - 1;
 					}
 				}
 			}
 		}.bind(this));
 
-		for (var device in this.deviceEntries) {
-			this.addEntry(this.deviceEntries[device]);
+		if (sortedTags) {
+			this.sortedTags = sortedTags;
 		}
 
-		if (refreshPinEntries) {
-			this.refreshPinnedEntriesView(callback);
+		this.sortedTags.forEach(function(tag) {
+			var tagId = tag.tagId;
+			this.tagGroupEntries[tagId] = this.tagGroupEntries[tagId] || [];
+
+			entries.forEach(function(entry) {
+				if (entry.get('tagId') === tagId && !entry.get('sourceName')) {
+					this.tagGroupEntries[tagId].push(entry);
+				}
+			}.bind(this));
+
+			if (this.tagGroupEntries[tagId].length > 0) {
+				this.addEntry({entries: this.tagGroupEntries[tagId], tag: tag}, {areDeviceEntries: false});
+			}
+		}.bind(this));
+
+		for (var device in this.deviceEntries) {
+			this.addEntry(this.deviceEntries[device], {areDeviceEntries: true});
 		}
 
 		if (refreshDraggableEntries) {
@@ -404,9 +335,7 @@ define(function(require, exports, module) {
 					this.trackEntryViews.splice(deletedSurfaceIndex, 1);
 					this.draggableList.splice(deletedSurfaceIndex, 1);
 				}
-				this.pinnScrollView.goToPage(0);
 				setTimeout(function() {
-					this.pinnScrollView.setPosition(this.pinPosition(this.glowView.position));
 					this.glowView.glow();
 				}.bind(this), 100);
 			} else {
@@ -438,19 +367,10 @@ define(function(require, exports, module) {
 		return trackEntryViewList[0];
 	};
 
-	EntryListView.prototype.getPinnedEntryView = function(entryId) {
-		var pinnedEntryViewList = _.filter(this.pinnedViews, function(pinnedEntryView) {
-			return pinnedEntryView.entry.id === entryId;
-		});
-
-		return pinnedEntryViewList[0];
-	};
-
 	EntryListView.prototype.deleteEntry = function(entry) {
 		var entryView = entry;
 		if (entry instanceof Entry) {
 			if (entry.isContinuous()) {
-				entryView = this.getPinnedEntryView(entry.get('id'));
 			} else {
 				entryView = this.getTrackEntryView(entry.get('id'));
 			}
@@ -462,47 +382,8 @@ define(function(require, exports, module) {
 			this.trackEntryViews.splice(deletedSurfaceIndex, 1);
 			this.draggableList.splice(deletedSurfaceIndex, 1);
 			this.scrollView.sequenceFrom(this.draggableList);
-		} else {
-			this.keepBookmarkEditMode = true;
-			this.pinnedViews.splice(this.pinnedViews.indexOf(entryView), 1);
-			this.pinnedContainerSurface.setSize([undefined, this.heightOfPins() + 10]);
 		}
 	};
-
-	EntryListView.prototype.heightOfPins = function () {
-		var numberOfRows = this.numberOfPinRows();
-		return numberOfRows ? ((numberOfRows * 40) + 15) : 15;
-	};
-
-	EntryListView.prototype.pinPosition = function (index) {
-		var numberOfRows = this.numberOfPinRows(index);
-		return numberOfRows > 3 ? ((numberOfRows - 2) * 40) : 0;
-	};
-
-	EntryListView.prototype.numberOfPinRows = function (pinIndex) {
-		var numberOfRows = (this.pinnedViews && this.pinnedViews.length) ? 1 : 0;
-		var rowWidthSoFar = 20;
-		this.pinnedEdgeIndex = [];
-		_.each(this.pinnedViews, function (pinnedView, index) {
-			if (pinIndex <= index) {
-				return;
-			}
-			rowWidthSoFar = rowWidthSoFar + pinnedView.getSize()[0] + 8; //adding padding after the tags
-			if (rowWidthSoFar > (App.width - 10)) {
-				numberOfRows ++;
-				rowWidthSoFar = 20 + (pinnedView.getSize()[0] + 8);
-				this.pinnedEdgeIndex.push(index);
-			}
-		}.bind(this));
-		return numberOfRows;
-	};
-
-	EntryListView.prototype.blur = function() {
-	}
-
-
-	EntryListView.prototype.unBlur = function() {
-	}
 
 	module.exports = EntryListView;
 });

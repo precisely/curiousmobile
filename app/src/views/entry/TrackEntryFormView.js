@@ -1,6 +1,6 @@
-'use strict';
-
 define(function(require, exports, module) {
+	'use strict';
+
 	var EntryFormView = require('views/entry/EntryFormView');
 	var DateGridView = require('views/calendar/DateGridView');
 	var BaseView = require('views/BaseView');

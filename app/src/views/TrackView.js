@@ -27,7 +27,6 @@ define(function(require, exports, module) {
 	var u = require('util/Utils');
 	require('bootstrap');
 	var DateUtil = require('util/DateUtil');
-	var inputSurfaceTemplate = require('text!templates/input-surface-dummy.html');
 
 	function TrackView() {
 		BaseView.apply(this, arguments);
@@ -35,7 +34,6 @@ define(function(require, exports, module) {
 		this.popoversList = [];
 		_createBody.call(this);
 		_createCalendar.call(this);
-		_setHandlers.call(this);
 	}
 
 	TrackView.prototype = Object.create(BaseView.prototype);
@@ -58,72 +56,10 @@ define(function(require, exports, module) {
 	}
 
 	function _createBody() {
-		var formContainerSurface = new ContainerSurface({
-			size: [undefined, 80],
-			properties: {
-				backgroundColor: '#eaeaea',
-				fontSize: '12px',
-				color: 'rgb(113, 113, 113)',
-				paddingBottom: '5px'
-			}
-		});
-
-		this.inputModifier = new Modifier({
-			align: [0, 0],
-			transform: Transform.translate(15, 15, window.App.zIndex.readView)
-		});
-
-		this.inputModifier.sizeFrom(function() {
-			var mainContext = window.mainContext;
-			var size = mainContext.getSize();
-			return [window.innerWidth - 30, 40];
-		});
-
-		this.inputSurface = new Surface({
-			content: _.template(inputSurfaceTemplate, {
-				tag: ''
-			}, templateSettings),
-		});
-
-		this.inputSurface.on('click', function(e) {
-			console.log('TrackView: Clicking on dummy input surface');
-			if (e instanceof CustomEvent) {
-				if (_.contains(e.srcElement.classList, 'bookmark-plus') || _.contains(e.srcElement.parentElement.classList, 'bookmark-plus')) {
-					$('#bookmark-menu-icon').popover('destroy');
-					if (this.currentListView.pinnedViews.length === 0) {
-						this.options.contextMenuOptions.splice(1, 1);
-					}
-					App.pageView._eventOutput.emit('show-context-menu', {
-						menu: 'bookmark',
-						target: this,
-						eventArg: {}
-					});
-				} else if (_.contains(e.srcElement.classList, 'input-placeholder')) {
-					$('#entry-description-dummy').popover('destroy');
-					this._eventOutput.emit('create-entry');
-				}
-			}
-		}.bind(this));
-
-		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
-
 		this.renderController = new RenderController();
 		this.renderController.inTransformFrom(function(progress) {
 			return Transform.translate(0, 0, 5);
 		});
-
-		var draggableToRefresh = new Draggable({
-			xRange: [0, 0],
-			yRange: [0, 40],
-		});
-
-		var draggableNode = new RenderNode(draggableToRefresh);
-		var snapTransition = {
-			method: 'snap',
-			period: 300,
-			dampingRatio: 0.3,
-			velocity: 0
-		};
 
 		var entryListContainer = new ContainerSurface({
 			classes: ['entry-list-container'],
@@ -134,7 +70,7 @@ define(function(require, exports, module) {
 		});
 
 		var entryListModifier = new Modifier({
-			transform: Transform.translate(0, 55, 5)
+			transform: Transform.translate(0, 10, 5)
 		});
 
 		entryListModifier.sizeFrom(function() {
@@ -144,8 +80,6 @@ define(function(require, exports, module) {
 
 		entryListContainer.add(this.renderController);
 
-		this.formContainerSurface = formContainerSurface;
-		this.setBody(formContainerSurface);
 		this.entryListContainer = entryListContainer;
 		this.addContent(entryListModifier, entryListContainer);
 
@@ -183,12 +117,10 @@ define(function(require, exports, module) {
 
 	TrackView.prototype.showAllPopovers = function(state, glowEntry) {
 		var showEntryBalloon;
-		var showBookmarkBalloon;
 		var entryId;
 
 		if (state && state.data) {
 			showEntryBalloon = state.data.showEntryBalloon ? state.data.showEntryBalloon : false;
-			showBookmarkBalloon = state.data.showBookmarkBalloon ? state.data.showBookmarkBalloon : false;
 			entryId = glowEntry ? glowEntry.id : null;
 		}
 		var elementId = "#entry-" + entryId;
@@ -196,15 +128,12 @@ define(function(require, exports, module) {
 		if (!store.get('hasVisitedMobileApp')) {
 			store.set('hasVisitedMobileApp', true);
 
-			if (!this.currentListView || this.currentListView.pinnedViews.length > 0) {
-				App.showPopover('#bookmark-label', {key: 'bookmarksPresent', container: '#bookmark-label', placement: 'bottom', autoHide: true});
-				this.popoversList.push('#bookmark-label');
-			} else {
-				App.showPopover('#bookmark-menu-icon', {key: 'createBookmark', container: '#bookmark-menu-icon', placement: 'bottom'});
-				this.popoversList.push('#bookmark-menu-icon');
-			}
+			App.showPopover('#entry-description-dummy', {
+				key: 'enterTag',
+				placement: 'bottom',
+				container: '#entry-description-dummy'
+			});
 
-			App.showPopover('#entry-description-dummy', {key: 'enterTag', placement: 'bottom', container: '#entry-description-dummy'});
 			this.popoversList.push('#entry-description-dummy');
 		}
 
@@ -213,17 +142,7 @@ define(function(require, exports, module) {
 			this.popoversList.push(elementId);
 		}
 
-		if (showBookmarkBalloon) {
-			App.showPopover(elementId, {key: 'bookmarkAdded', autoHide: true, container: '#popover-surface'});
-			this.popoversList.push(elementId);
-		}
-
 		this.showSprintMenuPopover();
-
-		if (state && state.showTrackathonTagsBalloon) {
-			App.showPopover('#bookmark-label', {key: 'trackathonBookmarks', container: '#bookmark-label', placement: 'bottom', autoHide: true});
-			this.popoversList.push('#bookmark-label');
-		}
 	};
 
 	TrackView.prototype.hideAllPopovers = function() {
@@ -276,7 +195,7 @@ define(function(require, exports, module) {
 
 			currentDay = this.isCurrentDay(glowEntryDate);
 			if (currentDay) {
-				this.currentListView.refreshEntries(entries, glowEntry, function() {
+				this.currentListView.refreshEntries(entries, glowEntry, null, function() {
 					this.showAllPopovers(state, glowEntry);
 				}.bind(this));
 				return true;
@@ -342,9 +261,6 @@ define(function(require, exports, module) {
 			webkitFilter: 'blur(0px)',
 			filter: 'blur(0px)'
 		});
-		this.formContainerSurface.setProperties({
-			visibility: 'visible'
-		});
 		$('#entry-description').val('');
 		this.entryFormView.dateGridRenderController.hide();
 		this.entryFormView.renderController.hide();
@@ -359,18 +275,14 @@ define(function(require, exports, module) {
 			this.showSprintMenuPopover();
 		}
 		this.setHeaderSurface(this.calendarView, new StateModifier({align: [0.5, 0.5], origin: [0.5, 0.5]}));
-		if (this.currentListView.keepBookmarkEditMode && this.currentListView.pinnedViews.length > 0) {
-			this.showBookmarkShimSurface();
-		}
-		this.currentListView.keepBookmarkEditMode = false;
 	};
 
 	TrackView.prototype.changeDate = function(date, callback, glowEntry) {
 		date = u.getMidnightDate(date);
 		App.selectedDate = date;
 		this.calendarView.setSelectedDate(date);
-		EntryCollection.fetchEntries(_getDefaultDates(date), function(entries) {
-			this.currentListView = new EntryListView(entries, glowEntry);
+		EntryCollection.fetchEntries(_getDefaultDates(date), function(entries, sortedTags) {
+			this.currentListView = new EntryListView(entries, glowEntry, sortedTags);
 			//Handle entry selection handler
 			this.currentListView.on('select-entry', function(entry) {
 				console.log('TrackView: Selecting an entry');
@@ -400,7 +312,6 @@ define(function(require, exports, module) {
 
 	TrackView.prototype.showEntryFormView = function(state) {
 		this.hideAllPopovers();
-		this.hideBookmarkShimSurface();
 		var continueShowForm = this.entryFormView.preShow(state);
 		if (continueShowForm) {
 			if (this.isSprintMenuPopoverVisible) {
@@ -410,9 +321,6 @@ define(function(require, exports, module) {
 			this.entryListContainer.setProperties({
 				webkitFilter: 'blur(5px)',
 				filter: 'blur(5px)'
-			});
-			this.formContainerSurface.setProperties({
-				visibility: 'hidden'
 			});
 			this.showBackButton();
 			this.setHeaderLabel('');
@@ -441,30 +349,6 @@ define(function(require, exports, module) {
 			return {onLoad: true};
 		}
 	};
-
-	function _setHandlers() {
-		this.on('edit-bookmarks', function(event) {
-			this.options.contextMenuOptions.splice(1, 1, {class: 'done-edit-bookmarks', label: 'Done Editing'});
-			this.showBookmarkShimSurface();
-			_.each(document.getElementsByClassName('edit-pin'), function(editPinIcon, index) {
-				editPinIcon.classList.remove('display-none');
-				this.currentListView.pinnedViews[index].entry.state = 'bookmarkEdit';
-			}.bind(this));
-		});
-
-		this.on('done-edit-bookmarks', function(event) {
-			this.options.contextMenuOptions.splice(1, 1, {class: 'edit-bookmarks', label: 'Edit Bookmarks'});
-			this.hideBookmarkShimSurface();
-			_.each(document.getElementsByClassName('edit-pin'), function(editPinIcon, index) {
-				editPinIcon.classList.add('display-none');
-				this.currentListView.pinnedViews[index].entry.state = null;
-			}.bind(this));
-		});
-
-		this.on('add-bookmark', function(event) {
-			this.showEntryFormView({bookmarkForm: true});
-		});
-	}
 
 	App.pages[TrackView.name] = TrackView;
 	module.exports = TrackView;

@@ -155,13 +155,13 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			return date.getTime();
 		};
 
-		Utils.dateToTimeStr = function(d, shortForm) {
+		Utils.dateToTimeStr = function(d, shortForm, toUpperCase) {
 			var ap = "";
 			var hour = d.getHours();
 			if (hour < 12)
-				ap = "am";
+				ap = toUpperCase ? "AM" : "am";
 			else
-				ap = "pm";
+				ap = toUpperCase ? "PM" : "pm";
 			if (hour === 0) {
 				hour = 12;
 			}

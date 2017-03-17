@@ -52,7 +52,7 @@ define(function (require, exports, module) {
 				target: input.render()
 			};
 		});
-		this.entries = new EntryCollection(this.entry); // This field is from TrackEntryView
+		this.entries = new EntryCollection(this.entry); // This field is from EntryView
 		this.group();
 		this.children = [];
 		this.childrenSequentialView.sequenceFrom(this.children);

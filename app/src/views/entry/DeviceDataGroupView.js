@@ -1,4 +1,5 @@
 define(function(require, exports, module) {
+
 	'use strict';
 	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
@@ -13,10 +14,7 @@ define(function(require, exports, module) {
 
 	function DeviceDataGroupView(options) {
 		DeviceDataView.apply(this, arguments);
-		//this.collapsed = false;
-
 		this.expand();
-		//this.add(this.bgModifier).add(this.backgroundSurface);
 	}
 
 	DeviceDataGroupView.prototype = Object.create(DeviceDataView.prototype);
@@ -43,9 +41,24 @@ define(function(require, exports, module) {
 	DeviceDataGroupView.prototype.createChildren = function () {
 		for (var i in this.groupedData) {
 			var groupedEntry = this.groupedData[i];
-			 this.children.push(new DeviceDataSummaryView({entry: groupedEntry,
-				 entryZIndex: App.zIndex.readView + 4, scrollView: this.options.scrollView}));
+
+			var deviceDataSummaryView = new DeviceDataSummaryView({
+				entry: groupedEntry,
+				entryZIndex: App.zIndex.readView + 4,
+				scrollView: this.options.scrollView
+			});
+
+			deviceDataSummaryView.on('delete-device-entry', function() {
+				var indexOfDeviceDataSummaryView = this.children.indexOf(deviceDataSummaryView);
+				if ((indexOfDeviceDataSummaryView > -1) && deviceDataSummaryView.children.length === 0) {
+					this.children.splice(this.children.indexOf(deviceDataSummaryView), 1);
+					this._eventOutput.emit('delete-device-entry');
+				}
+			}.bind(this));
+
+			this.children.push(deviceDataSummaryView);
 		}
 	};
+
 	module.exports = DeviceDataGroupView;
 });

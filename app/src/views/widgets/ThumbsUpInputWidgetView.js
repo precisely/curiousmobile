@@ -34,8 +34,6 @@ define(function(require, exports, module) {
 	};
 
 	ThumbsUpInputWidgetView.prototype.initializeWidgetContent = function() {
-		this.tagDescription = 'Sleep';
-		this.time = '12:03 PM';
 		this.inputWidgetDiv = _.template(thumbsUpInputWidgetTemplate, {}, templateSettings);
 
 		// Initialize the currently selected input.

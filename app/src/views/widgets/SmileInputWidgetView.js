@@ -12,8 +12,6 @@ define(function(require, exports, module) {
 	SmileInputWidgetView.prototype.constructor = SmileInputWidgetView;
 
 	SmileInputWidgetView.prototype.initializeWidgetContent = function() {
-		this.tagDescription = 'Mood';
-		this.time = '12:03 PM';
 		this.inputWidgetDiv = _.template(smileInputWidgetTemplate, {}, templateSettings);
 
 		// Initialize the currently selected input.

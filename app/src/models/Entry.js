@@ -144,7 +144,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					}
 				}
 
-				entryStr += escapeHTML(this.dateStr()) + (entry.comment != '' ? ' ' + escapeHTML(entry.comment) : '')
+				entryStr += escapeHTML(this.dateStr()) + (entry.comment != '' ? ' ' + escapeHTML(entry.comment) : '');
 				return entryStr;
 			},
 			formattedAmount: function(args) {
@@ -170,13 +170,19 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 
 				return "";
 			},
-			dateStr: function () {
+			dateStr: function (toUpperCase) {
 				var dateStr = '';
 				if (this.get('datePrecisionSecs') < 43200) {
-					dateStr = u.dateToTimeStr(new Date(this.get('date')), false);
+					dateStr = u.dateToTimeStr(new Date(this.get('date')), false, toUpperCase);
 					dateStr = ' ' + dateStr;
 				}
 				return dateStr;
+			},
+			getTimeString: function() {
+				var toUpperCase = true;
+				var timeString = u.escapeHTML(this.dateStr(), toUpperCase);
+
+				return timeString.slice(0);
 			},
 			removeSuffix: function() {
 				var text = this.toString();

@@ -12,8 +12,6 @@ define(function(require, exports, module) {
 	BooleanInputWidgetView.prototype.constructor = BooleanInputWidgetView;
 
 	BooleanInputWidgetView.prototype.initializeWidgetContent = function() {
-		this.tagDescription = 'Misbehavior';
-		this.time = '12:03 PM';
 		this.inputWidgetDiv = _.template(booleanInputWidgetTemplate, {}, templateSettings);
 
 		// Initialize the currently selected input.

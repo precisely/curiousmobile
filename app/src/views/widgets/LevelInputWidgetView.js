@@ -12,8 +12,6 @@ define(function(require, exports, module) {
 	LevelInputWidgetView.prototype.constructor = LevelInputWidgetView;
 
 	LevelInputWidgetView.prototype.initializeWidgetContent = function() {
-		this.tagDescription = 'Energy';
-		this.time = '12:03 PM';
 		this.inputWidgetDiv = _.template(levelInputWidgetTemplate, {}, templateSettings);
 
 		// Initialize the currently selected input.

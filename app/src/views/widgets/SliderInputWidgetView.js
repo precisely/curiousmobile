@@ -14,8 +14,6 @@ define(function(require, exports, module) {
 	var SLIDER_INPUT_ELEMENT = 'slider-input-element';
 
 	SliderInputWidgetView.prototype.initializeWidgetContent = function() {
-		this.tagDescription = 'Bowell Movement';
-		this.time = '6:44 am, 12:03 pm';
 		this.inputWidgetDiv = _.template(sliderInputWidgetTemplate, {}, templateSettings);
 
 		// Initialize the currently selected input.
