@@ -10,14 +10,6 @@ define(function(require, exports, module) {
 	CircleInputWidgetView.prototype = Object.create(InputWidgetView.prototype);
 	CircleInputWidgetView.prototype.constructor = CircleInputWidgetView;
 
-	CircleInputWidgetView.prototype.CIRCLE_DOM_IDS = {
-		CIRCLE_1: 'c1',
-		CIRCLE_2: 'c2',
-		CIRCLE_3: 'c3',
-		CIRCLE_4: 'c4',
-		CIRCLE_5: 'c5'
-	};
-
 	CircleInputWidgetView.prototype.selectCircle = function(element) {
 		$(element).addClass('fill-circle');
 	};
@@ -46,6 +38,18 @@ define(function(require, exports, module) {
 
 		this.currentlySelected.state = this.STATES.NONE_SELECTED;
 		this.currentlySelected.id = this.DOM_ID.NONE;
+	};
+
+	CircleInputWidgetView.prototype.selectIcon = function(element) {
+		var currentSelection = this.getCurrentlySelectedElement(element);
+		this.selectCircle(currentSelection);
+	};
+
+	CircleInputWidgetView.prototype.unSelectIcon = function(element) {
+		var unSelect = true;
+		var currentSelection = this.getCurrentlySelectedElement(element, unSelect);
+
+		this.unSelectCircle(currentSelection);
 	};
 
 	module.exports = CircleInputWidgetView;

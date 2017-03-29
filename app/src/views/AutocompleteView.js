@@ -20,27 +20,27 @@ define(function(require, exports, module) {
 	AutocompleteView.prototype.constructor = AutocompleteView;
 	AutocompleteView.DEFAULT_OPTIONS = {};
 
-	var onSelectCallback;
-
 	AutocompleteView.prototype.init = function() {
 		this.renderController = new RenderController();
 		this.add(this.renderController);
+
+		this.surfaceList = [];
+		this.scrollView = new Scrollview({
+			direction: Utility.Direction.Y,
+		});
 	};
 
 
 	AutocompleteView.prototype.hide = function(callback) {
 		this.renderController.hide({duration:0});
-	}
+	};
 
 	AutocompleteView.prototype.onSelect = function(callback) {
-		onSelectCallback = callback;
+		this.onSelectCallback = callback;
 	};
 
 	AutocompleteView.prototype.getAutocompletes = function(enteredKey, callback) {
 		this.surfaceList = [];
-		this.scrollView = new Scrollview({
-			direction: Utility.Direction.Y,
-		});
 		var i = 0;
 		if (!enteredKey) {
 			this.processAutocompletes(false);	
@@ -93,7 +93,9 @@ define(function(require, exports, module) {
 				borderBottom: borderProperty,
 				borderLeft: '1px solid #aaaaaa',
 				borderRight: '1px solid #aaaaaa'
-			}
+			},
+			classes: ['autocomplete-surface'],
+			size: [window.innerWidth - 30, 40]
 		});
 
 		myView.autoCompleteModifier = new StateModifier({
@@ -105,7 +107,7 @@ define(function(require, exports, module) {
 			if (e instanceof CustomEvent) {
 				console.log('Autocomplete click: ' + e);
 				this.renderController.hide(this.scrollView);
-				onSelectCallback(autocomplete.label || autocomplete);
+				this.onSelectCallback(autocomplete.label || autocomplete);
 			}
 		}.bind(this));
 

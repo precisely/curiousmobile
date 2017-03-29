@@ -145,11 +145,6 @@ define(function(require, exports, module) {
 						if (typeof cordova !== 'undefined') {
 							cordova.plugins.Keyboard.close();
 						}
-						// this.addSprintTagsView = new SprintEntryFormView(this);
-						// var formViewState = this.addSprintTagsView.buildStateFromEntry(this.entryMap[entryId]);
-						// this.showOverlayContent(this.addSprintTagsView, function() {
-						// 	this.onShow(formViewState);
-						// }.bind(this.addSprintTagsView));
 						var entryId = e.srcElement.parentElement.dataset.id;
 						var entry = this.entryMap[entryId];
 						entry.delete(function(data) {

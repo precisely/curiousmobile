@@ -115,11 +115,7 @@ define(function(require, exports, module) {
 		console.log('entry selected with id: ' + this.entry.id);
 		if (this.entry.get("sourceName")) {
 			u.showAlert('You can not edit this entry');
-			return;
 		}
-		var trackView = App.pageView.getPage('TrackView');
-		var formViewState = trackView.buildStateFromEntry(this.entry);
-		trackView.showEntryFormView(formViewState);
 	};
 
 	EntryView.prototype.delete = function(e) {

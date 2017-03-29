@@ -12,18 +12,21 @@ define(function(require, exports, module) {
 	BooleanInputWidgetView.prototype.constructor = BooleanInputWidgetView;
 
 	BooleanInputWidgetView.prototype.initializeWidgetContent = function() {
-		this.inputWidgetDiv = _.template(booleanInputWidgetTemplate, {}, templateSettings);
+		var entryId = this.getIdForDOMElement();
+		this.inputWidgetDiv = _.template(booleanInputWidgetTemplate, {
+			entryId: entryId
+		}, templateSettings);
+
+		this.YES_BUTTON_ID = 'yes-button-' + entryId;
+		this.NO_BUTTON_ID = 'no-button-' + entryId;
+		this.DESCRIBE_BUTTON_ID = 'describe-button-' + entryId;
 
 		// Initialize the currently selected input.
 		this.currentlySelected = {id: this.DOM_ID.NONE, state: this.STATES.NONE_SELECTED};
 	};
 
-	var YES_BUTTON = 'yes-button';
-	var NO_BUTTON = 'no-button';
-	var DESCRIBE_BUTTON = 'describe-button';
-
 	BooleanInputWidgetView.prototype.isBooleanInput = function(element) {
-		return _.contains([YES_BUTTON, NO_BUTTON], element.id);
+		return _.contains([this.YES_BUTTON_ID, this.NO_BUTTON_ID], element.id);
 	};
 
 	BooleanInputWidgetView.prototype.selectButton = function(element) {
@@ -51,7 +54,7 @@ define(function(require, exports, module) {
 	};
 
 	BooleanInputWidgetView.prototype.handleNewInputSelection = function(element) {
-		if (element.id === DESCRIBE_BUTTON) {
+		if (element.id === this.DESCRIBE_BUTTON_ID) {
 			// Handle describe event.
 		} else {
 			this.defaultNewInputSelectionHandler(element);

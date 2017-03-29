@@ -170,17 +170,18 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 
 				return "";
 			},
-			dateStr: function (toUpperCase) {
+			dateStr: function () {
 				var dateStr = '';
 				if (this.get('datePrecisionSecs') < 43200) {
-					dateStr = u.dateToTimeStr(new Date(this.get('date')), false, toUpperCase);
+					dateStr = u.dateToTimeStr(new Date(this.get('date')), false);
 					dateStr = ' ' + dateStr;
 				}
 				return dateStr;
 			},
 			getTimeString: function() {
 				var toUpperCase = true;
-				var timeString = u.escapeHTML(this.dateStr(), toUpperCase);
+				var dateStr = u.dateToTimeStr(new Date(this.get('date')), false, toUpperCase);
+				var timeString = u.escapeHTML(dateStr);
 
 				return timeString.slice(0);
 			},

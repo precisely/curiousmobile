@@ -3,29 +3,63 @@ define(function(require, exports, module) {
 
 	require('jquery');
 	require('bootstrap');
+
 	var View = require('famous/core/View');
 	var Surface = require('famous/core/Surface');
-	var baseInputWidgetTemplate = require('text!templates/input-widgets/base-input-widget.html');
-	var DateGridView = require('views/calendar/DateGridView');
-	var StateModifier = require('famous/modifiers/StateModifier');
 	var Modifier = require('famous/core/Modifier');
 	var Transform = require('famous/core/Transform');
-	var RenderController = require("famous/views/RenderController");
-	var ContainerSurface = require('famous/surfaces/ContainerSurface');
+
+	var StateModifier = require('famous/modifiers/StateModifier');
+	var Draggable = require('famous/modifiers/Draggable');
 	var TouchSync = require("famous/inputs/TouchSync");
+
+	var RenderController = require("famous/views/RenderController");
+
+	var FixedRenderNode = require('util/FixedRenderNode');
+	var EntryCollection = require('models/EntryCollection');
+	var baseInputWidgetTemplate = require('text!templates/input-widgets/base-input-widget.html');
+
+	var SetRepeatTypeAndDateView = require('views/entry/SetRepeatTypeAndDateView');
+	var TimePickerView = require('views/entry/TimePickerView');
 
 	function InputWidgetView(entry, parentWidgetGroup) {
 		View.apply(this, arguments);
+
+		this.options = Object.create(InputWidgetView.DEFAULT_OPTIONS);
+
 		this.entry = entry;
 		this.parentWidgetGroup = parentWidgetGroup;
-		this.initializeWidgetContent(); // Defined in Overriding Views to set the content.
-		this.createWidget();
-		this.addComponents();
-		this.registerListeners();
+
+		this.init();
 	}
 
 	InputWidgetView.prototype = Object.create(View.prototype);
 	InputWidgetView.prototype.constructor = InputWidgetView;
+
+	InputWidgetView.DEFAULT_OPTIONS = {
+		widgetHeight: 100,
+		surfaceHeight: 95
+	};
+
+	InputWidgetView.prototype.init = function() {
+		if (this.entry instanceof EntryCollection) {
+			this.isDrawerInputSurface = true;
+		}
+
+		this.trackView = App.pageView.getPage('TrackView');
+
+		var entryId = this.getIdForDOMElement();
+		this.BELL_ICON_ID = 'bell-icon-' + entryId;
+		this.BELL_ICON_BOX_CLASS = 'bell-icon-box-' + entryId;
+		this.REPEAT_ICON_CLASS = 'repeat-icon-' + entryId;
+		this.TIME_BOX_ID = 'time-box-' + entryId;
+
+		this.initializeWidgetContent(); // Defined in Overriding Views to set the content.
+		this.createWidget();
+		this.addComponents();
+		this.registerListeners();
+		this.addGlowSurface();
+	};
 
 	InputWidgetView.prototype.STATES = {
 		UNSELECTED: 0,
@@ -37,92 +71,169 @@ define(function(require, exports, module) {
 		NONE: 'none'
 	};
 
-	// Dom Id of the element.
-	var BELL_ICON = 'remind-bell-button';
-
 	InputWidgetView.prototype.isBellIcon = function(element) {
-		return (_.contains(element.classList, BELL_ICON) || _.contains(element.parentElement.classList, BELL_ICON))
+		return (_.contains(element.classList, this.BELL_ICON_BOX_CLASS) || 
+				_.contains(element.parentElement.classList, this.BELL_ICON_BOX_CLASS));
+	};
+
+	InputWidgetView.prototype.isRepeatIcon = function(element) {
+		return (_.contains(element.classList, this.REPEAT_ICON_CLASS) ||
+				_.contains(element.parentElement.classList, this.REPEAT_ICON_CLASS));
+	};
+
+	InputWidgetView.prototype.isTimeBox = function(element) {
+		return (element.id === this.TIME_BOX_ID);
+	};
+
+	InputWidgetView.prototype.getTagDisplayText = function() {
+		if (this.isDrawerInputSurface) {
+			return this.parentWidgetGroup.tag.description;
+		}
+
+		return this.entry.get('description');
+	};
+
+	InputWidgetView.prototype.getTimeDisplayText = function() {
+		if (this.isDrawerInputSurface) {
+			if (this.entry.length >= 1) {
+				var timeString = this.entry.at(0).getTimeString();
+
+				if (this.entry.length >= 2) {
+					timeString += ', ' + this.entry.at(1).getTimeString();
+				}
+
+				if (this.entry.length >= 3) {
+					timeString += '...';
+				}
+
+				return timeString;
+			}
+
+			return '';
+		}
+
+		return this.entry.getTimeString();
+	};
+
+	InputWidgetView.prototype.isRemindEntry = function() {
+		if (this.isDrawerInputSurface) {
+			return false;
+		}
+
+		return this.entry.isRemind();
+	};
+
+	InputWidgetView.prototype.isRepeatEntry = function() {
+		if (this.isDrawerInputSurface) {
+			return false;
+		}
+
+		return this.entry.isRepeat();
 	};
 
 	InputWidgetView.prototype.createWidget = function() {
-		this.inputWidgetSurface = new Surface({
-			size: [App.width, 105],
+		var classes = ['input-widget-view'];
+
+		if (!this.isDrawerInputSurface) {
+			classes.push('input-widget-view-drawer-content');
+
+			this.repeatView = new SetRepeatTypeAndDateView(this);
+			this.timePickerView = new TimePickerView(this);
+		}
+
+		this.inputWidgetSurfaceContent = {
+			size: this.getInputWidgetSurfaceSize(),
 			content: _.template(baseInputWidgetTemplate, {
-				tag: this.entry.get('description'),
-				time: this.entry.getTimeString(),
-				reminderSet: this.entry.isRemind(),
-				widgetDiv: this.inputWidgetDiv
+				tag: this.getTagDisplayText(),
+				time: this.getTimeDisplayText(),
+				reminderSet: this.isRemindEntry(),
+				repeatSet: this.isRepeatEntry(),
+				isDrawer: this.isDrawerInputSurface,
+				widgetDiv: this.inputWidgetDiv,
+				entryId: this.getIdForDOMElement()
 			}, templateSettings),
-			classes: ['input-widget-surface']
+			classes: classes
+		};
+
+		this.inputWidgetSurface = new Surface(this.inputWidgetSurfaceContent);
+	};
+
+	InputWidgetView.prototype.getIdForDOMElement = function() {
+		return (this.isDrawerInputSurface ? 'tag-' + this.parentWidgetGroup.tag.id : this.entry.get('id'));
+	};
+
+	InputWidgetView.prototype.getInputWidgetSurfaceSize = function() {
+		if (this.isDrawerInputSurface) {
+			return [App.width, this.options.surfaceHeight];
+		}
+
+		return ([App.width - 10, this.options.surfaceHeight - 10]);
+	};
+
+	InputWidgetView.prototype.addDraggableSurface = function() {
+		var draggable = new Draggable({
+			xRange: [-100, 0],
+			yRange: [0, 0],
 		});
+
+		var touchSync = new TouchSync();
+		touchSync.on('end', function() {
+			var movementX = Math.abs(draggable.getPosition()[0]);
+
+			if (movementX < 50) {
+				draggable.setPosition([0, 0]);
+			} else {
+				draggable.setPosition([-100, 0]);
+			}
+		});
+
+		var fixedRenderNode = new FixedRenderNode(draggable);
+		fixedRenderNode.add(this.inputWidgetSurface);
+
+		this.deleteSurface = new Surface({
+			size: [100, this.options.surfaceHeight - 10],
+			content: '<div class="delete-surface-text">Delete</div>',
+			classes: ['delete-surface']
+		});
+
+		//this.deleteSurface.on('click', this.delete.bind(this));
+
+		this.deleteSurfaceModifier = new StateModifier({
+			transform: Transform.translate(App.width - 130, 0, 0)
+		});
+
+		this.add(this.deleteSurfaceModifier).add(this.deleteSurface);
+
+		var inputSurfaceModifier = new StateModifier({
+			transform: Transform.translate(-5, 0, 5)
+		});
+		this.add(inputSurfaceModifier).add(fixedRenderNode);
+
+		this.inputWidgetSurface.pipe(draggable);
+		this.inputWidgetSurface.pipe(touchSync);
 	};
 
 	InputWidgetView.prototype.addComponents = function() {
-		this.add(this.inputWidgetSurface);
+		if (!this.isDrawerInputSurface) {
+			this.addDraggableSurface();
+		} else {
+			this.add(this.inputWidgetSurface);
+		}
+
 		this.inputWidgetSurface.pipe(this.parentWidgetGroup.scrollView);
-		this.inputWidgetSurface.pipe(this._eventOutput);
-		this.createTouchInputSurface();
-	};
-
-	InputWidgetView.prototype.createTouchInputSurface = function() {
-		this.start = 0;
-		this.update = 0;
-		this.end = 0;
-		this.delta = [0, 0];
-		this.position = [0, 0];
-
-		//this.on('trigger-delete-entry', this.delete.bind(this));
-
-		this.touchSync = new TouchSync(function() {
-			return position;
-		});
-
-		this.inputWidgetSurface.pipe(this.touchSync);
-
-		this.touchSync.on('start', function(data) {
-			console.log('Entry touched: ' + this.entry.get('id'));
-			this.start = Date.now();
-			// Show context menu after the timeout regardless of tap end
-			this.touchTimeout = setTimeout(function() {}.bind(this), 500)
-		}.bind(this));
-
-		this.touchSync.on('update', function(data) {
-			var movementX = Math.abs(data.position[0]);
-			var movementY = Math.abs(data.position[1]);
-			// Don't show context menu if there is intent to move something
-			if (movementX > 8 || movementY > 8) {
-				clearTimeout(this.touchTimeout);
-			}
-		}.bind(this));
-
-		this.touchSync.on('end', function(data) {
-			this.end = Date.now();
-			var movementX = Math.abs(data.position[0]);
-			var movementY = Math.abs(data.position[1]);
-			var timeDelta = this.end - this.start;
-			// If the intent is to just select don't show context menu
-			if (movementX < 8 && movementY < 8) {
-				if (timeDelta < 500) {
-					clearTimeout(this.touchTimeout);
-					this.select();
-					return;
-				}
-				if (timeDelta > 600) {
-					App.pageView._eventOutput.emit('show-context-menu', {
-						menu: this.menu,
-						target: this,
-						eventArg: {entry: this.entry}
-					});
-				}
-			}
-		}.bind(this));
 	};
 
 	InputWidgetView.prototype.registerListeners = function() {
 		this.inputWidgetSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				if (this.isBellIcon(e.srcElement)) {
+				if (this.isDrawerInputSurface) {
+					this.handleDrawerSurfaceEvent();
+				} else if (this.isBellIcon(e.srcElement)) {
 					this.handleReminderBellEvent(e.srcElement);
+				} else if (this.isRepeatIcon(e.srcElement)) {
+					this.handleRepeatEvent(e.srcElement);
+				} else if (this.isTimeBox(e.srcElement)) {
+					this.handleTimeBoxEvent();
 				} else if (e.srcElement.id) {
 					this.inputWidgetEventHandler(e.srcElement);
 				}
@@ -130,7 +241,15 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
+	InputWidgetView.prototype.handleDrawerSurfaceEvent = function() {
+		this.parentWidgetGroup.select();
+	};
+
 	InputWidgetView.prototype.handleReminderBellEvent = function(element) {
+		if (element.id !== this.BELL_ICON_ID) {
+			element = document.getElementById(this.BELL_ICON_ID);
+		}
+
 		if (this.remindEntry) {
 			$(element).removeClass('fa-bell');
 			$(element).addClass('fa-bell-o');
@@ -140,6 +259,14 @@ define(function(require, exports, module) {
 			$(element).addClass('fa-bell');
 			this.remindEntry = true;
 		}
+	};
+
+	InputWidgetView.prototype.handleRepeatEvent = function() {
+		this.trackView.showRepeatOverlay(this.repeatView);
+	};
+
+	InputWidgetView.prototype.handleTimeBoxEvent = function() {
+		this.trackView.showRepeatOverlay(this.timePickerView);
 	};
 
 	InputWidgetView.prototype.inputWidgetEventHandler = function(element) {
@@ -168,7 +295,12 @@ define(function(require, exports, module) {
 		this.selectInput(element);
 	};
 
-	InputWidgetView.prototype.removeTimeSuffix = function(timeString) {
+	InputWidgetView.prototype.getSize = function() {
+		return [undefined, this.options.surfaceHeight - 5];
+	};
+
+	InputWidgetView.prototype.removeTimeSuffix = function() {
+		var timeString = this.entry.getTimeString();
 		var timeStringInHHMMFormat = timeString.replace(/am|pm/gi, '');
 
 		var hoursMinutesPlaceValues = timeStringInHHMMFormat.split(':');
@@ -184,6 +316,48 @@ define(function(require, exports, module) {
 		}
 
 		return (hoursPlaceValue + ':' + minutesPlaceValue);
+	};
+
+	InputWidgetView.prototype.getTimeForTimePickerView = function() {
+		var timeString = this.entry.getTimeString();
+
+		var hoursMinutesPlaceValues = timeString.split(':');
+		var hoursPlaceValue = hoursMinutesPlaceValues[0];
+		var minutesPlaceValueWithAmPm = hoursMinutesPlaceValues[1];
+
+		var minutesPlaceValue = minutesPlaceValueWithAmPm.substr(0, 2);
+		var ampm = minutesPlaceValueWithAmPm.substr(2);
+
+		return {hh: hoursPlaceValue, mm: minutesPlaceValue, ampm: ampm};
+	};
+
+	InputWidgetView.prototype.addGlowSurface = function() {
+		this.glowSurface = new Surface();
+		this.glowController = new RenderController();
+
+		var xTransform = this.isDrawerInputSurface ? 0 : -5;
+
+		this.glowSurfaceTransform = Transform.translate(xTransform, 0, 100);
+		this.glowControllerModifier = new StateModifier({transform: this.glowSurfaceTransform});
+		this.add(this.glowControllerModifier).add(this.glowController);
+
+		var glowSurfaceContent = Object.create(this.inputWidgetSurfaceContent);
+		this.glowSurface.setOptions(glowSurfaceContent);
+		this.glowSurface.addClass('glow');
+	};
+
+	InputWidgetView.prototype.glow = function() {
+		this.glowController.show(this.glowSurface, null, function() {
+			setTimeout(function() {
+				/* 
+				 * Calling just hide() was not allowing the glow surface to persist so modifying the z-Index first
+				 * and then hiding the glow surface. Also since glow surface was displayed on the top of entry surface, 
+				 * zIndex had to be given so added a state modifier.
+				 */
+				this.glowControllerModifier.setTransform(this.glowSurfaceTransform, {duration: 5000});
+				this.glowController.hide();
+			}.bind(this), 1000);
+		}.bind(this));
 	};
 
 	module.exports = InputWidgetView;

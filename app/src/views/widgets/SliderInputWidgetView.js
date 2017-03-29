@@ -6,32 +6,38 @@ define(function(require, exports, module) {
 
 	function SliderInputWidgetView() {
 		InputWidgetView.apply(this, arguments);
+		this.addCustomEventListeners();
 	}
 
 	SliderInputWidgetView.prototype = Object.create(InputWidgetView.prototype);
 	SliderInputWidgetView.prototype.constructor = SliderInputWidgetView;
 
-	var SLIDER_INPUT_ELEMENT = 'slider-input-element';
-
 	SliderInputWidgetView.prototype.initializeWidgetContent = function() {
-		this.inputWidgetDiv = _.template(sliderInputWidgetTemplate, {}, templateSettings);
+		var entryId = this.getIdForDOMElement();
+		this.inputWidgetDiv = _.template(sliderInputWidgetTemplate, {
+			entryId: entryId
+		}, templateSettings);
+
+		this.SLIDER_INPUT_ELEMENT_ID = 'slider-input-element-' + entryId;
+		this.SLIDER_INPUT_VALUE_BOX_ID = 'slider-value-' + entryId;
 
 		// Initialize the currently selected input.
 		this.currentlySelected = {id: this.DOM_ID.NONE, state: this.STATES.NONE_SELECTED};
 	};
 
-	SliderInputWidgetView.prototype.registerListeners = function() {
+	SliderInputWidgetView.prototype.addCustomEventListeners = function() {
 		this.inputWidgetSurface.on('change', function(e) {
 			this.inputWidgetEventHandler(e.srcElement);
 		}.bind(this));
 	};
 
 	SliderInputWidgetView.prototype.inputWidgetEventHandler = function(element) {
-		if (element.id === SLIDER_INPUT_ELEMENT) {
+		if (element.id === this.SLIDER_INPUT_ELEMENT_ID) {
 			var currentValue = element.value;
 
 			$(element).removeClass(element.className);
 			$(element).addClass('rv-' + currentValue);
+			$('#' + this.SLIDER_INPUT_VALUE_BOX_ID).text(currentValue);
 		}
 	};
 

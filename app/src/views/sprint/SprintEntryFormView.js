@@ -172,45 +172,6 @@ define(function(require, exports, module) {
 		}
 	};
 
-	SprintEntryFormView.prototype.buildStateFromEntry = function(entry) {
-		console.log('Build state for entry with id: ' + entry.id);
-		this.setPinned = this.setRemind = this.setRepeat = false;
-		this.entry = entry;
-		var entryText = entry.toString();
-		if (entry && entry.isContinuous()) {
-			entryText = this.removeSuffix(entryText);
-		}
-
-		var selectionRange = entry.getSelectionRange();
-		if (selectionRange !== undefined) {
-			if (selectionRange[2]) { // insert space at selectionRange[0]
-				entryText = entryText.substr(0, selectionRange[0] - 1) + " " + entryText.substr(selectionRange[0] - 1);
-			}
-		}
-
-		var state = {
-			viewProperties: {
-				name: 'entry',
-				value: entry,
-				model: 'entry'
-			},
-			form: [{
-				id: 'entry-description',
-				value: entryText,
-				selectionRange: selectionRange,
-				elementType: ElementType.domElement,
-				focus: true
-			}],
-			postLoadAction: {
-				name: 'showEntryModifiers',
-				args: {
-					entry: entry
-				}
-			}
-		};
-		return state;
-	};
-
 	SprintEntryFormView.prototype.toggleSuffix = function(suffix) {
 		var text = document.getElementById("entry-description").value;
 		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned')) {

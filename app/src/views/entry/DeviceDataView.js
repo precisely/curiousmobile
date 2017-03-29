@@ -34,24 +34,6 @@ define(function (require, exports, module) {
 			itemSpacing: 0
 		});
 
-		this.childrenSequentialView.setOutputFunction(function (input, offset, index) {
-			if (input.constructor.name == 'DeviceDataGroupView') {
-				console.log(childView.constructor.name);
-			}
-			//if (index > 0) {
-			//	offset -= 55;
-			////	var prevView = this._items._.array[index - 1];
-			////	var prevSize = prevView.getSize();
-			////	offset += prevSize[1] - (55 * (index + 1));
-			//}
-			//var previousChild = this._items.getPrevious();
-			var transform = (this.options.direction === Utility.Direction.X) ? Transform.translate(offset, 0) : Transform.translate(0, offset);
-			return {
-				size: this.cachedSize,
-				transform: transform,
-				target: input.render()
-			};
-		});
 		this.entries = new EntryCollection(this.entry); // This field is from EntryView
 		this.group();
 		this.children = [];
@@ -130,18 +112,18 @@ define(function (require, exports, module) {
 	};
 
 	DeviceDataView.prototype.getSize = function () {
-		//console.log(this.constructor.name + 'getSize called');
 		var size = [window.innerWidth, 55];
+
 		if (this.collapsed) {
 			return size;
 		}
+
 		for (var i in this.children) {
 			var childView = this.children[i];
 			var childSize = childView.getSize();
-			if (typeof childSize == 'undefined') {
-			}
 			size[1] += childSize[1];
 		}
+
 		return size;
 	};
 

@@ -1,13 +1,25 @@
-<div class="input-widget-view">
+<div class="input-widget-surface" id="{{- entryId}}">
 	<div class="tag-time-row">
 		<div class="input-widget-tag-description">
 			<span>{{- tag}}</span>
 		</div>
 		<div class="input-widget-time-display">
-			<button class="time-display-box">{{- time}}</button>
-			<button class="remind-bell-button">
-				<i class="fa fa-bell-o remind-bell" aria-hidden="true"></i>
-			</button>
+			{{ if (time) { }}
+				<button class="time-display-box" id="time-box-{{- entryId}}">{{- time}}</button>
+			{{ } }}
+
+			{{ if (!isDrawer) { }}
+				<button class="transparent-bg bell-icon-box-{{- entryId}}">
+					<i class="fa fa-bell-o colored-icon" aria-hidden="true" id="bell-icon-{{- entryId}}"></i>
+				</button>
+				<button class="transparent-bg repeat-icon-{{- entryId}}">
+					{{ if (repeatSet) { }}
+						<i class="fa fa-repeat colored-icon" aria-hidden="true"></i>
+					{{ } else { }}
+						<i class="fa fa-repeat faded-icon" aria-hidden="true"></i>
+					{{ } }}
+				</button>
+			{{ } }}
 		</div>
 	</div>
 
