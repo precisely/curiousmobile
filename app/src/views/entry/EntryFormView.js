@@ -12,7 +12,6 @@ define(function(require, exports, module) {
 	var StateView = require('views/StateView');
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var AutocompleteView = require("views/AutocompleteView");
-	var Autocomplete = require('models/Autocomplete');
 	var DraggableView = require("views/widgets/DraggableView");
 	var store = require('store');
 	var Entry = require('models/Entry');

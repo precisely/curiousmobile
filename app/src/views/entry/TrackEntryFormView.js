@@ -7,7 +7,7 @@ define(function(require, exports, module) {
 	var Timer = require('famous/utilities/Timer');
 	var Transform = require('famous/core/Transform');
 	var AutocompleteView = require("views/AutocompleteView");
-	var Autocomplete = require('models/Autocomplete');
+	var Autocomplete = require('models/TagsAutoComplete');
 	var Entry = require('models/Entry');
 	var u = require('util/Utils');
 	var store = require('store');

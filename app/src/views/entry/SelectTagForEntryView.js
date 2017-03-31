@@ -21,7 +21,7 @@ define(function(require, exports, module) {
 	var Utility = require('famous/utilities/Utility');
 
 	var AutoCompleteView = require("views/AutocompleteView");
-	var AutoCompleteModel = require('models/Autocomplete');
+	var TagInputTypeAutoComplete = require('models/TagInputTypeAutoComplete');
 
 	var inputSurfaceTemplate = require('text!templates/input-surface.html');
 
@@ -55,8 +55,8 @@ define(function(require, exports, module) {
 	};
 
 	SelectTagForEntryView.prototype.addAutoCompleteView = function() {
-		this.autoCompleteModelInstance = new AutoCompleteModel();
-		window.autocompleteCache = this.autoCompleteModelInstance;
+		this.autoCompleteModelInstance = new TagInputTypeAutoComplete();
+		window.tagWithInputTypeAutoComplete = this.autoCompleteModelInstance;
 
 		this.autoCompleteView = new AutoCompleteView(this.autoCompleteModelInstance);
 
@@ -113,9 +113,9 @@ define(function(require, exports, module) {
 
 		this.timePickerContainerSurface.add(this.inputModifier).add(this.inputSurface);
 
-		this.inputSurface.on('click', function(e) {
+		this.inputSurface.on('click', function() {
 			this.setFocusOnInputSurface();
-		});
+		}.bind(this));
 
 		this.inputSurface.on('keyup', function(e) {
 			// On enter
@@ -156,7 +156,7 @@ define(function(require, exports, module) {
 
 	SelectTagForEntryView.prototype.initializeTagsList = function() {
 		this.autoCompleteView.surfaceList = [];
-		this.autoCompleteView.processAutocompletes(this.autoCompleteModelInstance.freqTagList, '',
+		this.autoCompleteView.processAutocompletes(this.autoCompleteModelInstance.tagsWithInputType, '',
 				function(autoCompleteViewList) {
 			this.refreshTagsList(autoCompleteViewList);
 		}.bind(this));

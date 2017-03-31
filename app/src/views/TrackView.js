@@ -144,7 +144,7 @@ define(function(require, exports, module) {
 
 			var inputWidgetToShowPopover = this.currentListView.inputWidgetGroupViewList[1];
 			if (inputWidgetToShowPopover && inputWidgetToShowPopover.drawerSurface instanceof LevelInputWidgetView) {
-				var tagId = inputWidgetToShowPopover.tag.id;
+				var tagId = inputWidgetToShowPopover.tagInputType.tagId;
 				App.showPopover('#c2-level-tag-' + tagId, {key: 'inputWidgetUsage', container: '#popover-surface'});
 				this.popoversList.push('#c3-level-132');
 			}

@@ -12,10 +12,12 @@ define(function(require, exports, module) {
 	SmileInputWidgetView.prototype.constructor = SmileInputWidgetView;
 
 	SmileInputWidgetView.prototype.initializeWidgetContent = function() {
+		this.currentlySelected = {id: this.DOM_ID.NONE, state: this.STATES.NONE_SELECTED};
+		this.inputWidgetDiv = _.template(smileInputWidgetTemplate, this.getTemplateOptions(), templateSettings);
+	};
+
+	SmileInputWidgetView.prototype.getTemplateOptions = function() {
 		var entryId = this.getIdForDOMElement();
-		this.inputWidgetDiv = _.template(smileInputWidgetTemplate, {
-			entryId: entryId
-		}, templateSettings);
 
 		this.CIRCLE_1_ID = 'c1-smile-' + entryId;
 		this.CIRCLE_2_ID = 'c2-smile-' + entryId;
@@ -27,12 +29,39 @@ define(function(require, exports, module) {
 		this.FLAT_MOUTH_ID = 'flat-mouth-' + entryId;
 		this.SMILE_ID = 'smile-' + entryId;
 
-		// Initialize the currently selected input.
-		this.currentlySelected = {id: this.DOM_ID.NONE, state: this.STATES.NONE_SELECTED};
+		var templateOptions = {entryId: entryId};
+		var elementIdToSelect = this.getElementIdToSelect();
+
+		for (var i = 1; i <= 5 ; i++) {
+			templateOptions['c' + i + 'Class'] = '';
+			
+			if (!(i === 2) || !(i === 4)) {
+				templateOptions['s' + i + 'Image'] = '';
+			}
+
+			if (this['CIRCLE_' + i + '_ID'] === elementIdToSelect) {
+				templateOptions['c' + i + 'Class'] = 'fill-circle';
+				if (!(i === 2) || !(i === 4)) {
+					templateOptions['s' + i + 'Image'] = '_white';
+				}
+			}
+		}
+
+		if (elementIdToSelect) {
+			// Initialize the currently selected input.
+			this.currentlySelected = {id: elementIdToSelect, state: this.STATES.SELECTED};
+		}
+
+		return templateOptions;
 	};
 
 	SmileInputWidgetView.prototype.isPlainCircleInput = function(element) {
 		return _.contains([this.CIRCLE_2_ID, this.CIRCLE_4_ID], element.id);
+	};
+
+	SmileInputWidgetView.prototype.isIconInput = function(element) {
+		return _.contains([this.FROWN_ID, this.FLAT_MOUTH_ID, this.SMILE_ID, this.CIRCLE_1_ID, this.CIRCLE_3_ID, 
+				this.CIRCLE_5_ID], element.id);
 	};
 
 	SmileInputWidgetView.prototype.getCurrentlySelectedElement = function(element, unSelect) {

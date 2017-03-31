@@ -3819,7 +3819,17 @@ input.cropit-image-zoom-input {
 }
 
 .glow .input-widget-surface {
-	background-color: #F88142 !important;
+	-webkit-animation-name: glow-effect;
+	-webkit-animation-duration: 2s;
+	-webkit-animation-timing-function: ease-in-out;
+}
+
+@-webkit-keyframes glow-effect {
+	0% { background-color: #F9F9F9; }
+	25% { background-color: #F88142; }
+	50% { background-color: #F88142; }
+	75% { background-color: #F88142; }
+	100% { background-color: #F9F9F9; }
 }
 
 .input-widget-surface {
@@ -3841,6 +3851,7 @@ input.cropit-image-zoom-input {
 }
 
 .time-display-box {
+	margin-right: 6px;
 	border-radius: 5px;
 	background-color: inherit;
 	border-color: #F88142;

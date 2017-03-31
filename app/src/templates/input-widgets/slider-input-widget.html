@@ -7,7 +7,8 @@
 			<div class="slider-track-unit"></div>
 			<div class="slider-track-unit"></div>
 		</div>
-		<input type="range" step="1" min="0" max="4" defaultValue="0" value="0" id="slider-input-element-{{- entryId}}">
+		<input type="range" step="1" min="0" max="4" defaultValue="0" value="{{- value}}" 
+				id="slider-input-element-{{- entryId}}" class="rv-{{- value}}">
 	</div>
-	<div class="slider-input-value-box" id="slider-value-{{- entryId}}">0</div>
+	<div class="slider-input-value-box" id="slider-value-{{- entryId}}">{{- value}}</div>
 </div>

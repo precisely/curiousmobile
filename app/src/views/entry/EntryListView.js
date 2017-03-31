@@ -308,9 +308,9 @@ define(function(require, exports, module) {
 
 		// Sorting Alphabetically in ascending order.
 		this.recentlyUsedTags.sort(function(a, b) {
-			if (a.tag.description < b.tag.description) {
+			if (a.description < b.description) {
 				return -1;
-			} else if (a.tag.description > b.tag.description) {
+			} else if (a.description > b.description) {
 				return 1;
 			} else {
 				return 0;
@@ -318,11 +318,11 @@ define(function(require, exports, module) {
 		});
 
 		this.recentlyUsedTags.forEach(function(tagDetails) {
-			var tagId = tagDetails.tag.id;
+			var tagId = tagDetails.tagId;
 			this.tagGroupEntries[tagId] = this.tagGroupEntries[tagId] || [];
 
 			entries.forEach(function(entry) {
-				if (entry.get('tagId') === tagId && !entry.get('sourceName')) {
+				if (entry.get('baseTagId') === tagId && !entry.get('sourceName')) {
 					this.tagGroupEntries[tagId].push(entry);
 				}
 			}.bind(this));
@@ -342,17 +342,24 @@ define(function(require, exports, module) {
 	};
 
 	EntryListView.prototype.addNewInputWidget = function(tagDescription) {
-		var tagDetails = this.getTagDetails(tagDescription);
+		var tagDetails = this.getTagDetailsFromRecentlyUsedTags(tagDescription);
 
 		if (!tagDetails) {
-			// TODO This method needs to be implemented in next PR.
-			tagDetails = this.fetchDetailsFromCompleteTagList(tagDescription);
-			this.recentlyUsedTags.push(tagDetails);
+			tagDetails = this.getTagDetailsFromAllTagsWithInputTypeList(tagDescription);
+			if (!tagDetails) {
+				return;
+			} else {
+				this.recentlyUsedTags.push(tagDetails);
+			}
 		}
 
-		this.tagIdOfInputWidgetGroupViewToGlow = tagDetails.tag.id;
+		this.tagIdOfInputWidgetGroupViewToGlow = tagDetails.tagId;
 
 		this.refreshEntries();
+	};
+
+	EntryListView.prototype.getTagDetailsFromAllTagsWithInputTypeList = function(tagDescription) {
+		return window.tagWithInputTypeAutoComplete.taginputTypeMap.get(tagDescription);
 	};
 
 	EntryListView.prototype.handleGlowEntry = function(callback) {
@@ -395,32 +402,26 @@ define(function(require, exports, module) {
 		}
 	};
 
-	EntryListView.prototype.getTagDetails = function(tagDescription) {
-		var tagDetailsList = _.find(this.recentlyUsedTags, function(tagDetails) {
-			return tagDetails.tag.description === tagDescription;
+	EntryListView.prototype.getTagDetailsFromRecentlyUsedTags = function(tagDescription) {
+		return _.find(this.recentlyUsedTags, function(tagDetails) {
+			return tagDetails.description === tagDescription;
 		});
-
-		return tagDetailsList;
 	};
 
 	EntryListView.prototype.getInputWidgetGroupViewForEntryId = function(entryId) {
-		var inputWidgetGroupViewList = _.find(this.inputWidgetGroupViewList, function(inputWidgetGroupView) {
+		return _.find(this.inputWidgetGroupViewList, function(inputWidgetGroupView) {
 			var entry = _.find(inputWidgetGroupView.inputWidgetViewList, function(inputWidgetView) {
 				return inputWidgetView.entry.get('id') === entryId;
 			});
 
 			return (entry ? true : false);
 		});
-
-		return inputWidgetGroupViewList;
 	};
 
 	EntryListView.prototype.getInputWidgetGroupViewForTagId = function(tagId) {
-		var inputWidgetGroupViewList = _.find(this.inputWidgetGroupViewList, function(inputWidgetGroupView) {
-			return inputWidgetGroupView.tag.id === tagId;
+		return _.find(this.inputWidgetGroupViewList, function(inputWidgetGroupView) {
+			return inputWidgetGroupView.tagInputType.tagId === tagId;
 		});
-
-		return inputWidgetGroupViewList;
 	};
 
 	EntryListView.prototype.deleteEntry = function(entry) {
@@ -435,7 +436,6 @@ define(function(require, exports, module) {
 
 		if (entryView instanceof TrackEntryView) {
 			var deletedSurfaceIndex = this.trackEntryViews.indexOf(entryView);
-			this.nonBookmarkEntries.splice(deletedSurfaceIndex, 1);
 			this.trackEntryViews.splice(deletedSurfaceIndex, 1);
 			this.draggableList.splice(deletedSurfaceIndex, 1);
 			this.scrollView.sequenceFrom(this.draggableList);

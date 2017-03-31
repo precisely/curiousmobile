@@ -14,15 +14,15 @@ define(function(require, exports, module) {
 
 	SliderInputWidgetView.prototype.initializeWidgetContent = function() {
 		var entryId = this.getIdForDOMElement();
+		var position =  this.getInputElementPositionToSelect();
+
 		this.inputWidgetDiv = _.template(sliderInputWidgetTemplate, {
-			entryId: entryId
+			entryId: entryId,
+			value: position ? position : 0
 		}, templateSettings);
 
 		this.SLIDER_INPUT_ELEMENT_ID = 'slider-input-element-' + entryId;
 		this.SLIDER_INPUT_VALUE_BOX_ID = 'slider-value-' + entryId;
-
-		// Initialize the currently selected input.
-		this.currentlySelected = {id: this.DOM_ID.NONE, state: this.STATES.NONE_SELECTED};
 	};
 
 	SliderInputWidgetView.prototype.addCustomEventListeners = function() {

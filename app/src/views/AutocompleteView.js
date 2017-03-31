@@ -47,11 +47,11 @@ define(function(require, exports, module) {
 			return;	
 		}
 		enteredKey = enteredKey.toLowerCase().trim();
-		this.addItem({label:enteredKey}, 0, false)
+		this.addItem({label:enteredKey}, 0, false);
 		this.AutocompleteObj.fetch(enteredKey, function(autocompletes) {
 			this.processAutocompletes(autocompletes, enteredKey, callback);
 		}.bind(this));
-	}
+	};
 
 	AutocompleteView.prototype.processAutocompletes = function(autocompletes, enteredKey, callback) {
 		if (autocompletes) {

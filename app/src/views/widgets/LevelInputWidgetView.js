@@ -12,16 +12,18 @@ define(function(require, exports, module) {
 	LevelInputWidgetView.prototype.constructor = LevelInputWidgetView;
 
 	LevelInputWidgetView.prototype.initializeWidgetContent = function() {
-		var entryId = this.getIdForDOMElement();
-		this.inputWidgetDiv = _.template(levelInputWidgetTemplate, {
-			entryId: entryId
-		}, templateSettings);
+		this.currentlySelected = {id: this.DOM_ID.NONE, state: this.STATES.NONE_SELECTED};
+		this.inputWidgetDiv = _.template(levelInputWidgetTemplate, this.getTemplateOptions(), templateSettings);
+	};
 
-		this.CIRCLE_1_ID = 'c0-level-' + entryId;
-		this.CIRCLE_2_ID = 'c1-level-' + entryId;
-		this.CIRCLE_3_ID = 'c2-level-' + entryId;
-		this.CIRCLE_4_ID = 'c3-level-' + entryId;
-		this.CIRCLE_5_ID = 'c4-level-' + entryId;
+	LevelInputWidgetView.prototype.getTemplateOptions = function() {
+		var entryId = this.getIdForDOMElement();
+
+		this.CIRCLE_1_ID = 'c1-level-' + entryId;
+		this.CIRCLE_2_ID = 'c2-level-' + entryId;
+		this.CIRCLE_3_ID = 'c3-level-' + entryId;
+		this.CIRCLE_4_ID = 'c4-level-' + entryId;
+		this.CIRCLE_5_ID = 'c5-level-' + entryId;
 
 		this.LEVEL_0_ID = '0-power-' + entryId;
 		this.LEVEL_1_ID = '1-power-' + entryId;
@@ -29,12 +31,36 @@ define(function(require, exports, module) {
 		this.LEVEL_3_ID = '3-power-' + entryId;
 		this.LEVEL_4_ID = '4-power-' + entryId;
 
-		// Initialize the currently selected input.
-		this.currentlySelected = {id: this.DOM_ID.NONE, state: this.STATES.NONE_SELECTED};
+		var templateOptions = {entryId: entryId};
+		var elementIdToSelect = this.getElementIdToSelect();
+
+		for (var i = 1; i <= 5 ; i++) {
+			templateOptions['c' + i + 'Class'] = '';
+			templateOptions['l' + (i - 1) + 'Image'] = '';
+
+			if (this['CIRCLE_' + i + '_ID'] === elementIdToSelect) {
+				templateOptions['c' + i + 'Class'] = 'fill-circle';
+				if (!(i === 1)) {
+					templateOptions['l' + (i - 1) + 'Image'] = '_invert';
+				}
+			}
+		}
+
+		if (elementIdToSelect) {
+			// Initialize the currently selected input.
+			this.currentlySelected = {id: elementIdToSelect, state: this.STATES.SELECTED};
+		}
+
+		return templateOptions;
 	};
 
 	LevelInputWidgetView.prototype.isPlainCircleInput = function(element) {
 		return false; // All circles with image, no plain circle input.
+	};
+
+	LevelInputWidgetView.prototype.isIconInput = function(element) {
+		return _.contains([this.LEVEL_0_ID, this.LEVEL_1_ID, this.LEVEL_2_ID, this.LEVEL_3_ID, this.LEVEL_4_ID,
+				this.CIRCLE_1_ID, this.CIRCLE_2_ID, this.CIRCLE_3_ID, this.CIRCLE_4_ID, this.CIRCLE_5_ID], element.id);
 	};
 
 	LevelInputWidgetView.prototype.getCurrentlySelectedElement = function(element, unSelect) {

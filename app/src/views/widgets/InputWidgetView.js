@@ -58,7 +58,6 @@ define(function(require, exports, module) {
 		this.createWidget();
 		this.addComponents();
 		this.registerListeners();
-		this.addGlowSurface();
 	};
 
 	InputWidgetView.prototype.STATES = {
@@ -87,7 +86,7 @@ define(function(require, exports, module) {
 
 	InputWidgetView.prototype.getTagDisplayText = function() {
 		if (this.isDrawerInputSurface) {
-			return this.parentWidgetGroup.tag.description;
+			return this.parentWidgetGroup.tagInputType.description;
 		}
 
 		return this.entry.get('description');
@@ -159,7 +158,7 @@ define(function(require, exports, module) {
 	};
 
 	InputWidgetView.prototype.getIdForDOMElement = function() {
-		return (this.isDrawerInputSurface ? 'tag-' + this.parentWidgetGroup.tag.id : this.entry.get('id'));
+		return (this.isDrawerInputSurface ? 'tag-' + this.parentWidgetGroup.tagInputType.tagId : this.entry.get('id'));
 	};
 
 	InputWidgetView.prototype.getInputWidgetSurfaceSize = function() {
@@ -180,11 +179,7 @@ define(function(require, exports, module) {
 		touchSync.on('end', function() {
 			var movementX = Math.abs(draggable.getPosition()[0]);
 
-			if (movementX < 50) {
-				draggable.setPosition([0, 0]);
-			} else {
-				draggable.setPosition([-100, 0]);
-			}
+			draggable.setPosition((movementX < 50 ? [0, 0] : [-100, 0]));
 		});
 
 		var fixedRenderNode = new FixedRenderNode(draggable);
@@ -231,7 +226,7 @@ define(function(require, exports, module) {
 				} else if (this.isBellIcon(e.srcElement)) {
 					this.handleReminderBellEvent(e.srcElement);
 				} else if (this.isRepeatIcon(e.srcElement)) {
-					this.handleRepeatEvent(e.srcElement);
+					this.handleRepeatEvent();
 				} else if (this.isTimeBox(e.srcElement)) {
 					this.handleTimeBoxEvent();
 				} else if (e.srcElement.id) {
@@ -239,6 +234,10 @@ define(function(require, exports, module) {
 				}
 			}
 		}.bind(this));
+	};
+
+	InputWidgetView.prototype.isInputWidgetDiv = function(element) {
+		return (element.id === 'input-widget-surface-' + this.getIdForDOMElement());
 	};
 
 	InputWidgetView.prototype.handleDrawerSurfaceEvent = function() {
@@ -270,6 +269,10 @@ define(function(require, exports, module) {
 	};
 
 	InputWidgetView.prototype.inputWidgetEventHandler = function(element) {
+		if (this.isInputWidgetDiv(element)) {
+			return;
+		}
+
 		if (this.currentlySelected.id === this.DOM_ID.NONE) {
 			this.selectInput(element);
 		} else {
@@ -331,33 +334,27 @@ define(function(require, exports, module) {
 		return {hh: hoursPlaceValue, mm: minutesPlaceValue, ampm: ampm};
 	};
 
-	InputWidgetView.prototype.addGlowSurface = function() {
-		this.glowSurface = new Surface();
-		this.glowController = new RenderController();
+	InputWidgetView.prototype.glow = function() {
+		this.inputWidgetSurface.addClass('glow');
 
-		var xTransform = this.isDrawerInputSurface ? 0 : -5;
-
-		this.glowSurfaceTransform = Transform.translate(xTransform, 0, 100);
-		this.glowControllerModifier = new StateModifier({transform: this.glowSurfaceTransform});
-		this.add(this.glowControllerModifier).add(this.glowController);
-
-		var glowSurfaceContent = Object.create(this.inputWidgetSurfaceContent);
-		this.glowSurface.setOptions(glowSurfaceContent);
-		this.glowSurface.addClass('glow');
+		setTimeout(function() {
+			this.inputWidgetSurface.removeClass('glow');
+		}.bind(this), 3000);
 	};
 
-	InputWidgetView.prototype.glow = function() {
-		this.glowController.show(this.glowSurface, null, function() {
-			setTimeout(function() {
-				/* 
-				 * Calling just hide() was not allowing the glow surface to persist so modifying the z-Index first
-				 * and then hiding the glow surface. Also since glow surface was displayed on the top of entry surface, 
-				 * zIndex had to be given so added a state modifier.
-				 */
-				this.glowControllerModifier.setTransform(this.glowSurfaceTransform, {duration: 5000});
-				this.glowController.hide();
-			}.bind(this), 1000);
-		}.bind(this));
+	InputWidgetView.prototype.getInputElementPositionToSelect = function() {
+		if (this.isDrawerInputSurface) {
+			return;
+		}
+
+		var amount = this.entry.get('amount');
+		var min = this.parentWidgetGroup.tagInputType.min;
+		var max = this.parentWidgetGroup.tagInputType.max;
+		var noOfLevels = this.parentWidgetGroup.tagInputType.noOfLevels;
+
+		var valueOfOneInputElement = (max - min)/noOfLevels;
+
+		return Math.ceil(amount/valueOfOneInputElement);
 	};
 
 	module.exports = InputWidgetView;

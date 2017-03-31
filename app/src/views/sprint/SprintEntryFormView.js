@@ -11,7 +11,7 @@ define(function(require, exports, module) {
 	var StateView = require('views/StateView');
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var AutocompleteView = require("views/AutocompleteView");
-	var Autocomplete = require('models/Autocomplete');
+	var TagsAutoComplete = require('models/TagsAutoComplete');
 	var u = require('util/Utils');
 	var Utility = require('famous/utilities/Utility');
 	var store = require('store');
@@ -44,7 +44,7 @@ define(function(require, exports, module) {
 	}
 
 	SprintEntryFormView.prototype._setListeners = function() {
-		var AutocompleteObj = new Autocomplete();
+		var AutocompleteObj = new TagsAutoComplete();
 		window.autocompleteCache = AutocompleteObj;
 		this.autoCompleteView = new AutocompleteView(AutocompleteObj);
 		this.autoCompleteView.on('updateInputSurface', function() {

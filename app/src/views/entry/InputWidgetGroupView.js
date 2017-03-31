@@ -22,6 +22,8 @@ define(function(require, exports, module) {
 	var SmileInputWidgetView = require('views/widgets/SmileInputWidgetView'); // InputType 4
 	var ThumbsUpInputWidgetView = require('views/widgets/ThumbsUpInputWidgetView'); // InputType 5
 
+	var TagInputType = require('util/TagInputType'); 
+
 	function InputWidgetGroupView(options) {
 		SizeAwareView.apply(this, arguments);
 		this.initialize(options);
@@ -37,8 +39,9 @@ define(function(require, exports, module) {
 	InputWidgetGroupView.prototype.initialize = function(options) {
 		this.entries = EntryCollection.sortAscByTime(new EntryCollection(options.entryDetails.entries));
 
-		this.tag = options.entryDetails.tagDetails.tag;
-		this.tagInputType = options.entryDetails.tagDetails.inputType;
+		var tagDetails = options.entryDetails.tagDetails;
+		this.tagInputType = new TagInputType(tagDetails.tagId, tagDetails.description, tagDetails.inputType,
+				tagDetails.min, tagDetails.max, tagDetails.noOfLevels);
 
 		this.scrollView = options.scrollView;
 		this.draggable = options.draggable;
@@ -50,20 +53,20 @@ define(function(require, exports, module) {
 	};
 
 	InputWidgetGroupView.prototype.getInputWidgetView = function() {
-		switch (this.tagInputType) {
-			case 1:
+		switch (this.tagInputType.inputType) {
+			case 'SLIDER':
 				return SliderInputWidgetView;
 				break;
-			case 2:
+			case 'LEVEL':
 				return LevelInputWidgetView;
 				break;
-			case 3:
+			case 'BOOLEAN':
 				return BooleanInputWidgetView;
 				break;
-			case 4:
+			case 'SMILEY':
 				return SmileInputWidgetView;
 				break;
-			case 5:
+			case 'THUMBS':
 				return ThumbsUpInputWidgetView;
 		}
 	};
@@ -141,7 +144,9 @@ define(function(require, exports, module) {
 
 	InputWidgetGroupView.prototype.showDrawer = function() {
 		this.drawerController.show(this.drawerContainerSurface);
+
 		this.drawerSurface.inputWidgetSurface.addClass('input-widget-view-selected');
+
 		this.drawerContainerSurface.setSize([App.width - 20, this.getDrawerContainerSurfaceHeight()]);
 		this.drawerSurfaceModifier.setTransform(
 			Transform.translate(0, this.getDrawerContainerSurfaceHeight(), 0)
