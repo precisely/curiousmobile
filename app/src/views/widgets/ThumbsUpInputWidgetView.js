@@ -19,14 +19,24 @@ define(function(require, exports, module) {
 	ThumbsUpInputWidgetView.prototype.getTemplateOptions = function() {
 		var entryId = this.getIdForDOMElement();
 
-		this.THUMBS_DOWN_ID = 'thumbs-down-' + entryId;
-		this.THUMBS_UP_ID = 'thumbs-up-' + entryId;
+		this.positionMap = {};
 
 		this.CIRCLE_1_ID = 'c1-thumb-' + entryId;
+		this.THUMBS_DOWN_ID = 'thumbs-down-' + entryId;
+		this.positionMap[this.CIRCLE_1_ID] = this.positionMap[this.THUMBS_DOWN_ID] = 1;
+
 		this.CIRCLE_2_ID = 'c2-thumb-' + entryId;
+		this.positionMap[this.CIRCLE_2_ID] = 2;
+
 		this.CIRCLE_3_ID = 'c3-thumb-' + entryId;
+		this.positionMap[this.CIRCLE_3_ID] = 3;
+
 		this.CIRCLE_4_ID = 'c4-thumb-' + entryId;
+		this.positionMap[this.CIRCLE_4_ID] = 4;
+
 		this.CIRCLE_5_ID = 'c5-thumb-' + entryId;
+		this.THUMBS_UP_ID = 'thumbs-up-' + entryId;
+		this.positionMap[this.CIRCLE_5_ID] = this.positionMap[this.THUMBS_UP_ID] = 5;
 
 		var templateOptions = {entryId: entryId};
 		var elementIdToSelect = this.getElementIdToSelect();

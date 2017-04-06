@@ -10,7 +10,8 @@
 
 			{{ if (!isDrawer) { }}
 				<button class="transparent-bg bell-icon-box-{{- entryId}}">
-					<i class="fa fa-bell-o colored-icon" aria-hidden="true" id="bell-icon-{{- entryId}}"></i>
+					<i class="fa fa-bell{{= (reminderSet ? '' : '-o')}} colored-icon" aria-hidden="true" 
+							id="bell-icon-{{- entryId}}"></i>
 				</button>
 				<button class="transparent-bg repeat-icon-{{- entryId}}">
 					{{ if (repeatSet) { }}

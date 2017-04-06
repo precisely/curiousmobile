@@ -19,15 +19,25 @@ define(function(require, exports, module) {
 	SmileInputWidgetView.prototype.getTemplateOptions = function() {
 		var entryId = this.getIdForDOMElement();
 
-		this.CIRCLE_1_ID = 'c1-smile-' + entryId;
-		this.CIRCLE_2_ID = 'c2-smile-' + entryId;
-		this.CIRCLE_3_ID = 'c3-smile-' + entryId;
-		this.CIRCLE_4_ID = 'c4-smile-' + entryId;
-		this.CIRCLE_5_ID = 'c5-smile-' + entryId;
+		this.positionMap = {};
 
+		this.CIRCLE_1_ID = 'c1-smile-' + entryId;
 		this.FROWN_ID ='frown-' + entryId;
+		this.positionMap[this.CIRCLE_1_ID] = this.positionMap[this.FROWN_ID] = 1;
+
+		this.CIRCLE_2_ID = 'c2-smile-' + entryId;
+		this.positionMap[this.CIRCLE_2_ID] = 2;
+
+		this.CIRCLE_3_ID = 'c3-smile-' + entryId;
 		this.FLAT_MOUTH_ID = 'flat-mouth-' + entryId;
+		this.positionMap[this.CIRCLE_3_ID] = this.positionMap[this.FLAT_MOUTH_ID] = 3;
+
+		this.CIRCLE_4_ID = 'c4-smile-' + entryId;
+		this.positionMap[this.CIRCLE_4_ID] = 4;
+
+		this.CIRCLE_5_ID = 'c5-smile-' + entryId;
 		this.SMILE_ID = 'smile-' + entryId;
+		this.positionMap[this.CIRCLE_5_ID] = this.positionMap[this.SMILE_ID] = 5;
 
 		var templateOptions = {entryId: entryId};
 		var elementIdToSelect = this.getElementIdToSelect();

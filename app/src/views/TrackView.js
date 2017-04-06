@@ -197,7 +197,7 @@ define(function(require, exports, module) {
 
 			glowEntry = state.data.glowEntry;
 			glowEntryDate = glowEntry.get("date");
-			entries = EntryCollection.setCache(glowEntryDate, state.data.entries);
+			entries = EntryCollection.getFromCache(glowEntryDate);
 
 			currentDay = this.isCurrentDay(glowEntryDate);
 			if (currentDay) {
@@ -209,10 +209,7 @@ define(function(require, exports, module) {
 			}
 
 			if (glowEntryDate.getTime() > App.selectedDate.getTime()) {
-				this.changeDate(glowEntryDate, function() {
-					this.currentListView.entryIdOfInputWidgetViewToGlow = glowEntry.get('id');
-					this.currentListView.handleGlowEntry();
-				}.bind(this), null);
+				this.changeDate(glowEntryDate, null, glowEntry);
 
 				return true;
 			}
@@ -224,7 +221,6 @@ define(function(require, exports, module) {
 
 			this.changeDate(this.calendarView.selectedDate, function() {
 				this.currentListView.entryIdOfInputWidgetViewToGlow = glowEntryId;
-				this.currentListView.handleGlowEntry();
 				this.processingNotification = false;
 			}.bind(this), null);
 
@@ -304,20 +300,24 @@ define(function(require, exports, module) {
 				this.currentListView.refreshEntries(entries, glowEntry, recentlyUsedTags, callback);
 			} else {
 				this.currentListView = new EntryListView(entries, glowEntry, recentlyUsedTags, callback);
-			}
 
-			// On Entry Select handler.
-			this.currentListView.on('select-entry', function(entry) {
-				this._eventOutput.emit('select-entry', entry);
-			}.bind(this));
-
-			this.currentListView.on('delete-failed', function() {
-				this.changeDate(this.calendarView.selectedDate, function() {
-					u.showAlert("Error deleting entry");
+				this.currentListView.on('delete-failed', function() {
+					this.changeDate(this.calendarView.selectedDate, function() {
+						u.showAlert("Error deleting entry");
+					}.bind(this));
 				}.bind(this));
-			}.bind(this));
 
-			this.renderController.show(this.currentListView, {duration: 500});
+				this.currentListView.on('new-entry', function(resp) {
+					this.preShow({data: resp, fromServer: true});
+
+					if (window.autocompleteCache) {
+						window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],
+								resp.tagStats[3], resp.tagStats[4]);
+					}
+				}.bind(this));
+
+				this.renderController.show(this.currentListView, {duration: 500});
+			}
 		}.bind(this));
 	};
 

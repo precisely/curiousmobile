@@ -19,17 +19,27 @@ define(function(require, exports, module) {
 	LevelInputWidgetView.prototype.getTemplateOptions = function() {
 		var entryId = this.getIdForDOMElement();
 
-		this.CIRCLE_1_ID = 'c1-level-' + entryId;
-		this.CIRCLE_2_ID = 'c2-level-' + entryId;
-		this.CIRCLE_3_ID = 'c3-level-' + entryId;
-		this.CIRCLE_4_ID = 'c4-level-' + entryId;
-		this.CIRCLE_5_ID = 'c5-level-' + entryId;
+		this.positionMap = {};
 
+		this.CIRCLE_1_ID = 'c1-level-' + entryId;
 		this.LEVEL_0_ID = '0-power-' + entryId;
+		this.positionMap[this.CIRCLE_1_ID] = this.positionMap[this.LEVEL_0_ID] = 1;
+
+		this.CIRCLE_2_ID = 'c2-level-' + entryId;
 		this.LEVEL_1_ID = '1-power-' + entryId;
+		this.positionMap[this.CIRCLE_2_ID] = this.positionMap[this.LEVEL_1_ID] = 2;
+
+		this.CIRCLE_3_ID = 'c3-level-' + entryId;
 		this.LEVEL_2_ID = '2-power-' + entryId;
+		this.positionMap[this.CIRCLE_3_ID] = this.positionMap[this.LEVEL_2_ID] = 3;
+
+		this.CIRCLE_4_ID = 'c4-level-' + entryId;
 		this.LEVEL_3_ID = '3-power-' + entryId;
+		this.positionMap[this.CIRCLE_4_ID] = this.positionMap[this.LEVEL_3_ID] = 4;
+
+		this.CIRCLE_5_ID = 'c5-level-' + entryId;
 		this.LEVEL_4_ID = '4-power-' + entryId;
+		this.positionMap[this.CIRCLE_5_ID] = this.positionMap[this.LEVEL_4_ID] = 5;
 
 		var templateOptions = {entryId: entryId};
 		var elementIdToSelect = this.getElementIdToSelect();

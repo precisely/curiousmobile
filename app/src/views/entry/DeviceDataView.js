@@ -55,24 +55,11 @@ define(function (require, exports, module) {
 		entrySurfaceOptions.classes = ['entry'];
 		this.entryContainerSurface = new ContainerSurface();
 		this.entrySurface.setOptions(entrySurfaceOptions);
-		this.entryModifier = new StateModifier({size: [window.innerWidth, 55]});
-		//Timer.every(function() {
-		//	this.entryContainerSurface.setSize(this.getSize());
-		//}.bind(this), 1);
 
 		this.entryContainerSurface.add(this.entrySurface);
 		this.entrySurface.pipe(this.options.scrollView);
 		this.entryContainerSurface.pipe(this);
-		var deleteModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth, -2, window.App.zIndex.readView + 2)
-		});
-		this.deleteSurface.setProperties({
-			padding: '8px 0px',
-			borderBottom: '1px solid #f6a583',
-			lineHeight: '23px',
-		});
-		this.deleteSurface.setSize([80, true]);
-		this.add(deleteModifier).add(this.deleteSurface);
+
 		this.entryContainerModifier = new StateModifier({
 			transform: Transform.translate(0, 0, this.options.entryZIndex)
 		});

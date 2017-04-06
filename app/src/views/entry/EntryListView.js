@@ -19,7 +19,6 @@ define(function(require, exports, module) {
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var ContainerSurface = require('famous/surfaces/ContainerSurface');
 	var RenderNode = require('famous/core/RenderNode');
-	var Draggable = require('famous/modifiers/Draggable');
 	var FixedRenderNode = require('util/FixedRenderNode');
 	var Utility = require('famous/utilities/Utility');
 	var Timer = require('famous/utilities/Timer');
@@ -75,24 +74,16 @@ define(function(require, exports, module) {
 		});
 		this.add(this.renderControllerMod).add(this.renderController);
 
-		this.initDraggableViews();
+		this.initEntryViews();
 		this.createScrollView();
 
 		this.refreshEntries(entries, glowEntry, this.recentlyUsedTags, callback);
 	};
 
 	EntryListView.prototype.addEntry = function(entries, entryInfo) {
-		var draggable = new Draggable({
-			xRange: [-90, 0],
-			yRange: [0, 0],
-		});
-
-		var draggableNode;
 		var trackEntryView;
 
 		if (entryInfo.areDeviceEntries) {
-			draggableNode = new RenderNode(draggable);
-
 			trackEntryView = new DeviceDataGroupView({
 				entry: entries,
 				entryZIndex: App.zIndex.readView + 2,
@@ -106,42 +97,26 @@ define(function(require, exports, module) {
 
 				if ((indexOfTrackEntryView > -1) && trackEntryView.children.length === 0) {
 					this.trackEntryViews.splice(indexOfTrackEntryView, 1);
-					this.draggableList.splice(indexOfTrackEntryView, 1);
 				}
 
-				this.scrollView.sequenceFrom(this.draggableList);
+				this.scrollView.sequenceFrom(this.trackEntryViews);
 			}.bind(this));
 		} else {
-			draggableNode = new RenderNode(draggable);
 			trackEntryView = new InputWidgetGroupView({
 				entryDetails: entries, // An object containing grouped entries with tagDetails.
-				scrollView: this.scrollView,
-				draggable: draggable
+				scrollView: this.scrollView
 			});
+
+			trackEntryView.on('new-entry', function(resp) {
+				this._eventOutput.emit('new-entry', resp);
+			}.bind(this));
 
 			this.inputWidgetGroupViewList.push(trackEntryView);
 		}
 
-		trackEntryView.pipe(draggable);
-		draggableNode.add(trackEntryView);
 		trackEntryView.pipe(this.scrollView);
 
 		this.trackEntryViews.push(trackEntryView);
-		this.draggableList.push(draggableNode);
-
-		var snapTransition = {
-			method: 'snap',
-			period: 300,
-			dampingRatio: 0.3,
-			velocity: 0
-		};
-		trackEntryView.on('touchend', function(e) {
-			console.log('EventHandler: trackEntryView event: mouseup');
-			var distance = Math.abs(draggable.getPosition()[0]);
-			if (distance < 85) {
-				draggable.setPosition([0,0,0], snapTransition);
-			}
-		}.bind(trackEntryView));
 
 		this.addEntryEventListeners(trackEntryView);
 
@@ -149,26 +124,12 @@ define(function(require, exports, module) {
 	};
 
 	EntryListView.prototype.addEntryEventListeners = function(entryView) {
-		entryView.on('delete-entry', function(entries) {
-			console.log('EntryListView: Deleting an entry');
-			if (entries && entries.fail) {
-				console.log('EntryListView:85 failed to delete entry. Reloading cache');
-				this._eventOutput.emit('delete-failed');
-			} else {
-				this.deleteEntry(entryView);
-			}
-		}.bind(this));
-
-		entryView.on('select-entry', function(entry) {
-			console.log('EntryListView: Selecting an entry');
-			if (entryView.select) {
-				entryView.select();
-			}
+		entryView.on('delete-failed', function() {
+			this._eventOutput.emit('delete-failed');
 		}.bind(this));
 	};
 
-	EntryListView.prototype.initDraggableViews = function() {
-		this.draggableList = [];
+	EntryListView.prototype.initEntryViews = function() {
 		if (this.scrollView) {
 			this.renderController.hide({duration:0});
 		}
@@ -241,7 +202,7 @@ define(function(require, exports, module) {
 	EntryListView.prototype.createScrollView = function() {
 		this.scrollNode.add(this.scrollView);
 		this.scrollWrapperSurface.add(this.scrollNode);
-		this.scrollView.sequenceFrom(this.draggableList);
+		this.scrollView.sequenceFrom(this.trackEntryViews);
 
 		var scrollerBackgroundSurface = new Surface({
 			size: [undefined, undefined],
@@ -290,14 +251,13 @@ define(function(require, exports, module) {
 			this.recentlyUsedTags = recentlyUsedTags;
 		}
 
-		this.draggableList = [];
 		this.trackEntryViews = [];
 		this.deviceEntries = [];
 		this.tagGroupEntries = [];
 		this.deviceDataGroupViewList = [];
 		this.inputWidgetGroupViewList = [];
 
-		//Filter out the device data
+		// Filter out the device data
 		entries.forEach(function(entry) {
 			if (entry.get('sourceName')) {
 				var source = entry.get('sourceName');
@@ -322,7 +282,7 @@ define(function(require, exports, module) {
 			this.tagGroupEntries[tagId] = this.tagGroupEntries[tagId] || [];
 
 			entries.forEach(function(entry) {
-				if (entry.get('baseTagId') === tagId && !entry.get('sourceName')) {
+				if (entry.get('baseTagId') === tagId && !entry.get('sourceName') && !entry.isContinuous()) {
 					this.tagGroupEntries[tagId].push(entry);
 				}
 			}.bind(this));
@@ -334,7 +294,7 @@ define(function(require, exports, module) {
 			this.addEntry(this.deviceEntries[device], {areDeviceEntries: true});
 		}
 
-		this.scrollView.sequenceFrom(this.draggableList);
+		this.scrollView.sequenceFrom(this.trackEntryViews);
 		this.scrollView.setPosition(0);
 		this.renderController.show(this.scrollWrapperSurface, {duration: 1000}, function() {
 			this.handleGlowEntry(callback);
@@ -363,6 +323,11 @@ define(function(require, exports, module) {
 	};
 
 	EntryListView.prototype.handleGlowEntry = function(callback) {
+		if (this.glowEntry instanceof Entry) {
+			this.entryIdOfInputWidgetViewToGlow = this.glowEntry.get('id');
+			this.glowEntry = null;
+		}
+
 		if (this.tagIdOfInputWidgetGroupViewToGlow) {
 			var inputWidgetGroupView = this.getInputWidgetGroupViewForTagId(this.tagIdOfInputWidgetGroupViewToGlow);
 			if (inputWidgetGroupView) {
@@ -422,24 +387,6 @@ define(function(require, exports, module) {
 		return _.find(this.inputWidgetGroupViewList, function(inputWidgetGroupView) {
 			return inputWidgetGroupView.tagInputType.tagId === tagId;
 		});
-	};
-
-	EntryListView.prototype.deleteEntry = function(entry) {
-		var entryView = entry;
-		if (entry instanceof Entry) {
-			if (entry.isContinuous()) {
-				return;
-			} else {
-				entryView = this.getTrackEntryView(entry.get('id'));
-			}
-		}
-
-		if (entryView instanceof TrackEntryView) {
-			var deletedSurfaceIndex = this.trackEntryViews.indexOf(entryView);
-			this.trackEntryViews.splice(deletedSurfaceIndex, 1);
-			this.draggableList.splice(deletedSurfaceIndex, 1);
-			this.scrollView.sequenceFrom(this.draggableList);
-		}
 	};
 
 	module.exports = EntryListView;

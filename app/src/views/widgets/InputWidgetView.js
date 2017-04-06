@@ -21,6 +21,9 @@ define(function(require, exports, module) {
 
 	var SetRepeatTypeAndDateView = require('views/entry/SetRepeatTypeAndDateView');
 	var TimePickerView = require('views/entry/TimePickerView');
+	var EntryDraggableNode = require('views/entry/EntryDraggableNode');
+	var Entry = require('models/Entry');
+	var Utils = require('util/Utils');
 
 	function InputWidgetView(entry, parentWidgetGroup) {
 		View.apply(this, arguments);
@@ -54,10 +57,19 @@ define(function(require, exports, module) {
 		this.REPEAT_ICON_CLASS = 'repeat-icon-' + entryId;
 		this.TIME_BOX_ID = 'time-box-' + entryId;
 
+		this.setValueOfOneInputElement();
 		this.initializeWidgetContent(); // Defined in Overriding Views to set the content.
 		this.createWidget();
 		this.addComponents();
 		this.registerListeners();
+	};
+
+	InputWidgetView.prototype.setValueOfOneInputElement = function() {
+		var min = this.parentWidgetGroup.tagInputType.min;
+		var max = this.parentWidgetGroup.tagInputType.max;
+		var noOfLevels = this.parentWidgetGroup.tagInputType.noOfLevels;
+
+		this.valueOfOneInputElement = (max - min)/noOfLevels;
 	};
 
 	InputWidgetView.prototype.STATES = {
@@ -131,10 +143,11 @@ define(function(require, exports, module) {
 	};
 
 	InputWidgetView.prototype.createWidget = function() {
-		var classes = ['input-widget-view'];
+		var domId = this.getIdForDOMElement();
+		var classes = ['input-widget-view', domId];
 
 		if (!this.isDrawerInputSurface) {
-			classes.push('input-widget-view-drawer-content');
+			classes.push('input-widget-view-drawer-content', domId);
 
 			this.repeatView = new SetRepeatTypeAndDateView(this);
 			this.timePickerView = new TimePickerView(this);
@@ -149,7 +162,7 @@ define(function(require, exports, module) {
 				repeatSet: this.isRepeatEntry(),
 				isDrawer: this.isDrawerInputSurface,
 				widgetDiv: this.inputWidgetDiv,
-				entryId: this.getIdForDOMElement()
+				entryId: domId
 			}, templateSettings),
 			classes: classes
 		};
@@ -169,29 +182,30 @@ define(function(require, exports, module) {
 		return ([App.width - 10, this.options.surfaceHeight - 10]);
 	};
 
+	InputWidgetView.prototype.deleteEntry = function(e) {
+		console.log('InputWidgetView: Deleting entry - ' + this.entry.id);
+
+		if ((e instanceof CustomEvent) || e.entry instanceof Entry) {
+			this.entry.delete(function(data) {
+				if (data && data.fail) {
+					this._eventOutput.emit('delete-failed');
+
+					return;
+				}
+
+				this._eventOutput.emit('delete-entry');
+			}.bind(this));
+		}
+	};
+
 	InputWidgetView.prototype.addDraggableSurface = function() {
-		var draggable = new Draggable({
-			xRange: [-100, 0],
-			yRange: [0, 0],
-		});
-
-		var touchSync = new TouchSync();
-		touchSync.on('end', function() {
-			var movementX = Math.abs(draggable.getPosition()[0]);
-
-			draggable.setPosition((movementX < 50 ? [0, 0] : [-100, 0]));
-		});
-
-		var fixedRenderNode = new FixedRenderNode(draggable);
-		fixedRenderNode.add(this.inputWidgetSurface);
-
 		this.deleteSurface = new Surface({
 			size: [100, this.options.surfaceHeight - 10],
 			content: '<div class="delete-surface-text">Delete</div>',
 			classes: ['delete-surface']
 		});
 
-		//this.deleteSurface.on('click', this.delete.bind(this));
+		this.deleteSurface.on('click', this.deleteEntry.bind(this));
 
 		this.deleteSurfaceModifier = new StateModifier({
 			transform: Transform.translate(App.width - 130, 0, 0)
@@ -199,13 +213,15 @@ define(function(require, exports, module) {
 
 		this.add(this.deleteSurfaceModifier).add(this.deleteSurface);
 
+		var entryDraggableNode = new EntryDraggableNode({
+			draggableSurface: this.inputWidgetSurface,
+			height: this.options.widgetHeight
+		});
+
 		var inputSurfaceModifier = new StateModifier({
 			transform: Transform.translate(-5, 0, 5)
 		});
-		this.add(inputSurfaceModifier).add(fixedRenderNode);
-
-		this.inputWidgetSurface.pipe(draggable);
-		this.inputWidgetSurface.pipe(touchSync);
+		this.add(inputSurfaceModifier).add(entryDraggableNode);
 	};
 
 	InputWidgetView.prototype.addComponents = function() {
@@ -222,7 +238,7 @@ define(function(require, exports, module) {
 		this.inputWidgetSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				if (this.isDrawerInputSurface) {
-					this.handleDrawerSurfaceEvent();
+					this.handleDrawerSurfaceEvent(e.srcElement);
 				} else if (this.isBellIcon(e.srcElement)) {
 					this.handleReminderBellEvent(e.srcElement);
 				} else if (this.isRepeatIcon(e.srcElement)) {
@@ -237,11 +253,85 @@ define(function(require, exports, module) {
 	};
 
 	InputWidgetView.prototype.isInputWidgetDiv = function(element) {
-		return (element.id === 'input-widget-surface-' + this.getIdForDOMElement());
+		return (element.id === 'input-widget-surface-' + this.getIdForDOMElement()
+				|| _.contains(element.classList, 'tag-time-row'));
 	};
 
-	InputWidgetView.prototype.handleDrawerSurfaceEvent = function() {
-		this.parentWidgetGroup.select();
+	InputWidgetView.prototype.handleDrawerSurfaceEvent = function(element) {
+		if (this.isInputWidgetDiv(element)) {
+			this.parentWidgetGroup.select();
+		} else if (element.id) {
+			this.createEntry(element);
+		}
+	};
+
+	InputWidgetView.prototype.createEntry = function(element) {
+		var amount = this.getAmountValueFromElementPosition(element);
+
+		if (!amount || !(amount > 0)) {
+			return;
+		}
+
+		if (!Utils.isOnline()) {
+			Utils.showAlert("You don't seem to be connected. Please wait until you are online to add an entry.");
+
+			return;
+		}
+
+		var entryText = this.parentWidgetGroup.tagInputType.description + ' ' + amount;
+
+		if (this.parentWidgetGroup.tagInputType.description == 'sleep') {
+			entryText += ' ' + 'hrs';
+		}
+
+		var newEntry = new Entry();
+		newEntry.setText(entryText);
+
+		newEntry.create(function(resp) {
+			this._eventOutput.emit('new-entry', resp);
+		}.bind(this));
+	};
+
+	InputWidgetView.prototype.updateRemindType = function(callback) {
+		// Create new reference for performing changes.
+		var entry = new Entry(this.entry.attributes);
+
+		var repeatParams = Entry.getRepeatParams(this.isRepeat, this.isRemind, this.repeatEndDate);
+		var repeatTypeId = repeatParams.repeatTypeId;
+		var repeatEnd = repeatParams.repeatEnd;
+
+		if (repeatTypeId) {
+			entry.set("repeatType", repeatTypeId);
+		}
+		if (repeatEnd) {
+			entry.set("repeatEnd", repeatEnd);
+		}
+
+		entry.setText(entry.toString());
+
+		var allFuture = false;
+		entry.save(allFuture, function(resp) {
+			this.glow();
+
+			// Update the reference with updated entry.
+			this.entry = entry;
+
+			if (callback) {
+				callback();
+			}
+
+			if (window.autocompleteCache) {
+				if (resp.tagStats[0]) {
+					window.autocompleteCache.update(resp.tagStats[0][0],
+							resp.tagStats[0][1], resp.tagStats[0][2], resp.tagStats[0][3], resp.tagStats[0][4])
+				}
+
+				if (resp.tagStats[1]) {
+					window.autocompleteCache.update(resp.tagStats[1][0],
+							resp.tagStats[1][1], resp.tagStats[1][2], resp.tagStats[1][3], resp.tagStats[1][4])
+				}
+			}
+		}.bind(this));
 	};
 
 	InputWidgetView.prototype.handleReminderBellEvent = function(element) {
@@ -249,15 +339,17 @@ define(function(require, exports, module) {
 			element = document.getElementById(this.BELL_ICON_ID);
 		}
 
-		if (this.remindEntry) {
-			$(element).removeClass('fa-bell');
-			$(element).addClass('fa-bell-o');
-			this.remindEntry = false;
-		} else {
-			$(element).removeClass('fa-bell-o');
-			$(element).addClass('fa-bell');
-			this.remindEntry = true;
-		}
+		this.isRemind = !this.isRemind;
+
+		this.updateRemindType(function() {
+			if (this.isRemind) {
+				$(element).removeClass('fa-bell-o');
+				$(element).addClass('fa-bell');
+			} else {
+				$(element).removeClass('fa-bell');
+				$(element).addClass('fa-bell-o');
+			}
+		}.bind(this));
 	};
 
 	InputWidgetView.prototype.handleRepeatEvent = function() {
@@ -348,13 +440,14 @@ define(function(require, exports, module) {
 		}
 
 		var amount = this.entry.get('amount');
-		var min = this.parentWidgetGroup.tagInputType.min;
-		var max = this.parentWidgetGroup.tagInputType.max;
-		var noOfLevels = this.parentWidgetGroup.tagInputType.noOfLevels;
 
-		var valueOfOneInputElement = (max - min)/noOfLevels;
+		return Math.ceil(amount/this.valueOfOneInputElement);
+	};
 
-		return Math.ceil(amount/valueOfOneInputElement);
+	InputWidgetView.prototype.getAmountValueFromElementPosition = function(element) {
+		var position = this.positionMap[element.id] || this.positionMap[element.parentElement.id];
+
+		return (position ? (position * this.valueOfOneInputElement) : 0);
 	};
 
 	module.exports = InputWidgetView;

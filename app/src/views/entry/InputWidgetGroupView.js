@@ -44,7 +44,6 @@ define(function(require, exports, module) {
 				tagDetails.min, tagDetails.max, tagDetails.noOfLevels);
 
 		this.scrollView = options.scrollView;
-		this.draggable = options.draggable;
 
 		this.inputWidgetViewList = [];
 		this.inputWidgetViewClass = this.getInputWidgetView();
@@ -106,6 +105,10 @@ define(function(require, exports, module) {
 
 		var InputWidgetView = this.inputWidgetViewClass;
 		this.drawerSurface = new InputWidgetView(this.entries, this);
+		this.drawerSurface.on('new-entry', function(resp) {
+			this._eventOutput.emit('new-entry', resp);
+		}.bind(this));
+
 		this.add(this.drawerSurfaceModifier).add(this.drawerSurface);
 	};
 
@@ -146,7 +149,10 @@ define(function(require, exports, module) {
 		this.drawerController.show(this.drawerContainerSurface);
 
 		this.drawerSurface.inputWidgetSurface.addClass('input-widget-view-selected');
+		this.resizeDrawerContainer();
+	};
 
+	InputWidgetGroupView.prototype.resizeDrawerContainer = function() {
 		this.drawerContainerSurface.setSize([App.width - 20, this.getDrawerContainerSurfaceHeight()]);
 		this.drawerSurfaceModifier.setTransform(
 			Transform.translate(0, this.getDrawerContainerSurfaceHeight(), 0)
@@ -181,7 +187,23 @@ define(function(require, exports, module) {
 	InputWidgetGroupView.prototype.addWidgetsToDrawer = function() {
 		this.entries.each(function(entry) {
 			var InputWidgetView = this.inputWidgetViewClass;
-			this.inputWidgetViewList.push(new InputWidgetView(entry, this));
+
+			var inputWidgetViewForEntry = new InputWidgetView(entry, this);
+
+			inputWidgetViewForEntry.on('delete-failed', function() {
+				this._eventOutput.emit('delete-failed');
+			}.bind(this));
+
+			inputWidgetViewForEntry.on('delete-entry', function() {
+				var indexOfInputWidgetViewForEntry = this.inputWidgetViewList.indexOf(inputWidgetViewForEntry);
+
+				if ((indexOfInputWidgetViewForEntry > -1)) {
+					this.inputWidgetViewList.splice(indexOfInputWidgetViewForEntry, 1);
+					this.resizeDrawerContainer();
+				}
+			}.bind(this));
+
+			this.inputWidgetViewList.push(inputWidgetViewForEntry);
 		}.bind(this));
 	};
 

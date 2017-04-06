@@ -340,17 +340,11 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 							glowEntry: this,
 							tagStats: [entries[1], entries[2]]
 						});
-						//if (entries[1] != null)
-							//updateAutocomplete(entries[1][0], entries[1][1],
-				//entries[1][2], entries[1][3]);
-				//if (entries[2] != null)
-					//updateAutocomplete(entries[2][0], entries[2][1],
-				//entries[2][2], entries[2][3]);
 					} else {
 						u.showAlert("Error updating entry");
 					}
 				}.bind(this), function (data) {
-					//callback({fail: true});
+					u.showAlert("Error updating entry");
 					console.log('Entry update failed for entry: ' + this.toString());
 				}.bind(this), 0, false, false);
 

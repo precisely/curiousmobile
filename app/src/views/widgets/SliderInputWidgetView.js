@@ -35,10 +35,22 @@ define(function(require, exports, module) {
 		if (element.id === this.SLIDER_INPUT_ELEMENT_ID) {
 			var currentValue = element.value;
 
+			if (this.isDrawerInputSurface) {
+				this.createEntry(element);
+
+				return;
+			}
+
 			$(element).removeClass(element.className);
 			$(element).addClass('rv-' + currentValue);
 			$('#' + this.SLIDER_INPUT_VALUE_BOX_ID).text(currentValue);
 		}
+	};
+
+	SliderInputWidgetView.prototype.getAmountValueFromElementPosition = function(element) {
+		var position = element.value;
+
+		return (position ? (position * this.valueOfOneInputElement) : 0);
 	};
 
 	module.exports = SliderInputWidgetView;

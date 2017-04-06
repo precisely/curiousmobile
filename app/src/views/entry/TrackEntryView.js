@@ -11,6 +11,7 @@ define(function(require, exports, module) {
 	var EventHandler = require('famous/core/EventHandler');
 	var EntryReadView = require('views/entry/EntryReadView');
 	var Entry = require('models/Entry');
+	var EntryDraggableNode = require('views/entry/EntryDraggableNode');
 
 	function TrackEntryView(options) {
 		EntryReadView.apply(this, arguments);
@@ -73,17 +74,27 @@ define(function(require, exports, module) {
 				this.select();
 			}
 		}.bind(this));
-		this.add(showMoreModifier).add(this.showMoreSurface);
+
+		if (!this.options.doNotAddMoreSurface) {
+			this.add(showMoreModifier).add(this.showMoreSurface);
+		}
 
 		var deleteModifier = new StateModifier({
-			transform: Transform.translate(window.innerWidth, 0, window.App.zIndex.readView + 2)
+			transform: Transform.translate(window.innerWidth - 100, 0, window.App.zIndex.readView + 2)
 		});
 		this.add(deleteModifier).add(this.deleteSurface);
 
 		var entryModifier = new Modifier({
 			transform: Transform.translate(0, 0, window.App.zIndex.readView + 500)
 		});
-		this.add(entryModifier).add(this.entrySurface);
+
+		var entryDraggableNode = new EntryDraggableNode({
+			draggableSurface: this.entrySurface,
+			deleteSurface: this.deleteSurface,
+			height: this.options.entryHeight
+		});
+
+		this.add(entryModifier).add(entryDraggableNode);
 	};
 
 	TrackEntryView.prototype.getSize = function () {

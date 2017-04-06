@@ -85,10 +85,17 @@ define(function(require, exports, module) {
 					properties: {
 						padding:'15px 45px 15px 46px'
 					}
-				}
+				},
+				doNotAddMoreSurface: true
 			});
 
-			childView.on('delete-entry', function() {
+			childView.on('delete-entry', function(data) {
+				if (data && data.fail) {
+					this._eventOutput.emit('delete-failed');
+
+					return;
+				}
+
 				var indexOfChildView = this.children.indexOf(childView);
 				if (indexOfChildView > -1) {
 					this.children.splice(indexOfChildView, 1);

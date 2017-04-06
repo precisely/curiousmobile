@@ -56,6 +56,10 @@ define(function(require, exports, module) {
 				}
 			}.bind(this));
 
+			deviceDataSummaryView.on('delete-failed', function() {
+				this._eventOutput.emit('delete-failed');
+			}.bind(this));
+
 			this.children.push(deviceDataSummaryView);
 		}
 	};
