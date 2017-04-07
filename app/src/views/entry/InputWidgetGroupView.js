@@ -41,7 +41,7 @@ define(function(require, exports, module) {
 
 		var tagDetails = options.entryDetails.tagDetails;
 		this.tagInputType = new TagInputType(tagDetails.tagId, tagDetails.description, tagDetails.inputType,
-				tagDetails.min, tagDetails.max, tagDetails.noOfLevels);
+				tagDetails.min, tagDetails.max, tagDetails.noOfLevels, tagDetails.defaultUnit, tagDetails.lastUnits);
 
 		this.scrollView = options.scrollView;
 
@@ -105,9 +105,6 @@ define(function(require, exports, module) {
 
 		var InputWidgetView = this.inputWidgetViewClass;
 		this.drawerSurface = new InputWidgetView(this.entries, this);
-		this.drawerSurface.on('new-entry', function(resp) {
-			this._eventOutput.emit('new-entry', resp);
-		}.bind(this));
 
 		this.add(this.drawerSurfaceModifier).add(this.drawerSurface);
 	};
@@ -147,9 +144,10 @@ define(function(require, exports, module) {
 
 	InputWidgetGroupView.prototype.showDrawer = function() {
 		this.drawerController.show(this.drawerContainerSurface);
-
 		this.drawerSurface.inputWidgetSurface.addClass('input-widget-view-selected');
 		this.resizeDrawerContainer();
+
+		this.collapsed = !this.collapsed;
 	};
 
 	InputWidgetGroupView.prototype.resizeDrawerContainer = function() {
@@ -164,11 +162,14 @@ define(function(require, exports, module) {
 	};
 
 	InputWidgetGroupView.prototype.hideDrawer = function() {
-		this.drawerController.hide();
 		this.drawerSurface.inputWidgetSurface.removeClass('input-widget-view-selected');
 		this.drawerSurfaceModifier.setTransform(
 			Transform.translate(0, 0, 0)
 		);
+
+		this.drawerController.hide();
+
+		this.collapsed = !this.collapsed;
 	};
 
 	InputWidgetGroupView.prototype.select = function() {
@@ -181,7 +182,6 @@ define(function(require, exports, module) {
 		} else {
 			this.hideDrawer();
 		}
-		this.collapsed = !this.collapsed;
 	};
 
 	InputWidgetGroupView.prototype.addWidgetsToDrawer = function() {
@@ -199,7 +199,16 @@ define(function(require, exports, module) {
 
 				if ((indexOfInputWidgetViewForEntry > -1)) {
 					this.inputWidgetViewList.splice(indexOfInputWidgetViewForEntry, 1);
-					this.resizeDrawerContainer();
+
+					this.entries.remove(inputWidgetViewForEntry.entry);
+
+					if (this.inputWidgetViewList.length === 0) {
+						this.hideDrawer();
+					} else {
+						this.resizeDrawerContainer();
+					}
+
+					this.drawerSurface.updateEntryTimeBox();
 				}
 			}.bind(this));
 

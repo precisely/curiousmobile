@@ -23,8 +23,13 @@ define(function(require, exports, module) {
 			noSelected: noSelectedClass
 		}, templateSettings);
 
+		this.positionMap = {};
 		this.YES_BUTTON_ID = 'yes-button-' + entryId;
+		this.positionMap[this.YES_BUTTON_ID] = 1;
+
 		this.NO_BUTTON_ID = 'no-button-' + entryId;
+		this.positionMap[this.NO_BUTTON_ID] = 2;
+
 		this.DESCRIBE_BUTTON_ID = 'describe-button-' + entryId;
 
 		var selectedElementId;

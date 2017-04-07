@@ -10,21 +10,25 @@ define( function(require, exports, module) {
 
 	TagInputTypeMap.prototype.constructor = TagInputTypeMap;
 
-	TagInputTypeMap.prototype.add = function(tagId, description, inputType, min, max, noOfLevels) {
-		var tagInputType = new TagInputType(tagId, description, inputType, min, max, noOfLevels);
+	TagInputTypeMap.prototype.add = function(tagId, description, inputType, min, max, noOfLevels,
+			defaultUnit, lastUnits) {
+		var tagInputType = new TagInputType(tagId, description, inputType, min, max, noOfLevels, defaultUnit,
+				lastUnits);
+
 		this.map[description] = tagInputType;
 
 		return tagInputType;
 	};
 
-	TagInputTypeMap.prototype.set = function(tagId, description, inputType, min, max, noOfLevels) {
+	TagInputTypeMap.prototype.set = function(tagId, description, inputType, min, max, noOfLevels,
+			defaultUnit, lastUnits) {
 		var tagInputType = this.map[description];
 
 		if (tagInputType) {
 			return;
 		}
 
-		return this.add(tagId, description, inputType, min, max, noOfLevels);
+		return this.add(tagId, description, inputType, min, max, noOfLevels, defaultUnit, lastUnits);
 	};
 
 	TagInputTypeMap.prototype.get = function(description) {

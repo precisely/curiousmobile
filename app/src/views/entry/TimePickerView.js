@@ -26,6 +26,8 @@ define(function(require, exports, module) {
 
 		var entryId = this.parentInputWidget.getIdForDOMElement();
 		this.AM_PM_BOX = 'ampm-box-' + entryId;
+		this.HH_INPUT_ID = 'hh-box-' + entryId;
+		this.MM_INPUT_ID = 'mm-box-' + entryId;
 
 		this.timePickerSurface = new Surface({
 			content: _.template(timePickerBoxTemplate, {
@@ -41,7 +43,7 @@ define(function(require, exports, module) {
 			if (e instanceof CustomEvent) {
 				if (e.srcElement.id === this.AM_PM_BOX) {
 					var newValue = e.srcElement.innerHTML === 'AM' ? 'PM': 'AM';
-					$(e.srcElement).html(newValue);
+					e.srcElement.innerHTML = newValue;
 				}
 			}
 		}.bind(this));
@@ -51,6 +53,22 @@ define(function(require, exports, module) {
 		});
 
 		this.overlayContainerSurface.add(this.timePickerModifier).add(this.timePickerSurface);
+	};
+
+	TimePickerView.prototype.getTimeText = function() {
+		var hhText = document.getElementById(this.HH_INPUT_ID).value;
+		var mmText = document.getElementById(this.MM_INPUT_ID).value;
+		var ampmText = document.getElementById(this.AM_PM_BOX).innerHTML;
+
+		return (hhText + ':' + mmText + ampmText);
+	};
+
+	TimePickerView.prototype.resetTimePicker = function() {
+		var timeObject = this.parentInputWidget.getTimeForTimePickerView();
+
+		document.getElementById(this.HH_INPUT_ID).value = timeObject.hh; 
+		document.getElementById(this.MM_INPUT_ID).value = timeObject.mm;
+		document.getElementById(this.AM_PM_BOX).innerHTML = timeObject.ampm;
 	};
 
 	module.exports = TimePickerView;

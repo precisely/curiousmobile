@@ -126,6 +126,19 @@ define(function(require, exports, module) {
 		return this.entry.getTimeString();
 	};
 
+	InputWidgetView.prototype.updateEntryTimeBox = function() {
+		var timeBox = document.getElementById(this.TIME_BOX_ID);
+
+		if (timeBox) {
+			var newTimeDisplayText = this.getTimeDisplayText();
+			if (newTimeDisplayText) {
+				timeBox.innerHTML = newTimeDisplayText;
+			} else {
+				$(timeBox).hide();
+			}
+		}
+	};
+
 	InputWidgetView.prototype.isRemindEntry = function() {
 		if (this.isDrawerInputSurface) {
 			return false;
@@ -146,20 +159,52 @@ define(function(require, exports, module) {
 		var domId = this.getIdForDOMElement();
 		var classes = ['input-widget-view', domId];
 
+		this.isRemind = this.isRemindEntry();
+		this.isRepeat = this.isRepeatEntry();
+
 		if (!this.isDrawerInputSurface) {
 			classes.push('input-widget-view-drawer-content', domId);
 
+			if (this.entry.isGhost()) {
+				classes.push('ghost-entry');
+			}
+
+			if (this.isRepeat && this.entry.get("repeatEnd")) {
+				this.repeatEndDate = new Date(this.entry.get("repeatEnd"));
+			}
+
 			this.repeatView = new SetRepeatTypeAndDateView(this);
+			this.repeatView.on('submit', function() {
+				this.trackView.killOverlayContent();
+
+				var entryText = this.entry.toString();
+				this.updateEntry(entryText);
+			}.bind(this));
+
 			this.timePickerView = new TimePickerView(this);
+			this.timePickerView.on('submit', function() {
+				var newEntryTime = this.timePickerView.getTimeText().toLowerCase();
+
+				var doNotCheckDatePrecisionSecs = true;
+				var oldEntryText = this.entry.toString(doNotCheckDatePrecisionSecs);
+				var oldEntryTime = this.entry.getTimeString().toLowerCase();
+
+				var newEntryText = oldEntryText.replace(oldEntryTime, newEntryTime);
+
+				this.trackView.killOverlayContent();
+
+				this.updateEntry(newEntryText);
+			}.bind(this));
 		}
 
 		this.inputWidgetSurfaceContent = {
 			size: this.getInputWidgetSurfaceSize(),
 			content: _.template(baseInputWidgetTemplate, {
+				entryDisplayText: this.getEntryInfoText(),
 				tag: this.getTagDisplayText(),
 				time: this.getTimeDisplayText(),
-				reminderSet: this.isRemindEntry(),
-				repeatSet: this.isRepeatEntry(),
+				reminderSet: this.isRemind,
+				repeatSet: this.isRepeat,
 				isDrawer: this.isDrawerInputSurface,
 				widgetDiv: this.inputWidgetDiv,
 				entryId: domId
@@ -168,6 +213,38 @@ define(function(require, exports, module) {
 		};
 
 		this.inputWidgetSurface = new Surface(this.inputWidgetSurfaceContent);
+	};
+
+	InputWidgetView.prototype.getEntryInfoText = function() {
+		if (this.isDrawerInputSurface) {
+			return '';
+		}
+
+		var infoText = '';
+
+		if (this.isRemind) {
+			infoText = 'Alert';
+
+			if (!this.isRepeat) {
+				infoText += ' set';
+			} else {
+				infoText += ' + ';
+			}
+		}
+
+		if (this.isRepeat) {
+			infoText += 'Repeat';
+
+			if (this.entry.isDaily()) {
+				infoText += ' every day';
+			} else if (this.entry.isWeekly()) {
+				infoText += ' every week';
+			} else if (this.entry.isMonthly()) {
+				infoText += ' every month';
+			}
+		}
+
+		return infoText;
 	};
 
 	InputWidgetView.prototype.getIdForDOMElement = function() {
@@ -183,8 +260,6 @@ define(function(require, exports, module) {
 	};
 
 	InputWidgetView.prototype.deleteEntry = function(e) {
-		console.log('InputWidgetView: Deleting entry - ' + this.entry.id);
-
 		if ((e instanceof CustomEvent) || e.entry instanceof Entry) {
 			this.entry.delete(function(data) {
 				if (data && data.fail) {
@@ -234,11 +309,19 @@ define(function(require, exports, module) {
 		this.inputWidgetSurface.pipe(this.parentWidgetGroup.scrollView);
 	};
 
+	InputWidgetView.prototype.handleGhostEntryEvent = function() {
+		this.entry.setText(this.entry.toString());
+		var allFuture = false;
+		this.entry.save(allFuture, this.updatedEntryCallback.bind(this));
+	};
+
 	InputWidgetView.prototype.registerListeners = function() {
 		this.inputWidgetSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				if (this.isDrawerInputSurface) {
 					this.handleDrawerSurfaceEvent(e.srcElement);
+				} else if (this.entry.isGhost()) {
+					this.handleGhostEntryEvent();
 				} else if (this.isBellIcon(e.srcElement)) {
 					this.handleReminderBellEvent(e.srcElement);
 				} else if (this.isRepeatIcon(e.srcElement)) {
@@ -246,7 +329,7 @@ define(function(require, exports, module) {
 				} else if (this.isTimeBox(e.srcElement)) {
 					this.handleTimeBoxEvent();
 				} else if (e.srcElement.id) {
-					this.inputWidgetEventHandler(e.srcElement);
+					this.updateEntry(this.getEntryTextForSelectedInputElement(e.srcElement));
 				}
 			}
 		}.bind(this));
@@ -265,34 +348,61 @@ define(function(require, exports, module) {
 		}
 	};
 
-	InputWidgetView.prototype.createEntry = function(element) {
+	InputWidgetView.prototype.getEntryTextForSelectedInputElement = function(element) {
 		var amount = this.getAmountValueFromElementPosition(element);
 
 		if (!amount || !(amount > 0)) {
 			return;
 		}
 
+		var entryText = this.parentWidgetGroup.tagInputType.description + ' ' + amount;
+
+		if (this.parentWidgetGroup.tagInputType.lastUnits) {
+			entryText += ' ' + this.parentWidgetGroup.tagInputType.lastUnits;
+		} else if (this.parentWidgetGroup.tagInputType.defaultUnit) {
+			entryText += ' ' + this.parentWidgetGroup.tagInputType.defaultUnit;
+		}
+
+		return entryText;
+	};
+
+	InputWidgetView.prototype.createEntry = function(element) {
 		if (!Utils.isOnline()) {
 			Utils.showAlert("You don't seem to be connected. Please wait until you are online to add an entry.");
 
 			return;
 		}
 
-		var entryText = this.parentWidgetGroup.tagInputType.description + ' ' + amount;
+		var entryText = this.getEntryTextForSelectedInputElement(element);
 
-		if (this.parentWidgetGroup.tagInputType.description == 'sleep') {
-			entryText += ' ' + 'hrs';
+		if (!entryText) {
+			return;
 		}
 
 		var newEntry = new Entry();
 		newEntry.setText(entryText);
 
 		newEntry.create(function(resp) {
-			this._eventOutput.emit('new-entry', resp);
+			this.trackView.preShow({data: resp, fromServer: true});
+
+			if (window.autocompleteCache) {
+				window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],
+						resp.tagStats[3], resp.tagStats[4]);
+			}
 		}.bind(this));
 	};
 
-	InputWidgetView.prototype.updateRemindType = function(callback) {
+	InputWidgetView.prototype.updateEntry = function(entryText) {
+		if (!Utils.isOnline()) {
+			Utils.showAlert("You don't seem to be connected. Please wait until you are online to update the entry.");
+
+			return;
+		}
+
+		if (!entryText) {
+			return;
+		}
+
 		// Create new reference for performing changes.
 		var entry = new Entry(this.entry.attributes);
 
@@ -300,64 +410,46 @@ define(function(require, exports, module) {
 		var repeatTypeId = repeatParams.repeatTypeId;
 		var repeatEnd = repeatParams.repeatEnd;
 
-		if (repeatTypeId) {
-			entry.set("repeatType", repeatTypeId);
-		}
-		if (repeatEnd) {
-			entry.set("repeatEnd", repeatEnd);
-		}
-
-		entry.setText(entry.toString());
+		entry.set("repeatType", repeatTypeId);
+		entry.set("repeatEnd", repeatEnd);
+		entry.setText(entryText);
 
 		var allFuture = false;
-		entry.save(allFuture, function(resp) {
-			this.glow();
+		entry.save(allFuture, this.updatedEntryCallback.bind(this));
+	};
 
-			// Update the reference with updated entry.
-			this.entry = entry;
+	InputWidgetView.prototype.updatedEntryCallback = function(resp) {
+		this.trackView.preShow({data: resp, fromServer: true});
 
-			if (callback) {
-				callback();
+		if (window.autocompleteCache) {
+			if (resp.tagStats[0]) {
+				window.autocompleteCache.update(resp.tagStats[0][0],
+					resp.tagStats[0][1], resp.tagStats[0][2], resp.tagStats[0][3], resp.tagStats[0][4])
 			}
 
-			if (window.autocompleteCache) {
-				if (resp.tagStats[0]) {
-					window.autocompleteCache.update(resp.tagStats[0][0],
-							resp.tagStats[0][1], resp.tagStats[0][2], resp.tagStats[0][3], resp.tagStats[0][4])
-				}
-
-				if (resp.tagStats[1]) {
-					window.autocompleteCache.update(resp.tagStats[1][0],
-							resp.tagStats[1][1], resp.tagStats[1][2], resp.tagStats[1][3], resp.tagStats[1][4])
-				}
+			if (resp.tagStats[1]) {
+				window.autocompleteCache.update(resp.tagStats[1][0],
+					resp.tagStats[1][1], resp.tagStats[1][2], resp.tagStats[1][3], resp.tagStats[1][4])
 			}
-		}.bind(this));
+		}
 	};
 
 	InputWidgetView.prototype.handleReminderBellEvent = function(element) {
-		if (element.id !== this.BELL_ICON_ID) {
-			element = document.getElementById(this.BELL_ICON_ID);
-		}
-
 		this.isRemind = !this.isRemind;
-
-		this.updateRemindType(function() {
-			if (this.isRemind) {
-				$(element).removeClass('fa-bell-o');
-				$(element).addClass('fa-bell');
-			} else {
-				$(element).removeClass('fa-bell');
-				$(element).addClass('fa-bell-o');
-			}
-		}.bind(this));
+		var entryText = this.entry.toString();
+		this.updateEntry(entryText);
 	};
 
 	InputWidgetView.prototype.handleRepeatEvent = function() {
-		this.trackView.showRepeatOverlay(this.repeatView);
+		this.trackView.showEditEntryOverlay(this.repeatView, function() {
+			this.repeatView.reset();
+		}.bind(this));
 	};
 
 	InputWidgetView.prototype.handleTimeBoxEvent = function() {
-		this.trackView.showRepeatOverlay(this.timePickerView);
+		this.trackView.showEditEntryOverlay(this.timePickerView, function() {
+			this.timePickerView.resetTimePicker();
+		}.bind(this));
 	};
 
 	InputWidgetView.prototype.inputWidgetEventHandler = function(element) {
@@ -392,25 +484,6 @@ define(function(require, exports, module) {
 
 	InputWidgetView.prototype.getSize = function() {
 		return [undefined, this.options.surfaceHeight - 5];
-	};
-
-	InputWidgetView.prototype.removeTimeSuffix = function() {
-		var timeString = this.entry.getTimeString();
-		var timeStringInHHMMFormat = timeString.replace(/am|pm/gi, '');
-
-		var hoursMinutesPlaceValues = timeStringInHHMMFormat.split(':');
-		var hoursPlaceValue = hoursMinutesPlaceValues[0];
-		var minutesPlaceValue = hoursMinutesPlaceValues[1];
-
-		if (hoursPlaceValue.length == 1) {
-			hoursPlaceValue = (timeString.indexOf('pm') > -1) ? 12 + Number(hoursPlaceValue) : ('0' + hoursPlaceValue);
-		}
-
-		if (minutesPlaceValue.length == 1) {
-			minutesPlaceValue = '0' + minutesPlaceValue;
-		}
-
-		return (hoursPlaceValue + ':' + minutesPlaceValue);
 	};
 
 	InputWidgetView.prototype.getTimeForTimePickerView = function() {

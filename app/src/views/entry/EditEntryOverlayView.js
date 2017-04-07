@@ -55,8 +55,7 @@ define(function(require, exports, module) {
 		this.submitButton.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				if (_.contains(e.srcElement.classList, 'create-entry-button')) {
-					this.parentInputWidget.trackView.killOverlayContent();
-					//this.submit();
+					this._eventOutput.emit('submit');
 				}
 			}
 		}.bind(this));

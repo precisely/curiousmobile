@@ -1,9 +1,12 @@
 <div class="input-widget-surface" id="input-widget-surface-{{- entryId}}">
 	<div class="tag-time-row">
 		<div class="input-widget-tag-description">
+			{{ if (!isDrawer) { }}
+				<div class="entry-help-text">{{- entryDisplayText}}</div>
+			{{ } }}
 			<span>{{- tag}}</span>
 		</div>
-		<div class="input-widget-time-display">
+		<div class="time-remind-repeat-box">
 			{{ if (time) { }}
 				<button class="time-display-box" id="time-box-{{- entryId}}">{{- time}}</button>
 			{{ } }}

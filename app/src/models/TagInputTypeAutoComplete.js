@@ -23,7 +23,7 @@ define( function(require, exports, module) {
 				if (Utils.checkData(tagsWithInputType)) {
 					tagsWithInputType.forEach(function(tagDetails) {
 						this.update(tagDetails.tagId, tagDetails.description, tagDetails.inputType, tagDetails.min,
-								tagDetails.max, tagDetails.noOfLevels);
+								tagDetails.max, tagDetails.noOfLevels, tagDetails.defaultUnit, tagDetails.lastUnits);
 					}.bind(this));
 				}
 			}.bind(this)
@@ -34,8 +34,11 @@ define( function(require, exports, module) {
 		return this.taginputTypeMap.get(description);
 	};
 
-	TagInputTypeAutoComplete.prototype.update = function(tagId, description, inputType, min, max, noOfLevels) {
-		var tagInputTypeAdded = this.taginputTypeMap.set(tagId, description, inputType, min, max, noOfLevels);
+	TagInputTypeAutoComplete.prototype.update = function(tagId, description, inputType, min, max, noOfLevels,
+			defaultUnit, lastUnits) {
+		var tagInputTypeAdded = this.taginputTypeMap.set(tagId, description, inputType, min, max, noOfLevels,
+				defaultUnit, lastUnits);
+
 		if (tagInputTypeAdded) {
 			this.tagsWithInputType.push(description);
 		}

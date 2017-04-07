@@ -3826,9 +3826,9 @@ input.cropit-image-zoom-input {
 
 @-webkit-keyframes glow-effect {
 	0% { background-color: #F9F9F9; }
-	25% { background-color: #F88142; }
-	50% { background-color: #F88142; }
-	75% { background-color: #F88142; }
+	25% { background-color: grey; }
+	50% { background-color: grey; }
+	75% { background-color: grey; }
 	100% { background-color: #F9F9F9; }
 }
 
@@ -3859,7 +3859,7 @@ input.cropit-image-zoom-input {
 	border-style: solid;
 	color: #F88142;
 	font-size: 15px;
-	display: inline-flex;
+	padding-top: 3px;
 }
 
 .time-picker-box {
@@ -3887,7 +3887,7 @@ input.cropit-image-zoom-input {
 }
 
 .faded-icon {
-	color: #9E9E9E;
+	color: #9E9E9E !important;
 }
 
 .transparent-bg {
@@ -4046,13 +4046,18 @@ input.cropit-image-zoom-input {
 	font-size: 15px;
 }
 
-.input-widget-view-drawer-content .time-display-box, .input-widget-view-drawer-content .tag-time-row {
+.input-widget-view-drawer-content .time-display-box {
+	font-size: 9px;
+	min-width: inherit;
+}
+
+.input-widget-view-drawer-content .tag-time-row {
 	font-size: 12px;
 }
 
 .input-widget-view-drawer-content .input-circle {
-	width: 25px;
-	height: 25px;
+	width: 20px;
+	height: 20px;
 }
 
 .input-widget-view-drawer-content .input-widget-surface {
@@ -4064,7 +4069,7 @@ input.cropit-image-zoom-input {
 }
 
 .input-widget-view-drawer-content .level-input-widget img {
-	width: 9px;
+	width: 6px;
 }
 
 .smile-input-surface img {
@@ -4072,7 +4077,7 @@ input.cropit-image-zoom-input {
 }
 
 .input-widget-view-drawer-content .smile-input-surface img {
-	width: 11px;
+	width: 10px;
 }
 
 .thumbs-up-input-widget span {
@@ -4080,7 +4085,7 @@ input.cropit-image-zoom-input {
 }
 
 .input-widget-view-drawer-content .thumbs-up-input-widget span {
-	font-size: 15px;
+	font-size: 12px;
 }
 
 .plus-icon-button {
@@ -4095,6 +4100,23 @@ input.cropit-image-zoom-input {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+}
+
+.ghost-entry .input-widget-tag-description, .ghost-entry .time-display-box, .ghost-entry .fa-repeat, 
+		.ghost-entry .fa-bell, .ghost-entry .fa-bell-o {
+	color: #9E9E9E !important;
+	border-color: #9E9E9E !important;
+}
+
+.entry-help-text {
+	font-size: 9px !important;
+	text-transform: uppercase;
+	color: #919191;
+	opacity: 0.8;
+}
+
+.time-remind-repeat-box {
+	display: inline-flex;
 }
 
 /*- - - - - - - - - - - - - - - - - - Range/Slider Input's CSS - - - - - - - - - - - - - - - - - - - - - - - - - - - */

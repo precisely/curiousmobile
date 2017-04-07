@@ -41,8 +41,16 @@ define(function(require, exports, module) {
 	};
 
 	SetRepeatTypeAndDateView.prototype.addRepeatSurface = function() {
+		this.initialRepeatViewState = {
+			repeatEndDate: this.parentInputWidget.repeatEndDate ? this.getEndDateDisplayText() : '',
+			isDaily: this.parentInputWidget.entry.isDaily() ? 'checked' : '',
+			isWeekly: this.parentInputWidget.entry.isWeekly() ? 'checked' : '',
+			isMonthly: this.parentInputWidget.entry.isMonthly() ? 'checked' : '',
+			confirmEachRepeat: this.parentInputWidget.entry.isGhost() ? 'checked' : ''
+		};
+
 		this.repeatModifierSurface = new Surface({
-			content: _.template(repeatModifierTemplate, templateSettings),
+			content: _.template(repeatModifierTemplate, this.initialRepeatViewState, templateSettings),
 			size: [undefined, undefined],
 			properties: {
 				backgroundColor: 'transparent',
@@ -53,21 +61,20 @@ define(function(require, exports, module) {
 		this.repeatModifierSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				var classList = e.srcElement.parentElement.classList;
-				if (_.contains(classList, 'entry-checkbox') ||
-					_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {
-					var repeatEachCheckbox = document.getElementById('confirm-each-repeat');
-					//repeatEachCheckbox.checked = !repeatEachCheckbox.checked;
-				} else if (_.contains(classList, 'date-picker-field')) {
+				if (_.contains(classList, 'date-picker-field')) {
 					if (typeof cordova !== 'undefined') {
 						cordova.plugins.Keyboard.close();
 					}
+
 					if (this.dateGridOpen) {
 						this.dateGridRenderController.hide();
 					} else {
-						this.dateGrid = new DateGridView(this.selectedDate || new Date());
+						this.dateGrid = new DateGridView(this.parentInputWidget.repeatEndDate || new Date());
+
 						this.dateGridRenderController.show(this.dateGrid, null, function() {
 							this.showShimSurface();
 						}.bind(this));
+
 						this.dateGrid.on('select-date', function(date) {
 							this.setSelectedDate(date);
 							this.dateGridRenderController.hide();
@@ -80,6 +87,7 @@ define(function(require, exports, module) {
 							this.hideShimSurface();
 						}.bind(this));
 					}
+
 					this.dateGridOpen = !this.dateGridOpen;
 				}
 			}
@@ -93,14 +101,37 @@ define(function(require, exports, module) {
 			document.getElementsByClassName('choose-date-input')[0].value = '';
 			return;
 		}
-		this.selectedDate = date;
 
+		this.parentInputWidget.repeatEndDate = date;
+
+		var dateElement = document.getElementsByClassName('choose-date-input')[0];
+
+		if (dateElement) {
+			dateElement.value = this.getEndDateDisplayText();
+		}
+	};
+
+	SetRepeatTypeAndDateView.prototype.getEndDateDisplayText = function() {
 		var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
 			'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
 		];
+
+		var date = this.parentInputWidget.repeatEndDate;
+
 		var monthName = months[date.getMonth()];
-		document.getElementsByClassName('choose-date-input')[0].value = date.getDate() + ' ' +
-				monthName + ' ' + date.getFullYear();
+
+		return (date.getDate() + ' ' + monthName + ' ' + date.getFullYear());
+	};
+
+	SetRepeatTypeAndDateView.prototype.reset = function() {
+		document.getElementsByClassName('choose-date-input')[0].value = this.initialRepeatViewState.repeatEndDate;
+
+		document.getElementById('daily').checked = this.initialRepeatViewState.isDaily ? true : false;
+		document.getElementById('weekly').checked = this.initialRepeatViewState.isWeekly ? true : false;
+		document.getElementById('monthly').checked = this.initialRepeatViewState.isMonthly ? true : false;
+
+		document.getElementById('confirm-each-repeat').checked = this.initialRepeatViewState.confirmEachRepeat ? true 
+				: false;
 	};
 
 	module.exports = SetRepeatTypeAndDateView;

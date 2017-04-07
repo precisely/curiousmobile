@@ -116,7 +116,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			needExtraSpace: function() {
 				return this.get('amountPrecision') < 0;
 			},
-			toString: function(argument) {
+			toString: function(doNotCheckDatePrecisionSecs) {
 				var entry = this.attributes;
 				var escapeHTML = u.escapeHTML;
 				var dateStr = '';
@@ -144,7 +144,9 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					}
 				}
 
-				entryStr += escapeHTML(this.dateStr()) + (entry.comment != '' ? ' ' + escapeHTML(entry.comment) : '');
+				entryStr += escapeHTML(this.dateStr(doNotCheckDatePrecisionSecs)) +
+						(entry.comment != '' ? ' ' + escapeHTML(entry.comment) : '');
+
 				return entryStr;
 			},
 			formattedAmount: function(args) {
@@ -170,9 +172,9 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 
 				return "";
 			},
-			dateStr: function () {
+			dateStr: function (doNotCheckDatePrecisionSecs) {
 				var dateStr = '';
-				if (this.get('datePrecisionSecs') < 43200) {
+				if (this.get('datePrecisionSecs') < 43200 || doNotCheckDatePrecisionSecs) {
 					dateStr = u.dateToTimeStr(new Date(this.get('date')), false);
 					dateStr = ' ' + dateStr;
 				}

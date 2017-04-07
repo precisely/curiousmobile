@@ -107,10 +107,6 @@ define(function(require, exports, module) {
 				scrollView: this.scrollView
 			});
 
-			trackEntryView.on('new-entry', function(resp) {
-				this._eventOutput.emit('new-entry', resp);
-			}.bind(this));
-
 			this.inputWidgetGroupViewList.push(trackEntryView);
 		}
 

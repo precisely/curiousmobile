@@ -283,10 +283,6 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	TrackView.prototype.showRepeatOverlay = function(repeatView) {
-		this.showRepeatOverlaySurface(repeatView);
-	};
-
 	TrackView.prototype.changeDate = function(date, callback, glowEntry) {
 		date = u.getMidnightDate(date);
 
@@ -305,15 +301,6 @@ define(function(require, exports, module) {
 					this.changeDate(this.calendarView.selectedDate, function() {
 						u.showAlert("Error deleting entry");
 					}.bind(this));
-				}.bind(this));
-
-				this.currentListView.on('new-entry', function(resp) {
-					this.preShow({data: resp, fromServer: true});
-
-					if (window.autocompleteCache) {
-						window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],
-								resp.tagStats[3], resp.tagStats[4]);
-					}
 				}.bind(this));
 
 				this.renderController.show(this.currentListView, {duration: 500});
@@ -338,11 +325,11 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	TrackView.prototype.showRepeatOverlaySurface = function(repeatView) {
+	TrackView.prototype.showEditEntryOverlay = function(editEntryOverlayView, callback) {
 		this.overlaySurfaceSetup();
 		this.setHeaderLabel('Edit Entry');
 
-		this.showOverlayContent(repeatView);
+		this.showOverlayContent(editEntryOverlayView, callback);
 	};
 
 	TrackView.prototype.overlaySurfaceSetup = function() {
