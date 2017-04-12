@@ -327,7 +327,7 @@ define(function(require, exports, module) {
 
 	TrackView.prototype.showEditEntryOverlay = function(editEntryOverlayView, callback) {
 		this.overlaySurfaceSetup();
-		this.setHeaderLabel('Edit Entry');
+		this.setHeaderLabel(editEntryOverlayView.getHeaderLabel());
 
 		this.showOverlayContent(editEntryOverlayView, callback);
 	};

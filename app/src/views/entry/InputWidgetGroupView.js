@@ -88,12 +88,12 @@ define(function(require, exports, module) {
 		});
 
 		this.drawerContainerSurfaceModifier = new StateModifier({
-			transform: Transform.translate(10, 0, 0)
+			transform: Transform.translate(7, 0, 0)
 		});
 		this.add(this.drawerContainerSurfaceModifier).add(this.drawerController);
 
 		this.drawerElementsModifier = new StateModifier({
-			transform: Transform.translate(0, 30, 0)
+			transform: Transform.translate(0, 25, 0)
 		});
 		this.drawerContainerSurface.add(this.drawerElementsModifier).add(this.inputWidgetSequentialView);
 	};
@@ -126,7 +126,7 @@ define(function(require, exports, module) {
 		});
 
 		this.closeIconSurfaceModifier = new StateModifier({
-			transform: Transform.translate(App.width - 45, 3, 20)
+			transform: Transform.translate(App.width - 40, 0, 20)
 		});
 
 		this.closeIconSurface.on('click', function(e) {
@@ -151,7 +151,7 @@ define(function(require, exports, module) {
 	};
 
 	InputWidgetGroupView.prototype.resizeDrawerContainer = function() {
-		this.drawerContainerSurface.setSize([App.width - 20, this.getDrawerContainerSurfaceHeight()]);
+		this.drawerContainerSurface.setSize([App.width - 14, this.getDrawerContainerSurfaceHeight()]);
 		this.drawerSurfaceModifier.setTransform(
 			Transform.translate(0, this.getDrawerContainerSurfaceHeight(), 0)
 		);
@@ -218,10 +218,10 @@ define(function(require, exports, module) {
 
 	InputWidgetGroupView.prototype.getSize = function () {
 		if (this.collapsed) {
-			return [undefined, this.options.inputWidgetHeight];
+			return [App.width, this.options.inputWidgetHeight];
 		}
 
-		return [undefined, this.getTotalHeight()];
+		return [App.width, this.getTotalHeight()];
 	};
 
 	InputWidgetGroupView.prototype.getTotalHeight = function() {
@@ -232,7 +232,7 @@ define(function(require, exports, module) {
 		}
 
 		// Adding extra height for close icon.
-		totalHeight += 30;
+		totalHeight += 25;
 
 		return totalHeight;
 	};

@@ -12,16 +12,12 @@ define(function(require, exports, module) {
 	BooleanInputWidgetView.prototype.constructor = BooleanInputWidgetView;
 
 	BooleanInputWidgetView.prototype.initializeWidgetContent = function() {
-		var entryId = this.getIdForDOMElement();
-		var position =  this.getInputElementPositionToSelect();
-		var yesSelectedClass = this.getYesSelectedCLass(position);
-		var noSelectedClass = this.getNoSelectedCLass(position);
+		this.currentlySelected = {id: this.DOM_ID.NONE, state: this.STATES.NONE_SELECTED};
+		this.inputWidgetDiv = _.template(booleanInputWidgetTemplate, this.getTemplateOptions(), templateSettings);
+	};
 
-		this.inputWidgetDiv = _.template(booleanInputWidgetTemplate, {
-			entryId: entryId,
-			yesSelected: yesSelectedClass,
-			noSelected: noSelectedClass
-		}, templateSettings);
+	BooleanInputWidgetView.prototype.getTemplateOptions = function() {
+		var entryId = this.getIdForDOMElement();
 
 		this.positionMap = {};
 		this.YES_BUTTON_ID = 'yes-button-' + entryId;
@@ -32,34 +28,36 @@ define(function(require, exports, module) {
 
 		this.DESCRIBE_BUTTON_ID = 'describe-button-' + entryId;
 
-		var selectedElementId;
-		var state;
-		if (!yesSelectedClass && !noSelectedClass) {
-			selectedElementId = this.DOM_ID.NONE;
-			state = this.STATES.NONE_SELECTED;
-		} else {
-			state = this.STATES.SELECTED;
+		var templateOptions = {entryId: entryId, yesSelected: '', noSelected: ''};
+		var elementIdToSelect = this.getElementIdToSelect();
 
-			if (yesSelectedClass) {
-				selectedElementId = this.YES_BUTTON_ID;
-			} else {
-				selectedElementId = this.NO_BUTTON_ID;
-			}
+		if (this.YES_BUTTON_ID === elementIdToSelect) {
+			templateOptions['yesSelected'] = 'boolean-button-selected';
 		}
 
-		// Initialize the currently selected input.
-		this.currentlySelected = {
-			id: selectedElementId, 
-			state: state
-		};
+		if (this.NO_BUTTON_ID === elementIdToSelect) {
+			templateOptions['noSelected'] = 'boolean-button-selected';
+		}
+
+		if (elementIdToSelect) {
+			// Initialize the currently selected input.
+			this.currentlySelected = {id: elementIdToSelect, state: this.STATES.SELECTED};
+		}
+
+		return templateOptions;
 	};
 
-	BooleanInputWidgetView.prototype.getYesSelectedCLass = function(position) {
-		return (this.isDrawerInputSurface ? '' : (position >= 1 ? 'boolean-button-selected' : ''));
-	};
+	BooleanInputWidgetView.prototype.getElementIdToSelect = function() {
+		var position = this.getInputElementPositionToSelect();
 
-	BooleanInputWidgetView.prototype.getNoSelectedCLass = function(position) {
-		return (this.isDrawerInputSurface ? '' : (position <= 0 ? 'boolean-button-selected' : ''));
+		switch (position) {
+			case 1:
+				return this.YES_BUTTON_ID;
+				break;
+			case 2:
+				return this.NO_BUTTON_ID;
+				break;
+		}
 	};
 
 	BooleanInputWidgetView.prototype.isBooleanInput = function(element) {

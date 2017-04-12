@@ -23,6 +23,8 @@ define(function(require, exports, module) {
 
 		this.SLIDER_INPUT_ELEMENT_ID = 'slider-input-element-' + entryId;
 		this.SLIDER_INPUT_VALUE_BOX_ID = 'slider-value-' + entryId;
+
+		this.currentlySelected = {id: this.SLIDER_INPUT_ELEMENT_ID, state: this.STATES.SELECTED};
 	};
 
 	SliderInputWidgetView.prototype.addCustomEventListeners = function() {
@@ -48,7 +50,13 @@ define(function(require, exports, module) {
 	};
 
 	SliderInputWidgetView.prototype.getAmountValueFromElementPosition = function(element) {
-		var position = element.value;
+		var position;
+
+		if (element && element.value) {
+			position = element.value
+		} else {
+			position = this.getInputElementPositionToSelect()
+		}
 
 		return (position ? (position * this.valueOfOneInputElement) : 0);
 	};

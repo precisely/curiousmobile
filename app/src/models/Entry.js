@@ -116,7 +116,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			needExtraSpace: function() {
 				return this.get('amountPrecision') < 0;
 			},
-			toString: function(doNotCheckDatePrecisionSecs) {
+			toString: function(argument) {
 				var entry = this.attributes;
 				var escapeHTML = u.escapeHTML;
 				var dateStr = '';
@@ -144,9 +144,7 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 					}
 				}
 
-				entryStr += escapeHTML(this.dateStr(doNotCheckDatePrecisionSecs)) +
-						(entry.comment != '' ? ' ' + escapeHTML(entry.comment) : '');
-
+				entryStr += escapeHTML(this.dateStr()) + (entry.comment != '' ? ' ' + escapeHTML(entry.comment) : '')
 				return entryStr;
 			},
 			formattedAmount: function(args) {
@@ -172,17 +170,16 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 
 				return "";
 			},
-			dateStr: function (doNotCheckDatePrecisionSecs) {
+			dateStr: function () {
 				var dateStr = '';
-				if (this.get('datePrecisionSecs') < 43200 || doNotCheckDatePrecisionSecs) {
+				if (this.get('datePrecisionSecs') < 43200) {
 					dateStr = u.dateToTimeStr(new Date(this.get('date')), false);
 					dateStr = ' ' + dateStr;
 				}
 				return dateStr;
 			},
 			getTimeString: function() {
-				var toUpperCase = true;
-				var dateStr = u.dateToTimeStr(new Date(this.get('date')), false, toUpperCase);
+				var dateStr = u.dateToTimeStr(new Date(this.get('date')), false);
 				var timeString = u.escapeHTML(dateStr);
 
 				return timeString.slice(0);
@@ -435,6 +432,9 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			isTodayOrLater: function() {
 				return new Date().getTime() - (24 * 60 * 60000) < window.App.selectedDate.getTime();
 
+			},
+			hasFuture: function() {
+				return ((this.isRepeat() && !this.isRemind()) || this.isGhost()) && !this.isTodayOrLater();
 			}
 
 		});
@@ -462,8 +462,8 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			collectionCache.setItem(key, entries);
 		}
 
-		Entry.getRepeatParams = function getRepeatParams(isRepeat, isRemind, repeatEnd) {
-			var repeatTypeId = getRepeatTypeId(isRepeat, isRemind, repeatEnd);
+		Entry.getRepeatParams = function getRepeatParams(isRepeat, isRemind, repeatEnd, removeRepeat) {
+			var repeatTypeId = getRepeatTypeId(isRepeat, isRemind, repeatEnd, removeRepeat);
 			if (repeatEnd) {
 				repeatEnd = repeatEnd.setHours(23, 59, 59, 0);
 				var now = new Date();
@@ -476,16 +476,18 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			return {repeatTypeId: repeatTypeId, repeatEnd: repeatEnd};
 		}
 
-		function getRepeatTypeId(isRepeat, isRemind, repeatEnd) {
+		function getRepeatTypeId(isRepeat, isRemind, repeatEnd, removeRepeat) {
 			var confirmRepeat = document.getElementById('confirm-each-repeat') ? document.getElementById('confirm-each-repeat').checked : false;
 			var frequencyBit, repeatTypeBit;
 
-			if (document.getElementById('daily') && document.getElementById('daily').checked) {
-				frequencyBit = RepeatType.DAILY_BIT;
-			} else if (document.getElementById('weekly') && document.getElementById('weekly').checked) {
-				frequencyBit = RepeatType.WEEKLY_BIT;
-			} else if (document.getElementById('monthly') && document.getElementById('monthly').checked) {
-				frequencyBit = RepeatType.MONTHLY_BIT;
+			if (!removeRepeat) {
+				if (document.getElementById('daily') && document.getElementById('daily').checked) {
+					frequencyBit = RepeatType.DAILY_BIT;
+				} else if (document.getElementById('weekly') && document.getElementById('weekly').checked) {
+					frequencyBit = RepeatType.WEEKLY_BIT;
+				} else if (document.getElementById('monthly') && document.getElementById('monthly').checked) {
+					frequencyBit = RepeatType.MONTHLY_BIT;
+				}
 			}
 
 			if (!isRepeat && (frequencyBit || confirmRepeat)) {

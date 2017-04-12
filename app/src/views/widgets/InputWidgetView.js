@@ -10,12 +10,9 @@ define(function(require, exports, module) {
 	var Transform = require('famous/core/Transform');
 
 	var StateModifier = require('famous/modifiers/StateModifier');
-	var Draggable = require('famous/modifiers/Draggable');
-	var TouchSync = require("famous/inputs/TouchSync");
 
 	var RenderController = require("famous/views/RenderController");
 
-	var FixedRenderNode = require('util/FixedRenderNode');
 	var EntryCollection = require('models/EntryCollection');
 	var baseInputWidgetTemplate = require('text!templates/input-widgets/base-input-widget.html');
 
@@ -53,8 +50,7 @@ define(function(require, exports, module) {
 
 		var entryId = this.getIdForDOMElement();
 		this.BELL_ICON_ID = 'bell-icon-' + entryId;
-		this.BELL_ICON_BOX_CLASS = 'bell-icon-box-' + entryId;
-		this.REPEAT_ICON_CLASS = 'repeat-icon-' + entryId;
+		this.REPEAT_ICON_ID = 'repeat-icon-' + entryId;
 		this.TIME_BOX_ID = 'time-box-' + entryId;
 
 		this.setValueOfOneInputElement();
@@ -83,13 +79,11 @@ define(function(require, exports, module) {
 	};
 
 	InputWidgetView.prototype.isBellIcon = function(element) {
-		return (_.contains(element.classList, this.BELL_ICON_BOX_CLASS) || 
-				_.contains(element.parentElement.classList, this.BELL_ICON_BOX_CLASS));
+		return (element.id === this.BELL_ICON_ID || element.parentElement.id === this.BELL_ICON_ID);
 	};
 
 	InputWidgetView.prototype.isRepeatIcon = function(element) {
-		return (_.contains(element.classList, this.REPEAT_ICON_CLASS) ||
-				_.contains(element.parentElement.classList, this.REPEAT_ICON_CLASS));
+		return (element.id === this.REPEAT_ICON_ID || element.parentElement.id === this.REPEAT_ICON_ID);
 	};
 
 	InputWidgetView.prototype.isTimeBox = function(element) {
@@ -97,11 +91,7 @@ define(function(require, exports, module) {
 	};
 
 	InputWidgetView.prototype.getTagDisplayText = function() {
-		if (this.isDrawerInputSurface) {
-			return this.parentWidgetGroup.tagInputType.description;
-		}
-
-		return this.entry.get('description');
+		return this.parentWidgetGroup.tagInputType.description;
 	};
 
 	InputWidgetView.prototype.getTimeDisplayText = function() {
@@ -117,13 +107,13 @@ define(function(require, exports, module) {
 					timeString += '...';
 				}
 
-				return timeString;
+				return timeString.toUpperCase();
 			}
 
 			return '';
 		}
 
-		return this.entry.getTimeString();
+		return this.entry.getTimeString().toUpperCase();
 	};
 
 	InputWidgetView.prototype.updateEntryTimeBox = function() {
@@ -155,12 +145,28 @@ define(function(require, exports, module) {
 		return this.entry.isRepeat();
 	};
 
+	InputWidgetView.prototype.setRepeatEndDate = function() {
+		if (this.entry.isRepeat() && this.entry.get("repeatEnd")) {
+			this.repeatEndDate = new Date(this.entry.get("repeatEnd"));
+		} else {
+			this.repeatEndDate = null;
+		}
+	};
+
+	InputWidgetView.prototype.setRepeatAndRemind = function() {
+		this.isRemind = this.isRemindEntry();
+		this.isRepeat = this.isRepeatEntry();
+	};
+
+	InputWidgetView.prototype.getCurrentElement = function () {
+		return (document.getElementById(this.currentlySelected.id));
+	};
+
 	InputWidgetView.prototype.createWidget = function() {
 		var domId = this.getIdForDOMElement();
 		var classes = ['input-widget-view', domId];
 
-		this.isRemind = this.isRemindEntry();
-		this.isRepeat = this.isRepeatEntry();
+		this.setRepeatAndRemind();
 
 		if (!this.isDrawerInputSurface) {
 			classes.push('input-widget-view-drawer-content', domId);
@@ -169,31 +175,46 @@ define(function(require, exports, module) {
 				classes.push('ghost-entry');
 			}
 
-			if (this.isRepeat && this.entry.get("repeatEnd")) {
-				this.repeatEndDate = new Date(this.entry.get("repeatEnd"));
-			}
+			this.setRepeatEndDate();
+
+			this.entryText = this.getEntryTextForSelectedInputElement({id: this.currentlySelected.id});
 
 			this.repeatView = new SetRepeatTypeAndDateView(this);
-			this.repeatView.on('submit', function() {
+			this.repeatView.on('submit', function(removeRepeat) {
 				this.trackView.killOverlayContent();
 
-				var entryText = this.entry.toString();
-				this.updateEntry(entryText);
+				if (removeRepeat) {
+					this.isRepeat = false;
+				}
+
+				var refreshEntries = false;
+				this.updateEntry(this.entryText, function() {
+					var classToAdd = 'faded-icon';
+					var classToRemove = 'colored-icon';
+
+					if (this.entry.isRepeat()) {
+						classToAdd = 'colored-icon';
+						classToRemove = 'faded-icon';
+					}
+
+					$('#' + this.REPEAT_ICON_ID).addClass(classToAdd).removeClass(classToRemove);
+				}.bind(this), refreshEntries, removeRepeat);
 			}.bind(this));
 
 			this.timePickerView = new TimePickerView(this);
 			this.timePickerView.on('submit', function() {
-				var newEntryTime = this.timePickerView.getTimeText().toLowerCase();
+				var newEntryTime = this.timePickerView.getTimeText();
 
-				var doNotCheckDatePrecisionSecs = true;
-				var oldEntryText = this.entry.toString(doNotCheckDatePrecisionSecs);
-				var oldEntryTime = this.entry.getTimeString().toLowerCase();
+				var oldEntryText = this.entryText;
+				var oldEntryTime = this.entry.getTimeString();
 
 				var newEntryText = oldEntryText.replace(oldEntryTime, newEntryTime);
 
 				this.trackView.killOverlayContent();
 
-				this.updateEntry(newEntryText);
+				var callback = null;
+				var refreshEntries = true;
+				this.updateEntry(newEntryText, callback, refreshEntries);
 			}.bind(this));
 		}
 
@@ -222,17 +243,17 @@ define(function(require, exports, module) {
 
 		var infoText = '';
 
-		if (this.isRemind) {
+		if (this.entry.isRemind()) {
 			infoText = 'Alert';
 
-			if (!this.isRepeat) {
+			if (!this.entry.isRepeat()) {
 				infoText += ' set';
 			} else {
 				infoText += ' + ';
 			}
 		}
 
-		if (this.isRepeat) {
+		if (this.entry.isRepeat()) {
 			infoText += 'Repeat';
 
 			if (this.entry.isDaily()) {
@@ -256,7 +277,7 @@ define(function(require, exports, module) {
 			return [App.width, this.options.surfaceHeight];
 		}
 
-		return ([App.width - 10, this.options.surfaceHeight - 10]);
+		return ([App.width - 14, this.options.surfaceHeight - 10]);
 	};
 
 	InputWidgetView.prototype.deleteEntry = function(e) {
@@ -283,7 +304,7 @@ define(function(require, exports, module) {
 		this.deleteSurface.on('click', this.deleteEntry.bind(this));
 
 		this.deleteSurfaceModifier = new StateModifier({
-			transform: Transform.translate(App.width - 130, 0, 0)
+			transform: Transform.translate(App.width - 119, 0, 0)
 		});
 
 		this.add(this.deleteSurfaceModifier).add(this.deleteSurface);
@@ -294,7 +315,7 @@ define(function(require, exports, module) {
 		});
 
 		var inputSurfaceModifier = new StateModifier({
-			transform: Transform.translate(-5, 0, 5)
+			transform: Transform.translate(0, 0, 5)
 		});
 		this.add(inputSurfaceModifier).add(entryDraggableNode);
 	};
@@ -310,9 +331,13 @@ define(function(require, exports, module) {
 	};
 
 	InputWidgetView.prototype.handleGhostEntryEvent = function() {
-		this.entry.setText(this.entry.toString());
+		this.entry.setText(this.entryText);
 		var allFuture = false;
-		this.entry.save(allFuture, this.updatedEntryCallback.bind(this));
+		this.entry.save(allFuture, function(resp) {
+			this.updateTagStatsCache(resp);
+			this.inputWidgetSurface.removeClass('ghost-entry');
+			this.glow();
+		}.bind(this));
 	};
 
 	InputWidgetView.prototype.registerListeners = function() {
@@ -329,9 +354,17 @@ define(function(require, exports, module) {
 				} else if (this.isTimeBox(e.srcElement)) {
 					this.handleTimeBoxEvent();
 				} else if (e.srcElement.id) {
-					this.updateEntry(this.getEntryTextForSelectedInputElement(e.srcElement));
+					this.updateEntryValue(e.srcElement);
 				}
 			}
+		}.bind(this));
+	};
+
+	InputWidgetView.prototype.updateEntryValue = function(element) {
+		var entryText = this.getEntryTextForSelectedInputElement(element);
+
+		this.updateEntry(entryText, function() {
+			this.handleNewInputSelection(element);
 		}.bind(this));
 	};
 
@@ -341,7 +374,7 @@ define(function(require, exports, module) {
 	};
 
 	InputWidgetView.prototype.handleDrawerSurfaceEvent = function(element) {
-		if (this.isInputWidgetDiv(element)) {
+		if (this.isInputWidgetDiv(element) || this.isTimeBox(element)) {
 			this.parentWidgetGroup.select();
 		} else if (element.id) {
 			this.createEntry(element);
@@ -363,6 +396,10 @@ define(function(require, exports, module) {
 			entryText += ' ' + this.parentWidgetGroup.tagInputType.defaultUnit;
 		}
 
+		if (this.entry.getTimeString) {
+			entryText += ' ' + this.entry.getTimeString();
+		}
+
 		return entryText;
 	};
 
@@ -375,7 +412,7 @@ define(function(require, exports, module) {
 
 		var entryText = this.getEntryTextForSelectedInputElement(element);
 
-		if (!entryText) {
+		if (!entryText || entryText.indexOf('undefined') > -1) {
 			return;
 		}
 
@@ -392,21 +429,21 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	InputWidgetView.prototype.updateEntry = function(entryText) {
+	InputWidgetView.prototype.updateEntry = function(entryText, callback, refreshEntries, removeRepeat) {
 		if (!Utils.isOnline()) {
 			Utils.showAlert("You don't seem to be connected. Please wait until you are online to update the entry.");
 
 			return;
 		}
 
-		if (!entryText) {
+		if (!entryText || entryText.indexOf('undefined') > -1) {
 			return;
 		}
 
 		// Create new reference for performing changes.
 		var entry = new Entry(this.entry.attributes);
 
-		var repeatParams = Entry.getRepeatParams(this.isRepeat, this.isRemind, this.repeatEndDate);
+		var repeatParams = Entry.getRepeatParams(this.isRepeat, this.isRemind, this.repeatEndDate, removeRepeat);
 		var repeatTypeId = repeatParams.repeatTypeId;
 		var repeatEnd = repeatParams.repeatEnd;
 
@@ -414,13 +451,62 @@ define(function(require, exports, module) {
 		entry.set("repeatEnd", repeatEnd);
 		entry.setText(entryText);
 
-		var allFuture = false;
-		entry.save(allFuture, this.updatedEntryCallback.bind(this));
+		if (entry.isRepeat() || entry.isRemind()) {
+			window.App.collectionCache.clear();
+		}
+
+		var updateCallback = function(resp) {
+			this.entry = entry; // Update the original entry reference.
+
+			this.setRepeatAndRemind();
+			this.setRepeatEndDate();
+
+			this.updateTagStatsCache(resp);
+
+			/*
+			 * Entries are refreshed when new entry is created or when an entry's time is updated. For other updates
+			 * like Alert toggle, Repeat settings, Ghost to Real and Amount change, only the glow effect is used. 
+			 */
+			if (refreshEntries) {
+				this.trackView.preShow({data: resp, fromServer: true});
+			} else {
+				this.glow();
+			}
+
+			if (callback) {
+				callback();
+			}
+		}.bind(this);
+
+		var allFuture = true; // By default all future entries should be updated.
+
+		/*
+		 * This check is performed on the current state of the entry and not on the updated state. Thus the call is
+		 * this.entry.hasFuture() and not entry.hasFuture()
+		 */
+		if (this.entry.hasFuture()) {
+			Utils.showAlert({
+					type: 'alert',
+					message: 'Update just this one event or also future events?',
+					a: 'One',
+					b: 'All Future',
+					onA: function() {
+						allFuture = false;
+						entry.save(allFuture, updateCallback);
+					}.bind(this),
+					onB: function() {
+						allFuture = true;
+						entry.save(allFuture, updateCallback);
+					}.bind(this)
+			});
+
+			return;
+		}
+
+		entry.save(allFuture, updateCallback);
 	};
 
-	InputWidgetView.prototype.updatedEntryCallback = function(resp) {
-		this.trackView.preShow({data: resp, fromServer: true});
-
+	InputWidgetView.prototype.updateTagStatsCache = function(resp) {
 		if (window.autocompleteCache) {
 			if (resp.tagStats[0]) {
 				window.autocompleteCache.update(resp.tagStats[0][0],
@@ -435,14 +521,35 @@ define(function(require, exports, module) {
 	};
 
 	InputWidgetView.prototype.handleReminderBellEvent = function(element) {
+		if (element.id !== this.BELL_ICON_ID) {
+			element = document.getElementById(this.BELL_ICON_ID);
+		}
+
 		this.isRemind = !this.isRemind;
-		var entryText = this.entry.toString();
-		this.updateEntry(entryText);
+
+		var entryText = this.entryText;
+
+		this.updateEntry(entryText, function() {
+			var classesToAdd = 'fa-bell-o faded-icon';
+			var classesToRemove = 'fa-bell colored-icon';
+
+			if (this.entry.isRemind()) {
+				classesToAdd = 'fa-bell colored-icon';
+				classesToRemove = 'fa-bell-o faded-icon';
+			}
+
+			$(element).removeClass(classesToRemove).addClass(classesToAdd);
+		}.bind(this));
 	};
 
 	InputWidgetView.prototype.handleRepeatEvent = function() {
 		this.trackView.showEditEntryOverlay(this.repeatView, function() {
 			this.repeatView.reset();
+			if (this.entry.isRepeat()) {
+				this.repeatView.showRemoveRepeatButton();
+			} else {
+				this.repeatView.hideRemoveRepeatButton();
+			}
 		}.bind(this));
 	};
 
@@ -483,20 +590,7 @@ define(function(require, exports, module) {
 	};
 
 	InputWidgetView.prototype.getSize = function() {
-		return [undefined, this.options.surfaceHeight - 5];
-	};
-
-	InputWidgetView.prototype.getTimeForTimePickerView = function() {
-		var timeString = this.entry.getTimeString();
-
-		var hoursMinutesPlaceValues = timeString.split(':');
-		var hoursPlaceValue = hoursMinutesPlaceValues[0];
-		var minutesPlaceValueWithAmPm = hoursMinutesPlaceValues[1];
-
-		var minutesPlaceValue = minutesPlaceValueWithAmPm.substr(0, 2);
-		var ampm = minutesPlaceValueWithAmPm.substr(2);
-
-		return {hh: hoursPlaceValue, mm: minutesPlaceValue, ampm: ampm};
+		return [App.width, this.options.surfaceHeight - 8];
 	};
 
 	InputWidgetView.prototype.glow = function() {
@@ -518,7 +612,14 @@ define(function(require, exports, module) {
 	};
 
 	InputWidgetView.prototype.getAmountValueFromElementPosition = function(element) {
-		var position = this.positionMap[element.id] || this.positionMap[element.parentElement.id];
+		if (!element) {
+			return 0;
+		}
+
+		var elementId = element.id;
+		var parentElementId = element.parentElement ? element.parentElement.id : '';
+
+		var position = this.positionMap[elementId] || this.positionMap[parentElementId];
 
 		return (position ? (position * this.valueOfOneInputElement) : 0);
 	};

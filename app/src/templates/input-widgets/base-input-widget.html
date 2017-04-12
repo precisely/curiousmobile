@@ -12,16 +12,14 @@
 			{{ } }}
 
 			{{ if (!isDrawer) { }}
-				<button class="transparent-bg bell-icon-box-{{- entryId}}">
-					<i class="fa fa-bell{{= (reminderSet ? '' : '-o')}} colored-icon" aria-hidden="true" 
+				<button class="transparent-bg">
+					<i class="fa fa-bell{{= (reminderSet ? '' : '-o')}} 
+							{{= (reminderSet ? 'colored-icon' : 'faded-icon')}}" aria-hidden="true" 
 							id="bell-icon-{{- entryId}}"></i>
 				</button>
-				<button class="transparent-bg repeat-icon-{{- entryId}}">
-					{{ if (repeatSet) { }}
-						<i class="fa fa-repeat colored-icon" aria-hidden="true"></i>
-					{{ } else { }}
-						<i class="fa fa-repeat faded-icon" aria-hidden="true"></i>
-					{{ } }}
+				<button class="transparent-bg">
+					<i class="fa fa-repeat {{= (repeatSet ? 'colored-icon' : 'faded-icon')}}" aria-hidden="true"
+							id="repeat-icon-{{- entryId}}"></i>
 				</button>
 			{{ } }}
 		</div>

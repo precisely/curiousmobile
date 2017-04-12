@@ -1890,7 +1890,8 @@ list-style-type: none;
 }
 
 .sprint-details button, .sprint-activity button, .people-detail button,
-.profile-detail button, .edit-people-detail button, .create-entry-button, .submit-post, #share-chart, .discussion-multi-select button {
+		.profile-detail button, .edit-people-detail button, .create-entry-button, .submit-post, #share-chart,
+		.discussion-multi-select button, .remove-repeat-button {
 	background-color: transparent;
 	border: 1px solid #979797;
 	border-radius: 2px;
@@ -3843,6 +3844,11 @@ input.cropit-image-zoom-input {
 	box-shadow: 0px 2px 0px #9E9E9E;
 }
 
+.input-widget-view-drawer-content .input-widget-surface {
+	box-shadow: 0px 1px 0px #9E9E9E;
+	margin: 0px 5px;
+}
+
 .tag-time-row {
 	display: inline-flex;
 	justify-content: space-between;
@@ -3858,7 +3864,7 @@ input.cropit-image-zoom-input {
 	border-width: 1px;
 	border-style: solid;
 	color: #F88142;
-	font-size: 15px;
+	font-size: 11px;
 	padding-top: 3px;
 }
 
@@ -4016,7 +4022,7 @@ input.cropit-image-zoom-input {
 	background-color: #dc6059;
 	font-size: 15px;
 	color: white;
-	box-shadow: 0px 2px 0px #9E9E9E;
+	box-shadow: 0px 1px 0px #9E9E9E;
 	display: flex;
 }
 
@@ -4058,10 +4064,6 @@ input.cropit-image-zoom-input {
 .input-widget-view-drawer-content .input-circle {
 	width: 20px;
 	height: 20px;
-}
-
-.input-widget-view-drawer-content .input-widget-surface {
-	margin: 0px 15px;
 }
 
 .level-input-widget img {
@@ -4108,6 +4110,15 @@ input.cropit-image-zoom-input {
 	border-color: #9E9E9E !important;
 }
 
+.ghost-entry .input-circle {
+	-webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
+	filter: grayscale(100%);
+}
+
+.ghost-entry .fill-circle {
+	background-color: #9E9E9E !important;
+}
+
 .entry-help-text {
 	font-size: 9px !important;
 	text-transform: uppercase;
@@ -4117,6 +4128,11 @@ input.cropit-image-zoom-input {
 
 .time-remind-repeat-box {
 	display: inline-flex;
+}
+
+.remove-repeat-button {
+	color: rgb(241, 74, 66) !important;
+	border: 1px solid rgb(241, 74, 66) !important;
 }
 
 /*- - - - - - - - - - - - - - - - - - Range/Slider Input's CSS - - - - - - - - - - - - - - - - - - - - - - - - - - - */

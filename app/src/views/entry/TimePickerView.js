@@ -21,8 +21,21 @@ define(function(require, exports, module) {
 	TimePickerView.prototype = Object.create(EditEntryOverlayView.prototype);
 	TimePickerView.prototype.constructor = TimePickerView;
 
+	TimePickerView.prototype.getTimeSettings = function() {
+		var timeString = this.parentInputWidget.entry.getTimeString();
+
+		var hoursMinutesPlaceValues = timeString.split(':');
+		var hoursPlaceValue = hoursMinutesPlaceValues[0];
+		var minutesPlaceValueWithAmPm = hoursMinutesPlaceValues[1];
+
+		var minutesPlaceValue = minutesPlaceValueWithAmPm.substr(0, 2);
+		var ampm = minutesPlaceValueWithAmPm.substr(2);
+
+		return {hh: hoursPlaceValue, mm: minutesPlaceValue, ampm: ampm.toUpperCase()};
+	};
+
 	TimePickerView.prototype.addTimePickerSurface = function() {
-		var timeObject = this.parentInputWidget.getTimeForTimePickerView();
+		var timeObject = this.getTimeSettings();
 
 		var entryId = this.parentInputWidget.getIdForDOMElement();
 		this.AM_PM_BOX = 'ampm-box-' + entryId;
@@ -60,15 +73,19 @@ define(function(require, exports, module) {
 		var mmText = document.getElementById(this.MM_INPUT_ID).value;
 		var ampmText = document.getElementById(this.AM_PM_BOX).innerHTML;
 
-		return (hhText + ':' + mmText + ampmText);
+		return (hhText + ':' + mmText + ampmText.toLowerCase());
 	};
 
 	TimePickerView.prototype.resetTimePicker = function() {
-		var timeObject = this.parentInputWidget.getTimeForTimePickerView();
+		var timeObject = this.getTimeSettings();
 
 		document.getElementById(this.HH_INPUT_ID).value = timeObject.hh; 
 		document.getElementById(this.MM_INPUT_ID).value = timeObject.mm;
 		document.getElementById(this.AM_PM_BOX).innerHTML = timeObject.ampm;
+	};
+
+	TimePickerView.prototype.getHeaderLabel = function() {
+		return 'Update Time';
 	};
 
 	module.exports = TimePickerView;

@@ -18,6 +18,7 @@ define(function(require, exports, module) {
 		this.dateGridOpen = false;
 		this.addDateGrid();
 		this.addRepeatSurface();
+		this.createRemoveRepeatButton();
 	}
 
 	SetRepeatTypeAndDateView.prototype = Object.create(EditEntryOverlayView.prototype);
@@ -40,8 +41,8 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	SetRepeatTypeAndDateView.prototype.addRepeatSurface = function() {
-		this.initialRepeatViewState = {
+	SetRepeatTypeAndDateView.prototype.getEntryRepeatSettings = function() {
+		var entryRepeatSettings = {
 			repeatEndDate: this.parentInputWidget.repeatEndDate ? this.getEndDateDisplayText() : '',
 			isDaily: this.parentInputWidget.entry.isDaily() ? 'checked' : '',
 			isWeekly: this.parentInputWidget.entry.isWeekly() ? 'checked' : '',
@@ -49,8 +50,12 @@ define(function(require, exports, module) {
 			confirmEachRepeat: this.parentInputWidget.entry.isGhost() ? 'checked' : ''
 		};
 
+		return entryRepeatSettings;
+	};
+
+	SetRepeatTypeAndDateView.prototype.addRepeatSurface = function() {
 		this.repeatModifierSurface = new Surface({
-			content: _.template(repeatModifierTemplate, this.initialRepeatViewState, templateSettings),
+			content: _.template(repeatModifierTemplate, this.getEntryRepeatSettings(), templateSettings),
 			size: [undefined, undefined],
 			properties: {
 				backgroundColor: 'transparent',
@@ -60,8 +65,9 @@ define(function(require, exports, module) {
 
 		this.repeatModifierSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				var classList = e.srcElement.parentElement.classList;
-				if (_.contains(classList, 'date-picker-field')) {
+				var parentElement = e.srcElement.parentElement;
+
+				if (_.contains(parentElement.classList, 'date-picker-field')) {
 					if (typeof cordova !== 'undefined') {
 						cordova.plugins.Keyboard.close();
 					}
@@ -96,6 +102,39 @@ define(function(require, exports, module) {
 		this.overlayContainerSurface.add(this.repeatModifierSurface);
 	};
 
+	SetRepeatTypeAndDateView.prototype.createRemoveRepeatButton = function() {
+		this.removeRepeatButton = new Surface({
+			content: '<button type="button" class="full-width-button remove-repeat-button">REMOVE REPEAT</button>',
+			size: [undefined, true]
+		});
+
+		this.removeRepeatButton.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				if (_.contains(e.srcElement.classList, 'remove-repeat-button')) {
+					var removeRepeat = true;
+					this._eventOutput.emit('submit', true);
+				}
+			}
+		}.bind(this));
+
+		this.removeButtonModifier = new StateModifier({
+			size: [App.width - 60, undefined],
+			transform: Transform.translate(30, 320, 20)
+		});
+
+		this.removeButtonRenderController = new RenderController();
+
+		this.overlayContainerSurface.add(this.removeButtonModifier).add(this.removeButtonRenderController);
+	};
+
+	SetRepeatTypeAndDateView.prototype.showRemoveRepeatButton = function() {
+		this.removeButtonRenderController.show(this.removeRepeatButton);
+	};
+
+	SetRepeatTypeAndDateView.prototype.hideRemoveRepeatButton = function() {
+		this.removeButtonRenderController.hide();
+	};
+
 	SetRepeatTypeAndDateView.prototype.setSelectedDate = function(date) {
 		if (!date) {
 			document.getElementsByClassName('choose-date-input')[0].value = '';
@@ -124,14 +163,22 @@ define(function(require, exports, module) {
 	};
 
 	SetRepeatTypeAndDateView.prototype.reset = function() {
-		document.getElementsByClassName('choose-date-input')[0].value = this.initialRepeatViewState.repeatEndDate;
+		this.parentInputWidget.setRepeatEndDate();
 
-		document.getElementById('daily').checked = this.initialRepeatViewState.isDaily ? true : false;
-		document.getElementById('weekly').checked = this.initialRepeatViewState.isWeekly ? true : false;
-		document.getElementById('monthly').checked = this.initialRepeatViewState.isMonthly ? true : false;
+		var entryRepeatSettings = this.getEntryRepeatSettings();
 
-		document.getElementById('confirm-each-repeat').checked = this.initialRepeatViewState.confirmEachRepeat ? true 
+		document.getElementsByClassName('choose-date-input')[0].value = entryRepeatSettings.repeatEndDate;
+
+		document.getElementById('daily').checked = entryRepeatSettings.isDaily ? true : false;
+		document.getElementById('weekly').checked = entryRepeatSettings.isWeekly ? true : false;
+		document.getElementById('monthly').checked = entryRepeatSettings.isMonthly ? true : false;
+
+		document.getElementById('confirm-each-repeat').checked = entryRepeatSettings.confirmEachRepeat ? true 
 				: false;
+	};
+
+	SetRepeatTypeAndDateView.prototype.getHeaderLabel = function() {
+		return 'Set Repeat Interval';
 	};
 
 	module.exports = SetRepeatTypeAndDateView;
