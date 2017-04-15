@@ -173,7 +173,7 @@ define(function(require, exports, module) {
 	};
 
 	TrackView.prototype.showSprintMenuPopover = function() {
-		if (!store.get('trackathonVisited') && this.currentListView.draggableList.length > 0) {
+		if (!store.get('trackathonVisited') && this.currentListView.trackEntryViews.length > 0) {
 			App.showPopover('#TrackView-sprint-menu', {key: 'sprintMenu', container: '#popover-surface'});
 			if (document.getElementById('TrackView-sprint-menu')) {
 				document.getElementById('TrackView-sprint-menu').classList.add('active');

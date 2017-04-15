@@ -3857,7 +3857,7 @@ input.cropit-image-zoom-input {
 }
 
 .time-display-box {
-	margin-right: 6px;
+	margin-right: 8px;
 	border-radius: 5px;
 	background-color: inherit;
 	border-color: #F88142;
@@ -3975,21 +3975,28 @@ input.cropit-image-zoom-input {
 	justify-content: flex-end;
 }
 
-.slider-input-row {
-	display: inline-flex;
-	align-items: center;
-}
-
 .slider-input {
-	margin-right: 40px;
+	padding-right: 40px;
 	display: inline-flex;
 	flex-direction: column;
 	width: 100%;
+	padding-top: 20px;
+	padding-bottom: 20px;
 }
 
-.slider-input input[type=range] {
+.slider-input-row {
+	display: inline-flex;
+	justify-content: space-between;
+	margin: 0px 5px;
+	align-items: center;
 	width: 100%;
-	background-color: #9399A5;
+	padding-left: 10px;
+	padding-right: 10px;
+}
+
+.range-input-view {
+	display: flex;
+	z-index: 10;
 }
 
 .slider-input-value-box {
@@ -4010,12 +4017,34 @@ input.cropit-image-zoom-input {
 .slider-track {
 	display: inline-flex;
 	justify-content: space-between;
+	width: 100%;
 }
 
 .slider-track-unit {
 	background: #858585;
 	height: 5px;
 	width: 2px;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.slider-track-unit button {
+	padding: 10px;
+	background: transparent;
+}
+
+.slider-runnable-track {
+	background: #9399A5;
+	height: 1px;
+	width: 100%;
+}
+
+.range-input-view-slider-thumb {
+	box-shadow: 0px 3px 0px #9E9E9E;
+	border-radius: 50%;
+	background: #F88142;
+	z-index: 12;
 }
 
 .delete-surface {
@@ -4130,63 +4159,35 @@ input.cropit-image-zoom-input {
 	display: inline-flex;
 }
 
+.time-remind-repeat-box button {
+	padding: 3px 8px;
+}
+
 .remove-repeat-button {
 	color: rgb(241, 74, 66) !important;
 	border: 1px solid rgb(241, 74, 66) !important;
 }
 
 /*- - - - - - - - - - - - - - - - - - Range/Slider Input's CSS - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-input[type=range] {
-	-webkit-appearance: none;
-	width: 100%;
+
+.rv-0 {
+	background: -webkit-linear-gradient(left, #9399A5, #9399A5);
 }
 
-input[type=range]:focus {
-	outline: none;
+.rv-1 {
+	background: -webkit-linear-gradient(left, #F88142, #F88142 25%, #9399A5 25%);
 }
 
-input[type=range]::-webkit-slider-runnable-track {
-	width: 100%;
-	height: 1px;
-	cursor: pointer;
-	animate: 0.2s;
+.rv-2 {
+	background: -webkit-linear-gradient(left, #F88142, #F88142 50%, #9399A5 50%);
 }
 
-input[type=range].rv-0::-webkit-slider-runnable-track {
-	background: -webkit-linear-gradient(left, #F88142, #F88142 0%, transparent 0%, transparent 100%);
+.rv-3 {
+	background: -webkit-linear-gradient(left, #F88142, #F88142 75%, #9399A5 75%);
 }
 
-input[type=range].rv-1::-webkit-slider-runnable-track {
-	background: -webkit-linear-gradient(left, #F88142, #F88142 25%, transparent 25%, transparent 100%);
-}
-
-input[type=range].rv-2::-webkit-slider-runnable-track {
-	background: -webkit-linear-gradient(left, #F88142, #F88142 50%, transparent 50%, transparent 100%);
-}
-
-input[type=range].rv-3::-webkit-slider-runnable-track {
-	background: -webkit-linear-gradient(left, #F88142, #F88142 75%, transparent 75%, transparent 100%);
-}
-
-input[type=range].rv-4::-webkit-slider-runnable-track {
-	background: -webkit-linear-gradient(left, #F88142, #F88142 100%, transparent 100%, transparent 100%);
-}
-
-input[type=range]::-webkit-slider-thumb {
-	box-shadow: 0px 3px 0px #9E9E9E;
-	height: 26px;
-	width: 26px;
-	border-radius: 50%;
-	background: #F88142;
-	cursor: pointer;
-	-webkit-appearance: none;
-	margin-top: -17px;
-}
-
-.input-widget-view-drawer-content input[type=range]::-webkit-slider-thumb {
-	height: 20px;
-	width: 20px;
-	margin-top: -14px;
+.rv-4 {
+	background: -webkit-linear-gradient(left, #F88142, #F88142 100%, #F88142 100%);
 }
 
 /*- - - - - - - - - - - - - - - - - - End Range/Slider Input's CSS - - - - - - - - - - - - - - - - - - - - - - - - - */

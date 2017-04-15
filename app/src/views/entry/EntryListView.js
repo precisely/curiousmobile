@@ -104,7 +104,7 @@ define(function(require, exports, module) {
 		} else {
 			trackEntryView = new InputWidgetGroupView({
 				entryDetails: entries, // An object containing grouped entries with tagDetails.
-				scrollView: this.scrollView
+				entryListView: this
 			});
 
 			this.inputWidgetGroupViewList.push(trackEntryView);
@@ -157,11 +157,30 @@ define(function(require, exports, module) {
 		this.scrollView.trans = new Transitionable(0);
 
 		// Vertical offset this.scrollView will start load at
-		this.scrollView.refreshOffset = 80;
+		this.scrollView.refreshOffset = 120;
 
 		// Reset scroller to default behavior
-		this.scrollView.reset = function(){
+		this.scrollView.reset = function() {
 			this.scrollView._scroller.positionFrom(this.scrollView.getPosition.bind(this.scrollView));
+		}.bind(this);
+
+		// Replicating the goToPage function as the setPosition function doesn't produce the same spring effect.
+		this.scrollView.goToPosition = function(position) {
+			this.scrollView._pageSpringPosition = position;
+
+			var springOptions = {
+				anchor: [this.scrollView._pageSpringPosition, 0, 0],
+				period: this.scrollView.options.pagePeriod,
+				dampingRatio: this.scrollView.options.pageDamp
+			};
+
+			this.scrollView.spring.setOptions(springOptions);
+
+			this.scrollView._springState = 0; // Setting it to SpringStates.NONE.
+			this.scrollView._physicsEngine.detachAll();
+
+			this.scrollView._springState = 2; // Setting spring state to SpringStates.PAGE
+			this.scrollView._physicsEngine.attach([this.scrollView.spring], this.scrollView._particle);
 		}.bind(this);
 
 		this.scrollView.sync.on('start',function(){
@@ -290,8 +309,9 @@ define(function(require, exports, module) {
 			this.addEntry(this.deviceEntries[device], {areDeviceEntries: true});
 		}
 
-		this.scrollView.sequenceFrom(this.trackEntryViews);
 		this.scrollView.setPosition(0);
+		this.scrollView.goToPage(0);
+		this.scrollView.sequenceFrom(this.trackEntryViews);
 		this.renderController.show(this.scrollWrapperSurface, {duration: 1000}, function() {
 			this.handleGlowEntry(callback);
 		}.bind(this));
@@ -327,12 +347,14 @@ define(function(require, exports, module) {
 		if (this.tagIdOfInputWidgetGroupViewToGlow) {
 			var inputWidgetGroupView = this.getInputWidgetGroupViewForTagId(this.tagIdOfInputWidgetGroupViewToGlow);
 			if (inputWidgetGroupView) {
-				var indexOfView = this.trackEntryViews.indexOf(inputWidgetGroupView);
+				var indexOfTrackEntryView = this.trackEntryViews.indexOf(inputWidgetGroupView);
 
-				if (indexOfView === 0) {
-					this.scrollView.setPosition(indexOfView);
-				} else {
-					this.scrollView.goToPage(indexOfView);
+				if (indexOfTrackEntryView >= 0) {
+					if (indexOfTrackEntryView === 0) {
+						this.scrollView.setPosition(indexOfTrackEntryView);
+					}
+
+					this.scrollView.goToPage(indexOfTrackEntryView);
 				}
 
 				inputWidgetGroupView.drawerSurface.glow();
@@ -344,14 +366,6 @@ define(function(require, exports, module) {
 		if (this.entryIdOfInputWidgetViewToGlow) {
 			var inputWidgetGroupView = this.getInputWidgetGroupViewForEntryId(this.entryIdOfInputWidgetViewToGlow);
 			if (inputWidgetGroupView) {
-				var indexOfView = this.trackEntryViews.indexOf(inputWidgetGroupView);
-
-				if (indexOfView === 0) {
-					this.scrollView.setPosition(indexOfView);
-				} else {
-					this.scrollView.goToPage(indexOfView);
-				}
-
 				inputWidgetGroupView.handleGlowEntry(this.entryIdOfInputWidgetViewToGlow);
 			}
 

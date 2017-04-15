@@ -22,7 +22,7 @@ define(function(require, exports, module) {
 	};
 
 	EntryDraggableNode.prototype.init = function() {
-		var draggable = new Draggable({
+		this.draggable = new Draggable({
 			xRange: [-100, 0],
 			yRange: [0, 0],
 		});
@@ -36,14 +36,14 @@ define(function(require, exports, module) {
 
 		var touchSync = new TouchSync();
 		touchSync.on('end', function() {
-			var movementX = Math.abs(draggable.getPosition()[0]);
+			var xPosition = Math.abs(this.draggable.getPosition()[0]);
 
-			draggable.setPosition((movementX < 50 ? [0, 0] : [-100, 0]), snapTransition);
-		});
+			this.draggable.setPosition((xPosition < 50 ? [0, 0] : [-100, 0]), snapTransition);
+		}.bind(this));
 
-		this.add(draggable).add(this.draggableSurface);
+		this.add(this.draggable).add(this.draggableSurface);
 		this.draggableSurface.pipe(touchSync);
-		this.draggableSurface.pipe(draggable);
+		this.draggableSurface.pipe(this.draggable);
 	};
 
 	EntryDraggableNode.prototype.getSize = function() {

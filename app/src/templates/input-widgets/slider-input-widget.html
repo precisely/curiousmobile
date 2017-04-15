@@ -1,14 +1,23 @@
 <div class="slider-input-row slider-input-widget">
-	<div class="slider-input">
-		<div class="slider-track">
-			<div class="slider-track-unit"></div>
-			<div class="slider-track-unit"></div>
-			<div class="slider-track-unit"></div>
-			<div class="slider-track-unit"></div>
-			<div class="slider-track-unit"></div>
+	<div class="slider-input"> 
+		<div class="slider-track"> 
+			<div class="slider-track-unit">
+				<button id="position0-{{-entryId}}"></button>
+			</div>
+			<div class="slider-track-unit">
+				<button id="position1-{{-entryId}}"></button>
+			</div>
+			<div class="slider-track-unit">
+				<button id="position2-{{-entryId}}"></button>
+			</div>
+			<div class="slider-track-unit">
+				<button id="position3-{{-entryId}}"></button>
+			</div>
+			<div class="slider-track-unit">
+				<button id="position4-{{-entryId}}"></button>
+			</div>
 		</div>
-		<input type="range" step="1" min="0" max="4" defaultValue="0" value="{{- value}}" 
-				id="slider-input-element-{{- entryId}}" class="rv-{{- value}}">
+		<div class="slider-runnable-track {{-rvClass}}" id="slider-runnable-track-{{-entryId}}"></div>
 	</div>
-	<div class="slider-input-value-box" id="slider-value-{{- entryId}}">{{- value}}</div>
+	<div class="slider-input-value-box" id="slider-value-{{-entryId}}">{{- position}}</div>
 </div>

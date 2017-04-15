@@ -309,7 +309,7 @@ define(function(require, exports, module) {
 
 		this.add(this.deleteSurfaceModifier).add(this.deleteSurface);
 
-		var entryDraggableNode = new EntryDraggableNode({
+		this.entryDraggableNode = new EntryDraggableNode({
 			draggableSurface: this.inputWidgetSurface,
 			height: this.options.widgetHeight
 		});
@@ -317,7 +317,7 @@ define(function(require, exports, module) {
 		var inputSurfaceModifier = new StateModifier({
 			transform: Transform.translate(0, 0, 5)
 		});
-		this.add(inputSurfaceModifier).add(entryDraggableNode);
+		this.add(inputSurfaceModifier).add(this.entryDraggableNode);
 	};
 
 	InputWidgetView.prototype.addComponents = function() {
@@ -360,11 +360,11 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	InputWidgetView.prototype.updateEntryValue = function(element) {
+	InputWidgetView.prototype.updateEntryValue = function(element, callback) {
 		var entryText = this.getEntryTextForSelectedInputElement(element);
 
 		this.updateEntry(entryText, function() {
-			this.handleNewInputSelection(element);
+			this.handleNewInputSelection(element, callback);
 		}.bind(this));
 	};
 
@@ -384,7 +384,7 @@ define(function(require, exports, module) {
 	InputWidgetView.prototype.getEntryTextForSelectedInputElement = function(element) {
 		var amount = this.getAmountValueFromElementPosition(element);
 
-		if (!amount || !(amount > 0)) {
+		if (!Utils.isValidNumber(amount)) {
 			return;
 		}
 
@@ -613,7 +613,7 @@ define(function(require, exports, module) {
 
 	InputWidgetView.prototype.getAmountValueFromElementPosition = function(element) {
 		if (!element) {
-			return 0;
+			return;
 		}
 
 		var elementId = element.id;
@@ -621,7 +621,15 @@ define(function(require, exports, module) {
 
 		var position = this.positionMap[elementId] || this.positionMap[parentElementId];
 
-		return (position ? (position * this.valueOfOneInputElement) : 0);
+		return this.getAmountForPosition(position);
+	};
+
+	InputWidgetView.prototype.getAmountForPosition = function(position) {
+		if (!Utils.isValidNumber(position)) {
+			return;
+		}
+
+		return (position * this.valueOfOneInputElement);
 	};
 
 	module.exports = InputWidgetView;

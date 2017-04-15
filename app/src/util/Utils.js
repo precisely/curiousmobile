@@ -148,6 +148,10 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 			return true;
 		};
 
+		Utils.isValidNumber = function(number) {
+			return (!isNaN(number) && number !== '');
+		};
+
 		Utils.dateToTime = function(date) {
 			if (typeof(date) == 'string') {
 				return Date.parse(date);

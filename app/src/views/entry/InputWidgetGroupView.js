@@ -43,7 +43,8 @@ define(function(require, exports, module) {
 		this.tagInputType = new TagInputType(tagDetails.tagId, tagDetails.description, tagDetails.inputType,
 				tagDetails.min, tagDetails.max, tagDetails.noOfLevels, tagDetails.defaultUnit, tagDetails.lastUnits);
 
-		this.scrollView = options.scrollView;
+		this.parentEntryListView = options.entryListView;
+		this.scrollView = this.parentEntryListView.scrollView;
 
 		this.inputWidgetViewList = [];
 		this.inputWidgetViewClass = this.getInputWidgetView();
@@ -143,17 +144,20 @@ define(function(require, exports, module) {
 	};
 
 	InputWidgetGroupView.prototype.showDrawer = function() {
-		this.drawerController.show(this.drawerContainerSurface);
 		this.drawerSurface.inputWidgetSurface.addClass('input-widget-view-selected');
-		this.resizeDrawerContainer();
+		this.drawerController.show(this.drawerContainerSurface, {duration: 50}, function() {
+			this.resizeDrawerContainer(this.updateScrollPosition.bind(this));
+		}.bind(this));
 
 		this.collapsed = !this.collapsed;
 	};
 
-	InputWidgetGroupView.prototype.resizeDrawerContainer = function() {
+	InputWidgetGroupView.prototype.resizeDrawerContainer = function(callback) {
 		this.drawerContainerSurface.setSize([App.width - 14, this.getDrawerContainerSurfaceHeight()]);
 		this.drawerSurfaceModifier.setTransform(
-			Transform.translate(0, this.getDrawerContainerSurfaceHeight(), 0)
+			Transform.translate(0, this.getDrawerContainerSurfaceHeight(), 0),
+			{duration: 0},
+			callback
 		);
 	};
 
@@ -167,9 +171,28 @@ define(function(require, exports, module) {
 			Transform.translate(0, 0, 0)
 		);
 
-		this.drawerController.hide();
+		this.drawerController.hide({duration: 50}, function() {
+			this.scrollView.goToPage(this.currentScrollViewIndex);
+			this.scrollView.goToPosition(this.currentScrollViewPosition);
+		}.bind(this));
 
 		this.collapsed = !this.collapsed;
+	};
+
+	InputWidgetGroupView.prototype.updateScrollPosition = function() {
+		var indexOfView = this.parentEntryListView.trackEntryViews.indexOf(this);
+
+		this.currentScrollViewIndex = this.scrollView.getCurrentIndex();
+		this.currentScrollViewPosition = this.scrollView.getPosition();
+
+		this.scrollView.goToPage(indexOfView);
+
+		var position= this.currentScrollViewPosition;
+
+		if (this.inputWidgetViewList.length > 3)  {
+			position += (this.options.inputWidgetHeight * (this.inputWidgetViewList.length - 2));
+			this.scrollView.goToPosition(position);
+		}
 	};
 
 	InputWidgetGroupView.prototype.select = function() {
