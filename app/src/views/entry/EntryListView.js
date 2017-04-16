@@ -164,25 +164,6 @@ define(function(require, exports, module) {
 			this.scrollView._scroller.positionFrom(this.scrollView.getPosition.bind(this.scrollView));
 		}.bind(this);
 
-		// Replicating the goToPage function as the setPosition function doesn't produce the same spring effect.
-		this.scrollView.goToPosition = function(position) {
-			this.scrollView._pageSpringPosition = position;
-
-			var springOptions = {
-				anchor: [this.scrollView._pageSpringPosition, 0, 0],
-				period: this.scrollView.options.pagePeriod,
-				dampingRatio: this.scrollView.options.pageDamp
-			};
-
-			this.scrollView.spring.setOptions(springOptions);
-
-			this.scrollView._springState = 0; // Setting it to SpringStates.NONE.
-			this.scrollView._physicsEngine.detachAll();
-
-			this.scrollView._springState = 2; // Setting spring state to SpringStates.PAGE
-			this.scrollView._physicsEngine.attach([this.scrollView.spring], this.scrollView._particle);
-		}.bind(this);
-
 		this.scrollView.sync.on('start',function(){
 
 			this.scrollView.trans.halt();
