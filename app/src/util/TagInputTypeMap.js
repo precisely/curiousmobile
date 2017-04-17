@@ -20,6 +20,13 @@ define( function(require, exports, module) {
 		return tagInputType;
 	};
 
+    TagInputTypeMap.prototype.addAll = function(tagInputTypeMap) {
+        _.each(tagInputTypeMap, function(tagInputType) {
+            this.add(tagInputType.tagId, tagInputType.description, tagInputType.inputType, tagInputType.min,
+                tagInputType.max, tagInputType.noOfLevels, tagInputType.defaultUnit, tagInputType.lastUnits);
+        }.bind(this));
+    };
+
 	TagInputTypeMap.prototype.set = function(tagId, description, inputType, min, max, noOfLevels,
 			defaultUnit, lastUnits) {
 		var tagInputType = this.map[description];
