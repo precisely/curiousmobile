@@ -96,11 +96,7 @@ define(function(require, exports, module) {
 		this.repeatModifierSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				var classList = e.srcElement.parentElement.classList;
-				if (_.contains(classList, 'entry-checkbox') ||
-					_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {
-					var repeatEachCheckbox = document.getElementById('confirm-each-repeat');
-					repeatEachCheckbox.checked = !repeatEachCheckbox.checked;
-				} else if (_.contains(classList, 'date-picker-field')) {
+				if (_.contains(classList, 'date-picker-field')) {
 					if (typeof cordova !== 'undefined') {
 						cordova.plugins.Keyboard.close();
 					}
@@ -132,9 +128,8 @@ define(function(require, exports, module) {
 			console.log("New Entry - TrackView event");
 			this.resetRepeatModifierForm();
 			this.renderController.hide();
-			var currentListView = this.trackView.currentListView;
-			window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],resp.tagStats[3], resp.tagStats[4])
-			this.trackView.initContextMenuOptions();
+			window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],resp.tagStats[3], resp.tagStats[4]);
+			this.trackView.killTrackEntryForm();
 			this.trackView.preShow({data: resp, fromServer: true});
 		}.bind(this));
 
@@ -142,23 +137,14 @@ define(function(require, exports, module) {
 			console.log('EntryListView: Updating an entry ');
 			this.resetRepeatModifierForm();
 			this.renderController.hide();
-			var currentListView = this.trackView.currentListView;
 			if (resp.tagStats[0]) {
 				window.autocompleteCache.update(resp.tagStats[0][0], resp.tagStats[0][1], resp.tagStats[0][2],resp.tagStats[0][3], resp.tagStats[0][4])
 			}
 			if (resp.tagStats[1]) {
 				window.autocompleteCache.update(resp.tagStats[1][0], resp.tagStats[1][1], resp.tagStats[1][2],resp.tagStats[1][3], resp.tagStats[1][4])
 			}
-			this.trackView.initContextMenuOptions();
+			this.trackView.killTrackEntryForm();
 			this.trackView.preShow({data: resp, fromServer: true});
-		}.bind(this));
-
-		this.on('delete-entry', function(resp) {
-			this.trackView.killEntryForm();
-			if (resp && resp.fail) {
-				u.showAlert('Could not delete entry');
-			}
-			this.trackView.initContextMenuOptions();
 		}.bind(this));
 	};
 
@@ -338,7 +324,6 @@ define(function(require, exports, module) {
 
 
 	TrackEntryFormView.prototype.submit = function(e, directlyCreateEntry) {
-		this.trackView.hideBookmarkShimSurface();
 		this.autoCompleteView.hide();
 		$('#remind-surface').popover('destroy');
 		if (typeof cordova !== 'undefined') {
@@ -390,7 +375,7 @@ define(function(require, exports, module) {
 			if (repeatEnd) {
 				newEntry.set("repeatEnd", repeatEnd);
 			}
-			this.trackView.killEntryForm(true);
+			this.trackView.killTrackEntryForm();
 			newEntry.create(function(resp) {
 				if (this.setRepeat || this.setRemind || this.setPinned) {
 					window.App.collectionCache.clear();
@@ -402,7 +387,7 @@ define(function(require, exports, module) {
 		} else if ((this['originalText-entry-description'] == newText) && (entry.get("repeatType") == repeatTypeId) && (entry.get("repeatEnd") == repeatEnd)) {
 			console.log("TrackEntryFormView: No changes made");
 			this.blur();
-			this.trackView.killEntryForm(null);
+			this.trackView.killTrackEntryForm();
 			this.trackView._eventOutput.emit('done-edit-bookmarks');
 			return;
 		} else {
@@ -435,7 +420,7 @@ define(function(require, exports, module) {
 
 	TrackEntryFormView.prototype.saveEntry = function(allFuture) {
 		var entry = this.entry;
-		this.trackView.killEntryForm(true);
+		this.trackView.killTrackEntryForm();
 		entry.save(allFuture, function(resp) {
 			this._eventOutput.emit('update-entry', resp);
 			this.blur();
@@ -444,7 +429,7 @@ define(function(require, exports, module) {
 
 	TrackEntryFormView.prototype.createEntry = function() {
 		var entry = this.entry;
-		this.trackView.killEntryForm(true);
+		this.trackView.killTrackEntryForm();
 		entry.save(function(resp) {
 			this.entry = new Entry(entry);
 			this._eventOutput.emit('new-entry', resp);
@@ -454,6 +439,15 @@ define(function(require, exports, module) {
 	TrackEntryFormView.prototype.hasFuture = function() {
 		var entry = this.entry;
 		return ((entry.isRepeat() && !entry.isRemind()) || entry.isGhost()) && !entry.isTodayOrLater();
+	};
+
+	TrackEntryFormView.prototype.resetTrackEntryFormView = function() {
+		this.dateGridRenderController.hide();
+		this.renderController.hide();
+		this.buttonsRenderController.hide();
+		this.submitButtonRenderController.hide();
+		this.deleteButtonRenderController.hide();
+		this.batchMoveUpModifiers();
 	};
 
 	App.pages[TrackEntryFormView.name] = TrackEntryFormView;

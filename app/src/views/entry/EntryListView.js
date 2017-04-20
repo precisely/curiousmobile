@@ -34,12 +34,7 @@ define(function(require, exports, module) {
 		this.entries = collection;
 		this.recentlyUsedTags = recentlyUsedTags || [];
 
-		this.trackEntryViews = [];
-		this.deviceEntries = [];
-		this.tagGroupEntries = [];
-
-		this.deviceDataGroupViewList = [];
-		this.inputWidgetGroupViewList = [];
+		this.initializeEntryViewList();
 
 		this.renderController = new RenderController();
 		this.createList(this.entries, glowEntry, callback);
@@ -53,6 +48,23 @@ define(function(require, exports, module) {
 		selectionPadding: 24,
 	};
 
+	EntryListView.prototype.initializeEntryViewList = function() {
+		// List of all views added to this EntryListView.
+		this.trackEntryViews = [];
+
+		// For legacy entries and its view(TrackEntryView) list.
+		this.legacyEntries = [];
+		this.legacyEntryViewList = [];
+
+		// For device entries and its view(DeviceDataGroupView) list.
+		this.deviceEntries = [];
+		this.deviceDataGroupViewList = [];
+
+		// For input widget entries and its view(InputWidgetGroupView) list.
+		this.inputWidgetEntries = [];
+		this.inputWidgetGroupViewList = [];
+	};
+
 	EntryListView.prototype.createList = function(entries, glowEntry, callback) {
 		var backgroundSurface = new Surface({
 			classes: ['entry-list-background'],
@@ -64,7 +76,7 @@ define(function(require, exports, module) {
 
 		var backgroundSurfaceModifier = new StateModifier({
 			transform: Transform.translate(0, 5 ,0)
-		}); 
+		});
 		this.add(backgroundSurfaceModifier).add(backgroundSurface);
 
 		backgroundSurface.pipe(this._eventOutput);
@@ -92,22 +104,18 @@ define(function(require, exports, module) {
 
 			this.deviceDataGroupViewList.push(trackEntryView);
 
-			trackEntryView.on('delete-device-entry', function() {
-				var indexOfTrackEntryView = this.trackEntryViews.indexOf(trackEntryView);
-
-				if ((indexOfTrackEntryView > -1) && trackEntryView.children.length === 0) {
-					this.trackEntryViews.splice(indexOfTrackEntryView, 1);
-				}
-
-				this.scrollView.sequenceFrom(this.trackEntryViews);
-			}.bind(this));
-		} else {
+			trackEntryView.on('delete-device-entry', this.deleteLegacyEntryView.bind(this, trackEntryView));
+		} else if (entryInfo.areInputWidgetEntries) {
 			trackEntryView = new InputWidgetGroupView({
 				entryDetails: entries, // An object containing grouped entries with tagDetails.
 				entryListView: this
 			});
 
 			this.inputWidgetGroupViewList.push(trackEntryView);
+		} else if (entryInfo.isLegacyEntry) {
+			trackEntryView = new TrackEntryView({entry: entries});
+			trackEntryView.on('delete-entry', this.deleteLegacyEntryView.bind(this, trackEntryView));
+			this.legacyEntryViewList.push(trackEntryView);
 		}
 
 		trackEntryView.pipe(this.scrollView);
@@ -241,26 +249,13 @@ define(function(require, exports, module) {
 			this.entries.set(entries);
 		}
 
-		entries = this.entries;
+		entries = new EntryCollection(this.entries.models);
 
 		if (recentlyUsedTags instanceof Array) {
 			this.recentlyUsedTags = recentlyUsedTags;
 		}
 
-		this.trackEntryViews = [];
-		this.deviceEntries = [];
-		this.tagGroupEntries = [];
-		this.deviceDataGroupViewList = [];
-		this.inputWidgetGroupViewList = [];
-
-		// Filter out the device data
-		entries.forEach(function(entry) {
-			if (entry.get('sourceName')) {
-				var source = entry.get('sourceName');
-				this.deviceEntries[source] = this.deviceEntries[source] || [];
-				this.deviceEntries[source].push(entry);
-			}
-		}.bind(this));
+		this.initializeEntryViewList();
 
 		// Sorting Alphabetically in ascending order.
 		this.recentlyUsedTags.sort(function(a, b) {
@@ -273,17 +268,37 @@ define(function(require, exports, module) {
 			}
 		});
 
+		// Adding InputWidget entries.
 		this.recentlyUsedTags.forEach(function(tagDetails) {
 			var tagId = tagDetails.tagId;
-			this.tagGroupEntries[tagId] = this.tagGroupEntries[tagId] || [];
-
+			this.inputWidgetEntries[tagId] = this.inputWidgetEntries[tagId] || [];
 			entries.forEach(function(entry) {
-				if (entry.get('baseTagId') === tagId && !entry.get('sourceName') && !entry.isContinuous()) {
-					this.tagGroupEntries[tagId].push(entry);
+				if (entry.get('tagId') === tagId && !entry.isContinuous()) {
+					this.inputWidgetEntries[tagId].push(entry);
 				}
 			}.bind(this));
+			entries.remove(this.inputWidgetEntries[tagId]);
 
-			this.addEntry({entries: this.tagGroupEntries[tagId], tagDetails: tagDetails}, {areDeviceEntries: false});
+			this.addEntry({entries: this.inputWidgetEntries[tagId], tagDetails: tagDetails},
+					{areInputWidgetEntries: true});
+		}.bind(this));
+
+		// Adding legacy entries.
+		entries.forEach(function(entry) {
+			if (!entry.get('sourceName')) {
+				this.legacyEntries.push(entry);
+				this.addEntry(entry, {isLegacyEntry: true});
+			}
+		}.bind(this));
+		entries.remove(this.legacyEntries);
+
+		// Filter out the device data
+		entries.forEach(function(entry) {
+			if (entry.get('sourceName')) {
+				var source = entry.get('sourceName');
+				this.deviceEntries[source] = this.deviceEntries[source] || [];
+				this.deviceEntries[source].push(entry);
+			}
 		}.bind(this));
 
 		for (var device in this.deviceEntries) {
@@ -378,6 +393,26 @@ define(function(require, exports, module) {
 		return _.find(this.inputWidgetGroupViewList, function(inputWidgetGroupView) {
 			return inputWidgetGroupView.tagInputType.tagId === tagId;
 		});
+	};
+
+	EntryListView.prototype.getLegacyEntryViewForEntry = function(entry) {
+		return _.find(this.legacyEntryViewList, function(trackEntryView) {
+			return trackEntryView.entry.get('id') === entry.get('id');
+		});
+	};
+
+	EntryListView.prototype.deleteLegacyEntryViewForEntry = function(entry) {
+		this.deleteLegacyEntryView(this.getLegacyEntryViewForEntry(entry));
+	};
+
+	EntryListView.prototype.deleteLegacyEntryView = function(legacyEntryView) {
+		var indexOfLegacyEntryView = this.trackEntryViews.indexOf(legacyEntryView);
+
+		if ((indexOfLegacyEntryView > -1)) {
+			this.trackEntryViews.splice(indexOfLegacyEntryView, 1);
+		}
+
+		this.scrollView.sequenceFrom(this.trackEntryViews);
 	};
 
 	module.exports = EntryListView;

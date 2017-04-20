@@ -16,9 +16,9 @@ define(function(require, exports, module) {
 	var EntryCollection = require('models/EntryCollection');
 	var baseInputWidgetTemplate = require('text!templates/input-widgets/base-input-widget.html');
 
-	var SetRepeatTypeAndDateView = require('views/entry/SetRepeatTypeAndDateView');
+	var RepeatFormView = require('views/entry/RepeatFormView');
 	var TimePickerView = require('views/entry/TimePickerView');
-	var EntryDraggableNode = require('views/entry/EntryDraggableNode');
+	var DraggableNode = require('views/entry/DraggableNode');
 	var Entry = require('models/Entry');
 	var Utils = require('util/Utils');
 
@@ -179,7 +179,7 @@ define(function(require, exports, module) {
 
 			this.entryText = this.getEntryTextForSelectedInputElement({id: this.currentlySelected.id});
 
-			this.repeatView = new SetRepeatTypeAndDateView(this);
+			this.repeatView = new RepeatFormView(this);
 			this.repeatView.on('submit', function(removeRepeat) {
 				this.trackView.killOverlayContent();
 
@@ -309,7 +309,7 @@ define(function(require, exports, module) {
 
 		this.add(this.deleteSurfaceModifier).add(this.deleteSurface);
 
-		this.entryDraggableNode = new EntryDraggableNode({
+		this.entryDraggableNode = new DraggableNode({
 			draggableSurface: this.inputWidgetSurface,
 			height: this.options.widgetHeight
 		});
@@ -337,6 +337,7 @@ define(function(require, exports, module) {
 			this.updateTagStatsCache(resp);
 			this.inputWidgetSurface.removeClass('ghost-entry');
 			this.glow();
+            this._eventOutput.emit('ghost-entry-updated');
 		}.bind(this));
 	};
 
@@ -465,7 +466,7 @@ define(function(require, exports, module) {
 
 			/*
 			 * Entries are refreshed when new entry is created or when an entry's time is updated. For other updates
-			 * like Alert toggle, Repeat settings, Ghost to Real and Amount change, only the glow effect is used. 
+			 * like Alert toggle, Repeat settings, Ghost to Real and Amount change, only the glow effect is used.
 			 */
 			if (refreshEntries) {
 				this.trackView.preShow({data: resp, fromServer: true});

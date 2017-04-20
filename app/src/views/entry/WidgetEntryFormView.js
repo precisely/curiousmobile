@@ -24,23 +24,30 @@ define(function(require, exports, module) {
 	var TagInputTypeAutoComplete = require('models/TagInputTypeAutoComplete');
 
 	var inputSurfaceTemplate = require('text!templates/input-surface.html');
+	var TrackEntryFormView = require('views/entry/TrackEntryFormView');
 
-	function SelectTagForEntryView(options) {
+	var Entry = require('models/Entry');
+
+	function WidgetEntryFormView(options) {
 		View.apply(this, arguments);
+
 		this.trackView = options.trackView;
 
 		this.tagsList = [];
+
 		this.addAutoCompleteView();
 		this.addViewContainer();
 		this.addScrollView();
 		this.addInputSurface();
+
+		this.createAddNewTagButton();
 	}
 
-	SelectTagForEntryView.prototype = Object.create(View.prototype);
-	SelectTagForEntryView.prototype.constructor = SelectTagForEntryView;
+	WidgetEntryFormView.prototype = Object.create(View.prototype);
+	WidgetEntryFormView.prototype.constructor = WidgetEntryFormView;
 
-	SelectTagForEntryView.prototype.addViewContainer = function() {
-		this.timePickerContainerSurface = new ContainerSurface({
+	WidgetEntryFormView.prototype.addViewContainer = function() {
+		this.selectTagContainerSurface = new ContainerSurface({
 			size: [undefined, undefined],
 			properties: {
 				backgroundColor: 'rgba(123, 120, 120, 0.48)',
@@ -51,10 +58,10 @@ define(function(require, exports, module) {
 			}
 		});
 
-		this.add(this.timePickerContainerSurface);
+		this.add(this.selectTagContainerSurface);
 	};
 
-	SelectTagForEntryView.prototype.addAutoCompleteView = function() {
+	WidgetEntryFormView.prototype.addAutoCompleteView = function() {
 		this.autoCompleteModelInstance = new TagInputTypeAutoComplete();
 		window.tagWithInputTypeAutoComplete = this.autoCompleteModelInstance;
 
@@ -65,7 +72,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	SelectTagForEntryView.prototype.addScrollView = function() {
+	WidgetEntryFormView.prototype.addScrollView = function() {
 		this.scrollView = new ScrollView({
 			direction: Utility.Direction.Y,
 		});
@@ -87,10 +94,10 @@ define(function(require, exports, module) {
 			size: [App.width - 30, App.height - 170]
 		});
 		this.scrollViewContainerSurface.add(this.scrollView);
-		this.timePickerContainerSurface.add(this.containerSurfaceModifier).add(this.scrollViewContainerSurface);
+		this.selectTagContainerSurface.add(this.containerSurfaceModifier).add(this.scrollViewContainerSurface);
 	};
 
-	SelectTagForEntryView.prototype.setFocusOnInputSurface = function() {
+	WidgetEntryFormView.prototype.setFocusOnInputSurface = function() {
 		var element = document.getElementById('entry-description').focus();
 
 		if (element) {
@@ -98,7 +105,7 @@ define(function(require, exports, module) {
 		}
 	};
 
-	SelectTagForEntryView.prototype.addInputSurface = function() {
+	WidgetEntryFormView.prototype.addInputSurface = function() {
 		this.inputModifier = new StateModifier({
 			transform: Transform.translate(15, 15, 10),
 			size: [App.width - 30, 40]
@@ -111,13 +118,14 @@ define(function(require, exports, module) {
 			}, templateSettings)
 		});
 
-		this.timePickerContainerSurface.add(this.inputModifier).add(this.inputSurface);
+		this.selectTagContainerSurface.add(this.inputModifier).add(this.inputSurface);
 
 		this.inputSurface.on('click', function() {
 			this.setFocusOnInputSurface();
 		}.bind(this));
 
 		this.inputSurface.on('keyup', function(e) {
+			var addButton = new View();
 			// On enter
 			if (e.keyCode == 13) {
 				this.submit(e);
@@ -134,17 +142,30 @@ define(function(require, exports, module) {
 
 				this.autoCompleteView.getAutocompletes(enteredKey, function(autoCompleteViewList) {
 					if (autoCompleteViewList && autoCompleteViewList.length >= 1) {
-						this.refreshTagsList(autoCompleteViewList);
-					} else {
-						this.initializeTagsList();
+						var refreshList = true;
+						if (autoCompleteViewList.length === 1) {
+							var autoCompleteSurface = autoCompleteViewList[0].autoCompleteSurface;
+							if (!window.tagWithInputTypeAutoComplete.taginputTypeMap.get(autoCompleteSurface.content)) {
+								this.scrollView.sequenceFrom([]);
+								this.addButtonRenderController.show(this.addNewTagButton);
+								refreshList = false;
+							}
+						}
+
+						if (refreshList) {
+							this.addButtonRenderController.hide();
+							this.refreshTagsList(autoCompleteViewList);
+						}
 					}
 				}.bind(this));
 			}
 		}.bind(this));
 	};
 
-	SelectTagForEntryView.prototype.refreshTagsList = function(autoCompleteViewList) {
+	WidgetEntryFormView.prototype.refreshTagsList = function(autoCompleteViewList) {
 		this.tagsList = [];
+
+		this.addButtonRenderController.hide({duration: 0});
 
 		autoCompleteViewList.forEach(function(autoCompleteView) {
 			var autoCompleteSurface = autoCompleteView.autoCompleteSurface;
@@ -154,7 +175,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	SelectTagForEntryView.prototype.initializeTagsList = function() {
+	WidgetEntryFormView.prototype.initializeTagsList = function() {
 		this.autoCompleteView.surfaceList = [];
 		this.autoCompleteView.processAutocompletes(this.autoCompleteModelInstance.tagsWithInputType, '',
 				function(autoCompleteViewList) {
@@ -162,5 +183,29 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	module.exports = SelectTagForEntryView;
+	WidgetEntryFormView.prototype.createAddNewTagButton = function() {
+		this.addNewTagButton = new Surface({
+			content: '<button type="button" class="full-width-button create-entry-button">ADD NEW TAG</button>',
+			size: [undefined, true]
+		});
+
+		this.addNewTagButton.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				this.trackView.killOverlayContent();
+				var state = this.trackView.entryFormView.buildStateFromEntry(new Entry());
+				this.trackView.showTrackEntryFormView(state);
+			}
+		}.bind(this));
+
+		this.addTagButtonModifier = new StateModifier({
+			size: [App.width - 60, undefined],
+			transform: Transform.translate(30, 85, 20)
+		});
+
+		this.addButtonRenderController = new RenderController();
+
+		this.selectTagContainerSurface.add(this.addTagButtonModifier).add(this.addButtonRenderController);
+	};
+
+	module.exports = WidgetEntryFormView;
 });

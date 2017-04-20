@@ -6,25 +6,30 @@ define(function(require, exports, module) {
 	var Draggable = require('famous/modifiers/Draggable');
 	var TouchSync = require("famous/inputs/TouchSync");
 
-	function EntryDraggableNode(options) {
+	function DraggableNode(options) {
 		RenderNode.apply(this, arguments);
 
 		this.height = options.height;
 		this.draggableSurface = options.draggableSurface;
 
+		this.xRange = options.xRange || [-100, 0];
+		this.yRange = options.yRange || [0, 0];
+
+		this.dragLimit = options.dragLimit || 50;
+
 		this.init();
 	}
 
-	EntryDraggableNode.prototype = Object.create(RenderNode.prototype);
-	EntryDraggableNode.prototype.constructor = EntryDraggableNode;
+	DraggableNode.prototype = Object.create(RenderNode.prototype);
+	DraggableNode.prototype.constructor = DraggableNode;
 
-	EntryDraggableNode.DEFAULT_OPTIONS = {
+	DraggableNode.DEFAULT_OPTIONS = {
 	};
 
-	EntryDraggableNode.prototype.init = function() {
+	DraggableNode.prototype.init = function() {
 		this.draggable = new Draggable({
-			xRange: [-100, 0],
-			yRange: [0, 0],
+			xRange: this.xRange,
+			yRange: this.yRange
 		});
 
 		var snapTransition = {
@@ -38,7 +43,7 @@ define(function(require, exports, module) {
 		touchSync.on('end', function() {
 			var xPosition = Math.abs(this.draggable.getPosition()[0]);
 
-			this.draggable.setPosition((xPosition < 50 ? [0, 0] : [-100, 0]), snapTransition);
+			this.draggable.setPosition((xPosition < this.dragLimit ? [0, 0] : this.xRange), snapTransition);
 		}.bind(this));
 
 		this.add(this.draggable).add(this.draggableSurface);
@@ -46,9 +51,9 @@ define(function(require, exports, module) {
 		this.draggableSurface.pipe(this.draggable);
 	};
 
-	EntryDraggableNode.prototype.getSize = function() {
-		return [undefined, this.height];
+	DraggableNode.prototype.getSize = function() {
+		return [true, this.height];
 	};
 
-	module.exports = EntryDraggableNode;
+	module.exports = DraggableNode;
 });

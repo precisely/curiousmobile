@@ -43,6 +43,10 @@ define(function(require, exports, module) {
 			this.createOrUpdateEntry(tapDetails.element, tapDetails.callback);
 		}.bind(this));
 
+		this.on('ghost-entry-updated', function() {
+			this.rangeInputView.removeGhostEntryClasses();
+		}.bind(this));
+
 		this.add(rangeViewModifier).add(this.rangeInputView);
 	};
 
@@ -95,7 +99,7 @@ define(function(require, exports, module) {
 			var domId = 'position' + i + '-' + entryId;
 
 			this[idVarName] = domId;
-			this.positionMap[domId] = i; 
+			this.positionMap[domId] = i;
 		}
 
 		this.currentlySelected = {id: this['SLIDER_POSITION_' + position + '_ID'], state: this.STATES.SELECTED};

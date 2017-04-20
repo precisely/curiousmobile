@@ -25,7 +25,7 @@ define(function(require, exports, module) {
 	var TrackEntryFormView = require('views/entry/TrackEntryFormView');
 	var CalendarView = require('views/calendar/CalendarView');
 	var BaseView = require('views/BaseView');
-	var SelectTagForEntryView = require('views/entry/SelectTagForEntryView');
+	var WidgetEntryFormView = require('views/entry/WidgetEntryFormView');
 	var LevelInputWidgetView = require('views/widgets/LevelInputWidgetView');
 
 	var store = require('store');
@@ -34,7 +34,7 @@ define(function(require, exports, module) {
 
 	function TrackView() {
 		BaseView.apply(this, arguments);
-
+		this.entryFormView = new TrackEntryFormView({trackView: this});
 		this.popoversList = [];
 
 		this.createBody();
@@ -100,11 +100,11 @@ define(function(require, exports, module) {
 
 		this.add(this.plusIconModifier).add(this.plusIconSurface);
 
-		this.selectTagForEntryView = new SelectTagForEntryView({trackView: this});
+		this.widgetEntryFormView = new WidgetEntryFormView({trackView: this});
 
 		this.plusIconSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				this.showSelectTagForEntryView();
+				this.showWidgetEntryFormView();
 			}
 		}.bind(this));
 	};
@@ -256,6 +256,11 @@ define(function(require, exports, module) {
 	};
 
 	TrackView.prototype.killOverlayContent = function(callback) {
+		var inputSurfaceElement = document.getElementById('entry-description');
+		if (inputSurfaceElement) {
+			inputSurfaceElement.value = '';
+		}
+
 		this.entryListContainer.setProperties({
 			webkitFilter: 'blur(0px)',
 			filter: 'blur(0px)'
@@ -312,16 +317,16 @@ define(function(require, exports, module) {
 		return this.calendarView.getSelectedDate();
 	};
 
-	TrackView.prototype.showSelectTagForEntryView = function() {
+	TrackView.prototype.showWidgetEntryFormView = function() {
 		this.overlaySurfaceSetup();
 		this.setHeaderLabel('New Tag');
 
 		// Initializing the tags list.
-		this.selectTagForEntryView.initializeTagsList();
+		this.widgetEntryFormView.initializeTagsList();
 
-		// Displaying the SelectTagForEntryView.
-		this.showOverlayContent(this.selectTagForEntryView, function() {
-			this.selectTagForEntryView.setFocusOnInputSurface();
+		// Displaying the WidgetEntryFormView.
+		this.showOverlayContent(this.widgetEntryFormView, function() {
+			this.widgetEntryFormView.setFocusOnInputSurface();
 		}.bind(this));
 	};
 
@@ -330,6 +335,25 @@ define(function(require, exports, module) {
 		this.setHeaderLabel(editEntryOverlayView.getHeaderLabel());
 
 		this.showOverlayContent(editEntryOverlayView, callback);
+	};
+
+	TrackView.prototype.showTrackEntryFormView = function(state) {
+		this.overlaySurfaceSetup();
+		var continueShowForm = this.entryFormView.preShow(state);
+		if (continueShowForm) {
+			this.setHeaderLabel('');
+			this.entryFormView.draggableEntryFormView.setPosition([0, 0]);
+			this.showOverlayContent(this.entryFormView, function() {
+				this.onShow(state);
+			}.bind(this.entryFormView));
+		}
+	};
+
+	TrackView.prototype.killTrackEntryForm = function() {
+		$('#remind-surface').popover('destroy');
+		$('#entry-description').val('');
+		this.killOverlayContent();
+		this.entryFormView.resetTrackEntryFormView();
 	};
 
 	TrackView.prototype.overlaySurfaceSetup = function() {

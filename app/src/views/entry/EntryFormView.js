@@ -161,9 +161,9 @@ define(function(require, exports, module) {
 
 		this.deleteButtonSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				this.trackView.currentListView.deleteEntry(this.entry);
 				this.entry.delete(function(data) {
-					this._eventOutput.emit('delete-entry', data);
+				    this.trackView.killTrackEntryForm();
+                    this.trackView.currentListView.deleteLegacyEntryViewForEntry(this.entry);
 				}.bind(this));
 			}
 		}.bind(this));
@@ -180,7 +180,7 @@ define(function(require, exports, module) {
 		this.buttonsRenderController = new RenderController();
 		var sequentialLayout = new SequentialLayout({
 			direction: 0,
-			itemSpacing: 30,
+			itemSpacing: 50,
 			defaultItemSize: [80, 24],
 		});
 
@@ -195,12 +195,12 @@ define(function(require, exports, module) {
 		});
 
 		this.pinSurface = new Surface({
-			content: '<div class="text-center"><i class="fa fa-plus-square-o"></i><br/> Bookmark</div>',
-			size: [84, 24]
+			content: '',
+			size: [0, 0]
 		});
 
-		this.firstOffset = (App.width - ((84 * 3) + 60)) / 2;
-		sequentialLayout.sequenceFrom([this.repeatSurface, this.remindSurface, this.pinSurface]);
+		this.firstOffset = (App.width - ((84 * 2) + 30)) / 2;
+		sequentialLayout.sequenceFrom([this.repeatSurface, this.remindSurface]);
 		this.buttonsAndHelp = new ContainerSurface({
 			size: [undefined, true],
 			classes: ['entry-form-buttons'],

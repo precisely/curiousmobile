@@ -4,6 +4,10 @@ define( function(require, exports, module) {
 
 	var TagInputType = require('util/TagInputType');
 
+	/**
+	 * This is a collection of TagInputType.
+	 * @constructor
+	 */
 	function TagInputTypeMap() {
 		this.map = {};
 	}
