@@ -28,10 +28,10 @@ define(function(require, exports, module) {
 
 	var Entry = require('models/Entry');
 
-	function WidgetEntryFormView(options) {
-		View.apply(this, arguments);
+	var autocompleteNotFound = require('text!templates/autocomplete-not-found.html');
 
-		this.trackView = options.trackView;
+	function WidgetEntryFormView() {
+		View.apply(this, arguments);
 
 		this.tagsList = [];
 
@@ -41,6 +41,10 @@ define(function(require, exports, module) {
 		this.addInputSurface();
 
 		this.createAddNewTagButton();
+
+		this.registerYesButtonListener();
+
+		this.initializeTagsList();
 	}
 
 	WidgetEntryFormView.prototype = Object.create(View.prototype);
@@ -62,14 +66,16 @@ define(function(require, exports, module) {
 	};
 
 	WidgetEntryFormView.prototype.addAutoCompleteView = function() {
-		this.autoCompleteModelInstance = new TagInputTypeAutoComplete();
-		window.tagWithInputTypeAutoComplete = this.autoCompleteModelInstance;
+		if (window.tagWithInputTypeAutoComplete) {
+			this.autoCompleteModelInstance = window.tagWithInputTypeAutoComplete;
+		} else {
+			this.autoCompleteModelInstance = new TagInputTypeAutoComplete();
+			window.tagWithInputTypeAutoComplete = this.autoCompleteModelInstance;
+		}
 
 		this.autoCompleteView = new AutoCompleteView(this.autoCompleteModelInstance);
 
-		this.autoCompleteView.onSelect(function(tagDescription) {
-			this.trackView.addNewInputWidget(tagDescription);
-		}.bind(this));
+		this.registerOnSelectForAutoCompleteView();
 	};
 
 	WidgetEntryFormView.prototype.addScrollView = function() {
@@ -125,40 +131,32 @@ define(function(require, exports, module) {
 		}.bind(this));
 
 		this.inputSurface.on('keyup', function(e) {
-			var addButton = new View();
-			// On enter
-			if (e.keyCode == 13) {
-				this.submit(e);
-			} else if (e.keyCode == 27) {
-				this.blur(e);
-				this.trackView.killOverlayContent();
-			} else {
-				var enteredKey = e.srcElement.value;
+			var enteredKey = e.srcElement.value;
 
-				if (!enteredKey) {
-					this.initializeTagsList();
-					return;
-				}
+			if (!enteredKey) {
+				this.initializeTagsList();
+				return;
+			}
 
-				this.autoCompleteView.getAutocompletes(enteredKey, function(autoCompleteViewList) {
-					if (autoCompleteViewList && autoCompleteViewList.length >= 1) {
-						var refreshList = true;
-						if (autoCompleteViewList.length === 1) {
-							var autoCompleteSurface = autoCompleteViewList[0].autoCompleteSurface;
-							if (!window.tagWithInputTypeAutoComplete.taginputTypeMap.get(autoCompleteSurface.content)) {
-								this.scrollView.sequenceFrom([]);
-								this.addButtonRenderController.show(this.addNewTagButton);
-								refreshList = false;
-							}
-						}
-
-						if (refreshList) {
-							this.addButtonRenderController.hide();
-							this.refreshTagsList(autoCompleteViewList);
+			this.autoCompleteView.getAutocompletes(enteredKey, function(autoCompleteViewList) {
+				if (autoCompleteViewList && autoCompleteViewList.length >= 1) {
+					var refreshList = true;
+					if (autoCompleteViewList.length === 1) {
+						var autoCompleteSurface = autoCompleteViewList[0].autoCompleteSurface;
+						if (!window.tagWithInputTypeAutoComplete.taginputTypeMap.get(autoCompleteSurface.content)) {
+							this.scrollView.sequenceFrom([]);
+							this.addButtonRenderController.show(this.addNewTagButton);
+							refreshList = false;
 						}
 					}
-				}.bind(this));
-			}
+
+					if (refreshList) {
+						this.addButtonRenderController.hide();
+						this.refreshTagsList(autoCompleteViewList);
+					}
+				}
+			}.bind(this));
+
 		}.bind(this));
 	};
 
@@ -185,15 +183,21 @@ define(function(require, exports, module) {
 
 	WidgetEntryFormView.prototype.createAddNewTagButton = function() {
 		this.addNewTagButton = new Surface({
-			content: '<button type="button" class="full-width-button create-entry-button">ADD NEW TAG</button>',
+			content: _.template(autocompleteNotFound, {}, templateSettings),
 			size: [undefined, true]
 		});
 
 		this.addNewTagButton.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				this.trackView.killOverlayContent();
-				var state = this.trackView.entryFormView.buildStateFromEntry(new Entry());
-				this.trackView.showTrackEntryFormView(state);
+				if (e.srcElement.id === 'custom-tag-yes-button') {
+					this._eventOutput.emit('yes-button-selected');
+
+					return;
+				}
+
+				if (e.srcElement.id === 'custom-tag-no-button') {
+					this.killOverlayContent();
+				}
 			}
 		}.bind(this));
 

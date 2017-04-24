@@ -11,7 +11,6 @@ define(function(require, exports, module) {
 	var RenderController = require("famous/views/RenderController");
 	var StateView = require('views/StateView');
 	var SequentialLayout = require("famous/views/SequentialLayout");
-	var AutocompleteView = require("views/AutocompleteView");
 	var DraggableView = require("views/widgets/DraggableView");
 	var store = require('store');
 	var Entry = require('models/Entry');
@@ -95,29 +94,6 @@ define(function(require, exports, module) {
 		this.inputSurface.on('click', function(e) {
 			document.getElementById('entry-description').focus();
 		});
-
-		this.inputSurface.on('keyup', function(e) {
-			//on enter
-			if (e.keyCode == 13) {
-				this.submit(e);
-			} else if (e.keyCode == 27) {
-				this.blur(e);
-				this.trackView.killEntryForm(null);
-			} else {
-				enteredKey = e.srcElement.value;
-				if (!enteredKey && this.modifiersMovedDown) {
-					this.batchMoveUpModifiers();
-				}
-				this.autoCompleteView.getAutocompletes(enteredKey, function(surfaceList) {
-					if (surfaceList && surfaceList.length > 1 && !this.modifiersMovedDown) {
-						this.batchMoveDownModifiers();
-					} else if (this.modifiersMovedDown) {
-						this.batchMoveUpModifiers();
-					}
-				}.bind(this));
-				formContainerSurface.add(this.autoCompleteView);
-			}
-		}.bind(this));
 
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
 		this.formContainerSurface = formContainerSurface;

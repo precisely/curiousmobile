@@ -3799,21 +3799,21 @@ input.cropit-image-zoom-input {
 }
 
 @keyframes blinker {
-  from, to {
-    color: transparent;
-  }
-  50% {
-    color: black;
-  }
+	from, to {
+		color: transparent;
+	}
+	50% {
+		color: black;
+	}
 }
 
 @-webkit-keyframes blinker {
-  from, to {
-    color: transparent;
-  }
-  50% {
-    color: black;
-  }
+	from, to {
+		color: transparent;
+	}
+	50% {
+		color: black;
+	}
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - Input Widgets CSS - - - - - - - - - - - - - - - - - - - - - - */
@@ -3822,7 +3822,7 @@ input.cropit-image-zoom-input {
 	display: flex;
 }
 
-.glow .input-widget-surface {
+.glow.entry, .glow .input-widget-surface {
 	-webkit-animation-name: glow-effect;
 	-webkit-animation-duration: 2s;
 	-webkit-animation-timing-function: ease-in-out;
@@ -4175,6 +4175,23 @@ input.cropit-image-zoom-input {
 	border: 1px solid rgb(241, 74, 66) !important;
 }
 
+.custom-tag-question {
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	height: 80px;
+	justify-content: space-between;
+}
+
+.custom-tag-buttons {
+	display: inline-flex;
+	justify-content: space-around;
+}
+
+.custom-tag-buttons button {
+	width: 100px;
+	height: 40px;
+}
 /*- - - - - - - - - - - - - - - - - - Range/Slider Input's CSS - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .rv-0 {

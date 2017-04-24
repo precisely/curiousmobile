@@ -285,7 +285,7 @@ define(function(require, exports, module) {
 
 		// Adding legacy entries.
 		entries.forEach(function(entry) {
-			if (!entry.get('sourceName')) {
+			if (!entry.get('sourceName') && !entry.isContinuous()) {
 				this.legacyEntries.push(entry);
 				this.addEntry(entry, {isLegacyEntry: true});
 			}
@@ -294,7 +294,7 @@ define(function(require, exports, module) {
 
 		// Filter out the device data
 		entries.forEach(function(entry) {
-			if (entry.get('sourceName')) {
+			if (entry.get('sourceName') && !entry.isContinuous()) {
 				var source = entry.get('sourceName');
 				this.deviceEntries[source] = this.deviceEntries[source] || [];
 				this.deviceEntries[source].push(entry);
@@ -336,36 +336,35 @@ define(function(require, exports, module) {
 
 	EntryListView.prototype.handleGlowEntry = function(callback) {
 		if (this.glowEntry instanceof Entry) {
-			this.entryIdOfInputWidgetViewToGlow = this.glowEntry.get('id');
+			this.idOfEntryToGlow = this.glowEntry.get('id');
 			this.glowEntry = null;
 		}
 
 		if (this.tagIdOfInputWidgetGroupViewToGlow) {
 			var inputWidgetGroupView = this.getInputWidgetGroupViewForTagId(this.tagIdOfInputWidgetGroupViewToGlow);
 			if (inputWidgetGroupView) {
-				var indexOfTrackEntryView = this.trackEntryViews.indexOf(inputWidgetGroupView);
-
-				if (indexOfTrackEntryView >= 0) {
-					if (indexOfTrackEntryView === 0) {
-						this.scrollView.setPosition(indexOfTrackEntryView);
-					}
-
-					this.scrollView.goToPage(indexOfTrackEntryView);
-				}
-
+				this.scrollToTrackEntryView(inputWidgetGroupView);
 				inputWidgetGroupView.drawerSurface.glow();
 			}
 
 			this.tagIdOfInputWidgetGroupViewToGlow = null;
 		}
 
-		if (this.entryIdOfInputWidgetViewToGlow) {
-			var inputWidgetGroupView = this.getInputWidgetGroupViewForEntryId(this.entryIdOfInputWidgetViewToGlow);
-			if (inputWidgetGroupView) {
-				inputWidgetGroupView.handleGlowEntry(this.entryIdOfInputWidgetViewToGlow);
+		if (this.idOfEntryToGlow) {
+			// First look for entry in InputWidgetGroupView (new entry view).
+			var trackEntryView = this.getInputWidgetGroupViewForEntryId(this.idOfEntryToGlow);
+			if (trackEntryView) {
+				trackEntryView.handleGlowEntry(this.idOfEntryToGlow);
+			} else {
+				// Then look for entry in TrackEntryView (legacy entry view).
+				trackEntryView = this.getLegacyEntryViewForEntryId(this.idOfEntryToGlow);
+				if (trackEntryView) {
+					this.scrollToTrackEntryView(trackEntryView);
+					trackEntryView.glow();
+				}
 			}
 
-			this.entryIdOfInputWidgetViewToGlow = null;
+			this.idOfEntryToGlow = null;
 		}
 
 		if (callback) {
@@ -373,9 +372,27 @@ define(function(require, exports, module) {
 		}
 	};
 
+	EntryListView.prototype.scrollToTrackEntryView = function(trackEntryView) {
+		var indexOfTrackEntryView = this.trackEntryViews.indexOf(trackEntryView);
+
+		if (indexOfTrackEntryView >= 0) {
+			if (indexOfTrackEntryView === 0) {
+				this.scrollView.setPosition(indexOfTrackEntryView);
+			}
+
+			this.scrollView.goToPage(indexOfTrackEntryView);
+		}
+	};
+
 	EntryListView.prototype.getTagDetailsFromRecentlyUsedTags = function(tagDescription) {
 		return _.find(this.recentlyUsedTags, function(tagDetails) {
 			return tagDetails.description === tagDescription;
+		});
+	};
+
+	EntryListView.prototype.getLegacyEntryViewForEntryId = function(entryId) {
+		return _.find(this.legacyEntryViewList, function(trackEntryView) {
+			return trackEntryView.entry.get('id') === entryId;
 		});
 	};
 

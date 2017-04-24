@@ -322,7 +322,6 @@ define(function(require, exports, module) {
 		};
 	};
 
-
 	TrackEntryFormView.prototype.submit = function(e, directlyCreateEntry) {
 		this.autoCompleteView.hide();
 		$('#remind-surface').popover('destroy');
@@ -365,6 +364,10 @@ define(function(require, exports, module) {
 			repeatTypeId = Entry.RepeatType.CONTINUOUSGHOST;
 		}
 
+		if (this.setRepeat || this.setRemind || this.setPinned) {
+			window.App.collectionCache.clear();
+		}
+
 		if (!entry || !entry.get('id') || (entry.isContinuous() && entry.state !== 'bookmarkEdit') ||
 				(!entry.isContinuous() && repeatTypeId && repeatTypeId === Entry.RepeatType.CONTINUOUSGHOST)) {
 			var newEntry = new Entry();
@@ -377,9 +380,6 @@ define(function(require, exports, module) {
 			}
 			this.trackView.killTrackEntryForm();
 			newEntry.create(function(resp) {
-				if (this.setRepeat || this.setRemind || this.setPinned) {
-					window.App.collectionCache.clear();
-				}
 				this.blur();
 				this._eventOutput.emit('new-entry', resp);
 			}.bind(this));
@@ -394,10 +394,6 @@ define(function(require, exports, module) {
 			entry.setText(newText);
 			entry.set("repeatType", repeatTypeId);
 			entry.set("repeatEnd", repeatEnd);
-		}
-
-		if (this.setRepeat || this.setRemind || this.setPinned) {
-			window.App.collectionCache.clear();
 		}
 
 		if (this.hasFuture()) {

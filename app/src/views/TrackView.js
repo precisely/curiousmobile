@@ -25,7 +25,7 @@ define(function(require, exports, module) {
 	var TrackEntryFormView = require('views/entry/TrackEntryFormView');
 	var CalendarView = require('views/calendar/CalendarView');
 	var BaseView = require('views/BaseView');
-	var WidgetEntryFormView = require('views/entry/WidgetEntryFormView');
+	var TrackWidgetEntryFormView = require('views/entry/TrackWidgetEntryFormView');
 	var LevelInputWidgetView = require('views/widgets/LevelInputWidgetView');
 
 	var store = require('store');
@@ -100,7 +100,7 @@ define(function(require, exports, module) {
 
 		this.add(this.plusIconModifier).add(this.plusIconSurface);
 
-		this.widgetEntryFormView = new WidgetEntryFormView({trackView: this});
+		this.widgetEntryFormView = new TrackWidgetEntryFormView({trackView: this});
 
 		this.plusIconSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
@@ -220,7 +220,7 @@ define(function(require, exports, module) {
 			this.processingNotification = true;
 
 			this.changeDate(this.calendarView.selectedDate, function() {
-				this.currentListView.entryIdOfInputWidgetViewToGlow = glowEntryId;
+				this.currentListView.idOfEntryToGlow = glowEntryId;
 				this.processingNotification = false;
 			}.bind(this), null);
 

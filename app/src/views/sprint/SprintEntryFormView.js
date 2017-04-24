@@ -30,19 +30,6 @@ define(function(require, exports, module) {
 	SprintEntryFormView.prototype = Object.create(EntryFormView.prototype);
 	SprintEntryFormView.prototype.constructor = SprintEntryFormView;
 
-	function _zIndex(argument) {
-		return window.App.zIndex.formView;
-	}
-
-	function getTagItem(createdEntry) {
-		var icon = createdEntry.isRepeat() ? '<i class="fa fa-repeat"></i>' :
-				createdEntry.isRemind() ? '<i class="fa fa-bell"></i>' :
-				createdEntry.isContinuous() ? '<i class="fa fa-bookmark"></i>' : '';
-		var entryItem = '<div class="tag-button-block" data-id="' + createdEntry.id + '"><button class="tag-button">' + createdEntry.get('description') + icon + '</button>&nbsp;' +
-				'<i class="fa fa-times-circle delete-tag"></i></div>';
-		return entryItem;
-	}
-
 	SprintEntryFormView.prototype._setListeners = function() {
 		var AutocompleteObj = new TagsAutoComplete();
 		window.autocompleteCache = AutocompleteObj;
@@ -62,13 +49,13 @@ define(function(require, exports, module) {
 
 		this.on('form-sprint-entry', function(resp) {
 			var createdEntry = resp.glowEntry;
-			var entryItem = getTagItem(createdEntry);
+			var entryItem = this.parentView.getTagItem(createdEntry);
 			this.parentView.killAddSprintTagsOverlay({entryItem: entryItem, entry: createdEntry});
 		}.bind(this));
 
 		this.on('update-sprint-entry', function(resp) {
 			var updatedEntry = resp.glowEntry;
-			var entryItem = getTagItem(updatedEntry);
+			var entryItem = this.parentView.getTagItem(updatedEntry);
 			this.parentView.killAddSprintTagsOverlay({entryItem: entryItem, entry: updatedEntry, hasUpdatedTag: true});
 		}.bind(this));
 
@@ -107,7 +94,7 @@ define(function(require, exports, module) {
 				this.toggleSelector(this.pinSurface);
 			}
 		}.bind(this));
-	}
+	};
 
 	SprintEntryFormView.prototype.preShow = function(state) {
 		if (state.preShowCheck) {
@@ -118,6 +105,7 @@ define(function(require, exports, module) {
 		}
 		return true;
 	};
+
 	SprintEntryFormView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 		if (!state) {
