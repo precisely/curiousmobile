@@ -12,6 +12,8 @@ define(function(require, exports, module) {
 
 	var EditEntryOverlayView = require('views/entry/EditEntryOverlayView');
 
+	var Utils = require('util/Utils');
+
 	function RepeatFormView(parentInputWidgetView) {
 		EditEntryOverlayView.apply(this, arguments);
 
@@ -66,6 +68,16 @@ define(function(require, exports, module) {
 		this.repeatModifierSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				var parentElement = e.srcElement.parentElement;
+
+				if (Utils.isIOS()) {
+					if (_.contains(parentElement.classList, 'entry-checkbox') ||
+								_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {
+						var repeatEachCheckbox = document.getElementById('confirm-each-repeat');
+						repeatEachCheckbox.checked = !repeatEachCheckbox.checked;
+
+						return;
+					}
+				}
 
 				if (_.contains(parentElement.classList, 'date-picker-field')) {
 					if (typeof cordova !== 'undefined') {

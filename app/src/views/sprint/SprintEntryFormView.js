@@ -179,6 +179,11 @@ define(function(require, exports, module) {
 	SprintEntryFormView.prototype.submit = function(e, directlyCreateEntry) {
 		var entry = this.entry;
 		var newText = document.getElementById("entry-description").value;
+
+		if (!newText) {
+			return;
+		}
+
 		var repeatTypeId;
 
 		if (!u.isOnline()) {
@@ -201,6 +206,7 @@ define(function(require, exports, module) {
 			newEntry.set('date', window.App.selectedDate);
 			newEntry.userId = this.parentView.virtualUserId;
 			newEntry.setText(newText);
+			var baseDate = new Date('January 1, 2001 12:00 am');
 			newEntry.create(function(resp) {
 				if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1 ||
 					newText.indexOf('pinned') > -1 || newText.indexOf('bookmark') > -1) {
@@ -208,7 +214,7 @@ define(function(require, exports, module) {
 				}
 				this.blur();
 				this._eventOutput.emit('form-sprint-entry', resp);
-			}.bind(this));
+			}.bind(this), baseDate);
 			return;
 		} else {
 			if (repeatTypeId) {

@@ -225,8 +225,8 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 
 		Utils.queueJSONAll = function(description, url, args, successCallback, failCallback, delay, httpArgs, background) {
 			if (u.isOnline()) {
-				/* 
-				 * Searching for current page in pageMap instead of calling getCurentView() so that it does not try to 
+				/*
+				 * Searching for current page in pageMap instead of calling getCurentView() so that it does not try to
 				 * create new instance of view if view does not exist
 				 */
 				var currentView = App.pageView.pageMap[App.pageView.getCurrentPage()];
@@ -400,7 +400,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		};
 
 		/*
-		 * This method reloads DOM with images in it to 
+		 * This method reloads DOM with images in it to
 		 * get actual size of the surface in scroll view
 		 *
 		 */
@@ -658,7 +658,19 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		};
 
 		Utils.isAndroid = function() {
+			if (typeof device === 'undefined') {
+				return;
+			}
+
 			return device.platform == 'android' || device.platform == 'Android';
+		};
+
+		Utils.isIOS = function() {
+			if (typeof device === 'undefined') {
+				return;
+			}
+
+			return device.platform == 'ios' || device.platform == 'iOS';
 		};
 
 		/**
@@ -679,13 +691,6 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 				inputElement.value = value;
 			}, 5);
 		};
-
-		var device = {};
-		if (/iPhone|iPod|iPad/i.test(navigator.userAgent)) {
-			device.platform = "ios"
-		} else if (/Android/i.test(navigator.userAgent)) {
-			device.platform = "android"
-		}
 
 		module.exports = Utils;
 	});

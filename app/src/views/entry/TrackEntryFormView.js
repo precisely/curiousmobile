@@ -48,11 +48,14 @@ define(function(require, exports, module) {
 		this.repeatSurface.on('click', function(e) {
 			console.log("repeatSurface event");
 			if (e instanceof CustomEvent) {
+				if (u.isAndroid()) {
+					document.activeElement.blur();
+				}
 				this.removeSuffix();
 				this.setRepeat = !this.setRepeat;
 				this.setPinned = false;
 				if (this.setRepeat) {
-					this.renderController.show(this.repeatModifierSurface, null, function() {
+					this.renderController.show(this.repeatModifierSurface, {duration: 50}, function() {
 						document.getElementById('daily').checked = true;
 						this.setSelectedDate(this.selectedDate);
 					}.bind(this));
@@ -70,6 +73,9 @@ define(function(require, exports, module) {
 
 		this.remindSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
+				if (u.isAndroid()) {
+					document.activeElement.blur();
+				}
 				this.removeSuffix();
 				this.setRemind = !this.setRemind;
 				this.setPinned = false;
@@ -95,7 +101,21 @@ define(function(require, exports, module) {
 
 		this.repeatModifierSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
+				if (u.isAndroid()) {
+					document.activeElement.blur();
+				}
 				var classList = e.srcElement.parentElement.classList;
+
+				if (u.isIOS()) {
+					if (_.contains(classList, 'entry-checkbox') ||
+								_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {
+						var repeatEachCheckbox = document.getElementById('confirm-each-repeat');
+						repeatEachCheckbox.checked = !repeatEachCheckbox.checked;
+
+						return;
+					}
+				}
+
 				if (_.contains(classList, 'date-picker-field')) {
 					if (typeof cordova !== 'undefined') {
 						cordova.plugins.Keyboard.close();
@@ -216,7 +236,7 @@ define(function(require, exports, module) {
 			}.bind(this);
 			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.formView + 5));
 			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 220, App.zIndex.formView + 5));
-			this.renderController.show(this.repeatModifierSurface, null, function() {
+			this.renderController.show(this.repeatModifierSurface, {duration: 50}, function() {
 				document.getElementById(radioSelector).checked = true;
 				if (entry.isGhost()) {
 					document.getElementById('confirm-each-repeat').checked = true;
@@ -244,7 +264,7 @@ define(function(require, exports, module) {
 			var nullAmount = false;
 			if ((entry.get('amountPrecision') < 0) && (entry.get('amount') == null)) {
 				nullAmount = true;
- 			}
+			}
 			if (!tagStatsMap) {
 				tagStatsMap = autocompleteCache.tagStatsMap.getFromText(tag);
 			}

@@ -153,10 +153,7 @@ define(function(require, exports, module) {
 						if (typeof cordova !== 'undefined') {
 							cordova.plugins.Keyboard.close();
 						}
-						this.widgetEntryFormView = new SprintWidgetEntryFormView({sprintFormView: this});
-						this.showOverlayContent(this.widgetEntryFormView, function() {
-							this.widgetEntryFormView.setFocusOnInputSurface();
-						}.bind(this));
+						this.showWidgetEntryFormView();
 					} else if (_.contains(classList, 'delete-tag')) {
 						if (typeof cordova !== 'undefined') {
 							cordova.plugins.Keyboard.close();
@@ -215,6 +212,13 @@ define(function(require, exports, module) {
 	SprintFormView.prototype.showSprintEntryFormView = function() {
 		this.addSprintTagsView = new SprintEntryFormView(this);
 		this.showOverlayContent(this.addSprintTagsView);
+	};
+
+	SprintFormView.prototype.showWidgetEntryFormView = function() {
+		this.widgetEntryFormView = new SprintWidgetEntryFormView({sprintFormView: this});
+		this.showOverlayContent(this.widgetEntryFormView, function() {
+			this.widgetEntryFormView.setFocusOnInputSurface();
+		}.bind(this));
 	};
 
 	SprintFormView.prototype.killAddSprintTagsOverlay = function(args) {
@@ -277,6 +281,23 @@ define(function(require, exports, module) {
 		document.getElementsByClassName('participants-wrapper')[0].innerHTML += participant;
 		this.resizeScrollView(30);
 		this.scrollView.sequenceFrom(this.scrollElements);
+	};
+
+	SprintFormView.prototype.killOverlayContent = function(callback, isBackButtonCall) {
+		var showWidgetEntryFormView;
+		if (this.currentOverlay === 'SprintEntryFormView' && isBackButtonCall) {
+			showWidgetEntryFormView = true;
+		}
+
+		BaseView.prototype.killOverlayContent.call(this);
+
+		if (showWidgetEntryFormView) {
+			this.showWidgetEntryFormView();
+		}
+
+		if (callback) {
+			callback();
+		}
 	};
 
 	App.pages['SprintFormView'] = SprintFormView;

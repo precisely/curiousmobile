@@ -245,10 +245,10 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						}.bind(this), 0, false, true);
 			},
 
-			create: function(callback) {
+			create: function(callback, baseDate) {
 				var now = new Date();
 				var collectionCache = window.App.collectionCache;
-				var baseDate = window.App.selectedDate || new Date(now.setHours(0, 0, 0, 0));
+				var baseDate = baseDate || window.App.selectedDate || new Date(now.setHours(0, 0, 0, 0));
 				if (App.pageView.getCurrentView().dateNotToday) {
 					baseDate = new Date(now.setHours(0, 0, 0, 0));
 				}

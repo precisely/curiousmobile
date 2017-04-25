@@ -9,11 +9,6 @@ define(function(require, exports, module) {
 		WidgetEntryFormView.apply(this, arguments);
 
 		this.sprintFormView = options.sprintFormView;
-
-		this.selectTagContainerSurface.setProperties({
-			background: 'rgb(184, 182, 182)',
-			overflow: 'hidden',
-		});
 	}
 
 	SprintWidgetEntryFormView.prototype = Object.create(WidgetEntryFormView.prototype);
@@ -46,7 +41,6 @@ define(function(require, exports, module) {
 
 	SprintWidgetEntryFormView.prototype.registerYesButtonListener = function() {
 		this.on('yes-button-selected', function() {
-			this.sprintFormView.killOverlayContent();
 			this.sprintFormView.showSprintEntryFormView();
 		}.bind(this));
 	};

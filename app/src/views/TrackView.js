@@ -34,8 +34,10 @@ define(function(require, exports, module) {
 
 	function TrackView() {
 		BaseView.apply(this, arguments);
+
 		this.entryFormView = new TrackEntryFormView({trackView: this});
 		this.popoversList = [];
+		this.entryFormOverlays = [];
 
 		this.createBody();
 		this.createCalendar();
@@ -90,7 +92,7 @@ define(function(require, exports, module) {
 
 	TrackView.prototype.addPlusIcon = function() {
 		this.plusIconModifier = new Modifier({
-			transform: Transform.translate(30, App.height - 120, 20)
+			transform: Transform.translate(30, App.height - 120, 18)
 		});
 
 		this.plusIconSurface = new Surface({
@@ -255,16 +257,18 @@ define(function(require, exports, module) {
 		return this.currentListView.scrollView.getPosition();
 	};
 
-	TrackView.prototype.killOverlayContent = function(callback) {
+	TrackView.prototype.killOverlayContent = function(callback, isBackButtonCall) {
+		this.entryFormView.resetTrackEntryFormView();
+
 		var inputSurfaceElement = document.getElementById('entry-description');
 		if (inputSurfaceElement) {
 			inputSurfaceElement.value = '';
 		}
 
-		this.entryListContainer.setProperties({
-			webkitFilter: 'blur(0px)',
-			filter: 'blur(0px)'
-		});
+		var indexOfCurrentOverlay = this.entryFormOverlays.indexOf(this.currentOverlay);
+		if (indexOfCurrentOverlay > -1) {
+			this.entryFormOverlays.splice(indexOfCurrentOverlay, 1);
+		}
 
 		BaseView.prototype.killOverlayContent.call(this);
 
@@ -276,6 +280,11 @@ define(function(require, exports, module) {
 		}
 
 		this.setHeaderSurface(this.calendarView, new StateModifier({align: [0.5, 0.5], origin: [0.5, 0.5]}));
+
+		if (this.entryFormOverlays.length === 1 && this.entryFormOverlays[0] === 'TrackWidgetEntryFormView' &&
+				isBackButtonCall) {
+			this.showWidgetEntryFormView();
+		}
 
 		if (callback) {
 			callback();
@@ -326,6 +335,10 @@ define(function(require, exports, module) {
 
 		// Displaying the WidgetEntryFormView.
 		this.showOverlayContent(this.widgetEntryFormView, function() {
+			var indexOfCurrentOverlay = this.entryFormOverlays.indexOf('TrackWidgetEntryFormView');
+			if (indexOfCurrentOverlay === -1) {
+				this.entryFormOverlays.push('TrackWidgetEntryFormView');
+			}
 			this.widgetEntryFormView.setFocusOnInputSurface();
 		}.bind(this));
 	};
@@ -344,8 +357,12 @@ define(function(require, exports, module) {
 			this.setHeaderLabel('');
 			this.entryFormView.draggableEntryFormView.setPosition([0, 0]);
 			this.showOverlayContent(this.entryFormView, function() {
-				this.onShow(state);
-			}.bind(this.entryFormView));
+				var indexOfCurrentOverlay = this.entryFormOverlays.indexOf('TrackEntryFormView');
+				if (indexOfCurrentOverlay === -1) {
+					this.entryFormOverlays.push('TrackEntryFormView');
+				}
+				this.entryFormView.onShow(state);
+			}.bind(this));
 		}
 	};
 
@@ -353,7 +370,6 @@ define(function(require, exports, module) {
 		$('#remind-surface').popover('destroy');
 		$('#entry-description').val('');
 		this.killOverlayContent();
-		this.entryFormView.resetTrackEntryFormView();
 	};
 
 	TrackView.prototype.overlaySurfaceSetup = function() {
@@ -363,12 +379,6 @@ define(function(require, exports, module) {
 			this.hideSprintMenuPopover();
 			this.isSprintMenuPopoverVisible = true;
 		}
-
-		// Producing the blur effect.
-		this.entryListContainer.setProperties({
-			webkitFilter: 'blur(5px)',
-			filter: 'blur(5px)'
-		});
 
 		this.showBackButton();
 		this.hideSearchIcon();

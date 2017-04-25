@@ -4180,14 +4180,14 @@ input.cropit-image-zoom-input {
 	display: flex;
 	flex-direction: column;
 	height: 80px;
-	justify-content: space-between;
+	color: #FFFFFF;
 }
 
 .custom-tag-buttons {
 	display: inline-flex;
 	justify-content: space-around;
+	padding-top: 30px;
 }
-
 .custom-tag-buttons button {
 	width: 100px;
 	height: 40px;

@@ -54,7 +54,7 @@ define(function(require, exports, module) {
 		this.selectTagContainerSurface = new ContainerSurface({
 			size: [undefined, undefined],
 			properties: {
-				backgroundColor: 'rgba(123, 120, 120, 0.48)',
+				backgroundColor: 'rgb(184, 182, 182)',
 				overflow: 'hidden'
 			},
 			attributes: {

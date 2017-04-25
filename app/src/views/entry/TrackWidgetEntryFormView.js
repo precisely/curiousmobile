@@ -26,7 +26,10 @@ define(function(require, exports, module) {
 
 	TrackWidgetEntryFormView.prototype.registerYesButtonListener = function() {
 		this.on('yes-button-selected', function() {
-			this.trackView.killOverlayContent();
+			var inputSurfaceElement = document.getElementById('entry-description');
+			if (inputSurfaceElement) {
+				inputSurfaceElement.value = '';
+			}
 			var state = this.trackView.entryFormView.buildStateFromEntry(new Entry());
 			this.trackView.showTrackEntryFormView(state);
 		}.bind(this));

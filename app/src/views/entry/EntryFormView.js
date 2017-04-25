@@ -28,7 +28,7 @@ define(function(require, exports, module) {
 		var backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
-				background: (this.constructor.name === 'TrackEntryFormView') ? 'rgba(123, 120, 120, 0.48)' : 'rgb(184, 182, 182)'
+				background: 'rgb(184, 182, 182)'
 			}
 		});
 		this.add(new StateModifier({
@@ -195,7 +195,13 @@ define(function(require, exports, module) {
 		this.renderController = new RenderController();
 		this.dateGridRenderController = new RenderController();
 		this.repeatModifierSurface = new Surface({
-			content: _.template(repeatModifierTemplate, templateSettings),
+			content: _.template(repeatModifierTemplate, {
+				repeatEndDate: '',
+				isDaily: '',
+				isWeekly: '',
+				isMonthly: '',
+				confirmEachRepeat: ''
+			}, templateSettings),
 			size: [undefined, undefined],
 			properties: {
 				backgroundColor: 'transparent',
