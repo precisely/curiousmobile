@@ -138,8 +138,8 @@ define(function(require, exports, module) {
 		this.deleteButtonSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				this.entry.delete(function(data) {
-				    this.trackView.killTrackEntryForm();
-                    this.trackView.currentListView.deleteLegacyEntryViewForEntry(this.entry);
+					this.trackView.killTrackEntryForm();
+					this.trackView.currentListView.deleteLegacyEntryViewForEntry(this.entry);
 				}.bind(this));
 			}
 		}.bind(this));

@@ -52,7 +52,6 @@ define(function(require, exports, module) {
 		};
 
 		this.entrySurface.setOptions(readSurfaceOptions);
-		this.glowInit(readSurfaceOptions);
 
 		this.entrySurface.pipe(this._eventOutput);
 

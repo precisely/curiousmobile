@@ -337,7 +337,7 @@ define(function(require, exports, module) {
 			this.updateTagStatsCache(resp);
 			this.inputWidgetSurface.removeClass('ghost-entry');
 			this.glow();
-            this._eventOutput.emit('ghost-entry-updated');
+			this._eventOutput.emit('ghost-entry-updated');
 		}.bind(this));
 	};
 
