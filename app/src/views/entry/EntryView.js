@@ -70,14 +70,6 @@ define(function(require, exports, module) {
 				if (timeDelta < 500) {
 					clearTimeout(this.touchTimeout);
 					this.select();
-					return;
-				}
-				if (timeDelta > 600) {
-					App.pageView._eventOutput.emit('show-context-menu', {
-						menu: this.menu,
-						target: this,
-						eventArg: {entry: this.entry}
-					});
 				}
 			}
 		}.bind(this));
