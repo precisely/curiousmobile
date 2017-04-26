@@ -335,10 +335,7 @@ define(function(require, exports, module) {
 
 		// Displaying the WidgetEntryFormView.
 		this.showOverlayContent(this.widgetEntryFormView, function() {
-			var indexOfCurrentOverlay = this.entryFormOverlays.indexOf('TrackWidgetEntryFormView');
-			if (indexOfCurrentOverlay === -1) {
-				this.entryFormOverlays.push('TrackWidgetEntryFormView');
-			}
+			this.addOverlayToEntryOverlayList('TrackWidgetEntryFormView');
 			this.widgetEntryFormView.setFocusOnInputSurface();
 		}.bind(this));
 	};
@@ -357,12 +354,16 @@ define(function(require, exports, module) {
 			this.setHeaderLabel('');
 			this.entryFormView.draggableEntryFormView.setPosition([0, 0]);
 			this.showOverlayContent(this.entryFormView, function() {
-				var indexOfCurrentOverlay = this.entryFormOverlays.indexOf('TrackEntryFormView');
-				if (indexOfCurrentOverlay === -1) {
-					this.entryFormOverlays.push('TrackEntryFormView');
-				}
+				this.addOverlayToEntryOverlayList('TrackEntryFormView');
 				this.entryFormView.onShow(state);
 			}.bind(this));
+		}
+	};
+
+	TrackView.prototype.addOverlayToEntryOverlayList = function(overlay) {
+		var indexOfCurrentOverlay = this.entryFormOverlays.indexOf(overlay);
+		if (indexOfCurrentOverlay === -1) {
+			this.entryFormOverlays.push(overlay);
 		}
 	};
 

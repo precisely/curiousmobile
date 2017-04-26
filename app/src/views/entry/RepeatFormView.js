@@ -69,6 +69,14 @@ define(function(require, exports, module) {
 			if (e instanceof CustomEvent) {
 				var parentElement = e.srcElement.parentElement;
 
+				/*
+				 * The IOS platform have unusual with checkboxes, it is resetting the input to previous state. Hence
+				 * added a check for IOS to again reset the input so that the final result is the intended one.
+				 * For example: If the checkbox is checked, IOS will clear it (reset), but this code will then
+				 * invert the current state, i.e will again check it.
+				 * 
+				 * TODO This repeat form is same in TrackEntryFormView also. Make it generic.
+				 */
 				if (Utils.isIOS()) {
 					if (_.contains(parentElement.classList, 'entry-checkbox') ||
 								_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {

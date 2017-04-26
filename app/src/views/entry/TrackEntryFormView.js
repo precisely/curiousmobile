@@ -48,9 +48,7 @@ define(function(require, exports, module) {
 		this.repeatSurface.on('click', function(e) {
 			console.log("repeatSurface event");
 			if (e instanceof CustomEvent) {
-				if (u.isAndroid()) {
-					document.activeElement.blur();
-				}
+				this.removeFocus();
 				this.removeSuffix();
 				this.setRepeat = !this.setRepeat;
 				this.setPinned = false;
@@ -73,9 +71,7 @@ define(function(require, exports, module) {
 
 		this.remindSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				if (u.isAndroid()) {
-					document.activeElement.blur();
-				}
+				this.removeFocus();
 				this.removeSuffix();
 				this.setRemind = !this.setRemind;
 				this.setPinned = false;
@@ -101,11 +97,13 @@ define(function(require, exports, module) {
 
 		this.repeatModifierSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				if (u.isAndroid()) {
-					document.activeElement.blur();
-				}
+				this.removeFocus();
+
 				var classList = e.srcElement.parentElement.classList;
 
+				/*
+				 * This code is intentionally written for IOS platform. See {@link RepeatFormView} for more details.
+				 */
 				if (u.isIOS()) {
 					if (_.contains(classList, 'entry-checkbox') ||
 								_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {
@@ -166,6 +164,16 @@ define(function(require, exports, module) {
 			this.trackView.killTrackEntryForm();
 			this.trackView.preShow({data: resp, fromServer: true});
 		}.bind(this));
+	};
+
+	/**
+	 * In Android platform, the focus is not automatically removed from the entry input surface and hence the
+	 * keyboard repeatedly gets opened and closed. Hence manually removing the focus from entry input surface.
+	 */
+	TrackEntryFormView.prototype.removeFocus = function() {
+		if (u.isAndroid()) {
+			document.activeElement.blur();
+		}
 	};
 
 	/**

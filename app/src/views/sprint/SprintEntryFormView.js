@@ -206,7 +206,10 @@ define(function(require, exports, module) {
 			newEntry.set('date', window.App.selectedDate);
 			newEntry.userId = this.parentView.virtualUserId;
 			newEntry.setText(newText);
+
+			// This code is replicated from Web's feeds.js file.
 			var baseDate = new Date('January 1, 2001 12:00 am');
+
 			newEntry.create(function(resp) {
 				if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1 ||
 					newText.indexOf('pinned') > -1 || newText.indexOf('bookmark') > -1) {

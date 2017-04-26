@@ -104,7 +104,7 @@ define(function(require, exports, module) {
 	};
 
 	WidgetEntryFormView.prototype.setFocusOnInputSurface = function() {
-		var element = document.getElementById('entry-description').focus();
+		var element = document.getElementById('entry-description');
 
 		if (element) {
 			element.focus();
