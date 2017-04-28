@@ -3808,3 +3808,7 @@ input.cropit-image-zoom-input {
     color: black;
   }
 }
+
+.header-container-ZTransform {
+	transform: translateZ(35px) !important;
+}

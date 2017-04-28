@@ -33,11 +33,8 @@ define(function(require, exports, module) {
 
 	OverlayWithGroupListView.prototype.createOverlay = function() {
 		this.overlayRenderController = new RenderController();
-		this.overlayContainerSurface = new ContainerSurface({
-			properties: {
-				zIndex: 12
-			}
-		});
+		this.overlayContainerSurface = new ContainerSurface();
+
 		this.overlayModal = new Surface({
 			size: [undefined, App.height - 110],
 			properties: {
@@ -51,7 +48,7 @@ define(function(require, exports, module) {
 		this.overlayModal.on('click', this.onClickHandler.bind(this));
 
 		this.overlayContainerSurface.add(this.overlayModalModifier).add(this.overlayModal);
-		this.add(new StateModifier({transform: Transform.translate(0, 0, 0)})).add(this.overlayRenderController);
+		this.add(new StateModifier({transform: Transform.translate(0, 0, 25)})).add(this.overlayRenderController);
 	};
 
 	OverlayWithGroupListView.prototype.createGroupsListScrollView = function() {
