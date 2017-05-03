@@ -100,6 +100,10 @@ define(function(require, exports, module) {
 			}
 		});
 
+		if (u.isAndroid()) {
+			this.headerContainer.addClass('header-container-ZTransform');
+		}
+
 		if (!this.options.header) {
 			return;
 		}
@@ -419,7 +423,6 @@ define(function(require, exports, module) {
 
 	BaseView.prototype.hideShimSurface = function() {
 		this.shimSurfaceRenderController.hide();
-		this.shimSurfaceModifier.setTransform(Transform.translate(0, 0, App.zIndex.datePicker - 1));
 	};
 
 	BaseView.prototype.createBookmarkEditShimSurface = function() {

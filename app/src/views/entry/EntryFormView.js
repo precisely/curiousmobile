@@ -23,6 +23,7 @@ define(function(require, exports, module) {
 	var inputSurfaceTemplate = require('text!templates/input-surface.html');
 	var repeatModifierTemplate = require('text!templates/repeat-input-modifier.html');
 	var Engine = require('famous/core/Engine');
+	var u = require('util/Utils');
 
 	function EntryFormView() {
 		StateView.apply(this, arguments);
@@ -50,6 +51,16 @@ define(function(require, exports, module) {
 		// zIndex calculated on top of the containing surface hence returning 0 will use zIndex of the form container
 		return 1;
 	}
+
+	/**
+	 * In Android platform, the focus is not automatically removed from the entry input surface and hence the
+	 * keyboard repeatedly gets opened and closed. Hence manually removing the focus from entry input surface.
+	 */
+	EntryFormView.prototype.removeFocus = function() {
+		if (u.isAndroid()) {
+			document.activeElement.blur();
+		}
+	};
 
 	EntryFormView.prototype.setSelectedDate = function(date) {
 		if (!date) {
@@ -112,16 +123,28 @@ define(function(require, exports, module) {
 				this.autoCompleteView.getAutocompletes(enteredKey, function(surfaceList) {
 					if (surfaceList && surfaceList.length > 1 && !this.modifiersMovedDown) {
 						this.batchMoveDownModifiers();
-					} else if (this.modifiersMovedDown) {
+					} else if (surfaceList && surfaceList.length <= 1 && this.modifiersMovedDown) {
 						this.batchMoveUpModifiers();
 					}
 				}.bind(this));
-				formContainerSurface.add(this.autoCompleteView);
+				var autoCompleteModifier = new StateModifier({
+					transform:Transform.translate(0, 0, App.zIndex.autocomplete),
+					size: [window.innerWidth - 30, 40]
+				});
+				formContainerSurface.add(autoCompleteModifier).add(this.autoCompleteView);
 			}
 		}.bind(this));
 
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
 		this.formContainerSurface = formContainerSurface;
+
+		this.formContainerSurface.on('click', function(e) {
+			if (e instanceof CustomEvent) {
+				if (e.srcElement.id !== 'entry-description') {
+					this.removeFocus();
+				}
+			}
+		}.bind(this));
 
 		if (!this.justBookmark) {
 			this.showEntryButtons();
@@ -233,12 +256,10 @@ define(function(require, exports, module) {
 			transform: Transform.translate(0, 140, _zIndex() + 1)
 		});
 		this.dateGridRenderControllerMod = new StateModifier({
-			transform: Transform.translate(18, 220, 16)
+			transform: Transform.translate(18, 220, App.zIndex.datePicker)
 		});
 		this.formContainerSurface.add(this.repeatControllerModifier).add(this.renderController);
-		this.formContainerSurface.add(new StateModifier({
-			transform: Transform.translate(0, 0, _zIndex() + 2)
-		})).add(this.dateGridRenderControllerMod).add(this.dateGridRenderController);
+		this.add(this.dateGridRenderControllerMod).add(this.dateGridRenderController);
 	};
 
 	EntryFormView.prototype.preShow = function(state) {
@@ -257,7 +278,17 @@ define(function(require, exports, module) {
 			this.repeatSurface.removeClass('highlight-surface');
 			this.remindSurface.removeClass('highlight-surface');
 			this.pinSurface.removeClass('highlight-surface');
+		} else if (this.constructor.name === 'TrackEntryFormView') {
+			if (this.setPinned) {
+				this.repeatSurface.removeClass('highlight-surface');
+				this.remindSurface.removeClass('highlight-surface');
+			}
+
+			if (this.setRepeat || this.setRemind) {
+				this.pinSurface.removeClass('highlight-surface');
+			}
 		}
+
 		if (selectorSurface && !isHilighted) {
 			selectorSurface.addClass('highlight-surface');
 		} else if (selectorSurface && isHilighted) {

@@ -654,7 +654,19 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		};
 
 		Utils.isAndroid = function() {
+			if (typeof device === 'undefined') {
+				return;
+			}
+
 			return device.platform == 'android' || device.platform == 'Android';
+		};
+
+		Utils.isIOS = function() {
+			if (typeof device === 'undefined') {
+				return;
+			}
+
+			return device.platform == 'ios' || device.platform == 'iOS';
 		};
 
 		/**

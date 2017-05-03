@@ -20,8 +20,6 @@ define(function(require, exports, module) {
 	AutocompleteView.prototype.constructor = AutocompleteView;
 	AutocompleteView.DEFAULT_OPTIONS = {};
 
-	var onSelectCallback;
-
 	AutocompleteView.prototype.init = function() {
 		this.renderController = new RenderController();
 		this.add(this.renderController);
@@ -33,7 +31,7 @@ define(function(require, exports, module) {
 	}
 
 	AutocompleteView.prototype.onSelect = function(callback) {
-		onSelectCallback = callback;
+		this.onSelectCallback = callback;
 	};
 
 	AutocompleteView.prototype.getAutocompletes = function(enteredKey, callback) {
@@ -105,7 +103,7 @@ define(function(require, exports, module) {
 			if (e instanceof CustomEvent) {
 				console.log('Autocomplete click: ' + e);
 				this.renderController.hide(this.scrollView);
-				onSelectCallback(autocomplete.label || autocomplete);
+				this.onSelectCallback(autocomplete.label || autocomplete);
 			}
 		}.bind(this));
 
