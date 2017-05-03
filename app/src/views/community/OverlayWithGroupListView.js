@@ -95,6 +95,10 @@ define(function(require, exports, module) {
 			this.overlayModal.setContent(_.template(this.template, templateProperties, templateSettings));
 
 			_.each(data.groups, function(groupName, index) {
+				if (groupName.fullName === 'Untitled Trackathon Trackathon' || groupName.fullName === 'system') {
+					return;
+				}
+
 				var groupSurface = new Surface({
 					size: [undefined, true],
 					content: _.template(groupsListTemplate, {index: index, groupName: groupName, currentGroup: templateProperties.groupName}, templateSettings)
