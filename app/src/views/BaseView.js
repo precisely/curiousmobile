@@ -337,7 +337,9 @@ define(function(require, exports, module) {
 
 	BaseView.prototype.goBack = function(state) {
 		if (this.currentOverlay) {
-			this.killOverlayContent();
+			var isBackButtonCall = true;
+			var callback = null;
+			this.killOverlayContent(callback, isBackButtonCall);
 			return;
 		}
 		App.pageView.goBack(this.parentPage, state || this.state);
@@ -423,57 +425,6 @@ define(function(require, exports, module) {
 
 	BaseView.prototype.hideShimSurface = function() {
 		this.shimSurfaceRenderController.hide();
-	};
-
-	BaseView.prototype.createBookmarkEditShimSurface = function() {
-		this.bookmarkShimContainerSurface = new ContainerSurface();
-		this.aboveBookmarkShimSurface = new Surface({
-			size: [undefined, 119],
-			attributes: {
-				id: 'above-bookmark'
-			}
-		});
-		this.aboveBookmarkShimSurface.on('click',function(e) {
-			if (e instanceof CustomEvent) {
-				this._eventOutput.emit('done-edit-bookmarks');
-			}
-		}.bind(this));
-
-		var yTransformForBelowSurface = 119 + Math.min(this.currentListView.heightOfPins(), 140) + 10;
-		this.bookmarkEditShimSurfaceRenderController = new RenderController();
-		this.aboveBookmarkEditShimSurfaceModifier = new StateModifier({transform: Transform.translate(0, 0, App.zIndex.datePicker + 50)});
-		this.belowBookmarkEditShimSurfaceModifier = new StateModifier({transform: Transform.translate(0, yTransformForBelowSurface, App.zIndex.datePicker + 50)});
-
-		this.belowBookmarkShimSurface = new Surface({
-			size: [undefined, App.height - yTransformForBelowSurface],
-			attributes: {
-				id: 'below-bookmark'
-			}
-		});
-		this.belowBookmarkShimSurface.on('click',function(e) {
-			if (e instanceof CustomEvent) {
-				this._eventOutput.emit('done-edit-bookmarks');
-			}
-		}.bind(this));
-
-		this.bookmarkShimContainerSurface.add(this.aboveBookmarkEditShimSurfaceModifier).add(this.aboveBookmarkShimSurface);
-		
-		this.bookmarkShimContainerSurface.add(this.belowBookmarkEditShimSurfaceModifier).add(this.belowBookmarkShimSurface);
-
-		this.add(this.bookmarkEditShimSurfaceRenderController);
-	};
-
-	BaseView.prototype.showBookmarkShimSurface = function() {
-		if (!this.bookmarkShimContainerSurface) {
-			this.createBookmarkEditShimSurface();
-		}
-		this.bookmarkEditShimSurfaceRenderController.show(this.bookmarkShimContainerSurface);
-	};
-
-	BaseView.prototype.hideBookmarkShimSurface = function() {
-		if (this.bookmarkEditShimSurfaceRenderController) {
-			this.bookmarkEditShimSurfaceRenderController.hide();
-		}
 	};
 
 	module.exports = BaseView;

@@ -178,6 +178,12 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 				}
 				return dateStr;
 			},
+			getTimeString: function() {
+				var dateStr = u.dateToTimeStr(new Date(this.get('date')), false);
+				var timeString = u.escapeHTML(dateStr);
+
+				return timeString.slice(0);
+			},
 			removeSuffix: function() {
 				var text = this.toString();
 				if (text.endsWith(' repeat') || text.endsWith(' pinned') || text.endsWith(' remind')
@@ -239,10 +245,10 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 						}.bind(this), 0, false, true);
 			},
 
-			create: function(callback) {
+			create: function(callback, baseDate) {
 				var now = new Date();
 				var collectionCache = window.App.collectionCache;
-				var baseDate = window.App.selectedDate || new Date(now.setHours(0, 0, 0, 0));
+				var baseDate = baseDate || window.App.selectedDate || new Date(now.setHours(0, 0, 0, 0));
 				if (App.pageView.getCurrentView().dateNotToday) {
 					baseDate = new Date(now.setHours(0, 0, 0, 0));
 				}
@@ -333,17 +339,11 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 							glowEntry: this,
 							tagStats: [entries[1], entries[2]]
 						});
-						//if (entries[1] != null)
-							//updateAutocomplete(entries[1][0], entries[1][1],
-				//entries[1][2], entries[1][3]);
-				//if (entries[2] != null)
-					//updateAutocomplete(entries[2][0], entries[2][1],
-				//entries[2][2], entries[2][3]);
 					} else {
 						u.showAlert("Error updating entry");
 					}
 				}.bind(this), function (data) {
-					//callback({fail: true});
+					u.showAlert("Error updating entry");
 					console.log('Entry update failed for entry: ' + this.toString());
 				}.bind(this), 0, false, false);
 
@@ -432,6 +432,9 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			isTodayOrLater: function() {
 				return new Date().getTime() - (24 * 60 * 60000) < window.App.selectedDate.getTime();
 
+			},
+			hasFuture: function() {
+				return ((this.isRepeat() && !this.isRemind()) || this.isGhost()) && !this.isTodayOrLater();
 			}
 
 		});
@@ -459,8 +462,8 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			collectionCache.setItem(key, entries);
 		}
 
-		Entry.getRepeatParams = function getRepeatParams(isRepeat, isRemind, repeatEnd) {
-			var repeatTypeId = getRepeatTypeId(isRepeat, isRemind, repeatEnd);
+		Entry.getRepeatParams = function getRepeatParams(isRepeat, isRemind, repeatEnd, removeRepeat) {
+			var repeatTypeId = getRepeatTypeId(isRepeat, isRemind, repeatEnd, removeRepeat);
 			if (repeatEnd) {
 				repeatEnd = repeatEnd.setHours(23, 59, 59, 0);
 				var now = new Date();
@@ -473,16 +476,18 @@ define(['require', 'exports', 'module', 'exoskeleton', 'util/Utils', 'main'],
 			return {repeatTypeId: repeatTypeId, repeatEnd: repeatEnd};
 		}
 
-		function getRepeatTypeId(isRepeat, isRemind, repeatEnd) {
+		function getRepeatTypeId(isRepeat, isRemind, repeatEnd, removeRepeat) {
 			var confirmRepeat = document.getElementById('confirm-each-repeat') ? document.getElementById('confirm-each-repeat').checked : false;
 			var frequencyBit, repeatTypeBit;
 
-			if (document.getElementById('daily') && document.getElementById('daily').checked) {
-				frequencyBit = RepeatType.DAILY_BIT;
-			} else if (document.getElementById('weekly') && document.getElementById('weekly').checked) {
-				frequencyBit = RepeatType.WEEKLY_BIT;
-			} else if (document.getElementById('monthly') && document.getElementById('monthly').checked) {
-				frequencyBit = RepeatType.MONTHLY_BIT;
+			if (!removeRepeat) {
+				if (document.getElementById('daily') && document.getElementById('daily').checked) {
+					frequencyBit = RepeatType.DAILY_BIT;
+				} else if (document.getElementById('weekly') && document.getElementById('weekly').checked) {
+					frequencyBit = RepeatType.WEEKLY_BIT;
+				} else if (document.getElementById('monthly') && document.getElementById('monthly').checked) {
+					frequencyBit = RepeatType.MONTHLY_BIT;
+				}
 			}
 
 			if (!isRepeat && (frequencyBit || confirmRepeat)) {

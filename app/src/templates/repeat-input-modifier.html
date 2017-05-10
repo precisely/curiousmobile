@@ -2,7 +2,7 @@
 	<form id="repeat-modifier-form">
 		<div class="input-group date-picker-field">
 			<span class="input-group-addon calander-addon"></span>
-			<input disabled class="choose-date-input" placeholder="Choose End Date">
+			<input disabled class="choose-date-input" value="{{- repeatEndDate}}" placeholder="Choose End Date">
 			<span class="input-group-addon">(Optional)</span>
 		</div>
 		<div>
@@ -10,18 +10,18 @@
 				Set repeat frequency
 			</span>
 			<div class="repeat-frequency-radio-group">
-				<input type="radio" id="daily" name="repeat-frequency" value="daily" checked />
+				<input type="radio" id="daily" name="repeat-frequency" value="daily" {{- isDaily}} />
 				<label for="daily"><span class="radio-label-span"></span>Daily</label>
-				<input type="radio" id="weekly" name="repeat-frequency" value="weekly" />
+				<input type="radio" id="weekly" name="repeat-frequency" value="weekly" {{- isWeekly}} />
 				<label for="weekly"><span class="radio-label-span"></span>Weekly</label>
-				<input type="radio" id="monthly" name="repeat-frequency" value="monthly" />
+				<input type="radio" id="monthly" name="repeat-frequency" value="monthly" {{- isMonthly}} />
 				<label for="monthly"><span class="radio-label-span"></span>Monthly</label>
 			</div>
 		</div>
 		<div>
 			<span class="instructions">Confirm Each Repeat</span>
 			<span class="entry-checkbox">
-				<input type="checkbox" name="repeat" value="repeat" id="confirm-each-repeat">
+				<input type="checkbox" name="repeat" value="repeat" id="confirm-each-repeat" {{- confirmEachRepeat}}>
 				<label for="confirm-each-repeat"><span class="checkbox-label-span"></span>Yes</label>
 			</span>
 		</div>

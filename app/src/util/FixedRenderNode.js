@@ -3,7 +3,6 @@ define(function(require, exports, module) {
 	var View = require('famous/core/View');
 	var RenderNode = require('famous/core/RenderNode');
 	var Transform = require('famous/core/Transform');
-	var StateModifier = require('famous/modifiers/StateModifier');
 
 	function FixedRenderNode() {
 		RenderNode.apply(this, arguments);
@@ -16,8 +15,8 @@ define(function(require, exports, module) {
 	};
 
 	FixedRenderNode.prototype.getSize = function(target) {
-		return [320, 55];
-	}
+		return [undefined, 110];
+	};
 
 	module.exports = FixedRenderNode;
 });

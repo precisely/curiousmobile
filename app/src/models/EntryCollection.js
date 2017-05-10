@@ -62,7 +62,8 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 						if (!dataSentToCallback) {
 							// Earlier we were caching entries for 11 days but now caching entries for just one day
 							var sortedEntries = this.sortDescByTime(collections[0]);
-							callback(sortedEntries);
+							var recentlyUsedTags = data[2];
+							callback(sortedEntries, recentlyUsedTags);
 						}
 					}
 				}.bind(this));
@@ -78,7 +79,18 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 				return 0;
 			});
 			return entries;
-		}
+		};
+
+		EntryCollection.sortAscByTime = function(entries) {
+			entries.models.sort(function(item1, item2) {
+				if (new Date(item1.get('date')) < new Date(item2.get('date')))
+					return -1;
+				if (new Date(item1.get('date')) > new Date(item2.get('date')))
+					return 1;
+				return 0;
+			});
+			return entries;
+		};
 
 		EntryCollection.getFromCache = function(key){
 			var collectionCache = window.App.collectionCache;

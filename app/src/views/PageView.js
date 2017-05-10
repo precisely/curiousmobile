@@ -51,11 +51,10 @@ define(function(require, exports, module) {
 		_menuHandlers.call(this);
 		_createContextMenu.call(this);
 		setTimeout(function() {
-			navigator.splashscreen.hide();
+			if (navigator.splashscreen) {
+				navigator.splashscreen.hide();
+			}
 		}, 100);
-		//		window.onclick = function() {
-		//			Utils.closeAlerts();
-		//		};
 	}
 
 	PageView.prototype = Object.create(StateView.prototype);
