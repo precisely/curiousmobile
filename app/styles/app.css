@@ -1060,7 +1060,7 @@ input[type=radio] {
 	text-transform: capitalize;
 	font-size: 14px;
 	float: right;
-	margin-right: -5;
+	margin-right: -5px;
 }
 
 .people-wrapper .user-details-header .follow {
@@ -3215,11 +3215,6 @@ input.cropit-image-zoom-input {
 	margin: 0px;
 }
 
-.rotate90 {
-	transform: rotate(90deg);
-	transition: transform 0.5 ease-out 0s;
-}
-
 #marked {
 	text-transform: capitalize;
 }
@@ -4216,3 +4211,8 @@ input.cropit-image-zoom-input {
 
 /*- - - - - - - - - - - - - - - - - - End Range/Slider Input's CSS - - - - - - - - - - - - - - - - - - - - - - - - - */
 /*- - - - - - - - - - - - - - - - - - End Input Widgets CSS - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+
+/*- - - - - - - - - - - - - - - - - - Android z-Index fixes - - - - - - - - - - - - - - - - - - - - - - - - - - - - -*/
+.header-container-ZTransform {
+	transform: translateZ(36px) !important;
+}

@@ -52,25 +52,18 @@ define(function(require, exports, module) {
 				this.removeSuffix();
 				this.setRepeat = !this.setRepeat;
 				this.setPinned = false;
-				if (this.setRepeat) {
-					this.renderController.show(this.repeatModifierSurface, {duration: 50}, function() {
-						document.getElementById('daily').checked = true;
-						this.setSelectedDate(this.selectedDate);
-					}.bind(this));
-					this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.formView + 5));
-					this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 220, App.zIndex.formView + 5));
-				} else {
-					this.dateGridRenderController.hide();
-					this.renderController.hide();
-					this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] - 220, App.zIndex.formView + 5));
-					this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] - 220, App.zIndex.formView + 5));
-				}
+				this.setUpdateAndDeleteButtonModifiers();
 				this.toggleSelector(this.repeatSurface);
 			}
 		}.bind(this));
 
 		this.remindSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
+				if (this.isRemindAlertBalloonVisible()) {
+					$('#remind-surface').popover('destroy');
+					return;
+				}
+
 				this.removeFocus();
 				this.removeSuffix();
 				this.setRemind = !this.setRemind;
@@ -85,9 +78,14 @@ define(function(require, exports, module) {
 
 		this.pinSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
+				this.removeFocus();
 				this.removeSuffix();
 				this.setPinned = !this.setPinned;
-				this.setRepeat = this.setRemind = false;
+				if (this.setRepeat) {
+					this.setRepeat = false;
+					this.setUpdateAndDeleteButtonModifiers();
+				}
+				this.setRemind = false;
 				this.toggleSelector(this.pinSurface);
 				this.dateGridRenderController.hide();
 				this.renderController.hide();
@@ -131,10 +129,12 @@ define(function(require, exports, module) {
 							this.setSelectedDate(date);
 							this.dateGridRenderController.hide();
 							this.dateGridOpen = false;
+							App.pageView.getCurrentView().hideShimSurface();
 						}.bind(this));
 
 						this.dateGrid.on('close-date-grid', function(date) {
 							this.dateGridRenderController.hide();
+							App.pageView.getCurrentView().hideShimSurface();
 						}.bind(this));
 					}
 					this.dateGridOpen = !this.dateGridOpen;
@@ -173,6 +173,32 @@ define(function(require, exports, module) {
 	TrackEntryFormView.prototype.removeFocus = function() {
 		if (u.isAndroid()) {
 			document.activeElement.blur();
+		}
+	};
+
+	TrackEntryFormView.prototype.isRemindAlertBalloonVisible = function() {
+		var popoverElement = document.getElementsByClassName('popover setAlert');
+
+		return (popoverElement && popoverElement.length === 1);
+	};
+
+	TrackEntryFormView.prototype.setUpdateAndDeleteButtonModifiers = function() {
+		if (this.setRepeat) {
+			this.renderController.show(this.repeatModifierSurface, null, function() {
+				document.getElementById('daily').checked = true;
+				this.setSelectedDate(this.selectedDate);
+			}.bind(this));
+			this.submitButtonModifier.setTransform(Transform.translate(30,
+					this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.formView + 5));
+			this.deleteButtonModifier.setTransform(Transform.translate(30,
+					this.deleteButtonModifier.getTransform()[13] + 220, App.zIndex.formView + 5));
+		} else {
+			this.dateGridRenderController.hide();
+			this.renderController.hide();
+			this.submitButtonModifier.setTransform(Transform.translate(30,
+					this.submitButtonModifier.getTransform()[13] - 220, App.zIndex.formView + 5));
+			this.deleteButtonModifier.setTransform(Transform.translate(30,
+					this.deleteButtonModifier.getTransform()[13] - 220, App.zIndex.formView + 5));
 		}
 	};
 

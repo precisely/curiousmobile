@@ -44,6 +44,9 @@ define(function(require, exports, module) {
 				var inputElement = document.getElementById("entry-description");
 				inputElement.value = inputLabel;
 				inputElement.focus();
+				if (this.modifiersMovedDown) {
+					this.batchMoveUpModifiers();
+				}
 			}.bind(this), 500);
 		}.bind(this));
 
@@ -70,6 +73,7 @@ define(function(require, exports, module) {
 
 		this.remindSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
+				this.removeFocus();
 				document.getElementById("entry-description").value = this.removeSuffix();
 				this.setRemind = !this.setRemind;
 				this.setRepeat = this.setPinned = false;
@@ -79,6 +83,7 @@ define(function(require, exports, module) {
 
 		this.repeatSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
+				this.removeFocus();
 				document.getElementById("entry-description").value = this.removeSuffix();
 				this.setRepeat = !this.setRepeat;
 				this.setRemind = this.setPinned = false;
@@ -88,6 +93,7 @@ define(function(require, exports, module) {
 
 		this.pinSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
+				this.removeFocus();
 				document.getElementById("entry-description").value = this.removeSuffix();
 				this.setPinned = !this.setPinned;
 				this.setRemind = this.setRepeat = false;
