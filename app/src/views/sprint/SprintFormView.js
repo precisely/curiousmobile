@@ -22,6 +22,8 @@ define(function(require, exports, module) {
 	var Scrollview = require('famous/views/Scrollview');
 	var Utility = require('famous/utilities/Utility');
 
+	var SprintWidgetEntryFormView = require('views/sprint/SprintWidgetEntryFormView');
+
 	function SprintFormView() {
 		BaseView.apply(this, arguments);
 		this.parentPage = 'SprintListView';
@@ -56,6 +58,18 @@ define(function(require, exports, module) {
 		header: true,
 		footer: true,
 		activeMenu: 'sprint'
+	};
+
+	SprintFormView.prototype.getTagItem = function(createdEntry) {
+		var icon = createdEntry.isRepeat() ? '<i class="fa fa-repeat"></i>' :
+				createdEntry.isRemind() ? '<i class="fa fa-bell"></i>' :
+				createdEntry.isContinuous() ? '<i class="fa fa-bookmark"></i>' : '';
+
+		var entryItem = '<div class="tag-button-block" data-id="' + createdEntry.id + '"><button class="tag-button">' +
+				createdEntry.get('description') + icon + '</button>&nbsp;' +
+				'<i class="fa fa-times-circle delete-tag"></i></div>';
+
+		return entryItem;
 	};
 
 	SprintFormView.prototype.onShow = function(state) {
@@ -139,8 +153,7 @@ define(function(require, exports, module) {
 						if (typeof cordova !== 'undefined') {
 							cordova.plugins.Keyboard.close();
 						}
-						this.addSprintTagsView = new SprintEntryFormView(this);
-						this.showOverlayContent(this.addSprintTagsView);
+						this.showWidgetEntryFormView();
 					} else if (_.contains(classList, 'delete-tag')) {
 						if (typeof cordova !== 'undefined') {
 							cordova.plugins.Keyboard.close();
@@ -178,7 +191,9 @@ define(function(require, exports, module) {
 						}.bind(this));
 					} else {
 						document.activeElement.blur();
-						cordova.plugins.Keyboard.close();
+						if (typeof cordova !== 'undefined') {
+							cordova.plugins.Keyboard.close();
+						}
 					}
 				}
 			}.bind(this));
@@ -191,6 +206,18 @@ define(function(require, exports, module) {
 			this.renderController.show(this.scrollView);
 		}.bind(this), function() {
 			App.pageView.goBack();
+		}.bind(this));
+	};
+
+	SprintFormView.prototype.showSprintEntryFormView = function() {
+		this.addSprintTagsView = new SprintEntryFormView(this);
+		this.showOverlayContent(this.addSprintTagsView);
+	};
+
+	SprintFormView.prototype.showWidgetEntryFormView = function() {
+		this.widgetEntryFormView = new SprintWidgetEntryFormView({sprintFormView: this});
+		this.showOverlayContent(this.widgetEntryFormView, function() {
+			this.widgetEntryFormView.setFocusOnInputSurface();
 		}.bind(this));
 	};
 
@@ -254,6 +281,23 @@ define(function(require, exports, module) {
 		document.getElementsByClassName('participants-wrapper')[0].innerHTML += participant;
 		this.resizeScrollView(30);
 		this.scrollView.sequenceFrom(this.scrollElements);
+	};
+
+	SprintFormView.prototype.killOverlayContent = function(callback, isBackButtonCall) {
+		var showWidgetEntryFormView;
+		if (this.currentOverlay === 'SprintEntryFormView' && isBackButtonCall) {
+			showWidgetEntryFormView = true;
+		}
+
+		BaseView.prototype.killOverlayContent.call(this);
+
+		if (showWidgetEntryFormView) {
+			this.showWidgetEntryFormView();
+		}
+
+		if (callback) {
+			callback();
+		}
 	};
 
 	App.pages['SprintFormView'] = SprintFormView;

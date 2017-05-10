@@ -30,7 +30,7 @@ define( function(require, exports, module) {
 
 	TagInputTypeAutoComplete.prototype.initializeFromStore = function() {
 		var tagsInputTypeMap = Store.get('taginputTypeMap');
-		this.taginputTypeMap.map = tagsInputTypeMap ? tagsInputTypeMap : {};
+		this.taginputTypeMap.addAll(tagsInputTypeMap);
 
 		var tagsWithInputType = Store.get('tagsWithInputType');
 		this.tagsWithInputType = tagsWithInputType ? tagsWithInputType : [];

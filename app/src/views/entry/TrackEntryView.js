@@ -11,7 +11,7 @@ define(function(require, exports, module) {
 	var EventHandler = require('famous/core/EventHandler');
 	var EntryReadView = require('views/entry/EntryReadView');
 	var Entry = require('models/Entry');
-	var EntryDraggableNode = require('views/entry/EntryDraggableNode');
+	var DraggableNode = require('views/entry/DraggableNode');
 
 	function TrackEntryView(options) {
 		EntryReadView.apply(this, arguments);
@@ -52,7 +52,6 @@ define(function(require, exports, module) {
 		};
 
 		this.entrySurface.setOptions(readSurfaceOptions);
-		this.glowInit(readSurfaceOptions);
 
 		this.entrySurface.pipe(this._eventOutput);
 
@@ -63,7 +62,8 @@ define(function(require, exports, module) {
 			size: [24, 24],
 			properties: {
 				zIndex: 10
-			}
+			},
+			classes: ['show-more-surface' + (this.entry.isGhost() ? '-ghost' : '')]
 		});
 		var showMoreModifier = new StateModifier({
 			transform: Transform.translate(window.innerWidth - 40, 15, window.App.zIndex.readView + 6)
@@ -75,10 +75,6 @@ define(function(require, exports, module) {
 			}
 		}.bind(this));
 
-		if (!this.options.doNotAddMoreSurface) {
-			this.add(showMoreModifier).add(this.showMoreSurface);
-		}
-
 		var deleteModifier = new StateModifier({
 			transform: Transform.translate(window.innerWidth - 100, 0, window.App.zIndex.readView + 2)
 		});
@@ -88,13 +84,19 @@ define(function(require, exports, module) {
 			transform: Transform.translate(0, 0, window.App.zIndex.readView + 500)
 		});
 
-		var entryDraggableNode = new EntryDraggableNode({
+		var entryDraggableNode = new DraggableNode({
 			draggableSurface: this.entrySurface,
 			deleteSurface: this.deleteSurface,
 			height: this.options.entryHeight
 		});
 
 		this.add(entryModifier).add(entryDraggableNode);
+
+		if (!this.options.doNotAddMoreSurface) {
+			this.add(showMoreModifier).add(entryDraggableNode.draggable).add(this.showMoreSurface);
+		}
+
+		this.showMoreSurface.pipe(entryDraggableNode.draggable);
 	};
 
 	TrackEntryView.prototype.getSize = function () {

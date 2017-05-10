@@ -16,7 +16,6 @@ define(function(require, exports, module) {
 		SizeAwareView.apply(this, arguments);
 		this.entry = options.entry;
 		this.createView();
-		this.addGlowSurface();
 	}
 
 	EntryView.prototype = Object.create(SizeAwareView.prototype);
@@ -71,51 +70,28 @@ define(function(require, exports, module) {
 				if (timeDelta < 500) {
 					clearTimeout(this.touchTimeout);
 					this.select();
-					return;
-				}
-				if (timeDelta > 600) {
-					App.pageView._eventOutput.emit('show-context-menu', {
-						menu: this.menu,
-						target: this,
-						eventArg: {entry: this.entry}
-					});
 				}
 			}
 		}.bind(this));
 	};
 
-	EntryView.prototype.addGlowSurface = function() {
-		this.glowSurface = new Surface();
-		this.glowController = new RenderController();
-		this.glowControllerModifier = new StateModifier({transform: Transform.translate(0, 0, 555)});
-		this.add(this.glowControllerModifier).add(this.glowController);
-	};
-
 	EntryView.prototype.glow = function() {
-		this.glowController.show(this.glowSurface, null, function() {
-			setTimeout(function() {
-				/* 
-				 * Calling just hide() was not allowing the glow surface to persist so modifying the z-Index first
-				 * and then hiding the glow surface. Also since glow surface was displayed on the top of entry surface 
-				 * zIndex had to be given so added a state modifier.
-				*/
-				this.glowControllerModifier.setTransform(Transform.translate(0, 0, 0), {duration: 3000});
-				this.glowController.hide();
-			 }.bind(this), 1000);
-		}.bind(this));
-	};
+		this.entrySurface.addClass('glow');
 
-	EntryView.prototype.glowInit = function (options) {
-		var glowSurfaceOptions = Object.create(options);
-		this.glowSurface.setOptions(glowSurfaceOptions);
-		this.glowSurface.addClass('glow');
+		setTimeout(function() {
+			this.entrySurface.removeClass('glow');
+		}.bind(this), 3000);
 	};
 
 	EntryView.prototype.select = function() {
 		console.log('entry selected with id: ' + this.entry.id);
 		if (this.entry.get("sourceName")) {
 			u.showAlert('You can not edit this entry');
+			return;
 		}
+		var trackView = App.pageView.getPage('TrackView');
+		var formViewState = trackView.entryFormView.buildStateFromEntry(this.entry);
+		trackView.showTrackEntryFormView(formViewState);
 	};
 
 	EntryView.prototype.delete = function(e) {

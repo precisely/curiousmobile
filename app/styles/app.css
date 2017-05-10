@@ -488,8 +488,7 @@ input, textarea {
 }
 
 .ghost {
-	color: #c0c0c0;
-	opacity: 0.6 !important;
+	color: #c0c0c0 !important;
 }
 
 .entry {
@@ -512,6 +511,10 @@ input, textarea {
 	color: #FC3F28;
 	background: #ffffff;
 	border-left: 5px solid #FC3F28;
+}
+
+.ghost.repeat {
+	border-left: 5px solid rgba(244, 141, 91, 0.5);
 }
 
 .remind {
@@ -3796,21 +3799,21 @@ input.cropit-image-zoom-input {
 }
 
 @keyframes blinker {
-  from, to {
-    color: transparent;
-  }
-  50% {
-    color: black;
-  }
+	from, to {
+		color: transparent;
+	}
+	50% {
+		color: black;
+	}
 }
 
 @-webkit-keyframes blinker {
-  from, to {
-    color: transparent;
-  }
-  50% {
-    color: black;
-  }
+	from, to {
+		color: transparent;
+	}
+	50% {
+		color: black;
+	}
 }
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - Input Widgets CSS - - - - - - - - - - - - - - - - - - - - - - */
@@ -3819,7 +3822,7 @@ input.cropit-image-zoom-input {
 	display: flex;
 }
 
-.glow .input-widget-surface {
+.glow.entry, .glow .input-widget-surface {
 	-webkit-animation-name: glow-effect;
 	-webkit-animation-duration: 2s;
 	-webkit-animation-timing-function: ease-in-out;
@@ -3994,7 +3997,7 @@ input.cropit-image-zoom-input {
 	padding-right: 10px;
 }
 
-.range-input-view {
+.range-input-view-runnable-track {
 	display: flex;
 	z-index: 10;
 }
@@ -4133,19 +4136,23 @@ input.cropit-image-zoom-input {
 	justify-content: center;
 }
 
-.ghost-entry .input-widget-tag-description, .ghost-entry .time-display-box, .ghost-entry .fa-repeat, 
-		.ghost-entry .fa-bell, .ghost-entry .fa-bell-o {
+.ghost-entry .input-widget-tag-description, .ghost-entry .time-display-box, .ghost-entry .fa-repeat,
+		.ghost-entry .fa-bell, .ghost-entry .fa-bell-o, .ghost-entry .slider-input-value-box {
 	color: #9E9E9E !important;
 	border-color: #9E9E9E !important;
 }
 
-.ghost-entry .input-circle {
+.ghost-entry .input-circle, .show-more-surface-ghost {
 	-webkit-filter: grayscale(100%); /* Safari 6.0 - 9.0 */
 	filter: grayscale(100%);
 }
 
 .ghost-entry .fill-circle {
 	background-color: #9E9E9E !important;
+}
+
+.ghost-entry.range-input-view-slider-thumb, .ghost-entry .slider-runnable-track {
+	background: #9E9E9E !important;
 }
 
 .entry-help-text {
@@ -4168,6 +4175,23 @@ input.cropit-image-zoom-input {
 	border: 1px solid rgb(241, 74, 66) !important;
 }
 
+.custom-tag-question {
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	height: 80px;
+	color: #FFFFFF;
+}
+
+.custom-tag-buttons {
+	display: inline-flex;
+	justify-content: space-around;
+	padding-top: 30px;
+}
+.custom-tag-buttons button {
+	width: 100px;
+	height: 40px;
+}
 /*- - - - - - - - - - - - - - - - - - Range/Slider Input's CSS - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 .rv-0 {

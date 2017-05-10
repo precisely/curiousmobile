@@ -32,9 +32,14 @@ define(function(require, exports, module) {
 		var templateOptions = this.parentInputWidgetView.getTemplateOptions();
 		this.currentPosition = templateOptions.position;
 
+		var classes = ['range-input-view-runnable-track'];
+		if (!this.parentInputWidgetView.isDrawerInputSurface && this.parentInputWidgetView.entry.isGhost()) {
+			classes.push('ghost-entry');
+		}
+
 		this.runnableTrackSurface = new Surface({
 			content: _.template(sliderInputWidgetTemplate, templateOptions, templateSettings),
-			classes: ['range-input-view']
+			classes: classes
 		});
 
 		this.runnableTrackSurface.on('click', function(e) {
@@ -93,9 +98,14 @@ define(function(require, exports, module) {
 	RangeInputView.prototype.createSliderThumb = function() {
 		this.draggable = new Draggable();
 
+		var classes = ['range-input-view-slider-thumb'];
+		if (!this.parentInputWidgetView.isDrawerInputSurface && this.parentInputWidgetView.entry.isGhost()) {
+			classes.push('ghost-entry');
+		}
+
 		this.sliderThumb = new Surface({
 			size: [20, 20],
-			classes: ['range-input-view-slider-thumb']
+			classes: classes
 		});
 
 		var sliderThumbModifier = new StateModifier({
@@ -140,6 +150,11 @@ define(function(require, exports, module) {
 			this.draggable.setPosition([(this.currentPosition * this.lengthOfOneMovement) - 3, 0],
 					this.snapTransition);
 		}
+	};
+
+	RangeInputView.prototype.removeGhostEntryClasses = function() {
+		this.runnableTrackSurface.removeClass('ghost-entry');
+		this.sliderThumb.removeClass('ghost-entry')
 	};
 
 	module.exports = RangeInputView;

@@ -12,7 +12,9 @@ define(function(require, exports, module) {
 
 	var EditEntryOverlayView = require('views/entry/EditEntryOverlayView');
 
-	function SetRepeatTypeAndDateView(parentInputWidgetView) {
+	var Utils = require('util/Utils');
+
+	function RepeatFormView(parentInputWidgetView) {
 		EditEntryOverlayView.apply(this, arguments);
 
 		this.dateGridOpen = false;
@@ -21,10 +23,10 @@ define(function(require, exports, module) {
 		this.createRemoveRepeatButton();
 	}
 
-	SetRepeatTypeAndDateView.prototype = Object.create(EditEntryOverlayView.prototype);
-	SetRepeatTypeAndDateView.prototype.constructor = SetRepeatTypeAndDateView;
+	RepeatFormView.prototype = Object.create(EditEntryOverlayView.prototype);
+	RepeatFormView.prototype.constructor = RepeatFormView;
 
-	SetRepeatTypeAndDateView.prototype.addDateGrid = function() {
+	RepeatFormView.prototype.addDateGrid = function() {
 		this.dateGridRenderController = new RenderController();
 		this.dateGridModifier = new StateModifier({
 			transform: Transform.translate((App.width < 320 ? 18: 30), 80, App.zIndex.datePicker)
@@ -41,7 +43,7 @@ define(function(require, exports, module) {
 		}.bind(this));
 	};
 
-	SetRepeatTypeAndDateView.prototype.getEntryRepeatSettings = function() {
+	RepeatFormView.prototype.getEntryRepeatSettings = function() {
 		var entryRepeatSettings = {
 			repeatEndDate: this.parentInputWidget.repeatEndDate ? this.getEndDateDisplayText() : '',
 			isDaily: this.parentInputWidget.entry.isDaily() ? 'checked' : '',
@@ -53,7 +55,7 @@ define(function(require, exports, module) {
 		return entryRepeatSettings;
 	};
 
-	SetRepeatTypeAndDateView.prototype.addRepeatSurface = function() {
+	RepeatFormView.prototype.addRepeatSurface = function() {
 		this.repeatModifierSurface = new Surface({
 			content: _.template(repeatModifierTemplate, this.getEntryRepeatSettings(), templateSettings),
 			size: [undefined, undefined],
@@ -66,6 +68,24 @@ define(function(require, exports, module) {
 		this.repeatModifierSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
 				var parentElement = e.srcElement.parentElement;
+
+				/*
+				 * The IOS platform have unusual with checkboxes, it is resetting the input to previous state. Hence
+				 * added a check for IOS to again reset the input so that the final result is the intended one.
+				 * For example: If the checkbox is checked, IOS will clear it (reset), but this code will then
+				 * invert the current state, i.e will again check it.
+				 * 
+				 * TODO This repeat form is same in TrackEntryFormView also. Make it generic.
+				 */
+				if (Utils.isIOS()) {
+					if (_.contains(parentElement.classList, 'entry-checkbox') ||
+								_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {
+						var repeatEachCheckbox = document.getElementById('confirm-each-repeat');
+						repeatEachCheckbox.checked = !repeatEachCheckbox.checked;
+
+						return;
+					}
+				}
 
 				if (_.contains(parentElement.classList, 'date-picker-field')) {
 					if (typeof cordova !== 'undefined') {
@@ -102,7 +122,7 @@ define(function(require, exports, module) {
 		this.overlayContainerSurface.add(this.repeatModifierSurface);
 	};
 
-	SetRepeatTypeAndDateView.prototype.createRemoveRepeatButton = function() {
+	RepeatFormView.prototype.createRemoveRepeatButton = function() {
 		this.removeRepeatButton = new Surface({
 			content: '<button type="button" class="full-width-button remove-repeat-button">REMOVE REPEAT</button>',
 			size: [undefined, true]
@@ -112,7 +132,7 @@ define(function(require, exports, module) {
 			if (e instanceof CustomEvent) {
 				if (_.contains(e.srcElement.classList, 'remove-repeat-button')) {
 					var removeRepeat = true;
-					this._eventOutput.emit('submit', true);
+					this._eventOutput.emit('submit', removeRepeat);
 				}
 			}
 		}.bind(this));
@@ -127,15 +147,15 @@ define(function(require, exports, module) {
 		this.overlayContainerSurface.add(this.removeButtonModifier).add(this.removeButtonRenderController);
 	};
 
-	SetRepeatTypeAndDateView.prototype.showRemoveRepeatButton = function() {
+	RepeatFormView.prototype.showRemoveRepeatButton = function() {
 		this.removeButtonRenderController.show(this.removeRepeatButton);
 	};
 
-	SetRepeatTypeAndDateView.prototype.hideRemoveRepeatButton = function() {
+	RepeatFormView.prototype.hideRemoveRepeatButton = function() {
 		this.removeButtonRenderController.hide();
 	};
 
-	SetRepeatTypeAndDateView.prototype.setSelectedDate = function(date) {
+	RepeatFormView.prototype.setSelectedDate = function(date) {
 		if (!date) {
 			document.getElementsByClassName('choose-date-input')[0].value = '';
 			return;
@@ -150,7 +170,7 @@ define(function(require, exports, module) {
 		}
 	};
 
-	SetRepeatTypeAndDateView.prototype.getEndDateDisplayText = function() {
+	RepeatFormView.prototype.getEndDateDisplayText = function() {
 		var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
 			'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
 		];
@@ -162,7 +182,7 @@ define(function(require, exports, module) {
 		return (date.getDate() + ' ' + monthName + ' ' + date.getFullYear());
 	};
 
-	SetRepeatTypeAndDateView.prototype.reset = function() {
+	RepeatFormView.prototype.reset = function() {
 		this.parentInputWidget.setRepeatEndDate();
 
 		var entryRepeatSettings = this.getEntryRepeatSettings();
@@ -173,13 +193,13 @@ define(function(require, exports, module) {
 		document.getElementById('weekly').checked = entryRepeatSettings.isWeekly ? true : false;
 		document.getElementById('monthly').checked = entryRepeatSettings.isMonthly ? true : false;
 
-		document.getElementById('confirm-each-repeat').checked = entryRepeatSettings.confirmEachRepeat ? true 
+		document.getElementById('confirm-each-repeat').checked = entryRepeatSettings.confirmEachRepeat ? true
 				: false;
 	};
 
-	SetRepeatTypeAndDateView.prototype.getHeaderLabel = function() {
+	RepeatFormView.prototype.getHeaderLabel = function() {
 		return 'Set Repeat Interval';
 	};
 
-	module.exports = SetRepeatTypeAndDateView;
+	module.exports = RepeatFormView;
 });

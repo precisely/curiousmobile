@@ -48,11 +48,12 @@ define(function(require, exports, module) {
 		this.repeatSurface.on('click', function(e) {
 			console.log("repeatSurface event");
 			if (e instanceof CustomEvent) {
+				this.removeFocus();
 				this.removeSuffix();
 				this.setRepeat = !this.setRepeat;
 				this.setPinned = false;
 				if (this.setRepeat) {
-					this.renderController.show(this.repeatModifierSurface, null, function() {
+					this.renderController.show(this.repeatModifierSurface, {duration: 50}, function() {
 						document.getElementById('daily').checked = true;
 						this.setSelectedDate(this.selectedDate);
 					}.bind(this));
@@ -70,6 +71,7 @@ define(function(require, exports, module) {
 
 		this.remindSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
+				this.removeFocus();
 				this.removeSuffix();
 				this.setRemind = !this.setRemind;
 				this.setPinned = false;
@@ -95,12 +97,24 @@ define(function(require, exports, module) {
 
 		this.repeatModifierSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
+				this.removeFocus();
+
 				var classList = e.srcElement.parentElement.classList;
-				if (_.contains(classList, 'entry-checkbox') ||
-					_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {
-					var repeatEachCheckbox = document.getElementById('confirm-each-repeat');
-					repeatEachCheckbox.checked = !repeatEachCheckbox.checked;
-				} else if (_.contains(classList, 'date-picker-field')) {
+
+				/*
+				 * This code is intentionally written for IOS platform. See {@link RepeatFormView} for more details.
+				 */
+				if (u.isIOS()) {
+					if (_.contains(classList, 'entry-checkbox') ||
+								_.contains(e.srcElement.parentElement.parentElement.classList, 'entry-checkbox')) {
+						var repeatEachCheckbox = document.getElementById('confirm-each-repeat');
+						repeatEachCheckbox.checked = !repeatEachCheckbox.checked;
+
+						return;
+					}
+				}
+
+				if (_.contains(classList, 'date-picker-field')) {
 					if (typeof cordova !== 'undefined') {
 						cordova.plugins.Keyboard.close();
 					}
@@ -132,9 +146,8 @@ define(function(require, exports, module) {
 			console.log("New Entry - TrackView event");
 			this.resetRepeatModifierForm();
 			this.renderController.hide();
-			var currentListView = this.trackView.currentListView;
-			window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],resp.tagStats[3], resp.tagStats[4])
-			this.trackView.initContextMenuOptions();
+			window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],resp.tagStats[3], resp.tagStats[4]);
+			this.trackView.killTrackEntryForm();
 			this.trackView.preShow({data: resp, fromServer: true});
 		}.bind(this));
 
@@ -142,24 +155,25 @@ define(function(require, exports, module) {
 			console.log('EntryListView: Updating an entry ');
 			this.resetRepeatModifierForm();
 			this.renderController.hide();
-			var currentListView = this.trackView.currentListView;
 			if (resp.tagStats[0]) {
 				window.autocompleteCache.update(resp.tagStats[0][0], resp.tagStats[0][1], resp.tagStats[0][2],resp.tagStats[0][3], resp.tagStats[0][4])
 			}
 			if (resp.tagStats[1]) {
 				window.autocompleteCache.update(resp.tagStats[1][0], resp.tagStats[1][1], resp.tagStats[1][2],resp.tagStats[1][3], resp.tagStats[1][4])
 			}
-			this.trackView.initContextMenuOptions();
+			this.trackView.killTrackEntryForm();
 			this.trackView.preShow({data: resp, fromServer: true});
 		}.bind(this));
+	};
 
-		this.on('delete-entry', function(resp) {
-			this.trackView.killEntryForm();
-			if (resp && resp.fail) {
-				u.showAlert('Could not delete entry');
-			}
-			this.trackView.initContextMenuOptions();
-		}.bind(this));
+	/**
+	 * In Android platform, the focus is not automatically removed from the entry input surface and hence the
+	 * keyboard repeatedly gets opened and closed. Hence manually removing the focus from entry input surface.
+	 */
+	TrackEntryFormView.prototype.removeFocus = function() {
+		if (u.isAndroid()) {
+			document.activeElement.blur();
+		}
 	};
 
 	/**
@@ -230,7 +244,7 @@ define(function(require, exports, module) {
 			}.bind(this);
 			this.submitButtonModifier.setTransform(Transform.translate(30, this.submitButtonModifier.getTransform()[13] + 220, App.zIndex.formView + 5));
 			this.deleteButtonModifier.setTransform(Transform.translate(30, this.deleteButtonModifier.getTransform()[13] + 220, App.zIndex.formView + 5));
-			this.renderController.show(this.repeatModifierSurface, null, function() {
+			this.renderController.show(this.repeatModifierSurface, {duration: 50}, function() {
 				document.getElementById(radioSelector).checked = true;
 				if (entry.isGhost()) {
 					document.getElementById('confirm-each-repeat').checked = true;
@@ -258,7 +272,7 @@ define(function(require, exports, module) {
 			var nullAmount = false;
 			if ((entry.get('amountPrecision') < 0) && (entry.get('amount') == null)) {
 				nullAmount = true;
- 			}
+			}
 			if (!tagStatsMap) {
 				tagStatsMap = autocompleteCache.tagStatsMap.getFromText(tag);
 			}
@@ -336,9 +350,7 @@ define(function(require, exports, module) {
 		};
 	};
 
-
 	TrackEntryFormView.prototype.submit = function(e, directlyCreateEntry) {
-		this.trackView.hideBookmarkShimSurface();
 		this.autoCompleteView.hide();
 		$('#remind-surface').popover('destroy');
 		if (typeof cordova !== 'undefined') {
@@ -380,6 +392,10 @@ define(function(require, exports, module) {
 			repeatTypeId = Entry.RepeatType.CONTINUOUSGHOST;
 		}
 
+		if (this.setRepeat || this.setRemind || this.setPinned) {
+			window.App.collectionCache.clear();
+		}
+
 		if (!entry || !entry.get('id') || (entry.isContinuous() && entry.state !== 'bookmarkEdit') ||
 				(!entry.isContinuous() && repeatTypeId && repeatTypeId === Entry.RepeatType.CONTINUOUSGHOST)) {
 			var newEntry = new Entry();
@@ -390,11 +406,8 @@ define(function(require, exports, module) {
 			if (repeatEnd) {
 				newEntry.set("repeatEnd", repeatEnd);
 			}
-			this.trackView.killEntryForm(true);
+			this.trackView.killTrackEntryForm();
 			newEntry.create(function(resp) {
-				if (this.setRepeat || this.setRemind || this.setPinned) {
-					window.App.collectionCache.clear();
-				}
 				this.blur();
 				this._eventOutput.emit('new-entry', resp);
 			}.bind(this));
@@ -402,17 +415,13 @@ define(function(require, exports, module) {
 		} else if ((this['originalText-entry-description'] == newText) && (entry.get("repeatType") == repeatTypeId) && (entry.get("repeatEnd") == repeatEnd)) {
 			console.log("TrackEntryFormView: No changes made");
 			this.blur();
-			this.trackView.killEntryForm(null);
+			this.trackView.killTrackEntryForm();
 			this.trackView._eventOutput.emit('done-edit-bookmarks');
 			return;
 		} else {
 			entry.setText(newText);
 			entry.set("repeatType", repeatTypeId);
 			entry.set("repeatEnd", repeatEnd);
-		}
-
-		if (this.setRepeat || this.setRemind || this.setPinned) {
-			window.App.collectionCache.clear();
 		}
 
 		if (this.hasFuture()) {
@@ -435,7 +444,7 @@ define(function(require, exports, module) {
 
 	TrackEntryFormView.prototype.saveEntry = function(allFuture) {
 		var entry = this.entry;
-		this.trackView.killEntryForm(true);
+		this.trackView.killTrackEntryForm();
 		entry.save(allFuture, function(resp) {
 			this._eventOutput.emit('update-entry', resp);
 			this.blur();
@@ -444,7 +453,7 @@ define(function(require, exports, module) {
 
 	TrackEntryFormView.prototype.createEntry = function() {
 		var entry = this.entry;
-		this.trackView.killEntryForm(true);
+		this.trackView.killTrackEntryForm();
 		entry.save(function(resp) {
 			this.entry = new Entry(entry);
 			this._eventOutput.emit('new-entry', resp);
@@ -454,6 +463,15 @@ define(function(require, exports, module) {
 	TrackEntryFormView.prototype.hasFuture = function() {
 		var entry = this.entry;
 		return ((entry.isRepeat() && !entry.isRemind()) || entry.isGhost()) && !entry.isTodayOrLater();
+	};
+
+	TrackEntryFormView.prototype.resetTrackEntryFormView = function() {
+		this.dateGridRenderController.hide();
+		this.renderController.hide();
+		this.buttonsRenderController.hide();
+		this.submitButtonRenderController.hide();
+		this.deleteButtonRenderController.hide();
+		this.batchMoveUpModifiers();
 	};
 
 	App.pages[TrackEntryFormView.name] = TrackEntryFormView;

@@ -333,7 +333,9 @@ define(function(require, exports, module) {
 
 	BaseView.prototype.goBack = function(state) {
 		if (this.currentOverlay) {
-			this.killOverlayContent();
+			var isBackButtonCall = true;
+			var callback = null;
+			this.killOverlayContent(callback, isBackButtonCall);
 			return;
 		}
 		App.pageView.goBack(this.parentPage, state || this.state);
