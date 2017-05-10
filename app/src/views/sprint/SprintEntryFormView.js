@@ -11,7 +11,7 @@ define(function(require, exports, module) {
 	var StateView = require('views/StateView');
 	var SequentialLayout = require("famous/views/SequentialLayout");
 	var AutocompleteView = require("views/AutocompleteView");
-	var Autocomplete = require('models/Autocomplete');
+	var TagsAutoComplete = require('models/TagsAutoComplete');
 	var u = require('util/Utils');
 	var Utility = require('famous/utilities/Utility');
 	var store = require('store');
@@ -30,21 +30,8 @@ define(function(require, exports, module) {
 	SprintEntryFormView.prototype = Object.create(EntryFormView.prototype);
 	SprintEntryFormView.prototype.constructor = SprintEntryFormView;
 
-	function _zIndex(argument) {
-		return window.App.zIndex.formView;
-	}
-
-	function getTagItem(createdEntry) {
-		var icon = createdEntry.isRepeat() ? '<i class="fa fa-repeat"></i>' :
-				createdEntry.isRemind() ? '<i class="fa fa-bell"></i>' :
-				createdEntry.isContinuous() ? '<i class="fa fa-bookmark"></i>' : '';
-		var entryItem = '<div class="tag-button-block" data-id="' + createdEntry.id + '"><button class="tag-button">' + createdEntry.get('description') + icon + '</button>&nbsp;' +
-				'<i class="fa fa-times-circle delete-tag"></i></div>';
-		return entryItem;
-	}
-
 	SprintEntryFormView.prototype._setListeners = function() {
-		var AutocompleteObj = new Autocomplete();
+		var AutocompleteObj = new TagsAutoComplete();
 		window.autocompleteCache = AutocompleteObj;
 		this.autoCompleteView = new AutocompleteView(AutocompleteObj);
 		this.autoCompleteView.on('updateInputSurface', function() {
@@ -65,13 +52,13 @@ define(function(require, exports, module) {
 
 		this.on('form-sprint-entry', function(resp) {
 			var createdEntry = resp.glowEntry;
-			var entryItem = getTagItem(createdEntry);
+			var entryItem = this.parentView.getTagItem(createdEntry);
 			this.parentView.killAddSprintTagsOverlay({entryItem: entryItem, entry: createdEntry});
 		}.bind(this));
 
 		this.on('update-sprint-entry', function(resp) {
 			var updatedEntry = resp.glowEntry;
-			var entryItem = getTagItem(updatedEntry);
+			var entryItem = this.parentView.getTagItem(updatedEntry);
 			this.parentView.killAddSprintTagsOverlay({entryItem: entryItem, entry: updatedEntry, hasUpdatedTag: true});
 		}.bind(this));
 
@@ -113,7 +100,7 @@ define(function(require, exports, module) {
 				this.toggleSelector(this.pinSurface);
 			}
 		}.bind(this));
-	}
+	};
 
 	SprintEntryFormView.prototype.preShow = function(state) {
 		if (state.preShowCheck) {
@@ -124,6 +111,7 @@ define(function(require, exports, module) {
 		}
 		return true;
 	};
+
 	SprintEntryFormView.prototype.onShow = function(state) {
 		BaseView.prototype.onShow.call(this);
 		if (!state) {
@@ -178,45 +166,6 @@ define(function(require, exports, module) {
 		}
 	};
 
-	SprintEntryFormView.prototype.buildStateFromEntry = function(entry) {
-		console.log('Build state for entry with id: ' + entry.id);
-		this.setPinned = this.setRemind = this.setRepeat = false;
-		this.entry = entry;
-		var entryText = entry.toString();
-		if (entry && entry.isContinuous()) {
-			entryText = this.removeSuffix(entryText);
-		}
-
-		var selectionRange = entry.getSelectionRange();
-		if (selectionRange !== undefined) {
-			if (selectionRange[2]) { // insert space at selectionRange[0]
-				entryText = entryText.substr(0, selectionRange[0] - 1) + " " + entryText.substr(selectionRange[0] - 1);
-			}
-		}
-
-		var state = {
-			viewProperties: {
-				name: 'entry',
-				value: entry,
-				model: 'entry'
-			},
-			form: [{
-				id: 'entry-description',
-				value: entryText,
-				selectionRange: selectionRange,
-				elementType: ElementType.domElement,
-				focus: true
-			}],
-			postLoadAction: {
-				name: 'showEntryModifiers',
-				args: {
-					entry: entry
-				}
-			}
-		};
-		return state;
-	};
-
 	SprintEntryFormView.prototype.toggleSuffix = function(suffix) {
 		var text = document.getElementById("entry-description").value;
 		if (text.endsWith(' repeat') || text.endsWith(' remind') || text.endsWith(' pinned')) {
@@ -236,6 +185,11 @@ define(function(require, exports, module) {
 	SprintEntryFormView.prototype.submit = function(e, directlyCreateEntry) {
 		var entry = this.entry;
 		var newText = document.getElementById("entry-description").value;
+
+		if (!newText) {
+			return;
+		}
+
 		var repeatTypeId;
 
 		if (!u.isOnline()) {
@@ -258,6 +212,10 @@ define(function(require, exports, module) {
 			newEntry.set('date', window.App.selectedDate);
 			newEntry.userId = this.parentView.virtualUserId;
 			newEntry.setText(newText);
+
+			// This code is replicated from Web's feeds.js file.
+			var baseDate = new Date('January 1, 2001 12:00 am');
+
 			newEntry.create(function(resp) {
 				if (newText.indexOf('repeat') > -1 || newText.indexOf('remind') > -1 ||
 					newText.indexOf('pinned') > -1 || newText.indexOf('bookmark') > -1) {
@@ -265,7 +223,7 @@ define(function(require, exports, module) {
 				}
 				this.blur();
 				this._eventOutput.emit('form-sprint-entry', resp);
-			}.bind(this));
+			}.bind(this), baseDate);
 			return;
 		} else {
 			if (repeatTypeId) {

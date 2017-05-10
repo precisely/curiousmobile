@@ -1,8 +1,8 @@
 define(function(require, exports, module) {
+
 	'use strict';
+
 	var View = require('famous/core/View');
-	var Surface = require('famous/core/Surface');
-	var Transform = require('famous/core/Transform');
 	var StateModifier = require('famous/modifiers/StateModifier');
 	var Timer = require('famous/utilities/Timer');
 	var OptionsManager = require('famous/core/OptionsManager');
@@ -34,10 +34,6 @@ define(function(require, exports, module) {
 	StateView.prototype.getStateFromCache = function() {
 		var oldState = App.stateCache.getItem(this.constructor.name);
 		this.loadState(oldState);
-		// Sub-states not needed for now
-		//_.each(this.subViews, function(subView) {
-		//	subView.getStateFromCache();
-		//});
 	};
 
 
@@ -56,7 +52,6 @@ define(function(require, exports, module) {
 	 * Loads the given state onto the view.
 	 */
 	StateView.prototype.loadState = function(state) {
-		var focusElement = null;
 		if (!state) {
 			return;
 		}
@@ -87,10 +82,11 @@ define(function(require, exports, module) {
 
 		if (state && state.form) {
 			console.log(this.constructor.name + ': Loading elements/form from state');
-			for (var i = 0, len = state.form.length; i < len; i++) {
-				var element = state.form[i];
-				console.log(this.constructor.name + ': Setting value for ' + element.id);
-				Timer.setTimeout(function() {
+			Timer.setTimeout(function() {
+				for (var i = 0, len = state.form.length; i < len; i++) {
+					var element = state.form[i];
+					console.log(this.constructor.name + ': Setting value for ' + element.id);
+
 					var elementDOM = document.getElementById(element.id);
 					elementDOM.value = element.value;
 
@@ -103,13 +99,14 @@ define(function(require, exports, module) {
 					if (element.focus) {
 						elementDOM.focus();
 					}
-				}.bind(this), 300);
-			}
+				}
+			}.bind(this), 300);
 		}
 
 		if (state.postLoadAction) {
 			this[state.postLoadAction.name].apply(this, state.postLoadAction.args);
 		}
+
 		return false;
 	};
 

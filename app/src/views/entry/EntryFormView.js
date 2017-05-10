@@ -11,8 +11,6 @@ define(function(require, exports, module) {
 	var RenderController = require("famous/views/RenderController");
 	var StateView = require('views/StateView');
 	var SequentialLayout = require("famous/views/SequentialLayout");
-	var AutocompleteView = require("views/AutocompleteView");
-	var Autocomplete = require('models/Autocomplete');
 	var DraggableView = require("views/widgets/DraggableView");
 	var store = require('store');
 	var Entry = require('models/Entry');
@@ -31,7 +29,7 @@ define(function(require, exports, module) {
 		var backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
-				background: (this.constructor.name === 'TrackEntryFormView') ? 'rgba(123, 120, 120, 0.48)' : 'rgb(184, 182, 182)'
+				background: 'rgb(184, 182, 182)'
 			}
 		});
 		this.add(new StateModifier({
@@ -108,33 +106,6 @@ define(function(require, exports, module) {
 			document.getElementById('entry-description').focus();
 		});
 
-		this.inputSurface.on('keyup', function(e) {
-			//on enter
-			if (e.keyCode == 13) {
-				this.submit(e);
-			} else if (e.keyCode == 27) {
-				this.blur(e);
-				this.trackView.killEntryForm(null);
-			} else {
-				enteredKey = e.srcElement.value;
-				if (!enteredKey && this.modifiersMovedDown) {
-					this.batchMoveUpModifiers();
-				}
-				this.autoCompleteView.getAutocompletes(enteredKey, function(surfaceList) {
-					if (surfaceList && surfaceList.length > 1 && !this.modifiersMovedDown) {
-						this.batchMoveDownModifiers();
-					} else if (surfaceList && surfaceList.length <= 1 && this.modifiersMovedDown) {
-						this.batchMoveUpModifiers();
-					}
-				}.bind(this));
-				var autoCompleteModifier = new StateModifier({
-					transform:Transform.translate(0, 0, App.zIndex.autocomplete),
-					size: [window.innerWidth - 30, 40]
-				});
-				formContainerSurface.add(autoCompleteModifier).add(this.autoCompleteView);
-			}
-		}.bind(this));
-
 		formContainerSurface.add(this.inputModifier).add(this.inputSurface);
 		this.formContainerSurface = formContainerSurface;
 
@@ -185,9 +156,9 @@ define(function(require, exports, module) {
 
 		this.deleteButtonSurface.on('click', function(e) {
 			if (e instanceof CustomEvent) {
-				this.trackView.currentListView.deleteEntry(this.entry);
 				this.entry.delete(function(data) {
-					this._eventOutput.emit('delete-entry', data);
+					this.trackView.killTrackEntryForm();
+					this.trackView.currentListView.deleteLegacyEntryViewForEntry(this.entry);
 				}.bind(this));
 			}
 		}.bind(this));
@@ -204,7 +175,7 @@ define(function(require, exports, module) {
 		this.buttonsRenderController = new RenderController();
 		var sequentialLayout = new SequentialLayout({
 			direction: 0,
-			itemSpacing: 30,
+			itemSpacing: 50,
 			defaultItemSize: [80, 24],
 		});
 
@@ -219,12 +190,12 @@ define(function(require, exports, module) {
 		});
 
 		this.pinSurface = new Surface({
-			content: '<div class="text-center"><i class="fa fa-plus-square-o"></i><br/> Bookmark</div>',
-			size: [84, 24]
+			content: '',
+			size: [0, 0]
 		});
 
-		this.firstOffset = (App.width - ((84 * 3) + 60)) / 2;
-		sequentialLayout.sequenceFrom([this.repeatSurface, this.remindSurface, this.pinSurface]);
+		this.firstOffset = (App.width - ((84 * 2) + 30)) / 2;
+		sequentialLayout.sequenceFrom([this.repeatSurface, this.remindSurface]);
 		this.buttonsAndHelp = new ContainerSurface({
 			size: [undefined, true],
 			classes: ['entry-form-buttons'],
@@ -243,7 +214,13 @@ define(function(require, exports, module) {
 		this.renderController = new RenderController();
 		this.dateGridRenderController = new RenderController();
 		this.repeatModifierSurface = new Surface({
-			content: _.template(repeatModifierTemplate, templateSettings),
+			content: _.template(repeatModifierTemplate, {
+				repeatEndDate: '',
+				isDaily: '',
+				isWeekly: '',
+				isMonthly: '',
+				confirmEachRepeat: ''
+			}, templateSettings),
 			size: [undefined, undefined],
 			properties: {
 				backgroundColor: 'transparent',
@@ -277,16 +254,6 @@ define(function(require, exports, module) {
 		if (this.constructor.name === 'SprintEntryFormView') {
 			this.repeatSurface.removeClass('highlight-surface');
 			this.remindSurface.removeClass('highlight-surface');
-			this.pinSurface.removeClass('highlight-surface');
-		} else if (this.constructor.name === 'TrackEntryFormView') {
-			if (this.setPinned) {
-				this.repeatSurface.removeClass('highlight-surface');
-				this.remindSurface.removeClass('highlight-surface');
-			}
-
-			if (this.setRepeat || this.setRemind) {
-				this.pinSurface.removeClass('highlight-surface');
-			}
 		}
 
 		if (selectorSurface && !isHilighted) {

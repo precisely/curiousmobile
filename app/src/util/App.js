@@ -26,19 +26,16 @@ var App = function() {
 
 	// Global popover contents, so that any popover content can be changed here without visiting any views.
 	var popoverContents = {
-		entryAdded: 'Tap to edit',
-		bookmarkAdded: 'Bookmark added here, tap to track it!',
-		setAlert: 'An alert will pop up at the time of this entry to remind you to track this',
-		bookmarksPresent: 'Tap bookmark to track it',
-		createBookmark: 'Create a bookmark for one-tap tracking',
+		entryAdded: 'Tap here to edit time',
 		sprintMenu: 'Activities to do with <br>We Are Curious!',
 		shareChart: 'Tap here to share',
-		enterTag: 'Enter tag to track',
 		addDiscussionTrackathon: 'Post new discussion topic',
 		trackathonBookmarks: "The trackathon’s tags have been added to your bookmarks! " +
 				"Go to the Trackathon/STARTED tab to see your started trackathons and discuss your progress with" +
 				" other users",
-		firstChartPlot: 'Tap tag to change graphing style'
+		firstChartPlot: 'Tap tag to change graphing style',
+		plusIcon: 'Tap here to add a tag you have not tracked recently',
+		inputWidgetUsage: 'Tap here to change value'
 	};
 
 	// Global popover settings applied to every popup in the app.

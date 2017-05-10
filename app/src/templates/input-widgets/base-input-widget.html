@@ -1,0 +1,29 @@
+<div class="input-widget-surface" id="input-widget-surface-{{- entryId}}">
+	<div class="tag-time-row">
+		<div class="input-widget-tag-description">
+			{{ if (!isDrawer) { }}
+				<div class="entry-help-text">{{- entryDisplayText}}</div>
+			{{ } }}
+			<span>{{- tag}}</span>
+		</div>
+		<div class="time-remind-repeat-box">
+			{{ if (time) { }}
+				<button class="time-display-box" id="time-box-{{- entryId}}">{{- time}}</button>
+			{{ } }}
+
+			{{ if (!isDrawer) { }}
+				<button class="transparent-bg">
+					<i class="fa fa-bell{{= (reminderSet ? '' : '-o')}} 
+							{{= (reminderSet ? 'colored-icon' : 'faded-icon')}}" aria-hidden="true" 
+							id="bell-icon-{{- entryId}}"></i>
+				</button>
+				<button class="transparent-bg">
+					<i class="fa fa-repeat {{= (repeatSet ? 'colored-icon' : 'faded-icon')}}" aria-hidden="true"
+							id="repeat-icon-{{- entryId}}"></i>
+				</button>
+			{{ } }}
+		</div>
+	</div>
+
+	{{= widgetDiv}}
+</div>
