@@ -21,7 +21,6 @@ define(function(require, exports, module) {
 	var DraggableNode = require('views/entry/DraggableNode');
 	var Entry = require('models/Entry');
 	var Utils = require('util/Utils');
-	var InputWidgetGroupView = require('../entry/InputWidgetGroupView');
 
 	function InputWidgetView(entry, parentWidgetGroup) {
 		View.apply(this, arguments);
@@ -136,11 +135,7 @@ define(function(require, exports, module) {
 				 * Glow the timebox only when the drawer is closed.
 				 */
 				if (glowTimeBox && this.parentWidgetGroup.collapsed) {
-					$(timeBox).addClass('glow');
-
-					setTimeout(function() {
-						$(timeBox).removeClass('glow');
-					}.bind(this), 3000);
+					this.glowTimeBox(timeBox);
 				}
 			} else {
 				$(timeBox).addClass('hidden');
@@ -442,7 +437,8 @@ define(function(require, exports, module) {
 		newEntry.create(function(resp) {
 			newEntry = resp.glowEntry;
 			this.parentWidgetGroup.addWidget(newEntry);
-			this.updateEntryTimeBox(true);
+			var glowTimeBox = true;
+			this.updateEntryTimeBox(glowTimeBox);
 			if (!this.parentWidgetGroup.collapsed) {
 				this.parentWidgetGroup.resizeDrawerContainer();
 				this.parentWidgetGroup.handleGlowEntry(newEntry.id);
@@ -628,6 +624,15 @@ define(function(require, exports, module) {
 		setTimeout(function() {
 			this.inputWidgetSurface.removeClass('glow');
 		}.bind(this), 3000);
+	};
+
+	InputWidgetView.prototype.glowTimeBox = function(timeBox) {
+		timeBox = timeBox || document.getElementById(this.TIME_BOX_ID);
+		$(timeBox).addClass('glow');
+
+		setTimeout(function() {
+			$(timeBox).removeClass('glow');
+		}.bind(this), 2000);
 	};
 
 	InputWidgetView.prototype.getInputElementPositionToSelect = function() {

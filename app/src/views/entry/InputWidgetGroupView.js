@@ -246,15 +246,15 @@ define(function(require, exports, module) {
 
 	InputWidgetGroupView.prototype.sortAscByTime = function() {
 		this.entries.sortAscByTime();
-	    this.inputWidgetViewList.sort(function(item1, item2) {
+		this.inputWidgetViewList.sort(function(item1, item2) {
 			var date1 = new Date(item1.entry.get('date'));
 			var date2 = new Date(item2.entry.get('date'));
-	        if (date1 < date2)
-                return -1;
-            if (date1 > date2)
-                return 1;
-            return 0;
-        });
+			if (date1 < date2)
+				return -1;
+			if (date1 > date2)
+				return 1;
+			return 0;
+		});
 	};
 
 	InputWidgetGroupView.prototype.getSize = function () {
