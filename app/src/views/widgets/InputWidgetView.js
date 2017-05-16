@@ -21,6 +21,7 @@ define(function(require, exports, module) {
 	var DraggableNode = require('views/entry/DraggableNode');
 	var Entry = require('models/Entry');
 	var Utils = require('util/Utils');
+	var InputWidgetGroupView = require('../entry/InputWidgetGroupView');
 
 	function InputWidgetView(entry, parentWidgetGroup) {
 		View.apply(this, arguments);
@@ -58,6 +59,12 @@ define(function(require, exports, module) {
 		this.createWidget();
 		this.addComponents();
 		this.registerListeners();
+	};
+
+	InputWidgetView.prototype.updateEntryCollection = function(entry) {
+		if (this.isDrawerInputSurface) {
+			this.entry.add(entry);
+		}
 	};
 
 	InputWidgetView.prototype.setValueOfOneInputElement = function() {
@@ -116,15 +123,27 @@ define(function(require, exports, module) {
 		return this.entry.getTimeString().toUpperCase();
 	};
 
-	InputWidgetView.prototype.updateEntryTimeBox = function() {
+	InputWidgetView.prototype.updateEntryTimeBox = function(glowTimeBox) {
 		var timeBox = document.getElementById(this.TIME_BOX_ID);
 
 		if (timeBox) {
 			var newTimeDisplayText = this.getTimeDisplayText();
 			if (newTimeDisplayText) {
 				timeBox.innerHTML = newTimeDisplayText;
+				$(timeBox).removeClass('hidden');
+
+				/**
+				 * Glow the timebox only when the drawer is closed.
+				 */
+				if (glowTimeBox && this.parentWidgetGroup.collapsed) {
+					$(timeBox).addClass('glow');
+
+					setTimeout(function() {
+						$(timeBox).removeClass('glow');
+					}.bind(this), 3000);
+				}
 			} else {
-				$(timeBox).hide();
+				$(timeBox).addClass('hidden');
 			}
 		}
 	};
@@ -421,7 +440,13 @@ define(function(require, exports, module) {
 		newEntry.setText(entryText);
 
 		newEntry.create(function(resp) {
-			this.trackView.preShow({data: resp, fromServer: true});
+			newEntry = resp.glowEntry;
+			this.parentWidgetGroup.addWidget(newEntry);
+			this.updateEntryTimeBox(true);
+			if (!this.parentWidgetGroup.collapsed) {
+				this.parentWidgetGroup.resizeDrawerContainer();
+				this.parentWidgetGroup.handleGlowEntry(newEntry.id);
+			}
 
 			if (window.autocompleteCache) {
 				window.autocompleteCache.update(resp.tagStats[0], resp.tagStats[1], resp.tagStats[2],
@@ -457,7 +482,7 @@ define(function(require, exports, module) {
 		}
 
 		var updateCallback = function(resp) {
-			this.entry = entry; // Update the original entry reference.
+			this.entry.set(entry.attributes); // Update the original entry reference.
 
 			this.setRepeatAndRemind();
 			this.setRepeatEndDate();
@@ -469,7 +494,10 @@ define(function(require, exports, module) {
 			 * like Alert toggle, Repeat settings, Ghost to Real and Amount change, only the glow effect is used.
 			 */
 			if (refreshEntries) {
-				this.trackView.preShow({data: resp, fromServer: true});
+				this.parentWidgetGroup.sortAscByTime();
+				this.parentWidgetGroup.updateEntryTimeBox();
+				this.updateEntryTimeBox();
+				this.glow();
 			} else {
 				this.glow();
 			}

@@ -3823,6 +3823,12 @@ input.cropit-image-zoom-input {
 	-webkit-animation-timing-function: ease-in-out;
 }
 
+.time-display-box.glow {
+	-webkit-animation-name: glow-effect;
+	-webkit-animation-duration: 2s;
+	-webkit-animation-timing-function: ease-in-out;
+}
+
 @-webkit-keyframes glow-effect {
 	0% { background-color: #F9F9F9; }
 	25% { background-color: grey; }
