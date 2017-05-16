@@ -3817,13 +3817,7 @@ input.cropit-image-zoom-input {
 	display: flex;
 }
 
-.glow.entry, .glow .input-widget-surface, .glow .time-display-box {
-	-webkit-animation-name: glow-effect;
-	-webkit-animation-duration: 2s;
-	-webkit-animation-timing-function: ease-in-out;
-}
-
-.time-display-box.glow {
+.glow.entry, .glow .input-widget-surface, .glow .time-display-box, .time-display-box.glow {
 	-webkit-animation-name: glow-effect;
 	-webkit-animation-duration: 2s;
 	-webkit-animation-timing-function: ease-in-out;
