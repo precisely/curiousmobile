@@ -8,8 +8,19 @@ define(['require', 'exports', 'module', 'jstzdetect', 'exoskeleton', 'models/Ent
 
 		var EntryCollection = Backbone.Collection.extend({
 			model: Entry,
-		});
 
+			sortAscByTime: function() {
+				this.models.sort(function(item1, item2) {
+					if (new Date(item1.get('date')) < new Date(item2.get('date'))) {
+						return -1;
+					}
+					if (new Date(item1.get('date')) > new Date(item2.get('date'))) {
+						return 1;
+					}
+					return 0;
+				});
+			}
+		});
 
 		EntryCollection.fetchEntries = function(dates, callback) {
 			var collectionCache = window.App.collectionCache;

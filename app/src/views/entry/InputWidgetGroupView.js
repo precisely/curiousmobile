@@ -22,7 +22,7 @@ define(function(require, exports, module) {
 	var SmileInputWidgetView = require('views/widgets/SmileInputWidgetView'); // InputType 4
 	var ThumbsUpInputWidgetView = require('views/widgets/ThumbsUpInputWidgetView'); // InputType 5
 
-	var TagInputType = require('util/TagInputType'); 
+	var TagInputType = require('util/TagInputType');
 
 	function InputWidgetGroupView(options) {
 		SizeAwareView.apply(this, arguments);
@@ -56,16 +56,12 @@ define(function(require, exports, module) {
 		switch (this.tagInputType.inputType) {
 			case 'SLIDER':
 				return SliderInputWidgetView;
-				break;
 			case 'LEVEL':
 				return LevelInputWidgetView;
-				break;
 			case 'BOOLEAN':
 				return BooleanInputWidgetView;
-				break;
 			case 'SMILEY':
 				return SmileInputWidgetView;
-				break;
 			case 'THUMBS':
 				return ThumbsUpInputWidgetView;
 		}
@@ -207,36 +203,62 @@ define(function(require, exports, module) {
 		}
 	};
 
+	InputWidgetGroupView.prototype.addWidget = function(entry) {
+		var InputWidgetView = this.inputWidgetViewClass;
+
+		var inputWidgetViewForEntry = new InputWidgetView(entry, this);
+
+		inputWidgetViewForEntry.on('delete-failed', function() {
+			this._eventOutput.emit('delete-failed');
+		}.bind(this));
+
+		inputWidgetViewForEntry.on('delete-entry', function() {
+			var indexOfInputWidgetViewForEntry = this.inputWidgetViewList.indexOf(inputWidgetViewForEntry);
+
+			if ((indexOfInputWidgetViewForEntry > -1)) {
+				this.inputWidgetViewList.splice(indexOfInputWidgetViewForEntry, 1);
+
+				this.entries.remove(inputWidgetViewForEntry.entry);
+
+				if (this.inputWidgetViewList.length === 0) {
+					this.hideDrawer();
+				} else {
+					this.resizeDrawerContainer();
+				}
+
+				this.drawerSurface.updateEntryTimeBox();
+			}
+		}.bind(this));
+
+		this.inputWidgetViewList.push(inputWidgetViewForEntry);
+		this.drawerSurface.updateEntryCollection(entry);
+	}
+
 	InputWidgetGroupView.prototype.addWidgetsToDrawer = function() {
 		this.entries.each(function(entry) {
-			var InputWidgetView = this.inputWidgetViewClass;
-
-			var inputWidgetViewForEntry = new InputWidgetView(entry, this);
-
-			inputWidgetViewForEntry.on('delete-failed', function() {
-				this._eventOutput.emit('delete-failed');
-			}.bind(this));
-
-			inputWidgetViewForEntry.on('delete-entry', function() {
-				var indexOfInputWidgetViewForEntry = this.inputWidgetViewList.indexOf(inputWidgetViewForEntry);
-
-				if ((indexOfInputWidgetViewForEntry > -1)) {
-					this.inputWidgetViewList.splice(indexOfInputWidgetViewForEntry, 1);
-
-					this.entries.remove(inputWidgetViewForEntry.entry);
-
-					if (this.inputWidgetViewList.length === 0) {
-						this.hideDrawer();
-					} else {
-						this.resizeDrawerContainer();
-					}
-
-					this.drawerSurface.updateEntryTimeBox();
-				}
-			}.bind(this));
-
-			this.inputWidgetViewList.push(inputWidgetViewForEntry);
+			this.addWidget(entry);
 		}.bind(this));
+	};
+
+	InputWidgetGroupView.prototype.updateEntryTimeBox = function() {
+		this.drawerSurface.updateEntryTimeBox();
+	};
+
+	InputWidgetGroupView.prototype.sortAscByTime = function() {
+		this.entries.sortAscByTime();
+		this.inputWidgetViewList.sort(function(item1, item2) {
+			var date1 = new Date(item1.entry.get('date'));
+			var date2 = new Date(item2.entry.get('date'));
+			if (date1 < date2) {
+				return -1;
+			}
+
+			if (date1 > date2) {
+				return 1;
+			}
+
+			return 0;
+		});
 	};
 
 	InputWidgetGroupView.prototype.getSize = function () {
