@@ -7,10 +7,7 @@
 			<span>{{- tag}}</span>
 		</div>
 		<div class="time-remind-repeat-box">
-			{{ if (time) { }}
-				<button class="time-display-box" id="time-box-{{- entryId}}">{{- time}}</button>
-			{{ } }}
-
+			<button class="time-display-box {{= (time ? '' : 'hidden')}}" id="time-box-{{- entryId}}">{{- time}}</button>
 			{{ if (!isDrawer) { }}
 				<button class="transparent-bg">
 					<i class="fa fa-bell{{= (reminderSet ? '' : '-o')}} 

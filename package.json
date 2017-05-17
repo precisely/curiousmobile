@@ -1,6 +1,6 @@
 {
   "name": "wearecurious",
-  "version": "2.0.0",
+  "version": "2.0.1rc1",
   "description": "Track Data, chart experience, find meaning.",
   "main": "Gruntfile.js",
   "dependencies": {
