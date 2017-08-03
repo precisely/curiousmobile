@@ -152,7 +152,7 @@ var pendingJSONCalls = [];
 
 
 /*
- * Curious data json return value check
+ * precise.ly data json return value check
  */
 function checkData(data, status, errorMessage, successMessage) {
 	if (data == 'error') {
@@ -266,7 +266,7 @@ function dataURItoBlob(dataURI) {
 	return new Blob([ia], {type:mimeString});
 }
 
-/* 
+/*
  * Moves cursor to the end of the input box
  */
 function moveCaretToEnd(el) {

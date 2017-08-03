@@ -11,7 +11,7 @@ define(function(require, exports, module) {
 			this.eventInput = new EventHandler();
 			Backbone.Model.apply(this, arguments);
 		},
-		urlRoot: 'http://dev.wearecurio.us/api/discussion'
+		urlRoot: 'http://dev.precise.ly/api/discussion'
 	});
 
 	Discussion.max = 10;

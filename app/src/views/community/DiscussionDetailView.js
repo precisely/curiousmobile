@@ -56,9 +56,9 @@ define(function(require, exports, module) {
 				zIndex: 1
 			}
 		});
-		
+
 		this.add(this.scrollViewContainer);
-		
+
 		this.scrollViewControllerMod = new StateModifier({
 			size: [undefined, App.height - 130],
 			transform: Transform.translate(0, 75, App.zIndex.feedItem)
@@ -100,7 +100,7 @@ define(function(require, exports, module) {
 		BaseView.prototype.preChangePage.call(this);
 		this.killOverlayContent();
 	};
-	
+
 	DiscussionDetailView.prototype.preShow = function(state) {
 		if (!state || !state.discussionHash) {
 			return false;
@@ -118,7 +118,7 @@ define(function(require, exports, module) {
 		this.surfaceList = [];
 		this.scrollView.setPosition(0);
 		this.isCommentSelected = false;
-		
+
 		this.scrollView.sequenceFrom(this.surfaceList);
 
 		DiscussionPost.fetch({
@@ -191,7 +191,7 @@ define(function(require, exports, module) {
 					this.postComment();
 				} else if (_.contains(classList, 'share-button') || _.contains(e.srcElement.parentElement.classList, 'share-button')) {
 					if (window.plugins) {
-						window.plugins.socialsharing.share(null, 'Curious Discussions', null, App.serverUrl + '/home/social/discussions/' + this.discussionHash);
+						window.plugins.socialsharing.share(null, 'precise.ly Discussions', null, App.serverUrl + '/home/social/discussions/' + this.discussionHash);
 					}
 				} else if (_.contains(classList, 'view-more-comments')) {
 					this.loadItems();

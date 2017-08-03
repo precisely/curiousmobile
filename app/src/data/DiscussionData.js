@@ -9,7 +9,7 @@ define(function(require, exports, module) {
 		'updated': '2014-08-11T23:34:44.000Z',
 		'isAdmin': false,
 		'groupId': 2,
-		'groupName': 'Curious Discussions',
+		'groupName': 'precise.ly Discussion',
 		'userName': 'heatheranne',
 		'isPlot': true
 	}, {
@@ -21,7 +21,7 @@ define(function(require, exports, module) {
 		'updated': '2014-05-19T11:35:55.000Z',
 		'isAdmin': true,
 		'groupId': 2,
-		'groupName': 'Curious Discussions',
+		'groupName': 'precise.ly Discussion',
 		'userName': 'visheshd',
 		'isPlot': false
 	}, {
@@ -33,7 +33,7 @@ define(function(require, exports, module) {
 		'updated': '2014-05-13T10:23:13.000Z',
 		'isAdmin': true,
 		'groupId': 2,
-		'groupName': 'Curious Discussions',
+		'groupName': 'precise.ly Discussion',
 		'userName': 'visheshd',
 		'isPlot': false
 	}, {
@@ -45,7 +45,7 @@ define(function(require, exports, module) {
 		'updated': '2014-05-06T12:21:47.000Z',
 		'isAdmin': false,
 		'groupId': 2,
-		'groupName': 'Curious Discussions',
+		'groupName': 'precise.ly Discussion',
 		'userName': 'lgmd',
 		'isPlot': true
 	}, {
@@ -57,7 +57,7 @@ define(function(require, exports, module) {
 		'updated': '2014-05-05T16:35:22.000Z',
 		'isAdmin': false,
 		'groupId': 2,
-		'groupName': 'Curious Discussions',
+		'groupName': 'precise.ly Discussion',
 		'userName': 'lgmd',
 		'isPlot': true
 	}, {
@@ -69,7 +69,7 @@ define(function(require, exports, module) {
 		'updated': '2014-04-28T14:18:36.000Z',
 		'isAdmin': true,
 		'groupId': 2,
-		'groupName': 'Curious Discussions',
+		'groupName': 'precise.ly Discussion',
 		'userName': 'visheshd',
 		'isPlot': true
 	}, {
@@ -81,7 +81,7 @@ define(function(require, exports, module) {
 		'updated': '2014-04-28T13:21:19.000Z',
 		'isAdmin': true,
 		'groupId': 2,
-		'groupName': 'Curious Discussions',
+		'groupName': 'precise.ly Discussion',
 		'userName': 'visheshd',
 		'isPlot': false
 	}, {
@@ -93,7 +93,7 @@ define(function(require, exports, module) {
 		'updated': '2014-04-14T12:17:27.000Z',
 		'isAdmin': false,
 		'groupId': 2,
-		'groupName': 'Curious Discussions',
+		'groupName': 'precise.ly Discussion',
 		'userName': 'heatheranne',
 		'isPlot': true
 	}, {
@@ -105,7 +105,7 @@ define(function(require, exports, module) {
 		'updated': '2014-04-14T10:02:06.000Z',
 		'isAdmin': false,
 		'groupId': 2,
-		'groupName': 'Curious Discussions',
+		'groupName': 'precise.ly Discussion',
 		'userName': 'heatheranne',
 		'isPlot': true
 	}, {
@@ -117,7 +117,7 @@ define(function(require, exports, module) {
 		'updated': '2014-03-31T07:17:03.000Z',
 		'isAdmin': true,
 		'groupId': 2,
-		'groupName': 'Curious Discussions',
+		'groupName': 'precise.ly Discussion',
 		'userName': 'visheshd',
 		'isPlot': true
 	}, {
@@ -129,7 +129,7 @@ define(function(require, exports, module) {
 		'updated': '2014-03-03T15:21:31.000Z',
 		'isAdmin': false,
 		'groupId': 2,
-		'groupName': 'Curious Discussions',
+		'groupName': 'precise.ly Discussion',
 		'userName': 'heatheranne',
 		'isPlot': true
 	}, {
@@ -141,7 +141,7 @@ define(function(require, exports, module) {
 		'updated': '2014-02-06T23:21:18.000Z',
 		'isAdmin': false,
 		'groupId': 2,
-		'groupName': 'Curious Discussions',
+		'groupName': 'precise.ly Discussion',
 		'userName': 'demo',
 		'isPlot': true
 	}, {
@@ -153,7 +153,7 @@ define(function(require, exports, module) {
 		'updated': '2013-10-21T19:16:08.000Z',
 		'isAdmin': false,
 		'groupId': 2,
-		'groupName': 'Curious Discussions',
+		'groupName': 'precise.ly Discussion',
 		'userName': 'lgmd',
 		'isPlot': true
 	}];

@@ -41,7 +41,7 @@ define(function(require, exports, module) {
 					confirm_email: confirmEmail,
 					username: username,
 					password: password,
-					groups: "['announce','curious','curious announce']"
+					groups: "['announce','precise.ly','precise.ly announce']"
 				}),
 				function(data) {
 					if (data['success']) {

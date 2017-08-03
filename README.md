@@ -1,5 +1,5 @@
 
-#Mobile Framework version of Curious Mobile App
+#Mobile Framework version of precise.ly
 ##Dependencies
 It is actually quite simple really
 
