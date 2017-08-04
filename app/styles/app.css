@@ -3633,6 +3633,13 @@ input.cropit-image-zoom-input {
 	width: 153px;
 }
 
+@media only screen and (max-device-height: 568px) {
+	div.sprintMenu > .arrow {
+		top: 95px !important;
+		left: 63% !important;
+	}
+}
+
 .bookmark-plus {
 	font-size: 16px;
 	padding: 4px 10px 0px 10px;
