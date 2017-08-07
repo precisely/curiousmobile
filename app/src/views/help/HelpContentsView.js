@@ -23,7 +23,7 @@ define(function(require, exports, module) {
 		this.add(new StateModifier({transform: Transform.translate(0, 0, 5)})).add(backgroundSurface);
 		this.renderController = new RenderController();
 		this.add(new StateModifier({size: [undefined, App.height - 200], transform: Transform.translate(0, 64, App.zIndex.footer - 1)})).add(this.renderController);
-		this.setHeaderLabel('Curious Help');
+		this.setHeaderLabel('precise.ly Help');
 		this.initScrollView();
 		this.listContents();
 	}

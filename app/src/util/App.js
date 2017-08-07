@@ -31,7 +31,7 @@ var App = function() {
 		setAlert: 'An alert will pop up at the time of this entry to remind you to track this',
 		bookmarksPresent: 'Tap bookmark to track it',
 		createBookmark: 'Create a bookmark for one-tap tracking',
-		sprintMenu: 'Activities to do with <br>We Are Curious!',
+		sprintMenu: 'Activities to do with <br>precise.ly!',
 		shareChart: 'Tap here to share',
 		enterTag: 'Enter tag to track',
 		addDiscussionTrackathon: 'Post new discussion topic',
@@ -83,7 +83,7 @@ var App = function() {
 		this.coreEventHandler = new EventHandler();
 	};
 
-	this.serverUrl = "https://www.wearecurio.us";
+	this.serverUrl = "https://www.precise.ly";
 
 	this.width = window.innerWidth;
 	this.height = window.innerHeight;
