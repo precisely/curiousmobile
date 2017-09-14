@@ -102,6 +102,14 @@
 				document.addEventListener("pause", function() {
 					App.coreEventHandler.emit('app-paused');
 				}, false);
+				window.ga.startTrackerWithId('UA-106318128-1', 30,
+				function() {
+					console.log('User tracked in Google analytics.')
+				},
+				function() {
+					console.log('Analytics failed.')
+				});
+				window.ga.trackView('user-screen')
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 				window.Keyboard = cordova.plugins.Keyboard;
 				window.open = cordova.InAppBrowser.open;
