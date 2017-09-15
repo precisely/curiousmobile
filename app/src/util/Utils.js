@@ -221,8 +221,8 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 
 		Utils.queueJSONAll = function(description, url, args, successCallback, failCallback, delay, httpArgs, background) {
 			if (u.isOnline()) {
-				/* 
-				 * Searching for current page in pageMap instead of calling getCurentView() so that it does not try to 
+				/*
+				 * Searching for current page in pageMap instead of calling getCurentView() so that it does not try to
 				 * create new instance of view if view does not exist
 				 */
 				var currentView = App.pageView.pageMap[App.pageView.getCurrentPage()];
@@ -396,7 +396,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		};
 
 		/*
-		 * This method reloads DOM with images in it to 
+		 * This method reloads DOM with images in it to
 		 * get actual size of the surface in scroll view
 		 *
 		 */
@@ -694,6 +694,22 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		} else if (/Android/i.test(navigator.userAgent)) {
 			device.platform = "android"
 		}
+
+		/**
+		* This method add generated event of users in google analytics page for analysis purpose.
+		*/
+		Utils.saveEventForAnalysis = function(catagory, action, label, value, successlog) {
+			if(window.ga) {
+				window.ga.trackView('Precise.ly Mobile')
+				window.ga.trackEvent(catagory, action, label, value , true,
+						function() {
+							console.log(successlog);
+						}.bind(this),
+						function() {
+							console.log('Error to add event.');
+						}.bind(this)
+				)}
+			};
 
 		module.exports = Utils;
 	});

@@ -265,6 +265,7 @@ define(function(require, exports, module) {
 				}
 				this.blur();
 				this._eventOutput.emit('form-sprint-entry', resp);
+				u.saveEventForAnalysis('Entry', 'Entry-Created', 'Entry: ' + resp.glowEntry.get('description'), 0 ,'create entry event traced.');
 			}.bind(this));
 			return;
 		} else {
