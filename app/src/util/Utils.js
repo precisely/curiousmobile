@@ -700,7 +700,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		*/
 		Utils.saveEventForAnalysis = function(catagory, action, label, value, successlog) {
 			if(window.ga) {
-				window.ga.trackView('Precise.ly Mobile')
+				window.ga.trackView('Precise.ly Mobile');
 				window.ga.trackEvent(catagory, action, label, value , true,
 						function() {
 							console.log(successlog);
@@ -708,8 +708,9 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 						function() {
 							console.log('Error to add event.');
 						}.bind(this)
-				)}
-			};
+				);
+			}
+		};
 
 		module.exports = Utils;
 	});
