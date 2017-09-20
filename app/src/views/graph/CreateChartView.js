@@ -204,6 +204,11 @@ define(function(require, exports, module) {
 				if (!this.selectedTags || this.selectedTags.length < 1) {
 					u.showAlert('No Tags Selected to plot');
 				} else {
+					this.tagString = ' ';
+					this.selectedTags.forEach(function(tag) {
+						this.tagString = this.tagString + tag.description + ' ';
+					}.bind(this));
+					u.saveEventForAnalysis('Chart Plotted', 'Done', 'Tag:' + this.tagString, 0,'Chart traced.');
 					var shareDiscussion = false;
 					if (this.shareDiscussion) {
 						shareDiscussion = true;

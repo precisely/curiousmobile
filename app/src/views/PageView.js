@@ -117,6 +117,7 @@ define(function(require, exports, module) {
 			User.logout(function(user) {
 				this.changePage('HomeView');
 			}.bind(this));
+			Utils.saveEventForAnalysis('Logout', 'Done', 'User logout successfully', 0 ,'Logout successfully.');
 			console.log('PageView: logout');
 		}.bind(this));
 

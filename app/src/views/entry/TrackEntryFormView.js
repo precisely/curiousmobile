@@ -427,6 +427,7 @@ define(function(require, exports, module) {
 				}
 				this.blur();
 				this._eventOutput.emit('new-entry', resp);
+				u.saveEventForAnalysis('Entry', 'Created', 'Entry: ' + resp.glowEntry.get('description'), 0 ,'create entry event traced.');
 			}.bind(this));
 			return;
 		} else if ((this['originalText-entry-description'] == newText) && (entry.get("repeatType") == repeatTypeId) && (entry.get("repeatEnd") == repeatEnd)) {
