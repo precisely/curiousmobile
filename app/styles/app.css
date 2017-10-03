@@ -1107,7 +1107,6 @@ input[type=radio] {
 	display: inline-block;
 	padding-top: 1px;
 	font-size: 13px;
-	margin-right: 7px;
 }
 
 .feed-item .discussion .discussion-topic, .feed-item .sprint {
@@ -1302,7 +1301,6 @@ input[type=radio] {
 }
 
 .discussion-topic .buttons {
-	float: right;
 	display: inline-block;
 	padding: 0px 5px 4px 0px;
 }
@@ -1320,14 +1318,13 @@ input[type=radio] {
 	height: 27px;
 	background-color: transparent;
 	margin: 0px 0px -10px 0px;
-	font-size: 10px;
-	padding: 4px;
+	font-size: 11px;
+	padding: 0px 4px 4px 2px;
 }
 
 .discussion-topic button img {
 	height: 24px;
 	width: auto;
-	margin-right: 5px;
 }
 
 .feed-item .discussion .discussion-comment {
@@ -2485,8 +2482,8 @@ and (max-device-height: 568px) {
 
 .edit-image p {
 	font-size: 13px;
-	color: #fee49f;
-	font-weight: 500;
+	color: #ffffff;
+	font-weight: 600;
 
 }
 
@@ -2496,8 +2493,8 @@ and (max-device-height: 568px) {
 }
 
 .edit-label {
-	color: #fee49f;
-	font-weight: 500;
+	color: #ffffff;
+	font-weight: 600;
 	font-size: 13px;
 	display: block;
 	margin-bottom: -3px;
@@ -2841,7 +2838,7 @@ input.cropit-image-zoom-input {
 }
 
 .people-detail .media-body {
-	padding-left: 0px;
+	padding-left: 20px;
 }
 
 .search-bar {
@@ -3823,4 +3820,12 @@ input.cropit-image-zoom-input {
 
 .header-container-ZTransform {
 	transform: translateZ(36px) !important;
+}
+
+.tag-icon {
+	margin-top: 2px;
+}
+
+.people-detail .tags {
+	padding-left: 23px;
 }
