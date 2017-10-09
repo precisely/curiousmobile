@@ -3826,6 +3826,10 @@ input.cropit-image-zoom-input {
 	margin-top: 2px;
 }
 
-.people-detail .tags {
-	padding-left: 23px;
+.people-detail .tags, .people-detail .media-body, .people-detail .media-body {
+	padding-left: 0px;
+}
+
+.people-detail .media-left {
+	width: 53px;
 }

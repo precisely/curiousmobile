@@ -18,10 +18,10 @@
 				PUBLIC INTEREST TAGS
 			</label>
 			<div class="row media">
-				<div class="col-xs-1 media-left">
+				<div class="col-xs-2 media-left">
 					<img class="tag-icon"src="content/images/tag.png" height="30" width="auto">
 				</div>
-				<div class="col-xs-11 media-body tags">
+				<div class="col-xs-10 media-body tags">
 					<p> {{- (user.interestTags.length == 0) ? "No Tags" : user.interestTags.join(", ") }}</p>
 				</div>
 			</div>
@@ -33,20 +33,20 @@
 			</label>
 			{{ if (user.sprints.length == 0) { }}
 			<div class="row media">
-				<div class="col-xs-1 media-left">
+				<div class="col-xs-2 media-left">
 					<img src="content/images/sprint-icon.png" height="30" width="auto">
 				</div>
-				<div class="col-xs-11 media-body">
+				<div class="col-xs-10 media-body">
 					<p>No Sprints</p>
 				</div>
 			</div>
 			{{ } else { }}
 			{{ _.each(user.sprints, function(sprint) { }}
 			<div class="row media">
-				<div class="col-xs-1 media-left">
+				<div class="col-xs-2 media-left">
 					<img src="content/images/sprint-icon.png" height="30" width="auto">
 				</div>
-				<div class="col-xs-11 media-body">
+				<div class="col-xs-10 media-body">
 					<h4 class="media-heading">{{- sprint.name }}</h4>
 					<p>{{- sprint.description }}</p>
 				</div>
@@ -60,10 +60,10 @@
 			</label>
 			{{ _.each(user.groups, function(group) { }}
 			<div class="row media">
-				<div class="col-xs-1 media-left">
+				<div class="col-xs-2 media-left">
 					<i class="fa fa-circle fa-2x"></i>
 				</div>
-				<div class="col-xs-11 media-body">
+				<div class="col-xs-10 media-body">
 					<h4 class="media-heading">{{- group.name }}</h4>
 					<p>{{- group.description }}</p>
 				</div>
