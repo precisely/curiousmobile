@@ -430,7 +430,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		 */
 		Utils.getCSRFPreventionURI = function(key) {
 			var App = window.App;
-			var mobileSessionId = store.get('mobileSessionId');
+			var mobileSessionId = window.mobileSessionId || store.get('mobileSessionId');
 			var preventionURI;
 			if (mobileSessionId) {
 				preventionURI = "mobileSessionId=" + mobileSessionId;
@@ -450,7 +450,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		 */
 		Utils.getCSRFPreventionObject = function(key, data) {
 			var CSRFPreventionObject = new Object();
-			var mobileSessionId = store.get('mobileSessionId');
+			var mobileSessionId = window.mobileSessionId || store.get('mobileSessionId');
 			if (mobileSessionId) {
 				CSRFPreventionObject['mobileSessionId'] = mobileSessionId;
 			} else {
@@ -518,7 +518,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		};
 
 		Utils.makeGetArgs = function(args) {
-			args['mobileSessionId'] = store.get('mobileSessionId');
+			args['mobileSessionId'] = window.mobileSessionId || store.get('mobileSessionId');
 
 			return args;
 		};
@@ -531,7 +531,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		};
 
 		Utils.makePostArgs = function(args) {
-			args['mobileSessionId'] = store.get('mobileSessionId');
+			args['mobileSessionId'] = window.mobileSessionId || store.get('mobileSessionId');
 
 			return args;
 		};
@@ -570,7 +570,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		};
 
 		Utils.getMobileSessionId = function() {
-			return store.get('mobileSessionId');
+			return window.mobileSessionId || store.get('mobileSessionId');
 		};
 
 		Utils.prettyDate = function prettyDate(time) {
@@ -709,6 +709,31 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 							console.log('Error to add event.');
 						}.bind(this)
 				);
+			}
+		};
+
+		/*
+		* Create Table or Update Table if exist in SQLite DB.
+		* Stores the mobileSessionId of current session.
+		* @params token: string.
+		*/
+		Utils.setTokenInDb = function(token) {
+			if(window.db && window.db.transaction) {
+				window.db.transaction(function(tx) {
+					tx.executeSql('CREATE TABLE IF NOT EXISTS test (id, token)');
+					tx.executeSql('SELECT * FROM test', [], function(tx, res) {
+						if(res.rows.length) {
+							tx.executeSql('UPDATE test SET token=? WHERE id=?', [token, '1']);
+						} else {
+							tx.executeSql('INSERT INTO test VALUES (?,?)', ['1', token]);
+						}
+						window.mobileSessionId = token;
+					});
+				}, function(error) {
+					console.log('Transaction ERROR: ' + error.message);
+				}, function() {
+					console.log('Populated database successfully.');
+				});
 			}
 		};
 
