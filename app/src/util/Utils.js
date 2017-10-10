@@ -715,7 +715,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		/*
 		* Create Table or Update Table if exist in SQLite DB.
 		* Stores the mobileSessionId of current session.
-		* @params token: string.
+		* @params token string get the mobileSessionId.
 		*/
 		Utils.setTokenInDb = function(token) {
 			if(window.db && window.db.transaction) {
