@@ -718,19 +718,20 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		* @params token string get the mobileSessionId.
 		*/
 		Utils.setTokenInDb = function(token) {
+			window.mobileSessionId = token;
 			if(window.db && window.db.transaction) {
-				window.db.transaction(function(tx) {
-					tx.executeSql('CREATE TABLE IF NOT EXISTS test (id, token)');
-					tx.executeSql('SELECT * FROM test', [], function(tx, res) {
-						if(res.rows.length) {
-							tx.executeSql('UPDATE test SET token=? WHERE id=?', [token, '1']);
+				window.db.transaction(function(transaction) {
+					transaction.executeSql('CREATE TABLE IF NOT EXISTS session (id, token)');
+					transaction.executeSql('SELECT * FROM session', [], function(transaction, result) {
+						if(result.rows && result.rows.length) {
+							transaction.executeSql('UPDATE session SET token=? WHERE id=?', [token, '1']);
 						} else {
-							tx.executeSql('INSERT INTO test VALUES (?,?)', ['1', token]);
+							transaction.executeSql('INSERT INTO session VALUES (?,?)', ['1', token]);
 						}
-						window.mobileSessionId = token;
 					});
 				}, function(error) {
 					console.log('Transaction ERROR: ' + error.message);
+					window.mobileSessionId = false;
 				}, function() {
 					console.log('Populated database successfully.');
 				});
