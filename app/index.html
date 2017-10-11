@@ -111,7 +111,7 @@
 					window.ga.trackView('Precise.ly Mobile Screen')
 					window.ga.setAppVersion('1.2.3')
 				}
-
+				initSqlite();
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 				window.Keyboard = cordova.plugins.Keyboard;
 				window.open = cordova.InAppBrowser.open;
@@ -126,12 +126,37 @@
 			}
 
 			function onAppResume() {
+				initSqlite();
 				setTimeout(function() {
 					$(document).ready(function() {
 						console.log('App has resumed from background');
 						App.coreEventHandler.emit('app-resume');
 					});
 				}, 10);
+			}
+
+			function initSqlite() {
+				/*
+				* Initializing SQLite and storing the mobileSessionId in the window object.
+				*/
+				if(window.sqlitePlugin) {
+					window.db = window.sqlitePlugin.openDatabase({name: "precisely.db"});
+					if(window.db && window.db.transaction) {
+						window.db.transaction(function(transaction) {
+							transaction.executeSql('CREATE TABLE IF NOT EXISTS session (id, token)');
+							transaction.executeSql('SELECT * FROM session', [], function(transaction, result) {
+								if(result.rows && result.rows.item(0)) {
+									window.mobileSessionId = result.rows.item(0).token;
+									console.log(window.mobileSessionId);
+								}
+							});
+						}, function(error) {
+							console.log('Transaction ERROR: ' + error.message);
+						}, function() {
+							console.log('Populated database successfully');
+						});
+					}
+				}
 			}
 
 		</script>
