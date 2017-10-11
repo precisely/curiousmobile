@@ -103,7 +103,7 @@ define(function(require, exports, module) {
 				padding: '8px 15px',
 				color: '#cc7299',
 				fontStyle: 'italic',
-				fontSize: '12px',
+				fontSize: '13px',
 				fontWeight: '500',
 				borderBottom: '1px solid #eaeaea',
 				backgroundColor: '#fff'
@@ -180,7 +180,7 @@ define(function(require, exports, module) {
 			size: [150, 40],
 			content: "PLOT GRAPH: ",
 			properties: {
-				fontSize: '10px',
+				fontSize: '13px',
 				margin: '13px 5px 0px 10px'
 			}
 		});
@@ -221,7 +221,7 @@ define(function(require, exports, module) {
 
 		this.submitFormContainer.add(labelSurface);
 		this.submitFormContainer.add(new Modifier({
-			transform: Transform.translate(90, 5, 0)
+			transform: Transform.translate(100, 6, 0)
 		})).add(createChartSurface);
 		this.formContainerMod = new StateModifier({
 			transform: Transform.translate(0, window.innerHeight - 105, App.zIndex.readView + 1)

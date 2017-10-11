@@ -17,16 +17,16 @@
 					</div>
 				</div>
 				<div class="discussion-title">
-					<a href="#"> 
+					<a href="#">
 							<span> {{- name ? name: '(No Title)' }}</span>
 						</a>
 				</div>
 				<hr>
 				<div class="row">
-					<div class="col-xs-3 posting-time"">
+					<div class="col-xs-4 posting-time">
 						{{- prettyDate }}
 					</div>
-					<div class="text-right col-xs-9 buttons">
+					<div class="text-right col-xs-8 buttons">
 						{{ if (typeof isFollower !== 'undefined') { }}
 							{{ if (!isFollower) { }}
 								<button class="follow-button">
@@ -48,7 +48,7 @@
 						{{ } }}
 						<button>
 							{{ if (!totalComments ||	totalComments < 1) {  }}
-								<img src="content/images/comment.png" alt="comment" /> 
+								<img src="content/images/comment.png" alt="comment" />
 								<span class="footer-label">Comment</span>
 							{{ } else { }}
 							<div class="dark-comment comment-button" data-total-comments="{{- totalComments }}">
