@@ -1,4 +1,4 @@
-// Global variable for "Curious."
+// Global variable for "precise.ly."
 C = {};
 
 // correlationIndex is a master list of all correlations seen so far.

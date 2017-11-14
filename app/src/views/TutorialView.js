@@ -132,6 +132,7 @@ define(function(require, exports, module) {
 					if (_.contains(classList, 'back') || _.contains(event.srcElement.parentElement.classList, 'back')) {
 						this.navigate(-1);
 					} else if (_.contains(classList, 'next') || _.contains(event.srcElement.parentElement.classList, 'next')) {
+						u.saveEventForAnalysis('Tutorial','Done', 'User done the tutorial.', 0 ,'Tutorial done event added successfully.');
 						var tagOptions = [];
 						_.each(document.getElementsByClassName('tracking-tags'), function(element) {
 							if (element.checked) {
@@ -146,6 +147,8 @@ define(function(require, exports, module) {
 					}
 				} else {
 					if (_.contains(classList, 'skip')) {
+						u.saveEventForAnalysis('Tutorial','Close', 'User close the tutorial after '+( this.currentStepIndex+1) +' step(s)',
+								0 ,'Tutorial close event added successfully.'  );
 						App.pageView.changePage('TrackView', {
 							onLoad: true
 						});
@@ -166,6 +169,7 @@ define(function(require, exports, module) {
 	};
 
 	TutorialView.prototype.init = function() {
+		u.saveEventForAnalysis('Tutorial', 'Start', 'User Start the tutorial', 0 ,'Tutorial start event added successfully.'  );
 		this.backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {
@@ -258,6 +262,8 @@ define(function(require, exports, module) {
 		if (u.isAndroid() || (event instanceof CustomEvent)) {
 			classList = event.srcElement.classList;
 			if (_.contains(classList, 'skip') || _.contains(event.srcElement.parentElement.classList, 'skip')) {
+				u.saveEventForAnalysis('Tutorial','Close', 'User close the tutorial after '+(this.currentStepIndex+1)+' step(s)',
+						0 ,'Tutorial close event added successfully.'  );
 				App.pageView.changePage('TrackView', {
 					onLoad: true
 				});

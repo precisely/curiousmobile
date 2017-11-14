@@ -77,7 +77,7 @@ define(function(require, exports, module) {
 					});
 				} else if (_.contains(classList, 'share-button') || _.contains(e.srcElement.classList, 'share-button')) {
 					if (window.plugins) {
-						window.plugins.socialsharing.share(null, 'Curious Discussions', null, App.serverUrl + '/home/social/discussions/' + this.discussion.get("hash"));
+						window.plugins.socialsharing.share(null, 'precise.ly Discussions', null, App.serverUrl + '/home/social/discussions/' + this.discussion.get("hash"));
 					}
 				} else if (_.contains(classList, 'follow-button') || _.contains(e.srcElement.parentElement.classList, 'follow-button')) {
 					Discussion.follow({id: this.discussion.get("hash")}, function(data) {

@@ -41,7 +41,7 @@ define(function(require, exports, module) {
 					confirm_email: confirmEmail,
 					username: username,
 					password: password,
-					groups: "['announce','curious','curious announce']"
+					groups: "['announce','precise.ly','precise.ly announce']"
 				}),
 				function(data) {
 					if (data['success']) {
@@ -58,6 +58,7 @@ define(function(require, exports, module) {
 		},
 		getUserData: function(data) {
 			store.set('mobileSessionId', data['mobileSessionId']);
+			u.setTokenInDb(data['mobileSessionId']);
 			store.set('hasVisitedMobileApp', data['hasVisitedMobileApp']);
 			if (data.user) {
 				return this.cache(data.user);
@@ -87,7 +88,7 @@ define(function(require, exports, module) {
 	});
 
 	User.isLoggedIn = function() {
-		var mobileSessionId = store.get('mobileSessionId');
+		var mobileSessionId = window.mobileSessionId || store.get('mobileSessionId');
 		if (!mobileSessionId) {
 			return false;
 		}
@@ -126,6 +127,7 @@ define(function(require, exports, module) {
 			chartView.graphView.clearGraph();
 		}
 		store.set('mobileSessionId', undefined);
+		u.setTokenInDb(undefined);
 		store.set('user', undefined);
 		window.App.collectionCache.clear();
 		window.App.stateCache.clear();
@@ -134,6 +136,7 @@ define(function(require, exports, module) {
 		App.pageView.pageMap = [];
 		App.pageView.pageMap['HomeView'] = homeView;
 		store.set('mobileSessionId', false);
+		u.setTokenInDb(false);
 		store.set('user', false);
 	}
 

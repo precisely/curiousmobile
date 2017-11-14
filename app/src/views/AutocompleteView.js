@@ -41,8 +41,8 @@ define(function(require, exports, module) {
 		});
 		var i = 0;
 		if (!enteredKey) {
-			this.processAutocompletes(false);	
-			return;	
+			this.processAutocompletes(false);
+			return;
 		}
 		enteredKey = enteredKey.toLowerCase().trim();
 		this.addItem({label:enteredKey}, 0, false)
@@ -56,12 +56,12 @@ define(function(require, exports, module) {
 			autocompletes.forEach(function(autocomplete, index) {
 				var isLastItem = false;
 				if (autocomplete.label && (autocomplete.label.trim() === enteredKey)) {
-					return;	
+					return;
 				}
 				if (index == autocompletes.length-1) {
-					isLastItem = true;	
-				} 
-				this.addItem(autocomplete, index+1, isLastItem);	
+					isLastItem = true;
+				}
+				this.addItem(autocomplete, index+1, isLastItem);
 			}.bind(this));
 		}
 		this.scrollView.sequenceFrom(this.surfaceList);
@@ -87,7 +87,7 @@ define(function(require, exports, module) {
 			properties: {
 				backgroundColor: backgroundColor,
 				padding: '9px',
-				fontSize: '13px',
+				fontSize: '15px',
 				borderBottom: borderProperty,
 				borderLeft: '1px solid #aaaaaa',
 				borderRight: '1px solid #aaaaaa'

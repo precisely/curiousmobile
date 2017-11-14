@@ -393,7 +393,7 @@ html {
 }
 
 .auto-link-color {
-	color: #428bca !important;
+	color: #0b6cb2 !important;
 }
 
 button {
@@ -436,7 +436,6 @@ input, textarea {
 }
 
 .footer-item {
-	margin: 0px 5px;
 	height: 45px;
 	background-repeat: no-repeat;
 	background-position-x: center;
@@ -750,7 +749,7 @@ button.close {
 }
 
 #entry-description-dummy {
-	color: rgba(192, 79, 127, 0.5);
+	color: rgba(192, 79, 127, 0.7);
 }
 
 #entry-description-dummy .input-placeholder {
@@ -1079,11 +1078,11 @@ input[type=radio] {
 
 .people-wrapper .user-details-content {
 	font-size: 12px;
-	color: #cacaca;
+	color: #999999;
 }
 
 .people-wrapper .user-details-content .label-value {
-	color: #7e7e7e;
+	color: #565656;
 	font-weight: 500;
 }
 
@@ -1108,7 +1107,6 @@ input[type=radio] {
 	display: inline-block;
 	padding-top: 1px;
 	font-size: 13px;
-	margin-right: 7px;
 }
 
 .feed-item .discussion .discussion-topic, .feed-item .sprint {
@@ -1261,7 +1259,12 @@ input[type=radio] {
 
 .feed-item .posting-time, .sprint-card-participants {
 	font-size: 10px;
-	color: #a8a8a8;
+	color: #888888;
+}
+
+.feed-item .posting-time {
+	font-size: 11px;
+	padding-top: 8px;
 }
 
 .feed-item .sprint .posting-time {
@@ -1298,8 +1301,8 @@ input[type=radio] {
 }
 
 .discussion-topic .buttons {
-	float: right;
 	display: inline-block;
+	padding: 0px 5px 4px 0px;
 }
 
 .discussion-topic .buttons .share-button {
@@ -1315,14 +1318,13 @@ input[type=radio] {
 	height: 27px;
 	background-color: transparent;
 	margin: 0px 0px -10px 0px;
-	font-size: 10px;
-	padding: 4px;
+	font-size: 11px;
+	padding: 0px 4px 4px 2px;
 }
 
 .discussion-topic button img {
 	height: 24px;
 	width: auto;
-	margin-right: 5px;
 }
 
 .feed-item .discussion .discussion-comment {
@@ -1453,7 +1455,7 @@ input[type=radio] {
 .feed-item .user-name, .discussion-comment .user-name {
 	color: #c04f7f;
 	margin-left: 5px;
-	font-size: 13px;
+	font-size: 15px;
 	position: relative;
 	top: 1px;
 }
@@ -1849,7 +1851,7 @@ list-style-type: none;
 	font-weight: 500;
 	color: #f48d5b;
 	margin: 10px 0px;
-	font-size: 10px;
+	font-size: 12px;
 }
 
 .sprint-default-label {
@@ -2043,7 +2045,7 @@ list-style-type: none;
 }
 
 .people-label {
-	color: #b6b6b6;
+	color: #999;
 	font-weight: 500;
 	font-size: 15px;
 	display: block;
@@ -2073,7 +2075,7 @@ list-style-type: none;
 }
 
 .right-icons p {
-	font-size: 10px;
+	font-size: 11px;
 	display: inline-block;
 	margin-left: 10px;
 }
@@ -2480,8 +2482,8 @@ and (max-device-height: 568px) {
 
 .edit-image p {
 	font-size: 13px;
-	color: #fe9985;
-	font-weight: 500;
+	color: #ffffff;
+	font-weight: 600;
 
 }
 
@@ -2491,8 +2493,8 @@ and (max-device-height: 568px) {
 }
 
 .edit-label {
-	color: #fee49f;
-	font-weight: 500;
+	color: #ffffff;
+	font-weight: 600;
 	font-size: 13px;
 	display: block;
 	margin-bottom: -3px;
@@ -2681,7 +2683,7 @@ and (max-device-height: 568px) {
 .radio-public-private label {
 	position: absolute;
 	font-size: 11px;
-	color: #fc9c81;
+	color: #fff;
 	font-weight: 500;
 	margin-left: 21px;
 }
@@ -2836,8 +2838,7 @@ input.cropit-image-zoom-input {
 }
 
 .people-detail .media-body {
-	padding-left: 10px;
-	padding-top: 5px;
+	padding-left: 20px;
 }
 
 .search-bar {
@@ -2895,6 +2896,7 @@ input.cropit-image-zoom-input {
 .uncheck-label-chart {
 	font-style: normal;
 	color: #A2A2A2;
+	font-weight: bold;
 }
 
 .datepicker-surface .fa {
@@ -3439,7 +3441,7 @@ input.cropit-image-zoom-input {
 }
 
 .discussion-comment-message {
-	font-size: 12px;
+	font-size: 14px;
 	margin: 15px 0px 10px 35px;
 }
 
@@ -3634,6 +3636,13 @@ input.cropit-image-zoom-input {
 	width: 153px;
 }
 
+@media only screen and (max-device-height: 568px) {
+	div.sprintMenu > .arrow {
+		top: 95px !important;
+		left: 63% !important;
+	}
+}
+
 .bookmark-plus {
 	font-size: 16px;
 	padding: 4px 10px 0px 10px;
@@ -3811,4 +3820,16 @@ input.cropit-image-zoom-input {
 
 .header-container-ZTransform {
 	transform: translateZ(36px) !important;
+}
+
+.tag-icon {
+	margin-top: 2px;
+}
+
+.people-detail .tags, .people-detail .media-body, .people-detail .media-body {
+	padding-left: 0px;
+}
+
+.people-detail .media-left {
+	width: 53px;
 }

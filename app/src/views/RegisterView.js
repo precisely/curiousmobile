@@ -102,6 +102,7 @@ define(function (require, exports, module) {
 					username,
 					password,
 					function (user) {
+						u.saveEventForAnalysis('Register', 'Done', 'New user register with ID:' + user.id, 0,'Register event user added.');
 						App.pageView.changePage('TutorialView');
 						push.register();
 					}.bind(this)

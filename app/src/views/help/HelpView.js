@@ -26,7 +26,7 @@ define(function(require, exports, module) {
 
 
 	HelpView.prototype.createBody = function() {
-		this.setHeaderLabel('Curious Help');
+		this.setHeaderLabel('precise.ly Help');
 		var backgroundSurface = new Surface({
 			size: [undefined, undefined],
 			properties: {

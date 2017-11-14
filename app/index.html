@@ -2,7 +2,7 @@
 <html>
 
 	<head>
-		<title>We are curious</title>
+		<title>precise.ly</title>
 		<meta http-equiv="content-Type" content="text/html;charset=utf-8">
 		<meta name="format-detection" content="telephone=no" />
 		<meta name="msapplication-tap-highlight" content="no" />
@@ -102,6 +102,16 @@
 				document.addEventListener("pause", function() {
 					App.coreEventHandler.emit('app-paused');
 				}, false);
+
+				if (window.ga) {
+					window.ga.startTrackerWithId('UA-106318128-1', 30,
+							function() {
+								console.log('User tracked in Google analytics.')
+							});
+					window.ga.trackView('Precise.ly Mobile Screen')
+					window.ga.setAppVersion('1.2.3')
+				}
+				initSqlite();
 				cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
 				window.Keyboard = cordova.plugins.Keyboard;
 				window.open = cordova.InAppBrowser.open;
@@ -116,12 +126,37 @@
 			}
 
 			function onAppResume() {
+				initSqlite();
 				setTimeout(function() {
 					$(document).ready(function() {
 						console.log('App has resumed from background');
 						App.coreEventHandler.emit('app-resume');
 					});
 				}, 10);
+			}
+
+			function initSqlite() {
+				/*
+				* Initializing SQLite and storing the mobileSessionId in the window object.
+				*/
+				if(window.sqlitePlugin) {
+					window.db = window.sqlitePlugin.openDatabase({name: "precisely.db"});
+					if(window.db && window.db.transaction) {
+						window.db.transaction(function(transaction) {
+							transaction.executeSql('CREATE TABLE IF NOT EXISTS session (id, token)');
+							transaction.executeSql('SELECT * FROM session', [], function(transaction, result) {
+								if(result.rows && result.rows.item(0)) {
+									window.mobileSessionId = result.rows.item(0).token;
+									console.log(window.mobileSessionId);
+								}
+							});
+						}, function(error) {
+							console.log('Transaction ERROR: ' + error.message);
+						}, function() {
+							console.log('Populated database successfully');
+						});
+					}
+				}
 			}
 
 		</script>

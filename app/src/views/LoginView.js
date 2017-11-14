@@ -89,6 +89,7 @@ define(function(require, exports, module) {
 				function(user) {
 					window.App.currentUser = user;
 					console.log('LoginView: login success');
+					u.saveEventForAnalysis('Login','done', 'Login user id:' + user.id, 0 ,'Login event added.');
 					Discussion.getNewNotificationCount(function(data) {
 						App.setNotificationCount(data.totalNotificationCount);
 					});

@@ -221,8 +221,8 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 
 		Utils.queueJSONAll = function(description, url, args, successCallback, failCallback, delay, httpArgs, background) {
 			if (u.isOnline()) {
-				/* 
-				 * Searching for current page in pageMap instead of calling getCurentView() so that it does not try to 
+				/*
+				 * Searching for current page in pageMap instead of calling getCurentView() so that it does not try to
 				 * create new instance of view if view does not exist
 				 */
 				var currentView = App.pageView.pageMap[App.pageView.getCurrentPage()];
@@ -396,7 +396,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		};
 
 		/*
-		 * This method reloads DOM with images in it to 
+		 * This method reloads DOM with images in it to
 		 * get actual size of the surface in scroll view
 		 *
 		 */
@@ -430,7 +430,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		 */
 		Utils.getCSRFPreventionURI = function(key) {
 			var App = window.App;
-			var mobileSessionId = store.get('mobileSessionId');
+			var mobileSessionId = window.mobileSessionId || store.get('mobileSessionId');
 			var preventionURI;
 			if (mobileSessionId) {
 				preventionURI = "mobileSessionId=" + mobileSessionId;
@@ -450,7 +450,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		 */
 		Utils.getCSRFPreventionObject = function(key, data) {
 			var CSRFPreventionObject = new Object();
-			var mobileSessionId = store.get('mobileSessionId');
+			var mobileSessionId = window.mobileSessionId || store.get('mobileSessionId');
 			if (mobileSessionId) {
 				CSRFPreventionObject['mobileSessionId'] = mobileSessionId;
 			} else {
@@ -518,7 +518,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		};
 
 		Utils.makeGetArgs = function(args) {
-			args['mobileSessionId'] = store.get('mobileSessionId');
+			args['mobileSessionId'] = window.mobileSessionId || store.get('mobileSessionId');
 
 			return args;
 		};
@@ -531,7 +531,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		};
 
 		Utils.makePostArgs = function(args) {
-			args['mobileSessionId'] = store.get('mobileSessionId');
+			args['mobileSessionId'] = window.mobileSessionId || store.get('mobileSessionId');
 
 			return args;
 		};
@@ -570,7 +570,7 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		};
 
 		Utils.getMobileSessionId = function() {
-			return store.get('mobileSessionId');
+			return window.mobileSessionId || store.get('mobileSessionId');
 		};
 
 		Utils.prettyDate = function prettyDate(time) {
@@ -694,6 +694,49 @@ define(['require', 'exports', 'module', 'store', 'jstzdetect', 'exoskeleton', 'v
 		} else if (/Android/i.test(navigator.userAgent)) {
 			device.platform = "android"
 		}
+
+		/**
+		* This method add generated event of users in google analytics page for analysis purpose.
+		*/
+		Utils.saveEventForAnalysis = function(catagory, action, label, value, successlog) {
+			if(window.ga) {
+				window.ga.trackView('Precise.ly Mobile');
+				window.ga.trackEvent(catagory, action, label, value , true,
+						function() {
+							console.log(successlog);
+						}.bind(this),
+						function() {
+							console.log('Error to add event.');
+						}.bind(this)
+				);
+			}
+		};
+
+		/*
+		* Create Table or Update Table if exist in SQLite DB.
+		* Stores the mobileSessionId of current session.
+		* @params token string get the mobileSessionId.
+		*/
+		Utils.setTokenInDb = function(token) {
+			window.mobileSessionId = token;
+			if(window.db && window.db.transaction) {
+				window.db.transaction(function(transaction) {
+					transaction.executeSql('CREATE TABLE IF NOT EXISTS session (id, token)');
+					transaction.executeSql('SELECT * FROM session', [], function(transaction, result) {
+						if(result.rows && result.rows.length) {
+							transaction.executeSql('UPDATE session SET token=? WHERE id=?', [token, '1']);
+						} else {
+							transaction.executeSql('INSERT INTO session VALUES (?,?)', ['1', token]);
+						}
+					});
+				}, function(error) {
+					console.log('Transaction ERROR: ' + error.message);
+					window.mobileSessionId = false;
+				}, function() {
+					console.log('Populated database successfully.');
+				});
+			}
+		};
 
 		module.exports = Utils;
 	});

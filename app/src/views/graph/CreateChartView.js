@@ -103,7 +103,7 @@ define(function(require, exports, module) {
 				padding: '8px 15px',
 				color: '#cc7299',
 				fontStyle: 'italic',
-				fontSize: '12px',
+				fontSize: '13px',
 				fontWeight: '500',
 				borderBottom: '1px solid #eaeaea',
 				backgroundColor: '#fff'
@@ -180,7 +180,7 @@ define(function(require, exports, module) {
 			size: [150, 40],
 			content: "PLOT GRAPH: ",
 			properties: {
-				fontSize: '10px',
+				fontSize: '13px',
 				margin: '13px 5px 0px 10px'
 			}
 		});
@@ -204,6 +204,11 @@ define(function(require, exports, module) {
 				if (!this.selectedTags || this.selectedTags.length < 1) {
 					u.showAlert('No Tags Selected to plot');
 				} else {
+					this.tagString = ' ';
+					this.selectedTags.forEach(function(tag) {
+						this.tagString = this.tagString + tag.description + ' ';
+					}.bind(this));
+					u.saveEventForAnalysis('Chart Plotted', 'Done', 'Tag:' + this.tagString, 0,'Chart traced.');
 					var shareDiscussion = false;
 					if (this.shareDiscussion) {
 						shareDiscussion = true;
@@ -216,7 +221,7 @@ define(function(require, exports, module) {
 
 		this.submitFormContainer.add(labelSurface);
 		this.submitFormContainer.add(new Modifier({
-			transform: Transform.translate(90, 5, 0)
+			transform: Transform.translate(100, 6, 0)
 		})).add(createChartSurface);
 		this.formContainerMod = new StateModifier({
 			transform: Transform.translate(0, window.innerHeight - 105, App.zIndex.readView + 1)
